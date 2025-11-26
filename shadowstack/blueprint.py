@@ -631,6 +631,109 @@ def get_domain(domain):
         postgres.close()
 
 
+@shadowstack_bp.route('/api/import', methods=['POST'])
+def import_domains():
+    """
+    Import domains from CSV or JSON list.
+    
+    POST /api/import
+    Body (JSON): {
+        "domains": ["domain1.com", "domain2.com", ...],
+        "source": "CSV Import",
+        "auto_enrich": false
+    }
+    
+    OR
+    
+    Body (CSV): CSV file with 'domain', 'source', 'notes' columns
+    """
+    postgres = PostgresClient()
+    
+    try:
+        imported = []
+        errors = []
+        
+        # Check if CSV file uploaded
+        if 'file' in request.files:
+            import csv
+            from io import StringIO
+            
+            file = request.files['file']
+            if file.filename.endswith('.csv'):
+                content = file.read().decode('utf-8')
+                reader = csv.DictReader(StringIO(content))
+                
+                for row in reader:
+                    domain = row.get('domain') or row.get('Domain') or row.get('url') or row.get('URL')
+                    if not domain:
+                        continue
+                    
+                    # Clean domain
+                    domain = domain.strip().lower()
+                    if domain.startswith('http://') or domain.startswith('https://'):
+                        from urllib.parse import urlparse
+                        domain = urlparse(domain).netloc or domain.replace('http://', '').replace('https://', '').split('/')[0]
+                    
+                    source = row.get('source', 'CSV Import')
+                    notes = row.get('notes', '') or row.get('Notes', '')
+                    
+                    try:
+                        domain_id = postgres.insert_domain(domain, source, notes)
+                        imported.append({"domain": domain, "id": domain_id})
+                    except Exception as e:
+                        errors.append({"domain": domain, "error": str(e)})
+        
+        # Check if JSON list provided
+        elif request.is_json:
+            data = request.get_json()
+            domains = data.get('domains', [])
+            source = data.get('source', 'API Import')
+            auto_enrich = data.get('auto_enrich', False)
+            
+            for domain in domains:
+                if not domain:
+                    continue
+                
+                # Clean domain
+                domain = domain.strip().lower()
+                if domain.startswith('http://') or domain.startswith('https://'):
+                    from urllib.parse import urlparse
+                    domain = urlparse(domain).netloc or domain.replace('http://', '').replace('https://', '').split('/')[0]
+                
+                try:
+                    domain_id = postgres.insert_domain(domain, source, data.get('notes', ''))
+                    imported.append({"domain": domain, "id": domain_id})
+                    
+                    # Auto-enrich if requested
+                    if auto_enrich:
+                        try:
+                            enrichment_data = enrich_domain(domain)
+                            postgres.insert_enrichment(domain_id, enrichment_data)
+                        except Exception as e:
+                            errors.append({"domain": domain, "error": f"Enrichment failed: {str(e)}"})
+                except Exception as e:
+                    errors.append({"domain": domain, "error": str(e)})
+        else:
+            return jsonify({"error": "No domains provided. Send JSON with 'domains' array or upload CSV file."}), 400
+        
+        postgres.close()
+        
+        return jsonify({
+            "success": True,
+            "imported": len(imported),
+            "errors": len(errors),
+            "domains": imported,
+            "error_details": errors
+        })
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        postgres.close()
+
+
 @shadowstack_bp.route('/api/analytics')
 def get_analytics():
     """Get analytics and outlier detection."""
