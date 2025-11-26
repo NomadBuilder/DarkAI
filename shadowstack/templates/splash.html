@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ShadowStack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="ShadowStack – exposing the infrastructure behind AI-generated sexual abuse so NGOs, researchers, and authorities can take action." />
+
+  <style>
+    :root {
+      --bg-deep: #05070b;
+      --bg-dark: #0b0f16;
+      --bg-panel: #111827;
+      --accent-red: #d9353e;
+      --accent-red-soft: rgba(217, 53, 62, 0.18);
+      --text-main: #f3f4f7;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2933;
+      --max-width: 1120px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.65);
+      --transition-fast: 150ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top, #141825 0, #020308 60%);
+    }
+
+    body {
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page { min-height: 80vh; display: flex; flex-direction: column; }
+    main { flex: 1; }
+    .section { padding: 4rem 1.5rem; }
+    .section--tight { padding-top: 2.5rem; padding-bottom: 3.5rem; }
+    .section__inner { max-width: var(--max-width); margin: 0 auto; }
+
+    /* HERO */
+    .hero { position: relative; min-height: 49vh; display: flex; flex-direction: column; padding: 2.5rem 1.5rem 5rem; overflow: hidden; background: #03040a; }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url("https://i.imgur.com/WiljXcq.png");
+      background-size: cover;
+      background-position: left center;
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    .hero__content { position: relative; z-index: 1; max-width: var(--max-width); margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; flex: 1; padding-top: 2rem; }
+    .hero__nav { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; }
+    .hero__brand { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); }
+    .hero__brand-mark { width: 26px; height: 26px; border-radius: 999px; background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%); box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8); }
+    .hero__link { font-size: 0.9rem; color: var(--text-muted); padding: 0.35rem 0.9rem; border-radius: 999px; border: 1px solid rgba(156, 163, 175, 0.35); backdrop-filter: blur(10px); background: rgba(15, 23, 42, 0.5); }
+
+    .hero__grid { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr); gap: 3rem; align-items: center; }
+    @media (max-width: 880px) { .hero__grid { grid-template-columns: minmax(0, 1fr); } }
+
+    .hero__headline { font-size: 3rem; line-height: 1.18; letter-spacing: 0.5px; margin-bottom: 2.5rem; }
+    .hero__headline + p { font-size: 1.2rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; }
+    .btn { padding: 0.9rem 1.7rem; border-radius: 999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; display: inline-flex; gap: 0.45rem; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .btn--primary { background: linear-gradient(to right, #f97373, var(--accent-red)); color: white; }
+    .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(217, 53, 62, 0.4); }
+    .btn--secondary { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--text-main); }
+    .btn--secondary:hover { background: rgba(15, 23, 42, 1); border-color: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+    .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    /* SECTION STYLES */
+    .section-kicker { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 1rem; }
+    .section-title { font-size: 1.9rem; line-height: 1.3; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); }
+    .section-lead { font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 600px; }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 768px) {
+      .hero { min-height: 38vh; padding: 2rem 1rem 3rem; }
+      .hero__headline { font-size: 2rem; margin-bottom: 1.5rem; }
+      .hero__headline + p { font-size: 1rem; margin-bottom: 2rem; }
+      .section { padding: 3rem 1rem; }
+      .section--tight { padding-top: 2rem; padding-bottom: 2.5rem; }
+      .section-title { font-size: 1.5rem; }
+      .section-lead { font-size: 1rem; }
+      .destroying-grid, .responsive-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
+      .analysis-panel { padding: 2rem 1.5rem; }
+      .btn-group { flex-direction: column; }
+      .btn-group .btn { width: 100%; justify-content: center; }
+    }
+
+    /* ANALYSIS SECTION */
+    .section--analysis { padding: 5rem 1.5rem; }
+    .analysis-panel { background: rgba(15, 23, 42, 0.4); border-radius: var(--radius-lg); padding: 3rem; border: 1px solid rgba(255, 255, 255, 0.06); }
+    .analysis-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    @media (max-width: 880px) { .analysis-inner { grid-template-columns: 1fr; } }
+    .analysis-graph { 
+      min-height: 500px;
+      background: rgba(0, 0, 0, 0.3); 
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .analysis-graph img {
+      width: 100%;
+      height: auto;
+      max-height: 600px;
+      object-fit: contain;
+      display: block;
+    }
+
+  </style>
+</head>
+<body class="page">
+  <main>
+    {% from "_navigation.html" import render_nav %}
+    {{ render_nav('home') }}
+    
+    <header class="hero" aria-labelledby="hero-title">
+  
+      <div class="hero__content">
+        <div class="hero__nav" style="display: none;">
+          <!-- Navigation moved to top of page -->
+          <div class="hero__brand"><span class="hero__brand-mark"></span>ShadowStack</div>
+          <a href="#about" class="hero__link">About the project</a>
+        </div>
+
+        <div class="hero__grid">
+          <div>
+            <h1 class="hero__headline">AI-generated sexual abuse is spreading faster than we can stop it.</h1>
+            <p>Behind every image is a real person whose life can be shattered in minutes.</p>
+            <a href="/shadowstack/dashboard" class="btn btn--primary">See the data</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- DESTROYING LIVES SECTION -->
+    <section id="about" class="section section--destroying" aria-labelledby="destroying-title">
+      <div class="section__inner destroying-grid" style="display:grid;grid-template-columns:1.4fr 1fr;gap:3rem;">
+        <div class="destroying-body" style="display:flex;flex-direction:column;gap:1.4rem;line-height:1.7;">
+          <div class="section-kicker" style="display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;">
+            <svg width="16" height="16" fill="#d9353e"><circle cx="8" cy="8" r="8"/></svg>
+            Destroying lives
+          </div>
+          <h2 id="destroying-title" class="section-title" style="font-size:1.9rem;line-height:1.3;">AI pornography is not a trend. It’s a weapon.</h2>
+          <p>People are being digitally violated without warning. Their faces are stolen. Their bodies are fabricated. Their identities are twisted into something they never consented to — something that can follow them for years.</p>
+          <p>These images do not simply “go viral.” They are copied, mirrored, and monetized across a network of sites that hide behind layers of technical infrastructure. Victims are left to fight a system they can’t even see.</p>
+          <div class="destroying-highlight" style="padding:1.5rem 1.8rem;background:rgba(15,23,42,0.7);border-left:4px solid #d9353e;border-radius:8px;backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.08);">Our mission is simple and urgent: <strong>expose the systems that enable this harm</strong>, so that advocates, regulators, and platforms have a clear map of where pressure and policy must be applied.</div>
+        </div>
+        <aside class="destroying-aside" style="display:flex;flex-direction:column;gap:1.4rem;padding:2rem;background:rgba(15,23,42,0.6);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);">
+          <h3 style="display:flex;align-items:center;gap:0.5rem;">
+            <svg width="18" height="18" fill="#f97373"><circle cx="9" cy="9" r="9"/></svg>
+            What the tool actually does
+          </h3>
+          <p>The NCII Infrastructure Mapping Tool ingests URLs of abusive websites and automatically gathers public infrastructure metadata: <strong>hosting providers, CDNs, name servers, payment processors, analytics tags, and CMS fingerprints.</strong></p>
+          <p>The output is an interactive graph that shows clusters of service providers most frequently connected to harmful content — turning a chaotic landscape into an actionable map for investigations and policy work.</p>
+        </aside>
+      </div>
+    </section>
+
+    <!-- FACTS & FIGURES -->
+    <section id="facts" class="section section--facts section--tight" aria-labelledby="facts-title">
+      <div class="section__inner" style="display:flex;flex-direction:column;gap:2.5rem;">
+        <div style="display:flex;flex-direction:column;gap:1.2rem;max-width:900px;">
+          <div class="section-kicker" style="display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;">
+            <svg width="16" height="16" fill="#d9353e"><rect width="16" height="16" rx="4"/></svg>
+            Facts & figures
+          </div>
+          <h2 id="facts-title" class="section-title" style="font-size:1.9rem;line-height:1.3;">The reality behind the harm</h2>
+          <p class="section-lead" style="font-size:1.1rem;color:var(--text-muted);max-width:740px;">AI-generated sexual abuse is not hypothetical. It is here, it is scaled, and it is built on top of mainstream internet infrastructure.</p>
+        </div>
+
+        <!-- STATS GRID -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:1rem;">
+          <div style="padding:2rem 1.8rem;background:rgba(15,23,42,0.45);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);">
+            <div style="font-size:3.5rem;font-weight:800;line-height:1;margin-bottom:0.8rem;background:linear-gradient(135deg,#f97373,#d9353e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">48%</div>
+            <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.6rem;color:var(--text-main);">of men</div>
+            <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.6;">A major study found that 48% of U.S. men report having seen deepfake pornography — showing how normalized AI‑generated sexual content has already become.</p>
+          </div>
+
+          <div style="padding:2rem 1.8rem;background:rgba(15,23,42,0.45);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);">
+            <div style="font-size:3.5rem;font-weight:800;line-height:1;margin-bottom:0.8rem;background:linear-gradient(135deg,#f97373,#d9353e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">+550%</div>
+            <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.6rem;color:var(--text-main);">Growth</div>
+            <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.6;">A 2025 policy brief shows a 550% increase in explicit AI deepfake videos since 2019, reaching 96,000+ videos recorded in 2023 alone.</p>
+          </div>
+
+          <div style="padding:2rem 1.8rem;background:rgba(15,23,42,0.45);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.06);backdrop-filter:blur(6px);">
+            <div style="font-size:3.5rem;font-weight:800;line-height:1;margin-bottom:0.8rem;background:linear-gradient(135deg,#f97373,#d9353e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">6%</div>
+            <div style="font-size:1.1rem;font-weight:600;margin-bottom:0.6rem;color:var(--text-main);">of youth</div>
+            <p style="font-size:0.95rem;color:var(--text-muted);line-height:1.6;">Research on young people shows that 1 in 17 (≈6%) have already had deepfake nudes created of them — a level of AI‑driven sexual harm without historical precedent.</p>
+          </div>
+        </div>
+
+        <!-- AD-DRIVEN AMPLIFICATION SECTION -->
+        <div style="margin-top:3rem;padding:2.5rem;background:rgba(15,23,42,0.4);border-radius:var(--radius-md);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);">
+          <h3 style="font-size:1.5rem;font-weight:700;margin-bottom:1.2rem;color:var(--text-main);display:flex;align-items:center;gap:0.6rem;">
+            <svg width="20" height="20" fill="#d9353e"><circle cx="10" cy="10" r="10"/></svg>
+            Ad‑driven amplification
+          </h3>
+          <p style="font-size:1.05rem;color:var(--text-muted);margin-bottom:1.8rem;line-height:1.7;">AI sexual abuse tools aren't spreading organically. Investigations show that ad networks and social platforms are directly amplifying them at scale:</p>
+          
+          <div style="display:flex;flex-direction:column;gap:1.4rem;">
+            <div style="padding:1.4rem;background:rgba(15,23,42,0.6);border-radius:8px;border-left:3px solid rgba(217,53,62,0.5);">
+              <p style="color:var(--text-main);line-height:1.7;"><strong> Up to 90% of traffic</strong> to one of the most popular AI "nudify" apps reportedly came from ads running on Meta platforms.</p>
+            </div>
+
+            <div style="padding:1.4rem;background:rgba(15,23,42,0.6);border-radius:8px;border-left:3px solid rgba(217,53,62,0.5);">
+              <p style="color:var(--text-main);line-height:1.7;">Investigations uncovered <strong>hundreds of paid ads</strong> for nudification apps on Facebook and Instagram, despite policies banning sexual exploitation.</p>
+            </div>
+
+            <div style="padding:1.4rem;background:rgba(15,23,42,0.6);border-radius:8px;border-left:3px solid rgba(217,53,62,0.5);">
+              <p style="color:var(--text-main);line-height:1.7;">Ad engines have sent <strong>hundreds of thousands of clicks and millions of impressions</strong> to deepfake and nudify tools.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANALYSIS SECTION -->
+    <section id="analysis" class="section section--analysis" aria-labelledby="analysis-title">
+      <div class="section__inner">
+        <div class="analysis-panel">
+          <div class="analysis-inner">
+            <div>
+              <div class="section-kicker">The analysis</div>
+              <h2 id="analysis-title" class="section-title">Cut through the obscurity.</h2>
+              <p class="section-lead">For every URL, the NCII Infrastructure Mapping Tool builds an infrastructure profile and drops it into an interactive network graph.</p>
+              <div style="margin-top: 2.5rem;">
+                <a href="/shadowstack/dashboard" class="btn btn--primary">See the data</a>
+              </div>
+            </div>
+            <div class="analysis-graph">
+              <img src="/shadowstack/static/images/nodes.png" alt="Infrastructure Graph Visualization showing connections between domains and service providers" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>

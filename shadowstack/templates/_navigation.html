@@ -1,0 +1,126 @@
+{% macro render_nav(current_page='') %}
+<nav class="site-nav">
+  <div class="nav-container">
+    <a href="/shadowstack/" class="nav-brand-link">
+      <div class="nav-brand">
+        <span class="nav-brand-mark"></span>
+        <span>ShadowStack</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="/shadowstack/" class="nav-link {% if current_page == 'home' %}active{% endif %}">Home</a>
+      <a href="/shadowstack/check" class="nav-link {% if current_page == 'check' %}active{% endif %}">Check URL</a>
+      <a href="/shadowstack/dashboard" class="nav-link {% if current_page == 'data' %}active{% endif %}">Data</a>
+      <a href="/shadowstack/action" class="nav-link {% if current_page == 'action' %}active{% endif %}">Take Action</a>
+    </div>
+  </div>
+</nav>
+
+<style>
+.site-nav {
+  position: relative;
+  z-index: 100;
+  padding: 1.5rem 1.5rem;
+  background: rgba(3, 4, 10, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.nav-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.nav-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #9ca3af;
+}
+
+.nav-brand-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.nav-brand-link:hover {
+  color: #f3f4f7;
+}
+
+.nav-brand-mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+  box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.nav-brand-link:hover .nav-brand-mark {
+  transform: scale(1.1);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-link {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(156, 163, 175, 0.35);
+  backdrop-filter: blur(10px);
+  background: rgba(15, 23, 42, 0.5);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.nav-link:hover {
+  border-color: rgba(156, 163, 175, 0.6);
+  background: rgba(15, 23, 42, 0.7);
+  color: #f3f4f7;
+}
+
+.nav-link.active {
+  border-color: rgba(217, 53, 62, 0.6);
+  background: rgba(217, 53, 62, 0.15);
+  color: #f3f4f7;
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .nav-link {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+  }
+}
+</style>
+{% endmacro %}
+

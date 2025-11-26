@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowStack - Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="/shadowstack/static/images/favicon.svg" />
+    <link rel="alternate icon" href="/shadowstack/static/images/favicon.svg" />
+    <link rel="stylesheet" href="/shadowstack/static/css/style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+    {% from "_navigation.html" import render_nav %}
+    {{ render_nav('data') }}
+    <div class="container">
+        <header>
+            <h1>🔍 ShadowStack</h1>
+            <p class="subtitle">Visualizing infrastructure relationships behind domains</p>
+        </header>
+        
+        <!-- Summary Section -->
+        <div class="summary-section" id="summary-section">
+            <h2>Summary & Outliers</h2>
+            <div class="summary-content" id="summary-content">
+                <div class="loading">Loading analytics...</div>
+            </div>
+        </div>
+        
+        <!-- View Toggle -->
+        <div class="view-toggle">
+            <button class="view-btn active" data-view="graph" id="graph-view-btn">
+                Visualization
+            </button>
+            <button class="view-btn" data-view="table" id="table-view-btn">
+                Table
+            </button>
+            <button class="view-btn" data-view="analysis" id="analysis-view-btn">
+                Analysis
+            </button>
+            <button class="view-btn" data-view="about" id="about-view-btn">
+                About
+            </button>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <div class="stats" id="stats">
+                <span>Loading statistics...</span>
+            </div>
+            <div class="buttons">
+                <button id="refresh-btn" class="btn btn-primary">Refresh</button>
+                <button id="reset-zoom-btn" class="btn btn-secondary" style="display: none;">Reset Zoom</button>
+                <button id="export-btn" class="btn btn-success">Export Data</button>
+            </div>
+        </div>
+        
+        <!-- Graph View -->
+        <div class="view-container" id="graph-view">
+            <div class="graph-controls">
+                <div class="search-box">
+                    <input type="text" id="graph-search" placeholder="🔍 Filter by domain, CDN, host, CMS, registrar..." class="search-input">
+                </div>
+                <div class="graph-filters">
+                    <span class="filter-label">Show service types:</span>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-host" checked>
+                        <span>Hosts</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-cdn" checked>
+                        <span>CDNs</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-cms" checked>
+                        <span>CMS</span>
+                    </label>
+                    <label class="filter-checkbox">
+                        <input type="checkbox" id="filter-registrar" checked>
+                        <span>Registrars</span>
+                    </label>
+                </div>
+                <div class="graph-info">
+                    <span id="graph-count">0 nodes</span>
+                </div>
+            </div>
+            <div class="graph-container">
+                <svg id="graph-svg"></svg>
+                <div id="tooltip" class="tooltip"></div>
+            </div>
+            
+            <!-- Node Detail Modal -->
+            <div id="node-modal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="modal-close">&times;</span>
+                    <div id="modal-body"></div>
+                </div>
+            </div>
+            
+            <div class="legend">
+                <h3>Node Types</h3>
+                <div class="legend-section">
+                    <h4>Domains (URLs)</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color domain"></span>
+                            <span><strong>Domain</strong> - The websites being analyzed</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-section">
+                    <h4>Services (Top 20 by frequency)</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color host"></span>
+                            <span>Hosting Provider</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color cdn"></span>
+                            <span>CDN</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color cms"></span>
+                            <span>CMS</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color registrar"></span>
+                            <span>Registrar</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Table View -->
+        <div class="view-container" id="table-view" style="display: none;">
+            <div class="table-controls">
+                <div class="search-box">
+                    <input type="text" id="table-search" placeholder="🔍 Search domains, CMS, CDN, country..." class="search-input">
+                </div>
+                <div class="filter-box">
+                    <select id="filter-column" class="filter-select">
+                        <option value="">All Columns</option>
+                        <option value="domain">Domain</option>
+                        <option value="ip_address">IP Address</option>
+                        <option value="isp">ISP</option>
+                        <option value="host_name">Host</option>
+                        <option value="cms">CMS</option>
+                        <option value="cdn">CDN</option>
+                        <option value="web_server">Web Server</option>
+                        <option value="payment_processor">Payment Processor</option>
+                        <option value="registrar">Registrar</option>
+                    </select>
+                </div>
+                <div class="column-controls">
+                    <button id="show-all-btn" class="btn btn-secondary">Show All Columns</button>
+                    <button id="column-toggle-btn" class="btn btn-secondary">📋 Columns</button>
+                    <div id="column-menu" class="column-menu" style="display: none;">
+                        <div class="column-menu-header">Toggle Columns</div>
+                        <div id="column-checkboxes"></div>
+                        <div class="column-menu-footer">
+                            <button id="save-columns-btn" class="btn btn-success">💾 Save</button>
+                            <button id="reset-columns-btn" class="btn btn-secondary">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table id="domains-table" class="data-table">
+                    <thead>
+                        <tr>
+                            <th class="row-number">#</th>
+                            <th class="sortable col-domain" data-column="domain" data-col="domain">Domain ↕</th>
+                            <th class="sortable col-isp" data-column="isp" data-col="isp">ISP ↕</th>
+                            <th class="sortable col-host" data-column="host_name" data-col="host_name">Host ↕</th>
+                            <th class="sortable col-cms" data-column="cms" data-col="cms">CMS ↕</th>
+                            <th class="sortable col-cdn" data-column="cdn" data-col="cdn">CDN ↕</th>
+                            <th class="sortable col-registrar" data-column="registrar" data-col="registrar">Registrar ↕</th>
+                            <th class="sortable col-created" data-column="creation_date" data-col="creation_date">Created ↕</th>
+                            <th class="col-frameworks" data-col="frameworks">Frameworks</th>
+                            <th class="sortable col-ip hidden-col" data-column="ip_address" data-col="ip_address">IP Address ↕</th>
+                            <th class="sortable col-country hidden-col" data-column="country" data-col="country">Country ↕</th>
+                            <th class="sortable col-asn hidden-col" data-column="asn" data-col="asn">ASN ↕</th>
+                            <th class="sortable col-webserver hidden-col" data-column="web_server" data-col="web_server">Web Server ↕</th>
+                            <th class="sortable col-payment hidden-col" data-column="payment_processor" data-col="payment_processor">Payment ↕</th>
+                            <th class="sortable col-expires hidden-col" data-column="expiration_date" data-col="expiration_date">Expires ↕</th>
+                            <th class="col-analytics hidden-col" data-col="analytics">Analytics</th>
+                            <th class="col-languages hidden-col" data-col="languages">Languages</th>
+                            <th class="col-ipv4 hidden-col" data-col="ip_addresses">IPs (IPv4)</th>
+                            <th class="col-ipv6 hidden-col" data-col="ipv6_addresses">IPv6</th>
+                            <th class="col-nameservers hidden-col" data-col="name_servers">Name Servers</th>
+                            <th class="col-mx hidden-col" data-col="mx_records">MX Records</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr><td colspan="21" class="loading">Loading data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-info">
+                <span id="table-count">0 domains</span>
+            </div>
+        </div>
+        
+        <!-- Analysis View -->
+        <div class="view-container" id="analysis-view" style="display: none;">
+            <div class="analysis-section">
+                <h2>🔍 Analysis and Review</h2>
+                <div class="analysis-content" id="analysis-content">
+                    <h3>Executive Summary</h3>
+                    <p>This analysis examines infrastructure patterns across 110 domains associated with AI-generated non-consensual intimate imagery (NCII). The data reveals significant concentration of infrastructure services, with several providers enabling disproportionately large numbers of these domains through CDN, hosting, and network services.</p>
+                    <p>IMPORTANT: Service providers (CDNs, hosts, ISPs) are being paid to enable these sites and should be held accountable, even if they're acting as intermediaries like Cloudflare.</p>
+                    
+                    <h3>Key Findings</h3>
+                    <p>Infrastructure Breakdown:</p>
+                    <ul>
+                        <li>Cloudflare, Inc.: hosts 45.5% of all domains (50 domains), serves as CDN for 53.6% of domains (59 domains), provides ISP services for 45.5% of domains (50 domains)</li>
+                        <li>Namecheap, Inc. is the registrar for 40.9% of domains (45 domains)</li>
+                    </ul>
+                    
+                    <h3>Bad Actors Identified</h3>
+                    <p>Key Principle: All service providers in the chain (CDN, Host, ISP) are being paid and should be held accountable, including intermediaries like Cloudflare.</p>
+                    
+                    <h4>Priority 1: High-Impact Service Providers (>40% market share)</h4>
+                    <p>Service Providers (CDN + Host + ISP combined - these are being paid):</p>
+                    <ul>
+                        <li>Cloudflare, Inc.: 59 domains (53.6%) - CRITICAL PRIORITY</li>
+                    </ul>
+                    
+                    <p>Hosting Providers:</p>
+                    <ul>
+                        <li>(All top hosting providers already listed in Service Providers section)</li>
+                    </ul>
+                    
+                    <p>Registrars:</p>
+                    <ul>
+                        <li>Namecheap, Inc.: 45 domains (40.9%) - CRITICAL PRIORITY</li>
+                        <li>GoDaddy.com, LLC: 11 domains (10.0%) - HIGH PRIORITY</li>
+                    </ul>
+                    
+                    <p>CDNs:</p>
+                    <ul>
+                        <li>(All top CDNs already listed in Service Providers section)</li>
+                    </ul>
+                    
+                    <h3>Recommendations</h3>
+                    <h4>Immediate Action Items</h4>
+                    <p>CRITICAL: Service providers (CDNs, hosts, ISPs) are being paid to enable these sites and must be held accountable, regardless of whether they are intermediaries.</p>
+                    <ol>
+                        <li>Contact Cloudflare, Inc. (Priority: CRITICAL)
+                            <ul>
+                                <li>They provide services (CDN/Host/ISP) to 53.6% of all domains, They host 45.5% of all domains, They serve 53.6% of domains via CDN</li>
+                                <li>They are being paid to enable these sites</li>
+                                <li>Abuse contact: abuse@cloudflare.com</li>
+                                <li>Reference: They are profiting from enabling NCII content distribution</li>
+                            </ul>
+                        </li>
+                        <li>Contact Namecheap, Inc. (Priority: CRITICAL)
+                            <ul>
+                                <li>They register 40.9% of all domains in this dataset</li>
+                                <li>Focus on their abuse department</li>
+                                <li>Reference: Domain registration terms violations, hosting NCII content</li>
+                            </ul>
+                        </li>
+                    </ol>
+                    
+                    <div class="bad-actor-list">
+                        <h4>Top Infrastructure Providers by Domain Count</h4>
+                        <p style="margin-bottom: 15px; color: #f97373; font-weight: bold;">⚠️ All service providers (CDN, Host, ISP) are being paid to enable these sites and should be held accountable.</p>
+                        <div class="bad-actor-item" style="background: rgba(217, 53, 62, 0.15); border-left: 4px solid #d9353e; padding: 10px; margin-bottom: 15px; color: #f3f4f7;">
+                            <strong style="color: #f3f4f7;">🚨 Service Providers (CDN + Host + ISP - Being Paid):</strong>
+                            <ul style="color: #f3f4f7; margin-top: 8px;">
+                                <li style="color: #f3f4f7;"><strong style="color: #f3f4f7;">Cloudflare, Inc.</strong>: 59 domains (53.6%)</li>
+                            </ul>
+                        </div>
+                        <div class="bad-actor-item" style="color: #f3f4f7;">
+                            <strong style="color: #f3f4f7;">Hosting Providers:</strong>
+                            <ul style="color: #f3f4f7; margin-top: 8px;">
+                                <li style="color: #f3f4f7;">Cloudflare, Inc.: 50 domains (45.5%)</li>
+                            </ul>
+                        </div>
+                        <div class="bad-actor-item" style="color: #f3f4f7;">
+                            <strong style="color: #f3f4f7;">Registrars:</strong>
+                            <ul style="color: #f3f4f7; margin-top: 8px;">
+                                <li style="color: #f3f4f7;">Namecheap, Inc.: 45 domains (40.9%)</li>
+                                <li style="color: #f3f4f7;">GoDaddy.com, LLC: 11 domains (10.0%)</li>
+                            </ul>
+                        </div>
+                        <div class="bad-actor-item" style="color: #f3f4f7;">
+                            <strong style="color: #f3f4f7;">CDNs:</strong>
+                            <ul style="color: #f3f4f7; margin-top: 8px;">
+                                <li style="color: #f3f4f7;">Cloudflare, Inc.: 59 domains (53.6%)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- About View -->
+        <div class="view-container" id="about-view" style="display: none;">
+            <div class="about-section">
+                <h2>ℹ️ About This Project</h2>
+                
+                <div class="about-content">
+                    <section class="about-section-block">
+                        <h3>🎯 Project Goals</h3>
+                        <p>
+                            This tool maps and visualizes the infrastructure (hosts, CDNs, CMS, payment processors, domains) 
+                            behind AI-generated non-consensual intimate imagery (NCII) websites. The goal is to help NGOs, 
+                            researchers, and law enforcement track infrastructure patterns and identify service providers 
+                            that enable these harmful sites.
+                        </p>
+                    </section>
+                    
+                    <section class="about-section-block">
+                        <h3>🔍 What This Tool Does</h3>
+                        <ul>
+                            <li><strong>Domain Enrichment:</strong> Collects metadata about domains including hosting providers, CDNs, registrars, and technology stacks</li>
+                            <li><strong>Infrastructure Mapping:</strong> Visualizes relationships between domains and service providers in an interactive graph</li>
+                            <li><strong>Pattern Analysis:</strong> Identifies common infrastructure providers and service concentrations</li>
+                            <li><strong>Data Export:</strong> Exports enriched datasets for further analysis and reporting</li>
+                        </ul>
+                    </section>
+                    
+                    <section class="about-section-block">
+                        <h3>🛡️ Ethics & Safety</h3>
+                        <ul>
+                            <li><strong>No Content Collection:</strong> This tool only collects metadata (IPs, hosting info, tech stack) - no actual website content</li>
+                            <li><strong>Anonymized Data:</strong> Personal information is not stored or collected</li>
+                            <li><strong>Compliance:</strong> Designed to comply with data privacy and NCII laws</li>
+                            <li><strong>Secure Access:</strong> API keys and database credentials are stored securely</li>
+                        </ul>
+                    </section>
+                    
+                    <section class="about-section-block">
+                        <h3>📊 Key Features</h3>
+                        <ul>
+                            <li><strong>Interactive Graph Visualization:</strong> Explore relationships between domains and service providers</li>
+                            <li><strong>Comprehensive Data Table:</strong> View detailed information about each domain with filtering and sorting</li>
+                            <li><strong>AI-Powered Analysis:</strong> Automated identification of high-impact service providers and actionable recommendations</li>
+                            <li><strong>Export Capabilities:</strong> Download data in CSV or JSON formats for reporting and analysis</li>
+                        </ul>
+                    </section>
+                    
+                    <section class="about-section-block">
+                        <h3>🎯 Use Cases</h3>
+                        <ul>
+                            <li><strong>NGOs:</strong> Track infrastructure patterns to identify providers enabling harmful content</li>
+                            <li><strong>Law Enforcement:</strong> Gather evidence and identify service providers for legal action</li>
+                            <li><strong>Researchers:</strong> Study infrastructure patterns and concentration of services</li>
+                            <li><strong>Advocacy Groups:</strong> Contact service providers to request domain removal</li>
+                        </ul>
+                    </section>
+                    
+                    <section class="about-section-block">
+                        <h3>🔧 Technical Details</h3>
+                        <p>
+                            This tool uses free APIs and open-source technologies to enrich domain data:
+                        </p>
+                        <ul>
+                            <li><strong>Data Storage:</strong> Neo4j (graph database) and PostgreSQL (relational database)</li>
+                            <li><strong>Visualization:</strong> D3.js for interactive graph visualization</li>
+                            <li><strong>Enrichment:</strong> WHOIS, DNS, IP geolocation, CMS detection, and technology stack analysis</li>
+                            <li><strong>Web Framework:</strong> Flask for the web interface</li>
+                        </ul>
+                    </section>
+                    
+                    <section class="about-section-block">
+                        <h3>📝 Important Principle</h3>
+                        <p class="highlight-box">
+                            <strong>Service providers (CDNs, hosts, ISPs) are being paid to enable these sites.</strong> 
+                            They must be held accountable, regardless of whether they're acting as intermediaries. 
+                            This tool helps identify these providers and provides actionable recommendations for 
+                            contacting them to request domain removal.
+                        </p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/shadowstack/static/js/visualization.js"></script>
+</body>
+</html>

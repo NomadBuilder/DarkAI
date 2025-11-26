@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Check URL – ShadowStack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Analyze a URL to map its infrastructure: hosting, CDN, registrar, payment processors, and more." />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('static', filename='images/favicon.svg') }}" />
+
+  <style>
+    :root {
+      --bg-deep: #05070b;
+      --bg-dark: #0b0f16;
+      --bg-panel: #111827;
+      --accent-red: #d9353e;
+      --accent-red-soft: rgba(217, 53, 62, 0.18);
+      --text-main: #f3f4f7;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2933;
+      --max-width: 1120px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.65);
+      --transition-fast: 150ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top, #141825 0, #020308 60%);
+    }
+
+    body {
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page { min-height: 80vh; display: flex; flex-direction: column; }
+    main { flex: 1; }
+    .section { padding: 4rem 1.5rem; }
+    .section--tight { padding-top: 2.5rem; padding-bottom: 3.5rem; }
+    .section__inner { max-width: var(--max-width); margin: 0 auto; }
+
+    /* HERO */
+    .hero { position: relative; min-height: 49vh; display: flex; flex-direction: column; padding: 2.5rem 1.5rem 5rem; overflow: hidden; background: #03040a; }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url("{{ url_for('static', filename='images/action.png') }}");
+      background-size: cover;
+      background-position: left center;
+      opacity: 0.8;
+      z-index: 0;
+    }
+    .hero__content { position: relative; z-index: 1; max-width: var(--max-width); margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; flex: 1; padding-top: 2rem; }
+    .hero__grid { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr); gap: 3rem; align-items: center; }
+    @media (max-width: 880px) { .hero__grid { grid-template-columns: minmax(0, 1fr); } }
+    .hero__headline { font-size: 3rem; line-height: 1.18; letter-spacing: 0.5px; margin-bottom: 2.5rem; color: var(--text-main); }
+    .hero__subtitle { font-size: 1.2rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; }
+
+    /* SECTION STYLES */
+    .section-kicker { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+    .section-title { font-size: 1.9rem; line-height: 1.3; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); }
+    .section-lead { font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 600px; }
+
+    /* FORM SECTION */
+    .check-form {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      margin-bottom: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--accent-red);
+      box-shadow: 0 0 0 3px rgba(217, 53, 62, 0.1);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .btn {
+      padding: 0.9rem 1.7rem;
+      border-radius: 999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      font-size: 0.9rem;
+    }
+
+    .btn--primary {
+      background: linear-gradient(to right, #f97373, var(--accent-red));
+      color: white;
+    }
+
+    .btn--primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(217, 53, 62, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid rgba(217, 53, 62, 0.3);
+      border-top-color: var(--accent-red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .results {
+      display: none;
+      background: rgba(15, 23, 42, 0.6);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      margin-top: 2rem;
+    }
+
+    .results.show {
+      display: block;
+    }
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .results-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .result-card {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 8px;
+      padding: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+    }
+
+    .result-card-label {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .result-card-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+    }
+
+    .result-card-value.empty {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    .error-message {
+      background: rgba(217, 53, 62, 0.15);
+      border: 1px solid rgba(217, 53, 62, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem;
+      color: #f97373;
+      margin-top: 1rem;
+    }
+
+    .success-message {
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: 8px;
+      padding: 1.5rem;
+      color: #4ade80;
+      margin-top: 1rem;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .btn--secondary {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-main);
+    }
+
+    .btn--secondary:hover {
+      background: rgba(15, 23, 42, 1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero { min-height: 38vh; padding: 2rem 1rem 3rem; }
+      .hero__headline { font-size: 2rem; margin-bottom: 1.5rem; }
+      .hero__subtitle { font-size: 1rem; margin-bottom: 2rem; }
+      .section { padding: 3rem 1rem; }
+      .section--tight { padding-top: 2rem; padding-bottom: 2.5rem; }
+      .section-title { font-size: 1.5rem; }
+      .section-lead { font-size: 1rem; }
+      .check-form { padding: 1.5rem; }
+      .results { padding: 1.5rem; }
+      .results-grid { grid-template-columns: 1fr; }
+      .action-buttons { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body class="page">
+  {% from "_navigation.html" import render_nav %}
+  {{ render_nav('check') }}
+  <main>
+    <header class="hero">
+      <div class="hero__content">
+        <div class="hero__grid">
+          <div>
+            <h1 class="hero__headline">Map any URL's infrastructure.</h1>
+            <p class="hero__subtitle">Discover the hosting providers, CDNs, registrars, and payment processors behind any website. Analysis is instant and not saved to the database.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section class="section section--tight">
+      <div class="section__inner">
+        <header style="margin-bottom: 2.5rem;">
+          <div class="section-kicker">
+            <svg width="16" height="16" fill="#d9353e"><circle cx="8" cy="8" r="8"/></svg>
+            Infrastructure Analysis
+          </div>
+          <h2 class="section-title">Check any URL's infrastructure</h2>
+          <p class="section-lead">Enter a URL below to analyze its hosting, CDN, registrar, payment processors, and other infrastructure components. This analysis is for reference only and is not saved to the database.</p>
+        </header>
+        
+        <form id="check-form" class="check-form">
+          <div class="form-group">
+            <label for="url-input" class="form-label">URL or Domain</label>
+            <input 
+              type="text" 
+              id="url-input" 
+              class="form-input" 
+              placeholder="https://example.com or example.com"
+              required
+            />
+            <small style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem; display: block;">
+              Enter a full URL (https://example.com) or just the domain (example.com)
+            </small>
+          </div>
+          <div class="form-group">
+            <label for="source-input" class="form-label">Source (Optional)</label>
+            <input 
+              type="text" 
+              id="source-input" 
+              class="form-input" 
+              placeholder="e.g., Research, Report, Investigation"
+            />
+          </div>
+          <div class="form-group">
+            <label for="notes-input" class="form-label">Notes (Optional)</label>
+            <textarea 
+              id="notes-input" 
+              class="form-input" 
+              rows="3"
+              placeholder="Additional context or notes about this domain"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary" id="submit-btn">
+            Analyze Infrastructure
+          </button>
+        </form>
+
+        <div id="loading" class="loading" style="display: none;">
+          <span class="loading-spinner"></span>
+          Analyzing infrastructure... This may take 30-60 seconds.
+        </div>
+
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        <div id="success-message" class="success-message" style="display: none;"></div>
+
+        <div id="results" class="results">
+          <div class="results-header">
+            <h2 class="results-title" id="results-title">Infrastructure Analysis</h2>
+          </div>
+          <div class="results-grid" id="results-grid"></div>
+          <div class="action-buttons">
+            <button id="export-btn" class="btn btn--primary">Export Data (JSON)</button>
+            <button id="check-another-btn" class="btn btn--secondary">Check Another URL</button>
+          </div>
+          <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(15, 23, 42, 0.4); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin: 0;">
+              <strong style="color: var(--text-main);">Note:</strong> This analysis is for reference only and is not saved to the database. 
+              To add domains to the main dataset, use the enrichment pipeline or contact the project administrators.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function extractDomain(url) {
+      try {
+        // If it's already a domain (no protocol), return as is
+        if (!url.includes('://') && !url.includes('.')) {
+          return url;
+        }
+        
+        // Try to parse as URL
+        let urlObj;
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+          urlObj = new URL(url);
+        } else {
+          urlObj = new URL('https://' + url);
+        }
+        return urlObj.hostname.replace(/^www\./, '');
+      } catch (e) {
+        // If parsing fails, try to extract domain manually
+        const match = url.match(/(?:https?:\/\/)?(?:www\.)?([^\/\s]+)/);
+        return match ? match[1] : url;
+      }
+    }
+
+    function formatValue(value) {
+      if (!value || value === 'None' || value === 'null') {
+        return '<span class="empty">Not detected</span>';
+      }
+      if (Array.isArray(value)) {
+        return value.length > 0 ? value.join(', ') : '<span class="empty">None</span>';
+      }
+      if (typeof value === 'object') {
+        return JSON.stringify(value, null, 2);
+      }
+      return String(value);
+    }
+
+    function displayResults(data) {
+      const resultsDiv = document.getElementById('results');
+      const resultsGrid = document.getElementById('results-grid');
+      const resultsTitle = document.getElementById('results-title');
+      
+      resultsTitle.textContent = `Infrastructure: ${data.domain}`;
+      resultsGrid.innerHTML = '';
+
+      const fields = [
+        { key: 'host_name', label: 'Hosting Provider' },
+        { key: 'isp', label: 'ISP' },
+        { key: 'cdn', label: 'CDN' },
+        { key: 'cms', label: 'CMS' },
+        { key: 'registrar', label: 'Registrar' },
+        { key: 'payment_processor', label: 'Payment Processor' },
+        { key: 'ip_address', label: 'IP Address' },
+        { key: 'asn', label: 'ASN' },
+        { key: 'web_server', label: 'Web Server' },
+        { key: 'creation_date', label: 'Domain Created' },
+        { key: 'expiration_date', label: 'Domain Expires' },
+      ];
+
+      fields.forEach(field => {
+        const card = document.createElement('div');
+        card.className = 'result-card';
+        const value = data.data && data.data[field.key] ? data.data[field.key] : null;
+        card.innerHTML = `
+          <div class="result-card-label">${field.label}</div>
+          <div class="result-card-value">${formatValue(value)}</div>
+        `;
+        resultsGrid.appendChild(card);
+      });
+
+      resultsDiv.classList.add('show');
+      resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    document.getElementById('check-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const urlInput = document.getElementById('url-input').value.trim();
+      const sourceInput = document.getElementById('source-input').value.trim();
+      const notesInput = document.getElementById('notes-input').value.trim();
+      
+      if (!urlInput) {
+        alert('Please enter a URL or domain');
+        return;
+      }
+
+      const domain = extractDomain(urlInput);
+      
+      // Show loading, hide results and messages
+      document.getElementById('loading').style.display = 'block';
+      document.getElementById('results').classList.remove('show');
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+      document.getElementById('submit-btn').disabled = true;
+
+      try {
+        // Use /api/check endpoint which does NOT store data
+        const response = await fetch('/shadowstack/api/check', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            domain: domain
+          })
+        });
+
+        const data = await response.json();
+        
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('submit-btn').disabled = false;
+
+        if (response.ok) {
+          document.getElementById('success-message').textContent = 
+            `Successfully analyzed ${domain}. This analysis was not saved to the database.`;
+          document.getElementById('success-message').style.display = 'block';
+          displayResults(data);
+        } else {
+          document.getElementById('error-message').textContent = 
+            `Error: ${data.error || 'Failed to analyze domain'}`;
+          document.getElementById('error-message').style.display = 'block';
+        }
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('submit-btn').disabled = false;
+        document.getElementById('error-message').textContent = 
+          `Error: ${error.message || 'Failed to connect to server'}`;
+        document.getElementById('error-message').style.display = 'block';
+      }
+    });
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+      const resultsGrid = document.getElementById('results-grid');
+      const cards = resultsGrid.querySelectorAll('.result-card');
+      const data = {};
+      cards.forEach(card => {
+        const label = card.querySelector('.result-card-label').textContent;
+        const value = card.querySelector('.result-card-value').textContent;
+        data[label] = value === 'Not detected' ? null : value;
+      });
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${document.getElementById('results-title').textContent.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById('check-another-btn').addEventListener('click', () => {
+      document.getElementById('check-form').reset();
+      document.getElementById('results').classList.remove('show');
+      document.getElementById('error-message').style.display = 'none';
+      document.getElementById('success-message').style.display = 'none';
+      document.getElementById('url-input').focus();
+    });
+  </script>
+</body>
+</html>
+

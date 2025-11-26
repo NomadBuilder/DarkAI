@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Support & Reporting – BlackWire Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="BlackWire provides immediate support and reporting guidance for victims of sextortion and extortion attempts." />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="/static/favicon.svg" />
+
+  <!-- Full Style Block Inserted -->
+  <style>
+    /* --- ROOT VARS --- */
+    :root {
+      --bg: #050711;
+      --bg-alt: #070a16;
+      --panel: #0b1021;
+      --accent: #f97373;
+      --accent-soft: rgba(249, 115, 115, 0.18);
+      --border-soft: rgba(148,163,184,0.3);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 60px rgba(0,0,0,0.65);
+      --max-width: 1160px;
+      --nav-height: 64px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top left, #0b1220 0, #020617 38%, #000 100%);
+      scroll-behavior: smooth;
+    }
+    body.page { min-height: 100vh; display: flex; flex-direction: column; }
+    main { flex: 1; }
+
+    /* PAGE LAYOUT */
+    .page-shell { width: 100%; padding: 0 1.5rem 4rem; }
+    .page-inner { max-width: var(--max-width); margin: 0 auto; }
+
+    /* HERO */
+    .hero {
+      position: relative;
+      padding: 1.5rem 1.5rem 4rem;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -20%;
+      background:
+        radial-gradient(circle at 10% 10%, rgba(248,113,113,0.16), transparent 55%),
+        radial-gradient(circle at 80% 0%, rgba(59,130,246,0.14), transparent 52%),
+        radial-gradient(circle at 50% 90%, rgba(15,23,42,0.9), #020617 75%);
+      opacity: 0.9;
+    }
+
+    .hero__content { position: relative; max-width: var(--max-width); margin: 0 auto; z-index: 1; }
+    .hero__nav {
+      height: var(--nav-height);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; margin-bottom: 2.5rem;
+    }
+
+    .hero__brand {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .94rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .hero__brand-mark {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
+    }
+
+    .hero__nav-links { display: flex; gap: 1.2rem; font-size: .92rem; color: var(--text-muted); }
+    .hero__link {
+      padding: .4rem .6rem; border-radius: 999px;
+      transition: color .16s, background .16s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .hero__link:hover { color: var(--text-main); background: rgba(148,163,184,0.12); }
+
+    .hero__link--accent {
+      border-radius: 999px; padding: .45rem .9rem;
+      background: rgba(248,113,113,0.16);
+      color: #fee2e2;
+      border: 1px solid rgba(248,113,113,0.4);
+    }
+
+    .hero__headline {
+      font-size: clamp(2.2rem, 4vw, 2.9rem);
+      line-height: 1.1;
+      letter-spacing: -0.035em;
+      margin: 0 0 1.1rem;
+    }
+
+    .hero__kicker {
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .82rem;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+
+    .hero__subtitle { font-size: 1.02rem; color: var(--text-muted); max-width: 34rem; margin: 0 0 1.7rem; }
+
+    /* SECTION LAYOUTS */
+    .section { padding: 3.5rem 1.5rem 0; }
+    .section__inner { max-width: var(--max-width); margin: 0 auto; }
+    .section-title { font-size:1.8rem;margin:0 0 .6rem; }
+    .section-lead { font-size:.98rem;color:var(--text-muted);max-width:36rem;margin:0; }
+
+    .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:1.6rem; margin-top:2rem; }
+    .card {
+      padding:1.3rem 1.4rem;
+      border-radius:var(--radius-md);
+      background: radial-gradient(circle at top left, rgba(15,23,42,.9), #020617);
+      border:1px solid var(--border-soft);
+      box-shadow:0 18px 40px rgba(0,0,0,.7);
+    }
+
+    /* SUPPORT & INVESTIGATOR PANELS */
+    .support-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    .support-panel {
+      padding: 1.4rem 1.5rem;
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at top left, rgba(248,113,113,0.12), transparent 55%), #020617;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+    }
+    .support-panel h3 { margin:0 0 .7rem; font-size:1.08rem; }
+    .support-panel p { margin:0 0 .8rem; font-size:.9rem; color:var(--text-muted);}  
+    .support-panel ol { margin:.6rem 0 0; padding-left:1.1rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .8rem 1.4rem; border-radius: 999px;
+      font-size: .95rem; font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer; background: none; color: inherit;
+      transition: background .16s, transform .1s, box-shadow .16s;
+      text-decoration: none;
+    }
+    .btn--primary {
+      background: linear-gradient(135deg, #fb7185, #ef4444);
+      color: #fff; border-color: rgba(248,113,113,0.7);
+      box-shadow: 0 10px 30px rgba(248,113,113,0.4);
+    }
+  </style>
+</head>
+<body class="page">
+
+<!-- HERO SECTION -->
+<header class="hero">
+  <div class="hero__content">
+    <nav class="hero__nav">
+      <a href="/blackwire/" class="hero__brand">
+        <div class="hero__brand-mark"></div>
+        BlackWire Intelligence
+      </a>
+      <div class="hero__nav-links">
+        <a href="/blackwire/" class="hero__link">Home</a>
+        <a href="/blackwire/support" class="hero__link">Report &amp; Escalate</a>
+        <a href="/blackwire/trace" class="hero__link hero__link--accent">Start Tracing</a>
+      </div>
+    </nav>
+
+    <div>
+      <div class="hero__kicker">Support & Reporting</div>
+      <h1 class="hero__headline">If you're being targeted, we're here to help.</h1>
+      <p class="hero__subtitle">Immediate steps to reduce harm, document safely, and get the support you need.</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- SUPPORT SECTION -->
+  <section class="section" id="support">
+    <div class="section__inner">
+      <h2 class="section-title">What to Do If You're Being Targeted</h2>
+      <p class="section-lead">Immediate, practical, expert‑verified steps to reduce harm and shut down attacker leverage.</p>
+
+      <div class="support-grid">
+        <div class="support-panel">
+          <h3>🚨 Immediate Steps</h3>
+          <p>These steps help you cut the attacker's leverage instantly.</p>
+          <ol>
+            <li>Stop responding — every reply increases leverage.</li>
+            <li>Screenshot threats & profiles without enlarging images.</li>
+            <li>Block the attacker on all platforms.</li>
+            <li>Report the profile or number to the platform.</li>
+            <li>Contact your local police if you are a minor or feel unsafe.</li>
+          </ol>
+        </div>
+
+        <div class="support-panel">
+          <h3>🧩 Understanding the Network</h3>
+          <p>BlackWire analyzes the infrastructure behind the messages you receive:</p>
+          <ol>
+            <li>Origin of the phone number or VOIP provider.</li>
+            <li>Any linked domains or shortlinks used in threats.</li>
+            <li>Associated crypto wallets or money-flow patterns.</li>
+            <li>Connections to known organized fraud clusters.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REPORT & ESCALATE SECTION -->
+  <section class="section" id="report">
+    <div class="section__inner">
+      <h2 class="section-title">Report &amp; Escalate</h2>
+      <p class="section-lead">Use these steps to document abuse, get help quickly, and push infrastructure providers to act. If you're in immediate danger, call local emergency services.</p>
+
+      <div class="support-grid" style="margin-top:2rem;">
+        <div class="support-panel">
+          <h3>1) Document safely</h3>
+          <p>Preserve evidence without re‑exposing yourself.</p>
+          <ol>
+            <li>Screenshot messages, profiles, and payment requests.</li>
+            <li>Copy URLs for any links, shortlinks, or domains.</li>
+            <li>Note dates/times and the platform used.</li>
+            <li>If images are involved, do not download or share them.</li>
+          </ol>
+        </div>
+
+        <div class="support-panel">
+          <h3>2) Report on-platform</h3>
+          <p>Reporting helps block accounts and preserves internal logs.</p>
+          <ol>
+            <li>Use "Report / Flag / Abuse" in the app/site where contact happened.</li>
+            <li>Select the most relevant reason (harassment, sexual exploitation, extortion).</li>
+            <li>Block the account after reporting.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="grid-3" style="margin-top:1.6rem;">
+        <div class="card">
+          <h3>3) Reach Canadian help</h3>
+          <p><strong>If you're under 18</strong>, contact <em>Cybertip.ca</em> (Canada's national tipline) or a trusted adult. You can also report to local police.</p>
+          <p style="margin-top:.6rem;color:var(--text-muted);font-size:.9rem;">Adults can contact local police non‑emergency if threatened, and provincial victim services for support.</p>
+        </div>
+        <div class="card">
+          <h3>4) Use takedown help</h3>
+          <p>Free services can help remove or prevent distribution:</p>
+          <ul style="margin:.6rem 0 0;padding-left:1.1rem;color:var(--text-muted);font-size:.95rem;">
+            <li>StopNCII.org — create a digital "hash" to block sharing across partner platforms.</li>
+            <li>NCMEC Take It Down (if in/with U.S. platforms).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>5) If you paid or feel stuck</h3>
+          <p>It's common to freeze — you're not alone. Paying rarely ends threats. Reach out to a support service and stop contact.</p>
+        </div>
+      </div>
+
+      <div class="support-panel" style="margin-top:1.8rem;">
+        <h3>Escalate to infrastructure providers</h3>
+        <p>Sextortion campaigns rely on real service providers. BlackWire helps you identify them and send targeted notices.</p>
+
+        <div class="grid-3" style="margin-top:1rem;">
+          <div class="card" style="background:#050814;">
+            <h4 style="margin:.1rem 0 .4rem;">Hosting / CDN (e.g., Cloudflare)</h4>
+            <p style="color:var(--text-muted);font-size:.92rem;">Report abusive domains and include BlackWire evidence: domain, IP, screenshots, timestamps, and any linked wallets.</p>
+            <button class="btn" style="margin-top:.6rem;border-color:var(--border-soft);" onclick="toggleContacts('abuse')">Open abuse contacts</button>
+            <div id="abuse-contacts" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-soft);">
+              <ul style="color:var(--text-muted);font-size:.9rem;line-height:1.6;margin:0;padding-left:1.2rem;">
+                <li><strong>Cloudflare:</strong> <a href="https://www.cloudflare.com/abuse/form" target="_blank" style="color:var(--accent);">abuse@cloudflare.com</a> / <a href="https://www.cloudflare.com/abuse/form" target="_blank" style="color:var(--accent);">Report form</a></li>
+                <li><strong>Amazon AWS:</strong> <a href="mailto:abuse@amazonaws.com" style="color:var(--accent);">abuse@amazonaws.com</a></li>
+                <li><strong>Google Cloud:</strong> <a href="https://support.google.com/code/go/cloudplatform-report" target="_blank" style="color:var(--accent);">Report form</a></li>
+                <li><strong>DigitalOcean:</strong> <a href="mailto:abuse@digitalocean.com" style="color:var(--accent);">abuse@digitalocean.com</a></li>
+                <li><strong>Namecheap:</strong> <a href="mailto:abuse@namecheap.com" style="color:var(--accent);">abuse@namecheap.com</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="card" style="background:#050814;">
+            <h4 style="margin:.1rem 0 .4rem;">Messaging platforms</h4>
+            <p style="color:var(--text-muted);font-size:.92rem;">Escalate via platform safety forms when standard reporting fails. Provide handles, threads, and links.</p>
+            <button class="btn" style="margin-top:.6rem;border-color:var(--border-soft);" onclick="toggleContacts('platform')">Platform escalation list</button>
+            <div id="platform-contacts" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-soft);">
+              <ul style="color:var(--text-muted);font-size:.9rem;line-height:1.6;margin:0;padding-left:1.2rem;">
+                <li><strong>WhatsApp:</strong> <a href="https://faq.whatsapp.com/317138481053249" target="_blank" style="color:var(--accent);">Safety reporting</a></li>
+                <li><strong>Telegram:</strong> <a href="https://t.me/abuse" target="_blank" style="color:var(--accent);">@abuse</a> or <a href="mailto:abuse@telegram.org" style="color:var(--accent);">abuse@telegram.org</a></li>
+                <li><strong>Instagram:</strong> <a href="https://help.instagram.com/165828726894770" target="_blank" style="color:var(--accent);">Safety center</a></li>
+                <li><strong>Discord:</strong> <a href="https://dis.gd/report" target="_blank" style="color:var(--accent);">Report form</a></li>
+                <li><strong>Signal:</strong> <a href="https://support.signal.org/hc/en-us/requests/new" target="_blank" style="color:var(--accent);">Support form</a></li>
+                <li><strong>SMS/MMS:</strong> Forward to <strong>7726</strong> (SPAM) in US/Canada</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card" style="background:#050814;">
+            <h4 style="margin:.1rem 0 .4rem;">Payment rails</h4>
+            <p style="color:var(--text-muted);font-size:.92rem;">Report wallets to exchanges and payment processors; ask for fraud review and freezing where possible.</p>
+            <button class="btn" style="margin-top:.6rem;border-color:var(--border-soft);" onclick="toggleContacts('payment')">Payment contacts</button>
+            <div id="payment-contacts" style="display:none;margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-soft);">
+              <ul style="color:var(--text-muted);font-size:.9rem;line-height:1.6;margin:0;padding-left:1.2rem;">
+                <li><strong>Coinbase:</strong> <a href="https://www.coinbase.com/legal/support" target="_blank" style="color:var(--accent);">Support form</a> / <a href="mailto:security@coinbase.com" style="color:var(--accent);">security@coinbase.com</a></li>
+                <li><strong>Binance:</strong> <a href="https://www.binance.com/en/support" target="_blank" style="color:var(--accent);">Support center</a></li>
+                <li><strong>PayPal:</strong> <a href="https://www.paypal.com/us/smarthelp/contact-us" target="_blank" style="color:var(--accent);">Report fraud</a></li>
+                <li><strong>Venmo:</strong> <a href="https://help.venmo.com/hc/en-us/requests/new" target="_blank" style="color:var(--accent);">Report form</a></li>
+                <li><strong>Western Union:</strong> <a href="https://www.westernunion.com/us/en/fraud.html" target="_blank" style="color:var(--accent);">Fraud reporting</a></li>
+                <li><strong>Bitcoin:</strong> Report wallet addresses to exchanges where funds are received</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:1rem;color:var(--text-muted);font-size:.92rem;">Want a ready‑to‑send notice? BlackWire can generate a concise escalation packet you can copy/paste to providers.</p>
+        <div style="margin-top:.8rem;">
+          <button class="btn btn--primary" onclick="generateEscalationPacket()">Generate escalation packet</button>
+        </div>
+        
+        <div id="escalation-packet" style="display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:1px solid var(--border-soft);">
+          <div style="margin-bottom:1rem;">
+            <label style="display:block;margin-bottom:.5rem;color:var(--text-muted);font-size:.9rem;font-weight:500;">Edit escalation packet:</label>
+            <textarea 
+              id="escalation-text" 
+              style="width:100%;min-height:300px;padding:1rem;background:rgba(15,23,42,0.5);border:1px solid var(--border-soft);border-radius:var(--radius-md);color:var(--text-main);font-size:.9rem;font-family:system-ui,-apple-system,sans-serif;line-height:1.6;resize:vertical;"
+              placeholder="Loading default escalation packet..."
+            ></textarea>
+          </div>
+          <div style="display:flex;gap:.8rem;flex-wrap:wrap;">
+            <button class="btn btn--primary" onclick="downloadAsTXT()" style="display:inline-flex;align-items:center;gap:.4rem;">
+              📄 Download as TXT
+            </button>
+            <button class="btn btn--primary" onclick="downloadAsPDF()" style="display:inline-flex;align-items:center;gap:.4rem;">
+              📑 Download as PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<footer style="padding:2.5rem 1.5rem; background:#02040c; border-top:1px solid rgba(148,163,184,0.18); margin-top:3rem;">
+  <div class="page-inner" style="max-width:var(--max-width);margin:0 auto; color:var(--text-muted); font-size:.9rem;">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;">
+      <div>
+        <div style="display:flex;align-items:center;gap:.6rem;font-size:1rem;margin-bottom:.4rem;">
+          <div class="hero__brand-mark"></div>
+          <strong style="color:var(--text-main);">BlackWire</strong>
+        </div>
+        Mapping sextortion networks to protect victims and expose organized abuse.
+      </div>
+      <div style="display:flex;gap:1.2rem;">
+        <a href="/blackwire/#patterns" style="color:var(--text-muted);text-decoration:none;">Patterns</a>
+        <a href="/blackwire/support#support" style="color:var(--text-muted);text-decoration:none;">Support</a>
+        <a href="/blackwire/support#report" style="color:var(--text-muted);text-decoration:none;">Report</a>
+        <a href="/blackwire/#investigators" style="color:var(--text-muted);text-decoration:none;">Investigators</a>
+        <a href="#" style="color:var(--text-muted);text-decoration:none;">Start Tracing</a>
+      </div>
+    </div>
+    <div style="margin-top:1.5rem;font-size:.8rem;opacity:.6;">© 2025 BlackWire Intelligence</div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+  // Auto-generate escalation packet if coming from trace page
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if we have entities from trace results
+    try {
+      const stored = localStorage.getItem('escalationEntities');
+      if (stored) {
+        // Auto-generate the packet
+        generateEscalationPacket();
+        // Scroll to the packet section if we're on the report section
+        if (window.location.hash === '#report' || window.location.hash === '') {
+          setTimeout(() => {
+            const packetDiv = document.getElementById('escalation-packet');
+            if (packetDiv) {
+              packetDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 500);
+        }
+      }
+    } catch (e) {
+      console.error('Error auto-generating escalation packet:', e);
+    }
+  });
+  
+  const buttonTexts = {
+    abuse: { open: 'Open abuse contacts', close: 'Close abuse contacts' },
+    platform: { open: 'Platform escalation list', close: 'Close platform list' },
+    payment: { open: 'Payment contacts', close: 'Close payment contacts' }
+  };
+  
+  function toggleContacts(type) {
+    const contactsDiv = document.getElementById(type + '-contacts');
+    const button = event.target;
+    const texts = buttonTexts[type];
+    
+    if (contactsDiv.style.display === 'none' || !contactsDiv.style.display) {
+      contactsDiv.style.display = 'block';
+      button.textContent = texts.close;
+    } else {
+      contactsDiv.style.display = 'none';
+      button.textContent = texts.open;
+    }
+  }
+  
+  function generateEscalationPacket() {
+    const packetDiv = document.getElementById('escalation-packet');
+    const textarea = document.getElementById('escalation-text');
+    
+    // Check if we have entities from trace results
+    let entitiesData = null;
+    try {
+      const stored = localStorage.getItem('escalationEntities');
+      if (stored) {
+        entitiesData = JSON.parse(stored);
+        // Clear after reading
+        localStorage.removeItem('escalationEntities');
+      }
+    } catch (e) {
+      console.error('Error reading escalation entities:', e);
+    }
+    
+    let defaultPacket = '';
+    
+    if (entitiesData && entitiesData.length > 0) {
+      // Generate packet from trace results
+      defaultPacket = `Subject: Abuse Report - Sextortion/Extortion Campaign
+
+To Whom It May Concern,
+
+I am writing to report abusive infrastructure that is being used as part of a sextortion/extortion campaign targeting victims. The following entities have been traced and analyzed using BlackWire Intelligence.
+
+INCIDENT DETAILS:
+- Date(s) of contact: [DATE]
+- Platform/Service: [PLATFORM]
+- Contact method: [CONTACT_METHOD]
+
+ABUSIVE INFRASTRUCTURE:
+`;
+      
+      // Add each selected entity
+      entitiesData.forEach((entity, idx) => {
+        const type = entity.type;
+        const value = entity.value;
+        const data = entity.data || {};
+        
+        defaultPacket += `\n--- ${type.toUpperCase()}: ${value} ---\n`;
+        
+        if (type === 'phone') {
+          defaultPacket += `Phone Number: ${value}\n`;
+          if (data.formatted) defaultPacket += `Formatted: ${data.formatted}\n`;
+          if (data.country) defaultPacket += `Country: ${data.country}\n`;
+          if (data.carrier) defaultPacket += `Carrier: ${data.carrier}\n`;
+          if (data.is_voip) defaultPacket += `VOIP: Yes (${data.voip_provider || 'Unknown provider'})\n`;
+          if (data.timezone) defaultPacket += `Timezone: ${data.timezone}\n`;
+        } else if (type === 'domain') {
+          defaultPacket += `Domain: ${value}\n`;
+          if (data.ip_address) defaultPacket += `IP Address: ${data.ip_address}\n`;
+          if (data.registrar) defaultPacket += `Registrar: ${data.registrar}\n`;
+          if (data.isp) defaultPacket += `Hosting Provider: ${data.isp}\n`;
+          if (data.country && !data.location_note) defaultPacket += `Location: ${data.city || ''}${data.city && data.country ? ', ' : ''}${data.country}\n`;
+          if (data.is_shortlink) defaultPacket += `Shortlink: Yes (${data.shortlink_provider || 'Unknown'})\n`;
+          if (data.creation_date) defaultPacket += `Domain Created: ${data.creation_date}\n`;
+          if (data.threat_intel && data.threat_intel.threat_level !== 'clean') {
+            defaultPacket += `Threat Level: ${data.threat_intel.threat_level.toUpperCase()}\n`;
+            if (data.threat_intel.threat_sources && data.threat_intel.threat_sources.length > 0) {
+              defaultPacket += `Flagged by: ${data.threat_intel.threat_sources.join(', ')}\n`;
+            }
+          }
+        } else if (type === 'wallet') {
+          defaultPacket += `Wallet Address: ${value}\n`;
+          if (data.currency) defaultPacket += `Currency: ${data.currency}\n`;
+          if (data.balance !== undefined) defaultPacket += `Balance: ${data.balance} ${data.currency || ''}\n`;
+          if (data.transaction_count !== undefined) defaultPacket += `Transaction Count: ${data.transaction_count}\n`;
+        } else if (type === 'handle') {
+          defaultPacket += `Handle: ${value}\n`;
+          if (data.platform || data.detected_platform) defaultPacket += `Platform: ${data.platform || data.detected_platform}\n`;
+          if (data.normalized_handle) defaultPacket += `Normalized: ${data.normalized_handle}\n`;
+        }
+        
+        // Add risk assessment if available
+        if (data.risk_assessment) {
+          const risk = data.risk_assessment;
+          defaultPacket += `Risk Level: ${risk.threat_level.toUpperCase()} (Severity: ${risk.severity_score}/100)\n`;
+          if (risk.actionable_insights && risk.actionable_insights.key_findings && risk.actionable_insights.key_findings.length > 0) {
+            defaultPacket += `Key Findings: ${risk.actionable_insights.key_findings.join('; ')}\n`;
+          }
+        }
+        
+        defaultPacket += '\n';
+      });
+      
+      defaultPacket += `
+EVIDENCE:
+- Screenshots of threats/messages (attached)
+- Timestamps of contact
+- Platform/service used
+- BlackWire Intelligence trace data (included above)
+
+REQUESTED ACTION:
+- Please investigate and take appropriate action against the abusive infrastructure
+- Consider blocking/suspending the reported entities
+- Preserve any logs or evidence for law enforcement if needed
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[YOUR NAME]
+[CONTACT INFORMATION]`;
+    } else {
+      // Default template (no trace data)
+      defaultPacket = `Subject: Abuse Report - Sextortion/Extortion Campaign
+
+To Whom It May Concern,
+
+I am writing to report an abusive domain/service that is being used as part of a sextortion/extortion campaign targeting victims.
+
+INCIDENT DETAILS:
+- Date(s) of contact: [DATE]
+- Platform/Service: [PLATFORM]
+- Contact method: [PHONE/EMAIL/DOMAIN]
+
+ABUSIVE INFRASTRUCTURE:
+- Domain: [DOMAIN]
+- IP Address: [IP_ADDRESS]
+- Related services: [ANY LINKED SERVICES]
+
+EVIDENCE:
+I have documented evidence of the abuse including:
+- Screenshots of threatening messages
+- Timestamps of contact attempts
+- Platform identifiers/usernames
+- Any associated crypto wallet addresses
+
+This infrastructure is being used to:
+- Threaten victims with exposure of private content
+- Extort money through cryptocurrency payments
+- Operate as part of an organized fraud network
+
+RECOMMENDED ACTION:
+Please review and take appropriate action against this abusive account/domain/service, including but not limited to:
+- Suspension of the account/domain
+- Review of associated services
+- Reporting to law enforcement if warranted
+
+I am available to provide additional documentation or evidence if needed.
+
+Thank you for your prompt attention to this matter.
+
+Best regards,
+[YOUR NAME]
+[CONTACT INFORMATION]`;
+    
+    textarea.value = defaultPacket;
+    packetDiv.style.display = 'block';
+    
+    // Smooth scroll to the packet
+    packetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  
+  function downloadAsTXT() {
+    const text = document.getElementById('escalation-text').value;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'escalation-packet.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+  
+  function downloadAsPDF() {
+    try {
+      // Wait for jsPDF to be available
+      if (typeof window.jspdf === 'undefined') {
+        alert('PDF library is still loading. Please wait a moment and try again.');
+        return;
+      }
+      
+      const { jsPDF } = window.jspdf;
+      const text = document.getElementById('escalation-text').value;
+      const doc = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4'
+      });
+      
+      // Set font and size
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      
+      // Split text into lines that fit the page width
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      const maxWidth = pageWidth - (margin * 2);
+      
+      const lines = doc.splitTextToSize(text, maxWidth);
+      
+      let y = margin;
+      const lineHeight = 5;
+      
+      lines.forEach((line) => {
+        if (y + lineHeight > pageHeight - margin) {
+          doc.addPage();
+          y = margin;
+        }
+        doc.text(line, margin, y);
+        y += lineHeight;
+      });
+      
+      // Save the PDF
+      doc.save('escalation-packet.pdf');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Error generating PDF. Please try downloading as TXT instead.');
+    }
+  }
+</script>
+
+</body>
+</html>
+

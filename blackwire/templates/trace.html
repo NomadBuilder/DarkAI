@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trace Entity – BlackWire Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="/static/favicon.svg" />
+  
+  <!-- D3.js for graph visualization -->
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <style>
+    :root {
+      --bg: #050711;
+      --bg-alt: #070a16;
+      --panel: #0b1021;
+      --accent: #f97373;
+      --accent-soft: rgba(249, 115, 115, 0.18);
+      --border-soft: rgba(148,163,184,0.3);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 60px rgba(0,0,0,0.65);
+      --max-width: 1160px;
+      --nav-height: 64px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top left, #0b1220 0, #020617 38%, #000 100%);
+      scroll-behavior: smooth;
+      min-height: 100vh;
+    }
+
+    .page { min-height: 100vh; display: flex; flex-direction: column; }
+    main { flex: 1; padding: 2rem 1.5rem; }
+
+    /* Navigation */
+    .nav {
+      height: var(--nav-height);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .nav__brand {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .94rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .nav__brand-mark {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8);
+    }
+
+    .nav__links { display: flex; gap: 1.2rem; font-size: .92rem; }
+    .nav__link {
+      padding: .4rem .6rem; border-radius: 999px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color .16s, background .16s;
+    }
+    .nav__link:hover { color: var(--text-main); background: rgba(148,163,184,0.12); }
+    .nav__link--accent {
+      border-radius: 999px; padding: .45rem .9rem;
+      background: rgba(248,113,113,0.16);
+      color: #fee2e2;
+      border: 1px solid rgba(248,113,113,0.4);
+    }
+
+    /* Container */
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    /* Form */
+    .trace-form {
+      background: radial-gradient(circle at top left, rgba(15,23,42,.9), #020617);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 2rem;
+    }
+
+    .trace-form h1 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem;
+      letter-spacing: -0.02em;
+    }
+
+    .trace-form__lead {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .trace-form__group {
+      margin-bottom: 0;
+      width: 100%;
+    }
+
+    .trace-form__label {
+      display: block;
+      margin-bottom: .5rem;
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    
+    .trace-form__hint {
+      display: block;
+      margin-top: .5rem;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.4;
+      opacity: 0.8;
+    }
+
+    .trace-form__select,
+    .trace-form__input {
+      width: 100%;
+      padding: .85rem 1.1rem;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: .95rem;
+      font-family: inherit;
+      transition: border-color .16s, box-shadow .16s;
+    }
+    
+    .trace-form__select:hover,
+    .trace-form__input:hover {
+      border-color: rgba(148,163,184,0.4);
+    }
+    
+    .trace-form__select option {
+      background: var(--panel);
+      color: var(--text-main);
+    }
+
+    .trace-form__select:focus,
+    .trace-form__input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .trace-form__row {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    
+    .trace-form__fields {
+      display: grid;
+      gap: 1.5rem;
+    }
+    
+    @media (max-width: 640px) {
+      .trace-form__row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+    }
+
+    .btn {
+      padding: .8rem 1.4rem;
+      border-radius: 999px;
+      font-size: .95rem; font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background .16s, transform .1s, box-shadow .16s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .btn--primary {
+      background: linear-gradient(135deg, #fb7185, #ef4444);
+      color: #fff;
+      border-color: rgba(248,113,113,0.7);
+      box-shadow: 0 10px 30px rgba(248,113,113,0.4);
+    }
+
+    .btn--primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 35px rgba(248,113,113,0.5);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Results */
+    .results {
+      display: none;
+    }
+
+    .results.active {
+      display: block;
+    }
+
+    .results__card {
+      background: radial-gradient(circle at top left, rgba(15,23,42,.9), #020617);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: var(--shadow-soft);
+      margin-bottom: 1rem;
+    }
+
+    .results__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .results__title {
+      font-size: 1.3rem;
+      margin: 0;
+    }
+
+    .results__status {
+      padding: .3rem .8rem;
+      border-radius: 999px;
+      font-size: .85rem;
+      font-weight: 500;
+    }
+
+    .results__status--success {
+      background: rgba(34, 197, 94, 0.2);
+      color: #4ade80;
+    }
+
+    .results__data {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .results__row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1rem;
+      padding: .8rem 0;
+      border-bottom: 1px solid rgba(148,163,184,0.1);
+    }
+
+    .results__label {
+      color: var(--text-muted);
+      font-size: .9rem;
+    }
+
+    .results__value {
+      color: var(--text-main);
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: .9rem;
+      word-break: break-all;
+    }
+
+    .results__value--empty {
+      color: var(--text-soft);
+      font-style: italic;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-muted);
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .error {
+      display: none;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      color: #fca5a5;
+      margin-top: 1rem;
+    }
+
+    .error.active {
+      display: block;
+    }
+  </style>
+</head>
+<body class="page">
+  <nav class="nav">
+    <a href="/blackwire/" class="nav__brand">
+      <div class="nav__brand-mark"></div>
+      BlackWire Intelligence
+    </a>
+    <div class="nav__links">
+      <a href="/blackwire/" class="nav__link">Home</a>
+      <a href="/blackwire/support" class="nav__link">Report &amp; Escalate</a>
+      <a href="/blackwire/trace" class="nav__link nav__link--accent">Start Tracing</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <form class="trace-form" id="traceForm">
+        <h1>Start Tracing</h1>
+        <p class="trace-form__lead">Enter a phone number, domain, crypto wallet, or messaging handle to trace its infrastructure.</p>
+        
+        <!-- CSV Upload Section -->
+        <div style="margin-bottom: 2rem; padding: 1.5rem; background: var(--panel); border: 1px solid var(--border-soft); border-radius: var(--radius-md);">
+          <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--accent);">📤 Bulk Upload (CSV)</h3>
+          <p style="margin: 0 0 1rem 0; color: var(--text-muted); font-size: 0.9rem; line-height: 1.6;">
+            Upload a CSV file to trace multiple entities at once. CSV should have columns: <code style="background: rgba(148,163,184,0.1); padding: 0.2rem 0.4rem; border-radius: 4px;">phone</code>, <code style="background: rgba(148,163,184,0.1); padding: 0.2rem 0.4rem; border-radius: 4px;">domain</code>, <code style="background: rgba(148,163,184,0.1); padding: 0.2rem 0.4rem; border-radius: 4px;">wallet</code>, <code style="background: rgba(148,163,184,0.1); padding: 0.2rem 0.4rem; border-radius: 4px;">handle</code> (at least one required per row).
+          </p>
+          <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+            <input type="file" id="csvFileInput" accept=".csv" style="
+              padding: 0.6rem;
+              background: rgba(15, 23, 42, 0.5);
+              border: 1px solid var(--border-soft);
+              border-radius: var(--radius-md);
+              color: var(--text-main);
+              font-size: 0.9rem;
+              cursor: pointer;
+            ">
+            <button type="button" id="uploadCsvBtn" class="btn btn--primary" style="display: inline-flex; align-items: center; gap: 0.4rem;">
+              📤 Upload & Trace CSV
+            </button>
+            <a href="/static/csv-template.csv" download style="
+              color: var(--accent);
+              text-decoration: none;
+              font-size: 0.9rem;
+              padding: 0.4rem 0.8rem;
+              border: 1px solid var(--accent-soft);
+              border-radius: var(--radius-md);
+            ">📥 Download Template</a>
+          </div>
+          <div id="csvUploadStatus" style="margin-top: 1rem; display: none; padding: 0.8rem; background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.3); border-radius: var(--radius-md); color: var(--text-main); font-size: 0.9rem;"></div>
+        </div>
+        
+        <div style="text-align: center; margin: 1.5rem 0; color: var(--text-muted); font-size: 0.9rem;">— OR —</div>
+        
+        <div class="trace-form__fields" id="entityFields">
+          <!-- Phone Numbers -->
+          <div class="trace-form__group" data-entity-type="phone">
+            <label class="trace-form__label" for="phoneValue0">Phone Number</label>
+            <div class="entity-input-group" data-type="phone">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input 
+                  type="text" 
+                  class="trace-form__input entity-input" 
+                  id="phoneValue0" 
+                  name="phone[]" 
+                  placeholder="e.g., +15198000997 or 5198000997"
+                  data-index="0"
+                  style="flex: 1;"
+                />
+                <button type="button" class="add-field-btn" data-type="phone" style="
+                  padding: 0.5rem 0.8rem;
+                  background: rgba(248,113,113,0.16);
+                  color: #fee2e2;
+                  border: 1px solid rgba(248,113,113,0.4);
+                  border-radius: 6px;
+                  font-size: 0.85rem;
+                  cursor: pointer;
+                  white-space: nowrap;
+                  flex-shrink: 0;
+                ">+ Add</button>
+              </div>
+            </div>
+            <small class="trace-form__hint">💡 Include country code (e.g., +1 for US/Canada, +44 for UK)</small>
+          </div>
+          
+          <!-- Domains -->
+          <div class="trace-form__group" data-entity-type="domain">
+            <label class="trace-form__label" for="domainValue0">Domain / URL</label>
+            <div class="entity-input-group" data-type="domain">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input 
+                  type="text" 
+                  class="trace-form__input entity-input" 
+                  id="domainValue0" 
+                  name="domain[]" 
+                  placeholder="e.g., example.com or https://example.com"
+                  data-index="0"
+                  style="flex: 1;"
+                />
+                <button type="button" class="add-field-btn" data-type="domain" style="
+                  padding: 0.5rem 0.8rem;
+                  background: rgba(248,113,113,0.16);
+                  color: #fee2e2;
+                  border: 1px solid rgba(248,113,113,0.4);
+                  border-radius: 6px;
+                  font-size: 0.85rem;
+                  cursor: pointer;
+                  white-space: nowrap;
+                  flex-shrink: 0;
+                ">+ Add</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Wallets -->
+          <div class="trace-form__group" data-entity-type="wallet">
+            <label class="trace-form__label" for="walletValue0">Crypto Wallet</label>
+            <div class="entity-input-group" data-type="wallet">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input 
+                  type="text" 
+                  class="trace-form__input entity-input" 
+                  id="walletValue0" 
+                  name="wallet[]" 
+                  placeholder="e.g., 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa (Bitcoin), 0x... (Ethereum)"
+                  data-index="0"
+                  style="flex: 1;"
+                />
+                <button type="button" class="add-field-btn" data-type="wallet" style="
+                  padding: 0.5rem 0.8rem;
+                  background: rgba(248,113,113,0.16);
+                  color: #fee2e2;
+                  border: 1px solid rgba(248,113,113,0.4);
+                  border-radius: 6px;
+                  font-size: 0.85rem;
+                  cursor: pointer;
+                  white-space: nowrap;
+                  flex-shrink: 0;
+                ">+ Add</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Handles -->
+          <div class="trace-form__group" data-entity-type="handle">
+            <label class="trace-form__label" for="handleValue0">Messaging Handle</label>
+            <div class="entity-input-group" data-type="handle">
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <input 
+                  type="text" 
+                  class="trace-form__input entity-input" 
+                  id="handleValue0" 
+                  name="handle[]" 
+                  placeholder="e.g., @telegram_username, @instagram_handle, t.me/username"
+                  data-index="0"
+                  style="flex: 1;"
+                />
+                <button type="button" class="add-field-btn" data-type="handle" style="
+                  padding: 0.5rem 0.8rem;
+                  background: rgba(248,113,113,0.16);
+                  color: #fee2e2;
+                  border: 1px solid rgba(248,113,113,0.4);
+                  border-radius: 6px;
+                  font-size: 0.85rem;
+                  cursor: pointer;
+                  white-space: nowrap;
+                  flex-shrink: 0;
+                ">+ Add</button>
+              </div>
+            </div>
+            <small class="trace-form__hint">💡 Telegram (@username or t.me/username), Instagram (@username), WhatsApp (phone number)</small>
+          </div>
+        </div>
+        
+        <p class="trace-form__lead" style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+          💡 <strong>Enter one or more entities</strong> from the same case. The system will trace each and automatically detect relationships between them.
+        </p>
+
+        <div style="margin-top: 1.5rem;">
+          <button type="button" class="btn btn--primary" id="submitBtn">
+            Trace Entities
+          </button>
+        </div>
+
+        <div class="error" id="errorMsg"></div>
+      </form>
+
+      <div class="loading" id="loading">
+        <p>⏳ Tracing entities... This may take a few seconds.</p>
+      </div>
+
+      <div class="results" id="results">
+        <div class="results__card">
+          <div class="results__header">
+            <h2 class="results__title" id="resultsTitle">Trace Results</h2>
+            <span class="results__status results__status--success" id="resultsStatus">Success</span>
+          </div>
+          <div class="results__data" id="resultsData">
+            <!-- Results will be inserted here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Wait for DOM to be ready
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('traceForm');
+      const loading = document.getElementById('loading');
+      const results = document.getElementById('results');
+      const errorMsg = document.getElementById('errorMsg');
+      const submitBtn = document.getElementById('submitBtn');
+
+      if (!form || !loading || !results || !errorMsg || !submitBtn) {
+        console.error('Required DOM elements not found!');
+        return;
+      }
+
+      // Add field functionality - use event delegation for dynamic buttons
+      function setupAddFieldButtons() {
+        document.querySelectorAll('.add-field-btn').forEach(btn => {
+          // Remove any existing listeners to avoid duplicates
+          const newBtn = btn.cloneNode(true);
+          btn.parentNode.replaceChild(newBtn, btn);
+          
+          newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            console.log('Add button clicked!', e);
+            
+            // Get the button element
+            const button = this; // 'this' refers to the button in a regular function
+            const type = button.getAttribute('data-type');
+            
+            console.log('Button type:', type);
+            
+            if (!type) {
+              console.error('No data-type found on button:', button);
+              return false;
+            }
+            
+            const group = document.querySelector(`.entity-input-group[data-type="${type}"]`);
+            if (!group) {
+              console.error(`No input group found for type: ${type}`);
+              return false;
+            }
+            
+            const existingInputs = group.querySelectorAll('.entity-input');
+            const nextIndex = existingInputs.length;
+            
+            console.log(`Adding new ${type} input, index: ${nextIndex}`);
+            
+            // Create new input row with remove button
+          const inputRow = document.createElement('div');
+          inputRow.style.cssText = 'display: flex; gap: 0.5rem; align-items: center; margin-top: 0.5rem;';
+          
+          const newInput = document.createElement('input');
+          newInput.type = 'text';
+          newInput.className = 'trace-form__input entity-input';
+          newInput.name = `${type}[]`;
+          newInput.dataset.index = nextIndex;
+          newInput.style.flex = '1';
+          
+          // Set placeholder based on type
+          const placeholders = {
+            phone: 'e.g., +15198000997 or 5198000997',
+            domain: 'e.g., example.com or https://example.com',
+            wallet: 'e.g., 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa (Bitcoin), 0x... (Ethereum)',
+            handle: 'e.g., @telegram_username, @instagram_handle, t.me/username'
+          };
+          newInput.placeholder = placeholders[type] || '';
+          
+          // Remove button
+          const removeBtn = document.createElement('button');
+          removeBtn.type = 'button';
+          removeBtn.textContent = '×';
+          removeBtn.style.cssText = 'padding: 0.4rem 0.8rem; background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 6px; cursor: pointer; font-size: 1.2rem; line-height: 1; flex-shrink: 0;';
+          removeBtn.addEventListener('click', function() {
+            inputRow.remove();
+          });
+          
+          inputRow.appendChild(newInput);
+          inputRow.appendChild(removeBtn);
+          group.appendChild(inputRow);
+          
+          // Focus on the new input
+          setTimeout(() => newInput.focus(), 10);
+          console.log(`✅ Added new ${type} input field`);
+          
+          return false;
+        });
+      });
+    }
+    
+    // Setup buttons on page load
+    setupAddFieldButtons();
+    
+    // Debug: Log if buttons are found
+    const addButtons = document.querySelectorAll('.add-field-btn');
+    console.log(`Found ${addButtons.length} "Add" buttons`);
+    addButtons.forEach((btn, idx) => {
+      console.log(`Button ${idx}: type=${btn.getAttribute('data-type')}, parent=${btn.parentElement?.tagName}`);
+    });
+      
+      // Function to handle trace submission
+      async function handleTrace() {
+        console.log('handleTrace called');
+        
+        const formData = new FormData(form);
+        
+        // Collect all entity values (support multiple inputs per type)
+        const entities = {};
+        
+        // Get all phone inputs
+        const phoneInputs = Array.from(document.querySelectorAll('input[name="phone[]"]')).map(inp => inp.value.trim()).filter(v => v);
+        if (phoneInputs.length > 0) {
+          entities.phone = phoneInputs.length === 1 ? phoneInputs[0] : phoneInputs;
+        }
+        
+        // Get all domain inputs
+        const domainInputs = Array.from(document.querySelectorAll('input[name="domain[]"]')).map(inp => inp.value.trim()).filter(v => v);
+        if (domainInputs.length > 0) {
+          entities.domain = domainInputs.length === 1 ? domainInputs[0] : domainInputs;
+        }
+        
+        // Get all wallet inputs
+        const walletInputs = Array.from(document.querySelectorAll('input[name="wallet[]"]')).map(inp => inp.value.trim()).filter(v => v);
+        if (walletInputs.length > 0) {
+          entities.wallet = walletInputs.length === 1 ? walletInputs[0] : walletInputs;
+        }
+        
+        // Get all handle inputs
+        const handleInputs = Array.from(document.querySelectorAll('input[name="handle[]"]')).map(inp => inp.value.trim()).filter(v => v);
+        if (handleInputs.length > 0) {
+          entities.handle = handleInputs.length === 1 ? handleInputs[0] : handleInputs;
+        }
+        
+        // Legacy support - also check old single-input format (if arrays are empty)
+        if (!entities.phone) {
+          const phone = formData.get('phone')?.trim();
+          if (phone) entities.phone = phone;
+        }
+        if (!entities.domain) {
+          const domain = formData.get('domain')?.trim();
+          if (domain) entities.domain = domain;
+        }
+        if (!entities.wallet) {
+          const wallet = formData.get('wallet')?.trim();
+          if (wallet) entities.wallet = wallet;
+        }
+        if (!entities.handle) {
+          const handle = formData.get('handle')?.trim();
+          if (handle) entities.handle = handle;
+        }
+        
+        console.log('Entities to trace:', entities);
+        
+        // Validate at least one entity is provided
+        if (Object.keys(entities).length === 0) {
+          errorMsg.textContent = 'Please enter at least one entity to trace.';
+          errorMsg.classList.add('active');
+          return;
+        }
+        
+        const data = { entities };
+
+        // Hide previous results/errors
+        results.classList.remove('active');
+        errorMsg.classList.remove('active');
+        loading.classList.add('active');
+        submitBtn.disabled = true;
+
+        try {
+          console.log('Sending request to /api/trace with data:', data);
+          const response = await fetch('/blackwire/api/trace', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+          });
+
+          console.log('Response status:', response.status);
+          const result = await response.json();
+          console.log('Response data:', result);
+
+          loading.classList.remove('active');
+          submitBtn.disabled = false;
+
+          // Check for errors in response (even if status is 200)
+          if (!response.ok || result.error) {
+            errorMsg.textContent = result.error || result.message || 'Tracing failed';
+            errorMsg.classList.add('active');
+            return;
+          }
+
+          // Display results
+          displayResults(result);
+          results.classList.add('active');
+          
+        } catch (error) {
+          console.error('Error during trace:', error);
+          loading.classList.remove('active');
+          submitBtn.disabled = false;
+          
+          // Better error handling - check if it's a JSON parse error
+          let errorMessage = 'Network error: ' + error.message;
+          if (error.message.includes('JSON') || error.message.includes('<!doctype')) {
+            errorMessage = 'Server error: The server returned an HTML error page instead of JSON. Check the server logs.';
+            console.error('Full error:', error);
+          }
+          
+          errorMsg.textContent = errorMessage;
+          errorMsg.classList.add('active');
+        }
+      }
+
+      // Handle form submission
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Form submit event triggered');
+        handleTrace();
+        return false;
+      });
+
+      // Handle button click
+      submitBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Button click event triggered');
+        handleTrace();
+        return false;
+      });
+
+      // Handle Enter key in input fields
+      const inputs = form.querySelectorAll('input[type="text"]');
+      inputs.forEach(input => {
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Enter key pressed in input field');
+            handleTrace();
+            return false;
+          }
+        });
+      });
+      
+      // Function to display results
+      function displayResults(result) {
+        const titleEl = document.getElementById('resultsTitle');
+      const statusEl = document.getElementById('resultsStatus');
+      const dataEl = document.getElementById('resultsData');
+
+      titleEl.textContent = 'Trace Results';
+      statusEl.textContent = result.status || result.message || 'Success';
+
+      // Create result rows
+      dataEl.innerHTML = '';
+      
+      // Store all results for escalation packet
+      window.traceResults = result.results || [];
+      
+      // Store entities from current search for graph filtering
+      // Use formatted/normalized values to match what's stored in Neo4j
+      window.currentSearchEntities = [];
+      if (result.results && Array.isArray(result.results)) {
+        result.results.forEach(entityResult => {
+          const entityType = entityResult.type;
+          let entityValue = entityResult.value;
+          
+          // For phones, prefer formatted value (E.164) if available, as that's what's stored in Neo4j
+          if (entityType === 'phone' && entityResult.data && entityResult.data.formatted) {
+            entityValue = entityResult.data.formatted;
+          }
+          
+          // For domains, normalize (remove protocol, www, paths) to match stored format
+          if (entityType === 'domain') {
+            entityValue = entityValue.trim().toLowerCase();
+            // Remove protocol
+            entityValue = entityValue.replace(/^https?:\/\//, '');
+            // Remove www.
+            entityValue = entityValue.replace(/^www\./, '');
+            // Remove paths, query strings, fragments
+            entityValue = entityValue.split('/')[0].split('?')[0].split('#')[0];
+            // Remove trailing slash
+            entityValue = entityValue.replace(/\/$/, '');
+          }
+          
+          // For wallets, use as-is (already normalized)
+          // For handles, use as-is (format is handle|platform)
+          
+          window.currentSearchEntities.push(`${entityType}:${entityValue}`);
+        });
+      }
+      
+      console.log('📝 Stored currentSearchEntities:', window.currentSearchEntities);
+      
+      // Display results for each traced entity
+      if (result.results && Array.isArray(result.results)) {
+        result.results.forEach((entityResult, index) => {
+          const entityType = entityResult.type;
+          const entityValue = entityResult.value;
+          const enrichmentData = entityResult.data || {};
+          
+          // Handle error results
+          if (entityResult.status === 'error' || entityResult.error) {
+            const entityContainer = document.createElement('div');
+            entityContainer.className = 'entity-result-container';
+            entityContainer.style.cssText = index > 0 ? 'margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-soft);' : '';
+            
+            const entityTitle = document.createElement('h3');
+            entityTitle.style.cssText = 'margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--accent);';
+            entityTitle.textContent = `${entityType.toUpperCase()}: ${entityValue}`;
+            entityContainer.appendChild(entityTitle);
+            
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = 'padding: 1rem; background: rgba(239, 68, 68, 0.1); border-left: 4px solid #ef4444; border-radius: 8px; color: #fca5a5;';
+            errorDiv.innerHTML = `<strong>⚠️ Error:</strong> ${entityResult.error || 'Enrichment failed'}`;
+            if (entityResult.errors && entityResult.errors.length > 0) {
+              errorDiv.innerHTML += `<div style="margin-top: 0.5rem; font-size: 0.9rem;">${entityResult.errors.join(', ')}</div>`;
+            }
+            entityContainer.appendChild(errorDiv);
+            dataEl.appendChild(entityContainer);
+            return; // Skip to next result
+          }
+          
+          // Create a container for this entity's results
+          const entityContainer = document.createElement('div');
+          entityContainer.className = 'entity-result-container';
+          entityContainer.style.cssText = index > 0 ? 'margin-top: 2rem; padding-top: 2rem; border-top: 2px solid var(--border-soft);' : '';
+          
+          // Entity header with checkbox
+          const entityHeader = document.createElement('div');
+          entityHeader.style.cssText = 'display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;';
+          
+          const entityTitle = document.createElement('h3');
+          entityTitle.style.cssText = 'margin: 0; font-size: 1.1rem; color: var(--accent);';
+          entityTitle.textContent = `${entityType.toUpperCase()}: ${entityValue}`;
+          
+          // Checkbox for adding to escalation packet
+          const checkboxContainer = document.createElement('div');
+          checkboxContainer.style.cssText = 'display: flex; align-items: center; gap: 0.5rem;';
+          const checkbox = document.createElement('input');
+          checkbox.type = 'checkbox';
+          checkbox.id = `entity-checkbox-${index}`;
+          checkbox.className = 'escalation-checkbox';
+          checkbox.dataset.index = index;
+          checkbox.checked = false; // Default to unchecked - user must select
+          checkbox.style.cssText = 'width: 18px; height: 18px; cursor: pointer;';
+          
+          const checkboxLabel = document.createElement('label');
+          checkboxLabel.htmlFor = `entity-checkbox-${index}`;
+          checkboxLabel.textContent = 'Add to escalation';
+          checkboxLabel.style.cssText = 'font-size: 0.9rem; color: var(--text-muted); cursor: pointer; user-select: none;';
+          
+          checkboxContainer.appendChild(checkbox);
+          checkboxContainer.appendChild(checkboxLabel);
+          entityHeader.appendChild(entityTitle);
+          entityHeader.appendChild(checkboxContainer);
+          entityContainer.appendChild(entityHeader);
+          
+          // Risk Assessment & "So What?" Summary Card (show first, most important)
+          // ALWAYS show risk assessment - even if it's low risk
+          try {
+            console.log('Checking risk assessment for', entityType, entityValue);
+            console.log('enrichmentData:', enrichmentData);
+            const risk = enrichmentData.risk_assessment;
+            console.log('risk_assessment:', risk);
+            
+            if (risk) {
+              const threatLevel = risk.threat_level || 'low';
+              const severityScore = risk.severity_score || 0;
+              const insights = risk.actionable_insights || {};
+              
+              console.log('Threat level:', threatLevel, 'Severity:', severityScore);
+              console.log('Actionable insights:', insights);
+              console.log('Key findings:', insights.key_findings);
+              console.log('Recommended actions:', insights.recommended_actions);
+              
+              // Threat level badge
+              let threatBadge = '';
+              let threatColor = '';
+              if (threatLevel === 'critical') {
+                threatBadge = '🔴 CRITICAL RISK';
+                threatColor = '#ef4444';
+              } else if (threatLevel === 'high') {
+                threatBadge = '🟠 HIGH RISK';
+                threatColor = '#f59e0b';
+              } else if (threatLevel === 'medium') {
+                threatBadge = '🟡 MEDIUM RISK';
+                threatColor = '#fbbf24';
+              } else {
+                threatBadge = '✓ LOW RISK';
+                threatColor = '#10b981';
+              }
+              
+              // Ensure arrays exist and are arrays (handle both null/undefined and ensure they're arrays)
+              const keyFindings = insights.key_findings ? (Array.isArray(insights.key_findings) ? insights.key_findings : []) : [];
+              const recommendedActions = insights.recommended_actions ? (Array.isArray(insights.recommended_actions) ? insights.recommended_actions : []) : [];
+              
+              console.log('Key findings array:', keyFindings, 'Length:', keyFindings.length);
+              console.log('Recommended actions array:', recommendedActions, 'Length:', recommendedActions.length);
+              
+              // Summary card
+              const summaryCard = document.createElement('div');
+              summaryCard.style.cssText = 'margin-bottom: 2rem; padding: 1.5rem; background: var(--panel); border: 2px solid ' + threatColor + '; border-radius: var(--radius-md);';
+              
+              let cardHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                  <span style="font-size: 1.5rem; font-weight: bold; color: ${threatColor};">${threatBadge}</span>
+                  <span style="color: var(--text-muted);">Severity: ${severityScore}/100</span>
+                </div>
+                <p style="color: var(--text-main); margin-bottom: 1rem; font-size: 1.05rem; line-height: 1.6;">${insights.summary || 'Risk assessment completed.'}</p>
+              `;
+              
+              // Key Findings (always show section, even if empty)
+              cardHTML += `
+                <div style="margin-top: 1rem;">
+                  <strong style="color: var(--accent);">🔍 Key Findings:</strong>
+              `;
+              if (keyFindings.length > 0) {
+                cardHTML += `
+                  <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: var(--text-muted); line-height: 1.8;">
+                    ${keyFindings.map(f => `<li>${f}</li>`).join('')}
+                  </ul>
+                `;
+              } else {
+                cardHTML += `
+                  <p style="margin: 0.5rem 0; color: var(--text-muted); font-style: italic;">No specific risk factors identified.</p>
+                `;
+              }
+              cardHTML += `</div>`;
+              
+              // Recommended Actions (always show section)
+              cardHTML += `
+                <div style="margin-top: 1rem;">
+                  <strong style="color: var(--accent);">✅ Recommended Actions:</strong>
+              `;
+              if (recommendedActions.length > 0) {
+                cardHTML += `
+                  <ol style="margin: 0.5rem 0; padding-left: 1.5rem; color: var(--text-muted); line-height: 1.8;">
+                    ${recommendedActions.map(a => `<li>${a}</li>`).join('')}
+                  </ol>
+                `;
+              } else {
+                cardHTML += `
+                  <p style="margin: 0.5rem 0; color: var(--text-muted); font-style: italic;">No specific actions recommended at this time.</p>
+                `;
+              }
+              cardHTML += `</div>`;
+              
+              summaryCard.innerHTML = cardHTML;
+              entityContainer.appendChild(summaryCard);
+              console.log('✅ Risk assessment card added to DOM with', keyFindings.length, 'findings and', recommendedActions.length, 'actions');
+            } else {
+              console.warn('⚠️ No risk assessment found for', entityType, entityValue);
+              console.warn('Full enrichmentData keys:', Object.keys(enrichmentData));
+              // Show a placeholder card if risk assessment is missing
+              const placeholderCard = document.createElement('div');
+              placeholderCard.style.cssText = 'margin-bottom: 2rem; padding: 1.5rem; background: var(--panel); border: 2px solid var(--border-soft); border-radius: var(--radius-md);';
+              placeholderCard.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                  <span style="font-size: 1.5rem; font-weight: bold; color: var(--text-muted);">⚠️ Risk Assessment</span>
+                  <span style="color: var(--text-muted);">Not Available</span>
+                </div>
+                <p style="color: var(--text-muted); font-style: italic;">Risk assessment data is not available for this entity.</p>
+              `;
+              entityContainer.appendChild(placeholderCard);
+            }
+          } catch (error) {
+            console.error('❌ Error rendering risk assessment:', error);
+            console.error('Error stack:', error.stack);
+          }
+          
+          // Create a data container for this entity's fields
+          const entityDataContainer = document.createElement('div');
+          entityDataContainer.className = 'entity-data-container';
+          
+          // Add main value
+          addResultRow(entityDataContainer, 'Entity', entityValue);
+      
+          // Add enriched data fields based on entity type
+          if (entityType === 'domain') {
+            // Domain-specific fields
+            if (enrichmentData.ip_address) addResultRow(entityDataContainer, 'IP Address', enrichmentData.ip_address);
+            if (enrichmentData.ip_addresses && enrichmentData.ip_addresses.length > 0) {
+              addResultRow(entityDataContainer, 'IP Addresses', enrichmentData.ip_addresses.join(', '));
+            }
+            if (enrichmentData.ipv6_addresses && enrichmentData.ipv6_addresses.length > 0) {
+              addResultRow(entityDataContainer, 'IPv6 Addresses', enrichmentData.ipv6_addresses.join(', '));
+            }
+            // Only show location if not a CDN (CDN location is misleading)
+            if (enrichmentData.location_note) {
+              addResultRow(entityDataContainer, '⚠️ Location Note', enrichmentData.location_note);
+            }
+            if (enrichmentData.country && !enrichmentData.location_note) addResultRow(entityDataContainer, 'Country', enrichmentData.country);
+            if (enrichmentData.city && !enrichmentData.location_note) addResultRow(entityDataContainer, 'City', enrichmentData.city);
+            if (enrichmentData.isp) addResultRow(entityDataContainer, 'Hosting Provider (ISP)', enrichmentData.isp);
+            if (enrichmentData.host_name) addResultRow(entityDataContainer, 'Host Name', enrichmentData.host_name);
+            if (enrichmentData.asn) addResultRow(entityDataContainer, 'ASN', enrichmentData.asn);
+            if (enrichmentData.registrar) addResultRow(entityDataContainer, 'Registrar', enrichmentData.registrar);
+            // Only show creation date if it exists and is valid (not filtered out)
+            if (enrichmentData.creation_date) addResultRow(entityDataContainer, 'Creation Date', enrichmentData.creation_date);
+            if (enrichmentData.expiration_date) addResultRow(entityDataContainer, 'Expiration Date', enrichmentData.expiration_date);
+            if (enrichmentData.updated_date) addResultRow(entityDataContainer, 'Updated Date', enrichmentData.updated_date);
+            if (enrichmentData.whois_status) addResultRow(entityDataContainer, 'WHOIS Status', enrichmentData.whois_status);
+            if (enrichmentData.name_servers && enrichmentData.name_servers.length > 0) {
+              addResultRow(entityDataContainer, 'Name Servers', enrichmentData.name_servers.join(', '));
+            }
+            if (enrichmentData.mx_records && enrichmentData.mx_records.length > 0) {
+              addResultRow(entityDataContainer, 'MX Records', enrichmentData.mx_records.join(', '));
+            }
+            if (enrichmentData.dns_records) {
+              const dns = enrichmentData.dns_records;
+              if (dns.NS && dns.NS.length > 0 && !enrichmentData.name_servers) {
+                addResultRow(entityDataContainer, 'Name Servers (DNS)', dns.NS.join(', '));
+              }
+              if (dns.MX && dns.MX.length > 0 && !enrichmentData.mx_records) {
+                addResultRow(entityDataContainer, 'MX Records (DNS)', dns.MX.join(', '));
+              }
+              if (dns.CNAME && dns.CNAME.length > 0) {
+                addResultRow(entityDataContainer, 'CNAME Records', dns.CNAME.join(', '));
+              }
+            }
+            if (enrichmentData.cdn) addResultRow(entityDataContainer, 'CDN', enrichmentData.cdn);
+            if (enrichmentData.is_shortlink !== undefined) addResultRow(entityDataContainer, 'Shortlink', enrichmentData.is_shortlink ? 'Yes' : 'No');
+            if (enrichmentData.shortlink_provider) addResultRow(entityDataContainer, 'Shortlink Provider', enrichmentData.shortlink_provider);
+            
+            // Threat Intelligence
+            if (enrichmentData.threat_level || enrichmentData.is_malicious !== undefined) {
+              let threatBadge = '';
+              const threatLevel = enrichmentData.threat_level || (enrichmentData.is_malicious ? 'high' : 'clean');
+              
+              if (threatLevel === 'high') {
+                threatBadge = '<span style="color: #ef4444; font-weight: bold;">🔴 HIGH THREAT</span>';
+              } else if (threatLevel === 'medium') {
+                threatBadge = '<span style="color: #f59e0b; font-weight: bold;">🟠 MEDIUM THREAT</span>';
+              } else if (threatLevel === 'low') {
+                threatBadge = '<span style="color: #fbbf24; font-weight: bold;">🟡 LOW THREAT (Possible False Positive)</span>';
+              } else {
+                threatBadge = '<span style="color: #10b981;">✓ Clean</span>';
+              }
+              
+              addResultRow(entityDataContainer, 'Threat Status', threatBadge);
+            }
+            
+            // Threat context (why it's flagged)
+            if (enrichmentData.threat_context && enrichmentData.threat_context.length > 0) {
+              addResultRow(entityDataContainer, 'Threat Context', enrichmentData.threat_context.join('; '));
+            }
+            
+            if (enrichmentData.threat_warning) {
+              addResultRow(entityDataContainer, '⚠️ Warning', enrichmentData.threat_warning);
+            }
+            
+            if (enrichmentData.threat_sources && enrichmentData.threat_sources.length > 0) {
+              addResultRow(entityDataContainer, 'Threat Sources', enrichmentData.threat_sources.join(', '));
+            }
+            
+            // Show detailed VirusTotal data if available
+            if (enrichmentData.threat_intel && enrichmentData.threat_intel.virustotal) {
+              const vt = enrichmentData.threat_intel.virustotal;
+              if (vt.malicious_count !== undefined && vt.total_scans !== undefined) {
+                const ratio = ((vt.malicious_count / Math.max(vt.total_scans, 1)) * 100).toFixed(1);
+                addResultRow(entityDataContainer, 'VirusTotal Detection', `${vt.malicious_count}/${vt.total_scans} engines (${ratio}%)`);
+              }
+              if (vt.reputation !== undefined) {
+                addResultRow(entityDataContainer, 'VirusTotal Reputation', vt.reputation);
+              }
+            }
+            
+            // Reputation Score removed - not useful
+            
+            // Certificate Transparency
+            if (enrichmentData.ct_related_domains && enrichmentData.ct_related_domains.length > 0) {
+              addResultRow(entityDataContainer, 'CT Log Related Domains', enrichmentData.ct_related_domains.slice(0, 10).join(', ') + 
+                (enrichmentData.ct_related_domains.length > 10 ? ` (+${enrichmentData.ct_related_domains.length - 10} more)` : ''));
+            }
+            if (enrichmentData.ct_subdomains && enrichmentData.ct_subdomains.length > 0) {
+              addResultRow(entityDataContainer, 'CT Log Subdomains', enrichmentData.ct_subdomains.slice(0, 10).join(', ') + 
+                (enrichmentData.ct_subdomains.length > 10 ? ` (+${enrichmentData.ct_subdomains.length - 10} more)` : ''));
+            }
+            if (enrichmentData.ct_certificates !== undefined) {
+              addResultRow(entityDataContainer, 'CT Log Certificates Found', enrichmentData.ct_certificates);
+            }
+            
+            // Reverse WHOIS
+            if (enrichmentData.reverse_whois_domains && enrichmentData.reverse_whois_domains.length > 0) {
+              addResultRow(entityDataContainer, 'Reverse WHOIS Domains', enrichmentData.reverse_whois_domains.slice(0, 10).join(', ') + 
+                (enrichmentData.reverse_whois_domains.length > 10 ? ` (+${enrichmentData.reverse_whois_domains.length - 10} more)` : ''));
+            }
+            
+            // Discovered Emails
+            if (enrichmentData.discovered_emails && enrichmentData.discovered_emails.length > 0) {
+              addResultRow(entityDataContainer, 'Discovered Email Addresses', enrichmentData.discovered_emails.join(', '));
+            }
+          } else if (entityType === 'phone') {
+            // Phone-specific fields
+            if (enrichmentData.formatted) addResultRow(entityDataContainer, 'Formatted', enrichmentData.formatted);
+            if (enrichmentData.country) addResultRow(entityDataContainer, 'Country', enrichmentData.country);
+            if (enrichmentData.country_code) addResultRow(entityDataContainer, 'Country Code', '+' + enrichmentData.country_code);
+            if (enrichmentData.carrier) addResultRow(entityDataContainer, 'Carrier', enrichmentData.carrier);
+            if (enrichmentData.voip_provider) addResultRow(entityDataContainer, 'VOIP Provider', enrichmentData.voip_provider);
+            if (enrichmentData.is_voip !== undefined) addResultRow(entityDataContainer, 'Is VOIP', enrichmentData.is_voip ? 'Yes' : 'No');
+            if (enrichmentData.is_valid !== undefined) addResultRow(entityDataContainer, 'Valid', enrichmentData.is_valid ? 'Yes' : 'No');
+            if (enrichmentData.timezone) addResultRow(entityDataContainer, 'Timezone', Array.isArray(enrichmentData.timezone) ? enrichmentData.timezone.join(', ') : enrichmentData.timezone);
+          } else if (entityType === 'wallet') {
+            // Wallet-specific fields
+            if (enrichmentData.currency) addResultRow(entityDataContainer, 'Currency', enrichmentData.currency);
+            if (enrichmentData.is_valid !== undefined) addResultRow(entityDataContainer, 'Valid', enrichmentData.is_valid ? 'Yes' : 'No');
+            if (enrichmentData.balance !== undefined) addResultRow(entityDataContainer, 'Balance', enrichmentData.balance);
+            if (enrichmentData.transaction_count !== undefined) addResultRow(entityDataContainer, 'Transaction Count', enrichmentData.transaction_count);
+          } else if (entityType === 'handle') {
+            // Handle-specific fields
+            if (enrichmentData.normalized_handle) addResultRow(entityDataContainer, 'Normalized Handle', enrichmentData.normalized_handle);
+            if (enrichmentData.platform) addResultRow(entityDataContainer, 'Detected Platform', enrichmentData.platform);
+            if (enrichmentData.possible_platforms && enrichmentData.possible_platforms.length > 0) {
+              addResultRow(entityDataContainer, 'Possible Platforms', enrichmentData.possible_platforms.join(', '));
+            }
+            if (enrichmentData.is_phone !== undefined) addResultRow(entityDataContainer, 'Is Phone Number', enrichmentData.is_phone ? 'Yes' : 'No');
+            if (enrichmentData.is_username !== undefined) addResultRow(entityDataContainer, 'Is Username', enrichmentData.is_username ? 'Yes' : 'No');
+            if (enrichmentData.phone_linked) addResultRow(entityDataContainer, 'Linked Phone', enrichmentData.phone_linked);
+            
+            // Cross-platform presence with detailed Instagram data
+            if (enrichmentData.cross_platform_presence && Object.keys(enrichmentData.cross_platform_presence).length > 0) {
+              const platforms = [];
+              for (const [platform, data] of Object.entries(enrichmentData.cross_platform_presence)) {
+                if (data && data.exists) {
+                  platforms.push(`${platform} ✓`);
+                } else {
+                  platforms.push(`${platform} ✗`);
+                }
+              }
+              addResultRow(entityDataContainer, 'Cross-Network Presence', platforms.join(', ') + ' (checked across Instagram, Telegram)');
+              
+              // Instagram profile data (simplified - only show what we can reliably detect)
+              const instagramData = enrichmentData.cross_platform_presence['Instagram'];
+              if (instagramData && instagramData.exists) {
+                // Always show profile URL
+                if (instagramData.url) {
+                  addResultRow(entityDataContainer, 'Instagram Profile', `<a href="${instagramData.url}" target="_blank" style="color: var(--accent);">${instagramData.url}</a>`);
+                }
+                
+                // Show privacy status
+                if (instagramData.is_private) {
+                  addResultRow(entityDataContainer, 'Instagram Privacy', 'Private Account');
+                } else if (instagramData.status === 'public') {
+                  addResultRow(entityDataContainer, 'Instagram Privacy', 'Public Account');
+                }
+              }
+            }
+            
+            // Profile URLs (fallback if not in cross_platform_presence)
+            if (enrichmentData.account_metadata && enrichmentData.account_metadata.profile_url) {
+              addResultRow(entityDataContainer, 'Profile URL', `<a href="${enrichmentData.account_metadata.profile_url}" target="_blank" style="color: var(--accent);">${enrichmentData.account_metadata.profile_url}</a>`);
+            }
+            
+            // OSINT data
+            if (enrichmentData.osint_data) {
+              if (enrichmentData.osint_data.username_patterns && enrichmentData.osint_data.username_patterns.length > 0) {
+                addResultRow(entityDataContainer, 'Username Patterns', enrichmentData.osint_data.username_patterns.join(', '));
+              }
+              if (enrichmentData.osint_data.potential_connections && enrichmentData.osint_data.potential_connections.length > 0) {
+                addResultRow(entityDataContainer, 'Potential Connections', enrichmentData.osint_data.potential_connections.join(', '));
+              }
+            }
+            
+            // Threat intelligence
+            if (enrichmentData.threat_intel) {
+              if (enrichmentData.threat_intel.is_suspicious) {
+                addResultRow(entityDataContainer, 'Threat Status', '<span style="color: var(--accent); font-weight: bold;">⚠️ Suspicious Pattern Detected</span>');
+              }
+              if (enrichmentData.threat_intel.notes && enrichmentData.threat_intel.notes.length > 0) {
+                addResultRow(entityDataContainer, 'Threat Notes', enrichmentData.threat_intel.notes.join('; '));
+              }
+            }
+            
+            // Investigation history (actionable intelligence)
+            if (enrichmentData.investigation_count !== undefined && enrichmentData.investigation_count > 0) {
+              addResultRow(entityDataContainer, 'Investigation History', enrichmentData.investigation_note || `Seen in ${enrichmentData.investigation_count} previous investigation(s)`);
+            }
+            
+            // Associated entities from previous investigations
+            if (enrichmentData.associated_entities && enrichmentData.associated_entities.length > 0) {
+              const entities = enrichmentData.associated_entities.map(e => 
+                `${e.type}: ${e.value} (${e.co_occurrence_count}x)`
+              ).join(', ');
+              addResultRow(entityDataContainer, 'Previously Seen With', entities);
+            }
+            
+            // Phone enrichment (if handle is a phone number)
+            if (enrichmentData.phone_enrichment) {
+              const phone = enrichmentData.phone_enrichment;
+              if (phone.country) addResultRow(entityDataContainer, 'Phone Country', phone.country);
+              if (phone.carrier) addResultRow(entityDataContainer, 'Phone Carrier', phone.carrier);
+              if (phone.is_voip !== undefined) addResultRow(entityDataContainer, 'Is VOIP', phone.is_voip ? 'Yes' : 'No');
+            }
+          }
+          
+          // Append entityDataContainer to entityContainer, then entityContainer to dataEl
+          entityContainer.appendChild(entityDataContainer);
+          dataEl.appendChild(entityContainer);
+      
+          // Show related entities if any
+          if (entityResult.related_entities && entityResult.related_entities.length > 0) {
+            dataEl.innerHTML += '<div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 2px solid var(--accent-soft);"><strong style="color: var(--accent);">🔗 Related Entities Found:</strong>';
+            
+            entityResult.related_entities.forEach(rel => {
+              const relRow = document.createElement('div');
+              relRow.className = 'results__row';
+              relRow.style.marginTop = '0.5rem';
+              relRow.style.padding = '0.5rem';
+              relRow.style.background = 'rgba(249, 115, 115, 0.05)';
+              relRow.style.borderRadius = 'var(--radius-md)';
+              relRow.innerHTML = `
+                <div class="results__label">${rel.type.toUpperCase()}</div>
+                <div class="results__value">
+                  <strong>${rel.id}</strong>
+                  <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                    ${rel.reason}
+                  </div>
+                </div>
+              `;
+              dataEl.appendChild(relRow);
+            });
+            
+            dataEl.innerHTML += '<div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">💡 These entities are linked in the network graph. View the <a href="/blackwire/dashboard" style="color: var(--accent);">Dashboard</a> to see relationships.</div></div>';
+          }
+          
+          // Show errors if any
+          if (enrichmentData.errors && enrichmentData.errors.length > 0) {
+            const errorsHtml = enrichmentData.errors.map(err => `<div style="color: var(--accent); margin-top: 0.5rem;">⚠️ ${err}</div>`).join('');
+            dataEl.innerHTML += '<div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-soft);"><strong>Errors:</strong>' + errorsHtml + '</div>';
+          }
+        });
+        
+        // Show cross-entity relationships if multiple entities traced
+        if (result.results.length > 1 && result.relationships && result.relationships.length > 0) {
+          dataEl.innerHTML += '<div style="margin-top: 2rem; padding-top: 2rem; border-top: 3px solid var(--accent-soft);"><strong style="color: var(--accent); font-size: 1.1rem;">🔗 Relationships Between Traced Entities:</strong>';
+          
+          result.relationships.forEach(rel => {
+            const relRow = document.createElement('div');
+            relRow.className = 'results__row';
+            relRow.style.marginTop = '0.75rem';
+            relRow.style.padding = '0.75rem';
+            relRow.style.background = 'rgba(249, 115, 115, 0.1)';
+            relRow.style.borderRadius = 'var(--radius-md)';
+            relRow.style.border = '1px solid var(--accent-soft)';
+            relRow.innerHTML = `
+              <div class="results__label">Connection</div>
+              <div class="results__value">
+                <strong>${rel.from}</strong> → <strong>${rel.to}</strong>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                  ${rel.reason}
+                </div>
+              </div>
+            `;
+            dataEl.appendChild(relRow);
+          });
+          
+          const graphSectionDiv = document.createElement('div');
+          graphSectionDiv.id = 'graphSection';
+          graphSectionDiv.style.cssText = 'margin-top: 1rem; padding: 1rem; background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.2); border-radius: var(--radius-md);';
+          graphSectionDiv.innerHTML = `
+            <div style="margin-bottom: 1rem;">
+              <strong style="color: var(--accent); font-size: 1rem;">🔗 Coordinated Pattern Detected!</strong>
+              <p style="margin: 0.5rem 0 0 0; color: var(--text-muted); font-size: 0.9rem;">These entities are linked. Explore the relationships in the network graph below.</p>
+            </div>
+            <div id="networkGraphContainer" style="width: 100%; height: 500px; background: rgba(2, 6, 23, 0.8); border-radius: var(--radius-md); position: relative; border: 1px solid var(--border-soft);">
+              <div id="graphLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Loading graph...</div>
+              <svg id="networkGraph" style="width: 100%; height: 100%;"></svg>
+              <div id="graphTooltip" class="tooltip" style="display: none; position: absolute; background: rgba(5, 7, 17, 0.95); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 0.75rem; color: var(--text-main); font-size: 0.85rem; pointer-events: none; z-index: 1000; box-shadow: var(--shadow-soft); max-width: 250px;"></div>
+            </div>
+          `;
+          dataEl.appendChild(graphSectionDiv);
+          dataEl.innerHTML += '</div>';
+          
+          // Load and render graph (small delay to ensure DOM is ready)
+          setTimeout(() => renderNetworkGraph(), 300);
+        } else {
+          // Show graph section even if no relationships detected
+          const graphSectionDiv = document.createElement('div');
+          graphSectionDiv.id = 'graphSection';
+          graphSectionDiv.style.cssText = 'margin-top: 2rem; padding: 1rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-md);';
+          graphSectionDiv.innerHTML = `
+            <div style="margin-bottom: 1rem;">
+              <strong style="color: #3b82f6; font-size: 1rem;">📊 Network Graph</strong>
+              <p style="margin: 0.5rem 0 0 0; color: var(--text-muted); font-size: 0.9rem;">All traced entities visualized in the network graph.</p>
+            </div>
+            <div id="networkGraphContainer" style="width: 100%; height: 500px; background: rgba(2, 6, 23, 0.8); border-radius: var(--radius-md); position: relative; border: 1px solid var(--border-soft);">
+              <div id="graphLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Loading graph...</div>
+              <svg id="networkGraph" style="width: 100%; height: 100%;"></svg>
+              <div id="graphTooltip" class="tooltip" style="display: none; position: absolute; background: rgba(5, 7, 17, 0.95); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 0.75rem; color: var(--text-main); font-size: 0.85rem; pointer-events: none; z-index: 1000; box-shadow: var(--shadow-soft); max-width: 250px;"></div>
+            </div>
+          `;
+          dataEl.appendChild(graphSectionDiv);
+          
+          // Load and render graph (small delay to ensure DOM is ready)
+          setTimeout(() => renderNetworkGraph(), 300);
+        }
+        
+        // Add "Generate Escalation Packet" section at the bottom
+        if (result.results && result.results.length > 0) {
+          const escalationSection = document.createElement('div');
+          escalationSection.style.cssText = 'margin-top: 2rem; padding: 1.5rem; background: var(--panel); border: 2px solid var(--accent-soft); border-radius: var(--radius-md);';
+          escalationSection.innerHTML = `
+            <h3 style="margin: 0 0 1rem 0; color: var(--accent); font-size: 1.1rem;">📋 Generate Escalation Packet</h3>
+            <p style="margin: 0 0 1rem 0; color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+              Select which entities to include in your escalation packet. The packet will be pre-filled with all trace data and ready to send to infrastructure providers.
+            </p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+              <button id="generateEscalationBtn" class="btn btn--primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                📄 Generate Escalation Packet
+              </button>
+              <span id="selectedCount" style="color: var(--text-muted); font-size: 0.9rem;">
+                0 entity/entities selected
+              </span>
+            </div>
+          `;
+          dataEl.appendChild(escalationSection);
+          
+          // Update selected count when checkboxes change
+          function updateSelectedCount() {
+            // Query checkboxes from the current results container only (not old ones)
+            const resultsContainer = document.getElementById('resultsData');
+            const checkboxes = resultsContainer ? resultsContainer.querySelectorAll('.escalation-checkbox') : [];
+            const selected = Array.from(checkboxes).filter(c => c && c.checked).length;
+            const countEl = document.getElementById('selectedCount');
+            if (countEl) {
+              countEl.textContent = `${selected} entity/entities selected`;
+              // Update color based on selection
+              if (selected === 0) {
+                countEl.style.color = 'var(--text-muted)';
+              } else {
+                countEl.style.color = 'var(--accent)';
+              }
+            }
+          }
+          
+          // Wait a tick to ensure all checkboxes are in the DOM
+          setTimeout(() => {
+            const resultsContainer = document.getElementById('resultsData');
+            const checkboxes = resultsContainer ? resultsContainer.querySelectorAll('.escalation-checkbox') : [];
+            checkboxes.forEach(cb => {
+              // Ensure all checkboxes are unchecked by default
+              cb.checked = false;
+              cb.addEventListener('change', updateSelectedCount);
+            });
+            
+            // Initial count update (should be 0)
+            updateSelectedCount();
+          }, 0);
+          
+          // Generate escalation packet button
+          document.getElementById('generateEscalationBtn').addEventListener('click', () => {
+            // Query checkboxes fresh on each click to avoid stale references
+            const resultsContainer = document.getElementById('resultsData');
+            const checkboxes = resultsContainer ? resultsContainer.querySelectorAll('.escalation-checkbox') : [];
+            const selectedIndices = Array.from(checkboxes)
+              .filter(cb => cb && cb.checked)
+              .map(cb => parseInt(cb.dataset.index));
+            
+            if (selectedIndices.length === 0) {
+              alert('Please select at least one entity to include in the escalation packet.');
+              return;
+            }
+            
+            const selectedEntities = selectedIndices.map(idx => result.results[idx]);
+            
+            // Store in localStorage
+            localStorage.setItem('escalationEntities', JSON.stringify(selectedEntities));
+            
+            // Navigate to support page with hash
+            window.location.href = '/support#report';
+          });
+        }
+      } else {
+        // Fallback for single entity format (backward compatibility)
+        const enrichmentData = result.data || {};
+        addResultRow(dataEl, 'Entity', result.value);
+      
+        // Scroll to results
+        results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      } // End of displayResults function
+
+      function addResultRow(container, label, value) {
+        const row = document.createElement('div');
+        row.className = 'results__row';
+        row.innerHTML = `
+          <div class="results__label">${label}</div>
+          <div class="results__value ${!value ? 'results__value--empty' : ''}">${value || 'N/A'}</div>
+        `;
+        container.appendChild(row);
+      }
+      
+      // CSV Upload functionality
+      const csvFileInput = document.getElementById('csvFileInput');
+      const uploadCsvBtn = document.getElementById('uploadCsvBtn');
+      const csvUploadStatus = document.getElementById('csvUploadStatus');
+      
+      uploadCsvBtn.addEventListener('click', async () => {
+        const file = csvFileInput.files[0];
+        if (!file) {
+          csvUploadStatus.style.display = 'block';
+          csvUploadStatus.style.background = 'rgba(239, 68, 68, 0.1)';
+          csvUploadStatus.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          csvUploadStatus.textContent = '⚠️ Please select a CSV file first';
+          return;
+        }
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        uploadCsvBtn.disabled = true;
+        uploadCsvBtn.textContent = '⏳ Uploading...';
+        csvUploadStatus.style.display = 'block';
+        csvUploadStatus.style.background = 'rgba(59, 130, 246, 0.1)';
+        csvUploadStatus.style.borderColor = 'rgba(59, 130, 246, 0.3)';
+        csvUploadStatus.textContent = '⏳ Uploading and tracing entities... This may take a while.';
+        
+        try {
+          const response = await fetch('/blackwire/api/upload-csv', {
+            method: 'POST',
+            body: formData
+          });
+          
+          const result = await response.json();
+          
+          if (response.ok) {
+            csvUploadStatus.style.background = 'rgba(34, 197, 94, 0.1)';
+            csvUploadStatus.style.borderColor = 'rgba(34, 197, 94, 0.3)';
+            csvUploadStatus.innerHTML = `
+              ✅ <strong>Success!</strong> Traced ${result.traced} of ${result.total} entities.
+              ${result.errors && result.errors.length > 0 ? `<br><br>⚠️ Errors: ${result.errors.length}<br><small style="color: var(--text-muted);">${result.errors.slice(0, 3).join('<br>')}${result.errors.length > 3 ? '<br>...' : ''}</small>` : ''}
+              <br><br>
+              <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
+                <a href="/blackwire/dashboard" class="btn btn--primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
+                  🔍 View Network Graph →
+                </a>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">All entities are now in the graph visualization</span>
+              </div>
+            `;
+            
+            // Clear file input
+            csvFileInput.value = '';
+            
+            // Auto-scroll to status message
+            csvUploadStatus.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          } else {
+            csvUploadStatus.style.background = 'rgba(239, 68, 68, 0.1)';
+            csvUploadStatus.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+            csvUploadStatus.textContent = `❌ Error: ${result.error || 'Upload failed'}`;
+          }
+        } catch (error) {
+          csvUploadStatus.style.background = 'rgba(239, 68, 68, 0.1)';
+          csvUploadStatus.style.borderColor = 'rgba(239, 68, 68, 0.3)';
+          csvUploadStatus.textContent = `❌ Error: ${error.message}`;
+        } finally {
+          uploadCsvBtn.disabled = false;
+          uploadCsvBtn.textContent = '📤 Upload & Trace CSV';
+        }
+      });
+      
+      console.log('Event listeners attached successfully');
+    });
+    
+    // Network Graph Visualization (embedded on trace page)
+    function renderNetworkGraph() {
+      const container = document.getElementById('networkGraphContainer');
+      if (!container) return;
+      
+      const svgEl = document.getElementById('networkGraph');
+      const loadingEl = document.getElementById('graphLoading');
+      const tooltipEl = document.getElementById('graphTooltip');
+      
+      if (!svgEl) return;
+      
+      // Clear existing graph
+      d3.select(svgEl).selectAll("*").remove();
+      
+      const containerRect = container.getBoundingClientRect();
+      const width = containerRect.width || 800;
+      const height = containerRect.height || 500;
+      
+      const svg = d3.select(svgEl)
+        .attr("width", width)
+        .attr("height", height);
+      
+      const g = svg.append("g");
+      
+      // Zoom behavior
+      const zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on("zoom", (event) => {
+          g.attr("transform", event.transform);
+        });
+      
+      svg.call(zoom);
+      
+      // Color mapping for node types
+      const nodeColors = {
+        "PhoneNumber": "#f97373",
+        "Domain": "#3b82f6",
+        "Wallet": "#10b981",
+        "MessagingHandle": "#f59e0b",
+        "VOIPProvider": "#ec4899",
+        "Country": "#8b5cf6",
+        "Currency": "#10b981",
+        "Platform": "#f59e0b",
+        "Host": "#6366f1",
+        "CDN": "#06b6d4",
+        "Registrar": "#a855f7",
+        "CMS": "#f97316",
+        "Nameserver": "#14b8a6",
+        "Cluster": "#8b5cf6"
+      };
+      
+      // Build entity filter for current search - ALWAYS use filter if available
+      let graphUrl = "/blackwire/api/graph";
+      if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
+        // Remove duplicates from currentSearchEntities
+        const uniqueEntities = [...new Set(window.currentSearchEntities)];
+        const entityFilter = uniqueEntities.join(',');
+        graphUrl = `/blackwire/api/graph?entities=${encodeURIComponent(entityFilter)}`;
+        console.log('🔍 Fetching graph with filter:', entityFilter);
+        console.log('📊 Total unique entities in current search:', uniqueEntities.length);
+      } else {
+        console.log('⚠️ No currentSearchEntities found, will show all nodes');
+      }
+      
+      // Load graph data (filtered to current search if available)
+      fetch(graphUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (loadingEl) loadingEl.style.display = "none";
+          
+          console.log('📊 Graph data received:', {
+            nodes: data.nodes?.length || 0,
+            edges: data.edges?.length || 0,
+            message: data.message
+          });
+          
+          const nodes = data.nodes || [];
+          const links = (data.edges || []).map(link => ({
+            source: typeof link.source === 'string' ? link.source : (link.source?.id || link.source),
+            target: typeof link.target === 'string' ? link.target : (link.target?.id || link.target),
+            type: link.type || link.rel_type || 'UNKNOWN'
+          }));
+          
+          if (nodes.length === 0) {
+            let message = "No entities in graph yet. ";
+            if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
+              message += "Entities may still be processing. The graph will auto-update when ready.";
+            } else {
+              message += "Trace some entities to see them here!";
+            }
+            
+            const textEl = svg.append("text")
+              .attr("x", width / 2)
+              .attr("y", height / 2)
+              .attr("text-anchor", "middle")
+              .attr("fill", "#9ca3af")
+              .style("font-size", "16px")
+              .text(message);
+            
+            // Auto-retry if we have entities to show (they might still be processing)
+            if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
+              let retryCount = 0;
+              const maxRetries = 3;
+              const retryInterval = setInterval(() => {
+                retryCount++;
+                if (retryCount > maxRetries) {
+                  clearInterval(retryInterval);
+                  textEl.text("No entities found. They may not have been stored in the graph database.");
+                  return;
+                }
+                
+                console.log(`🔄 Retrying graph fetch (attempt ${retryCount}/${maxRetries})...`);
+                const entityFilter = window.currentSearchEntities.join(',');
+                const retryUrl = `/blackwire/api/graph?entities=${encodeURIComponent(entityFilter)}`;
+                
+                fetch(retryUrl)
+                  .then(response => response.json())
+                  .then(data => {
+                    const retryNodes = data.nodes || [];
+                    if (retryNodes.length > 0) {
+                      clearInterval(retryInterval);
+                      // Reload the graph
+                      renderNetworkGraph();
+                    }
+                  })
+                  .catch(err => {
+                    console.error('Retry failed:', err);
+                  });
+              }, 2000); // Retry every 2 seconds
+            }
+            
+            return;
+          }
+          
+          // Create links
+          const link = g.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("class", "link")
+            .attr("stroke", "rgba(148,163,184,0.6)")
+            .attr("stroke-opacity", 0.6)
+            .attr("stroke-width", 1.5);
+          
+          // Create nodes
+          const node = g.append("g")
+            .attr("class", "nodes")
+            .selectAll("g")
+            .data(nodes)
+            .enter()
+            .append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+              .on("start", dragstarted)
+              .on("drag", dragged)
+              .on("end", dragended));
+          
+          node.append("circle")
+            .attr("r", d => {
+              const label = d.label || d.properties?.label || '';
+              // Make relationship nodes (Country, Currency, etc.) larger
+              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
+                return 12;
+              }
+              return 8;
+            })
+            .attr("fill", d => {
+              const label = d.label || d.properties?.label || '';
+              return nodeColors[label] || "#6b7280";
+            })
+            .attr("stroke", "#fff")
+            .attr("stroke-width", d => {
+              const label = d.label || d.properties?.label || '';
+              // Thicker stroke for relationship nodes
+              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
+                return 3;
+              }
+              return 2;
+            })
+            .on("mouseover", function(event, d) {
+              showTooltip(event, d, tooltipEl, container);
+            })
+            .on("mouseout", function() {
+              if (tooltipEl) tooltipEl.style.display = "none";
+            });
+          
+          node.append("text")
+            .attr("dx", 12)
+            .attr("dy", 4)
+            .text(d => {
+              const label = d.label || d.properties?.label || '';
+              // For relationship nodes, show shorter names
+              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
+                return d.display_name || d.properties?.name || d.id.substring(0, 10);
+              }
+              return d.display_name || d.properties?.phone || d.properties?.domain || 
+                     d.properties?.address || d.properties?.handle || d.id.substring(0, 10);
+            })
+            .attr("font-size", d => {
+              const label = d.label || d.properties?.label || '';
+              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
+                return "11px";
+              }
+              return "10px";
+            })
+            .attr("font-weight", d => {
+              const label = d.label || d.properties?.label || '';
+              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
+                return "600";
+              }
+              return "normal";
+            })
+            .attr("fill", "#9ca3af");
+          
+          // Force simulation
+          const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-300))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(30));
+          
+          // Update positions on tick
+          simulation.on("tick", () => {
+            link
+              .attr("x1", d => d.source.x)
+              .attr("y1", d => d.source.y)
+              .attr("x2", d => d.target.x)
+              .attr("y2", d => d.target.y);
+            
+            node
+              .attr("transform", d => `translate(${Math.max(10, Math.min(width - 10, d.x))},${Math.max(10, Math.min(height - 10, d.y))})`);
+          });
+          
+          // Drag functions
+          function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+          }
+          
+          function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+          }
+          
+          function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+          }
+          
+          // Tooltip function
+          function showTooltip(event, d, tooltip, container) {
+            if (!tooltip) return;
+            const props = d.properties || {};
+            const label = d.label || d.properties?.label || 'Unknown';
+            
+            let content = `<div style="font-weight: 600; color: var(--accent); margin-bottom: 0.5rem;">${label}</div>`;
+            
+            // Entity-specific details
+            if (props.phone || props.formatted) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Phone:</span> ${props.formatted || props.phone}</div>`;
+              if (props.country) {
+                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Country:</span> ${props.country}</div>`;
+              }
+            }
+            if (props.domain) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Domain:</span> ${props.domain}</div>`;
+            }
+            if (props.address) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Wallet:</span> ${props.address.substring(0, 20)}...</div>`;
+              if (props.currency) {
+                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Currency:</span> ${props.currency}</div>`;
+              }
+            }
+            if (props.handle) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Handle:</span> ${props.handle}</div>`;
+              if (props.platform) {
+                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Platform:</span> ${props.platform}</div>`;
+              }
+            }
+            
+            // Relationship node details
+            if (label === "Country" && props.name) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">All phone numbers from this country</div>`;
+            }
+            if (label === "Currency" && props.name) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">All wallets using ${props.name}</div>`;
+            }
+            if (label === "Platform" && props.name) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">All handles on ${props.name}</div>`;
+            }
+            if (label === "Host" && props.name) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">Hosting provider: ${props.name}</div>`;
+              if (props.isp) {
+                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">ISP:</span> ${props.isp}</div>`;
+              }
+            }
+            if (label === "CDN" && props.name) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">CDN provider: ${props.name}</div>`;
+            }
+            if (label === "Registrar" && props.name) {
+              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">Domain registrar: ${props.name}</div>`;
+            }
+            
+            tooltip.innerHTML = content;
+            tooltip.style.display = "block";
+            const rect = container.getBoundingClientRect();
+            tooltip.style.left = (event.pageX - rect.left + 10) + "px";
+            tooltip.style.top = (event.pageY - rect.top + 10) + "px";
+          }
+        })
+        .catch(error => {
+          console.error("Error loading graph:", error);
+          if (loadingEl) {
+            loadingEl.textContent = "❌ Neo4j is required for graph visualization. Please configure NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD.";
+            loadingEl.style.color = "#f97373";
+          }
+        });
+    }
+  </script>
+</body>
+</html>
+

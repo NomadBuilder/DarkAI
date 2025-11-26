@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Network Graph – BlackWire Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="/static/favicon.svg" />
+  
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <style>
+    :root {
+      --bg: #050711;
+      --bg-alt: #070a16;
+      --panel: #0b1021;
+      --accent: #f97373;
+      --accent-soft: rgba(249, 115, 115, 0.18);
+      --border-soft: rgba(148,163,184,0.3);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 60px rgba(0,0,0,0.65);
+      --max-width: 1160px;
+      --nav-height: 64px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top left, #0b1220 0, #020617 38%, #000 100%);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .page { display: flex; flex-direction: column; height: 100vh; }
+
+    /* Navigation */
+    .nav {
+      height: var(--nav-height);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(5, 7, 17, 0.9);
+      z-index: 100;
+    }
+
+    .nav__brand {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .94rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .nav__brand-mark {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8);
+    }
+
+    .nav__links { display: flex; gap: 1.2rem; font-size: .92rem; }
+    .nav__link {
+      padding: .4rem .6rem; border-radius: 999px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color .16s, background .16s;
+    }
+    .nav__link:hover { color: var(--text-main); background: rgba(148,163,184,0.12); }
+    .nav__link--accent {
+      border-radius: 999px; padding: .45rem .9rem;
+      background: rgba(248,113,113,0.16);
+      color: #fee2e2;
+      border: 1px solid rgba(248,113,113,0.4);
+    }
+
+    /* Main container */
+    .dashboard-container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 280px;
+      background: radial-gradient(circle at top left, rgba(15,23,42,.9), #020617);
+      border-right: 1px solid var(--border-soft);
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      color: var(--text-main);
+    }
+
+    .sidebar__section {
+      margin-bottom: 2rem;
+    }
+
+    .sidebar__label {
+      font-size: .85rem;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+      display: block;
+    }
+
+    .sidebar__input,
+    .sidebar__select {
+      width: 100%;
+      padding: .6rem;
+      background: rgba(15, 23, 42, 0.5);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: .9rem;
+      margin-bottom: .5rem;
+    }
+
+    .sidebar__input:focus,
+    .sidebar__select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .sidebar__stats {
+      background: rgba(248, 113, 113, 0.1);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-top: 1rem;
+    }
+
+    .sidebar__stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: .5rem;
+      font-size: .9rem;
+    }
+
+    .sidebar__stat-label {
+      color: var(--text-muted);
+    }
+
+    .sidebar__stat-value {
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* Graph container */
+    .graph-container {
+      flex: 1;
+      position: relative;
+      background: #020617;
+    }
+
+    #graph {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: absolute;
+      background: rgba(5, 7, 17, 0.95);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      color: var(--text-main);
+      font-size: .9rem;
+      pointer-events: none;
+      z-index: 1000;
+      box-shadow: var(--shadow-soft);
+      max-width: 300px;
+    }
+
+    .tooltip__title {
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: .5rem;
+    }
+
+    .tooltip__row {
+      margin-bottom: .3rem;
+      font-size: .85rem;
+    }
+
+    .tooltip__label {
+      color: var(--text-muted);
+    }
+
+    /* Loading */
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Node styles */
+    .node {
+      cursor: pointer;
+    }
+
+    .node circle {
+      stroke: var(--border-soft);
+      stroke-width: 2px;
+    }
+
+    .node.phone circle {
+      fill: #f97373;
+    }
+
+    .node.domain circle {
+      fill: #3b82f6;
+    }
+
+    .node.wallet circle {
+      fill: #10b981;
+    }
+
+    .node.messaginghandle circle {
+      fill: #f59e0b;
+    }
+
+    .node.voipprovider circle {
+      fill: #ec4899;
+    }
+
+    .node.cluster circle {
+      fill: #8b5cf6;
+    }
+
+    .node text {
+      font-size: 10px;
+      fill: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .link {
+      stroke: var(--border-soft);
+      stroke-opacity: 0.6;
+      stroke-width: 1.5px;
+    }
+
+    .link:hover {
+      stroke-opacity: 1;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body class="page">
+  <nav class="nav">
+    <a href="/blackwire/" class="nav__brand">
+      <div class="nav__brand-mark"></div>
+      BlackWire Intelligence
+    </a>
+    <div class="nav__links">
+      <a href="/blackwire/" class="nav__link">Home</a>
+      <a href="/blackwire/support" class="nav__link">Report &amp; Escalate</a>
+      <a href="/blackwire/trace" class="nav__link nav__link--accent">Start Tracing</a>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <aside class="sidebar">
+      <div class="sidebar__section">
+        <h2>Network Graph</h2>
+        <p style="color: var(--text-muted); font-size: .9rem; margin-bottom: 1rem;">
+          Interactive visualization of traced entities and their relationships. All entities from multiple searches are stored and visualized here.
+        </p>
+        <a href="/blackwire/trace" style="
+          display: inline-block;
+          margin-top: 0.5rem;
+          padding: 0.5rem 1rem;
+          background: rgba(248,113,113,0.16);
+          color: #fee2e2;
+          border: 1px solid rgba(248,113,113,0.4);
+          border-radius: var(--radius-md);
+          text-decoration: none;
+          font-size: 0.9rem;
+        ">+ Add More Entities</a>
+      </div>
+
+      <div class="sidebar__section">
+        <label class="sidebar__label" for="filterType">Filter by Type</label>
+        <select class="sidebar__select" id="filterType">
+          <option value="all">All Types</option>
+          <option value="PhoneNumber">Phone Numbers</option>
+          <option value="Domain">Domains</option>
+          <option value="Wallet">Wallets</option>
+          <option value="MessagingHandle">Messaging Handles</option>
+          <option value="VOIPProvider">VOIP Providers</option>
+        </select>
+      </div>
+
+      <div class="sidebar__section">
+        <label class="sidebar__label" for="searchNode">Search Node</label>
+        <input type="text" class="sidebar__input" id="searchNode" placeholder="Enter entity ID...">
+      </div>
+
+      <div class="sidebar__section">
+        <button id="refreshBtn" style="
+          width: 100%;
+          padding: .6rem;
+          background: linear-gradient(135deg, #fb7185, #ef4444);
+          color: #fff;
+          border: none;
+          border-radius: var(--radius-md);
+          font-size: .9rem;
+          font-weight: 500;
+          cursor: pointer;
+          margin-bottom: .5rem;
+        ">Refresh Graph</button>
+        <button id="centerBtn" style="
+          width: 100%;
+          padding: .6rem;
+          background: rgba(148,163,184,0.1);
+          color: var(--text-main);
+          border: 1px solid var(--border-soft);
+          border-radius: var(--radius-md);
+          font-size: .9rem;
+          font-weight: 500;
+          cursor: pointer;
+        ">Center View</button>
+      </div>
+
+      <div class="sidebar__stats" id="stats">
+        <div class="sidebar__stat">
+          <span class="sidebar__stat-label">Nodes</span>
+          <span class="sidebar__stat-value" id="nodeCount">0</span>
+        </div>
+        <div class="sidebar__stat">
+          <span class="sidebar__stat-label">Links</span>
+          <span class="sidebar__stat-value" id="linkCount">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="graph-container">
+      <div id="graph"></div>
+      <div class="loading" id="loading">Loading graph...</div>
+      <div class="tooltip" id="tooltip" style="display: none;"></div>
+    </main>
+  </div>
+
+  <script>
+    // Graph visualization using D3.js
+    const width = window.innerWidth - 280; // Account for sidebar
+    const height = window.innerHeight - 64; // Account for nav
+
+    const svg = d3.select("#graph")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    const g = svg.append("g");
+
+    // Zoom behavior
+    const zoom = d3.zoom()
+      .scaleExtent([0.1, 4])
+      .on("zoom", (event) => {
+        g.attr("transform", event.transform);
+      });
+
+    svg.call(zoom);
+
+    // Simulation
+    let simulation = d3.forceSimulation()
+      .force("link", d3.forceLink().id(d => d.id).distance(100))
+      .force("charge", d3.forceManyBody().strength(-300))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("collision", d3.forceCollide().radius(30));
+
+    let nodes = [];
+    let links = [];
+    let allNodes = [];
+    let allLinks = [];
+
+    // Color mapping for node types
+    const nodeColors = {
+      "PhoneNumber": "#f97373",
+      "Domain": "#3b82f6",
+      "Wallet": "#10b981",
+      "MessagingHandle": "#f59e0b",
+      "VOIPProvider": "#ec4899",
+      "Cluster": "#8b5cf6"
+    };
+
+    // Load graph data
+    async function loadGraph() {
+      const loadingEl = document.getElementById("loading");
+      loadingEl.style.display = "block";
+
+      try {
+        const response = await fetch("/blackwire/api/graph");
+        const data = await response.json();
+
+        // Check if Neo4j is not configured (required for core functionality)
+        if (data.error && data.error.includes("Neo4j connection not established")) {
+          console.error("Neo4j not configured - core functionality unavailable");
+          loadingEl.textContent = "❌ Neo4j is required for BlackWire graph visualization. Please configure NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD in your environment variables.";
+          loadingEl.style.color = "#f97373";
+          allNodes = [];
+          allLinks = [];
+          updateGraph();
+          return;
+        }
+
+        // Check for other errors
+        if (data.error) {
+          console.error("Graph API error:", data.error);
+          loadingEl.textContent = `Error loading graph: ${data.error}`;
+          loadingEl.style.color = "#f97373";
+          allNodes = [];
+          allLinks = [];
+          updateGraph();
+          return;
+        }
+
+        allNodes = data.nodes || [];
+        allLinks = (data.edges || []).map(link => {
+          // Ensure source and target are IDs (not objects)
+          return {
+            source: typeof link.source === 'string' ? link.source : (link.source?.id || link.source),
+            target: typeof link.target === 'string' ? link.target : (link.target?.id || link.target),
+            type: link.type || link.rel_type || 'UNKNOWN'
+          };
+        });
+
+        updateGraph();
+        updateStats();
+
+        loadingEl.style.display = "none";
+      } catch (error) {
+        console.error("Error loading graph:", error);
+        loadingEl.textContent = "Error loading graph. Make sure Neo4j is running.";
+      }
+    }
+
+    // Update graph visualization
+    function updateGraph(filterType = "all") {
+      // Filter nodes
+      nodes = allNodes.filter(node => {
+        if (filterType === "all") return true;
+        // Handle both label and properties.label
+        const nodeLabel = node.label || node.properties?.label || '';
+        return nodeLabel === filterType;
+      });
+
+      // Filter links to only include filtered nodes
+      const nodeIds = new Set(nodes.map(n => n.id));
+      links = allLinks.filter(link => {
+        const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+        const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+        return nodeIds.has(sourceId) && nodeIds.has(targetId);
+      }).map(link => {
+        // Convert IDs to node references for D3
+        const sourceId = typeof link.source === 'string' ? link.source : link.source.id;
+        const targetId = typeof link.target === 'string' ? link.target : link.target.id;
+        return {
+          source: nodes.find(n => n.id === sourceId),
+          target: nodes.find(n => n.id === targetId),
+          type: link.type
+        };
+      }).filter(link => link.source && link.target);
+
+      // Create link elements
+      const link = g.selectAll(".link")
+        .data(links, d => `${d.source}-${d.target}`);
+
+      link.exit().remove();
+
+      const linkEnter = link.enter()
+        .append("line")
+        .attr("class", "link")
+        .attr("stroke", "rgba(148,163,184,0.6)")
+        .attr("stroke-opacity", 0.6);
+
+      // Create node elements
+      const node = g.selectAll(".node")
+        .data(nodes, d => d.id);
+
+      node.exit().remove();
+
+      const nodeEnter = node.enter()
+        .append("g")
+        .attr("class", d => `node ${d.label.toLowerCase()}`)
+        .call(drag(simulation));
+
+      nodeEnter.append("circle")
+        .attr("r", 8)
+        .attr("fill", d => {
+          const label = d.label || d.properties?.label || '';
+          return nodeColors[label] || "#6b7280";
+        })
+        .on("mouseover", showTooltip)
+        .on("mouseout", hideTooltip)
+        .on("click", function(event, d) {
+          // Focus on clicked node
+          simulation.alphaTarget(0.3).restart();
+          nodes.forEach(n => {
+            if (n.id === d.id) {
+              n.fx = width / 2;
+              n.fy = height / 2;
+            } else {
+              n.fx = null;
+              n.fy = null;
+            }
+          });
+        });
+
+      nodeEnter.append("text")
+        .attr("dx", 12)
+        .attr("dy", 4)
+        .text(d => {
+          return d.display_name || d.properties?.phone || d.properties?.domain || 
+                 d.properties?.address || d.properties?.handle || d.id.substring(0, 10);
+        })
+        .attr("font-size", "10px")
+        .attr("fill", "#9ca3af");
+
+      // Merge enter and update selections
+      const linkUpdate = link.merge(linkEnter);
+      const nodeUpdate = node.merge(nodeEnter);
+
+      // Update simulation
+      simulation.nodes(nodes);
+      simulation.force("link").links(links);
+      simulation.alpha(1).restart();
+
+      // Update positions on tick
+      simulation.on("tick", () => {
+        linkUpdate
+          .attr("x1", d => d.source.x)
+          .attr("y1", d => d.source.y)
+          .attr("x2", d => d.target.x)
+          .attr("y2", d => d.target.y);
+
+        nodeUpdate.select("circle")
+          .attr("cx", d => Math.max(10, Math.min(width - 10, d.x)))
+          .attr("cy", d => Math.max(10, Math.min(height - 10, d.y)));
+        
+        nodeUpdate.select("text")
+          .attr("x", d => Math.max(10, Math.min(width - 10, d.x)) + 12)
+          .attr("y", d => Math.max(10, Math.min(height - 10, d.y)) + 4);
+      });
+    }
+
+    // Drag behavior
+    function drag(simulation) {
+      function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+      }
+
+      function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+
+      return d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended);
+    }
+
+    // Tooltip functions
+    function showTooltip(event, d) {
+      const tooltip = document.getElementById("tooltip");
+      const props = d.properties || {};
+      const label = d.label || d.properties?.label || 'Unknown';
+      
+      let content = `<div class="tooltip__title">${label}</div>`;
+      
+      if (props.phone || props.formatted) {
+        content += `<div class="tooltip__row"><span class="tooltip__label">Phone:</span> ${props.formatted || props.phone}</div>`;
+      }
+      if (props.domain) {
+        content += `<div class="tooltip__row"><span class="tooltip__label">Domain:</span> ${props.domain}</div>`;
+      }
+      if (props.address) {
+        content += `<div class="tooltip__row"><span class="tooltip__label">Wallet:</span> ${props.address.substring(0, 20)}...</div>`;
+      }
+      if (props.handle) {
+        content += `<div class="tooltip__row"><span class="tooltip__label">Handle:</span> ${props.handle}</div>`;
+      }
+      if (props.voip_provider || props.carrier) {
+        content += `<div class="tooltip__row"><span class="tooltip__label">VOIP:</span> ${props.voip_provider || props.carrier}</div>`;
+      }
+      
+      tooltip.innerHTML = content;
+      tooltip.style.display = "block";
+      tooltip.style.left = (event.pageX + 10) + "px";
+      tooltip.style.top = (event.pageY + 10) + "px";
+    }
+
+    function hideTooltip() {
+      const tooltip = document.getElementById("tooltip");
+      tooltip.style.display = "none";
+    }
+
+    // Update statistics
+    function updateStats() {
+      document.getElementById("nodeCount").textContent = allNodes.length;
+      document.getElementById("linkCount").textContent = allLinks.length;
+    }
+
+    // Event listeners
+    document.getElementById("filterType").addEventListener("change", (e) => {
+      updateGraph(e.target.value);
+      updateStats();
+    });
+
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+      loadGraph();
+    });
+
+    document.getElementById("centerBtn").addEventListener("click", () => {
+      svg.transition()
+        .duration(750)
+        .call(zoom.transform, d3.zoomIdentity.translate(0, 0).scale(1));
+    });
+
+    // Search functionality
+    document.getElementById("searchNode").addEventListener("input", (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      if (!searchTerm) {
+        updateGraph(document.getElementById("filterType").value);
+        return;
+      }
+
+      const filtered = allNodes.filter(node => {
+        const props = node.properties || {};
+        const searchFields = [
+          props.phone, props.formatted, props.domain, props.address,
+          props.handle, props.name, node.display_name
+        ].filter(f => f);
+        
+        return searchFields.some(field => 
+          String(field).toLowerCase().includes(searchTerm)
+        );
+      });
+
+      nodes = filtered;
+      const nodeIds = new Set(nodes.map(n => n.id));
+      links = allLinks.filter(link => 
+        nodeIds.has(link.source) && nodeIds.has(link.target)
+      );
+
+      updateGraph();
+    });
+
+    // Handle window resize
+    window.addEventListener("resize", () => {
+      const newWidth = window.innerWidth - 280;
+      const newHeight = window.innerHeight - 64;
+      svg.attr("width", newWidth).attr("height", newHeight);
+      simulation.force("center", d3.forceCenter(newWidth / 2, newHeight / 2));
+      simulation.alpha(1).restart();
+    });
+
+    // Initial load
+    loadGraph();
+  </script>
+</body>
+</html>
+

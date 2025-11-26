@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Clusters – BlackWire Intelligence</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" type="image/png" href="/static/favicon.svg" />
+  
+  <style>
+    :root {
+      --bg: #050711;
+      --bg-alt: #070a16;
+      --panel: #0b1021;
+      --accent: #f97373;
+      --accent-soft: rgba(249, 115, 115, 0.18);
+      --border-soft: rgba(148,163,184,0.3);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --text-soft: #6b7280;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 60px rgba(0,0,0,0.65);
+      --max-width: 1160px;
+      --nav-height: 64px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top left, #0b1220 0, #020617 38%, #000 100%);
+      min-height: 100vh;
+    }
+
+    .page { min-height: 100vh; display: flex; flex-direction: column; }
+    main { flex: 1; padding: 2rem 1.5rem; }
+
+    /* Navigation */
+    .nav {
+      height: var(--nav-height);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1.5rem; padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border-soft);
+      background: rgba(5, 7, 17, 0.9);
+    }
+
+    .nav__brand {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .94rem; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .nav__brand-mark {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8);
+    }
+
+    .nav__links { display: flex; gap: 1.2rem; font-size: .92rem; }
+    .nav__link {
+      padding: .4rem .6rem; border-radius: 999px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color .16s, background .16s;
+    }
+    .nav__link:hover { color: var(--text-main); background: rgba(148,163,184,0.12); }
+    .nav__link--accent {
+      border-radius: 999px; padding: .45rem .9rem;
+      background: rgba(248,113,113,0.16);
+      color: #fee2e2;
+      border: 1px solid rgba(248,113,113,0.4);
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 0;
+    }
+
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      margin: 0 0 .5rem;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      margin: 0;
+    }
+
+    .controls {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+
+    .btn {
+      padding: .8rem 1.4rem;
+      border-radius: 999px;
+      font-size: .95rem; font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background .16s, transform .1s, box-shadow .16s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .btn--primary {
+      background: linear-gradient(135deg, #fb7185, #ef4444);
+      color: #fff;
+      border-color: rgba(248,113,113,0.7);
+      box-shadow: 0 10px 30px rgba(248,113,113,0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .cluster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .cluster-card {
+      background: radial-gradient(circle at top left, rgba(15,23,42,.9), #020617);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-soft);
+      transition: transform .16s, box-shadow .16s;
+    }
+
+    .cluster-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 28px 65px rgba(0,0,0,.75);
+    }
+
+    .cluster-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .cluster-card__title {
+      font-size: 1.1rem;
+      margin: 0 0 .5rem;
+      color: var(--text-main);
+    }
+
+    .cluster-card__confidence {
+      padding: .3rem .8rem;
+      border-radius: 999px;
+      font-size: .85rem;
+      font-weight: 500;
+      background: rgba(249, 115, 115, 0.2);
+      color: #f97373;
+    }
+
+    .cluster-card__description {
+      color: var(--text-muted);
+      font-size: .9rem;
+      margin-bottom: 1rem;
+    }
+
+    .cluster-card__meta {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+      font-size: .85rem;
+      color: var(--text-muted);
+    }
+
+    .cluster-card__entities {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(148,163,184,0.1);
+    }
+
+    .cluster-card__entities-title {
+      font-size: .85rem;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .entity-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+
+    .entity-tag {
+      padding: .3rem .6rem;
+      border-radius: 999px;
+      font-size: .8rem;
+      background: rgba(148,163,184,0.1);
+      border: 1px solid var(--border-soft);
+      color: var(--text-main);
+      font-family: 'Monaco', 'Menlo', monospace;
+    }
+
+    .entity-tag--phone { border-color: rgba(249, 115, 115, 0.3); }
+    .entity-tag--domain { border-color: rgba(59, 130, 246, 0.3); }
+    .entity-tag--wallet { border-color: rgba(16, 185, 129, 0.3); }
+    .entity-tag--handle { border-color: rgba(245, 158, 11, 0.3); }
+
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state__icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body class="page">
+  <nav class="nav">
+    <a href="/blackwire/" class="nav__brand">
+      <div class="nav__brand-mark"></div>
+      BlackWire Intelligence
+    </a>
+    <div class="nav__links">
+      <a href="/blackwire/" class="nav__link">Home</a>
+      <a href="/blackwire/support" class="nav__link">Report &amp; Escalate</a>
+      <a href="/blackwire/trace" class="nav__link nav__link--accent">Start Tracing</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="page-header">
+        <h1>Detected Clusters</h1>
+        <p>Coordinated abuse patterns identified by cluster detection algorithm</p>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn--primary" id="refreshBtn">
+          🔄 Refresh Clusters
+        </button>
+        <span style="color: var(--text-muted);" id="lastUpdate"></span>
+      </div>
+
+      <div class="loading" id="loading">Loading clusters...</div>
+      <div class="cluster-grid" id="clusterGrid" style="display: none;"></div>
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-state__icon">📊</div>
+        <p>No clusters detected yet.</p>
+        <p style="margin-top: .5rem; font-size: .9rem;">Trace some entities first to detect patterns.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const clusterGrid = document.getElementById('clusterGrid');
+    const loading = document.getElementById('loading');
+    const emptyState = document.getElementById('emptyState');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const lastUpdate = document.getElementById('lastUpdate');
+
+    async function loadClusters() {
+      loading.style.display = 'block';
+      clusterGrid.style.display = 'none';
+      emptyState.style.display = 'none';
+      refreshBtn.disabled = true;
+
+      try {
+        const response = await fetch('/blackwire/api/clusters');
+        const data = await response.json();
+        const clusters = data.clusters || [];
+
+        loading.style.display = 'none';
+        refreshBtn.disabled = false;
+        lastUpdate.textContent = `Last updated: ${new Date().toLocaleTimeString()}`;
+
+        if (clusters.length === 0) {
+          emptyState.style.display = 'block';
+          return;
+        }
+
+        clusterGrid.style.display = 'grid';
+        renderClusters(clusters);
+
+      } catch (error) {
+        console.error('Error loading clusters:', error);
+        loading.innerHTML = 'Error loading clusters. Make sure databases are running.';
+        refreshBtn.disabled = false;
+      }
+    }
+
+    function renderClusters(clusters) {
+      // Sort by confidence (highest first)
+      clusters.sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+
+      clusterGrid.innerHTML = '';
+
+      clusters.forEach(cluster => {
+        const card = document.createElement('div');
+        card.className = 'cluster-card';
+
+        const confidencePercent = Math.round((cluster.confidence || 0) * 100);
+        const entityTypes = cluster.entity_types || [];
+        const entities = cluster.entities || [];
+
+        card.innerHTML = `
+          <div class="cluster-card__header">
+            <div>
+              <h3 class="cluster-card__title">${cluster.description || 'Cluster'}</h3>
+              <div class="cluster-card__meta">
+                <span>${entities.length} entities</span>
+                <span>•</span>
+                <span>${entityTypes.join(', ')}</span>
+                <span>•</span>
+                <span>${cluster.pattern_type || 'unknown'}</span>
+              </div>
+            </div>
+            <div class="cluster-card__confidence">
+              ${confidencePercent}% confidence
+            </div>
+          </div>
+
+          <p class="cluster-card__description">
+            ${cluster.description || 'No description available.'}
+          </p>
+
+          <div class="cluster-card__entities">
+            <div class="cluster-card__entities-title">Entities (${entities.length})</div>
+            <div class="entity-list">
+              ${entities.slice(0, 10).map(entity => {
+                const entityType = entity.type || 'unknown';
+                return `<span class="entity-tag entity-tag--${entityType}">${formatEntityId(entity.id)}</span>`;
+              }).join('')}
+              ${entities.length > 10 ? `<span class="entity-tag">+${entities.length - 10} more</span>` : ''}
+            </div>
+          </div>
+        `;
+
+        clusterGrid.appendChild(card);
+      });
+    }
+
+    function formatEntityId(id) {
+      if (!id) return 'N/A';
+      const str = String(id);
+      if (str.length > 20) {
+        return str.substring(0, 17) + '...';
+      }
+      return str;
+    }
+
+    refreshBtn.addEventListener('click', loadClusters);
+
+    // Initial load
+    loadClusters();
+
+    // Auto-refresh every 30 seconds
+    setInterval(loadClusters, 30000);
+  </script>
+</body>
+</html>
+

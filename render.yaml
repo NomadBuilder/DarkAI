@@ -1,0 +1,81 @@
+services:
+  - type: web
+    name: darkai-consolidated
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --threads 2 --timeout 120
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      
+      # Shared Database - All services use the same database
+      # Using the existing ncii-postgres database (same as standalone ShadowStack)
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: ncii-postgres
+          property: host
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: ncii-postgres
+          property: port
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: ncii-postgres
+          property: user
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: ncii-postgres
+          property: password
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: ncii-postgres
+          property: database
+      
+      # All services (PersonaForge, BlackWire, ShadowStack) will use the same POSTGRES_* vars
+      # They use different table names so there's no conflict
+      
+      # Neo4j (optional - shared or separate for each service)
+      # Uncomment and set manually if you want to use Neo4j:
+      # - key: NEO4J_URI
+      #   sync: false
+      # - key: NEO4J_USER
+      #   sync: false
+      # - key: NEO4J_PASSWORD
+      #   sync: false
+      
+      # API Keys - set these manually in Render dashboard
+      # PersonaForge API Keys
+      - key: BUILTWITH_API_KEY
+        sync: false
+      - key: IPLOCATE_API_KEY
+        sync: false
+      - key: SHODAN_API_KEY
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: SERPAPI_API_KEY
+        sync: false
+      
+      # BlackWire API Keys
+      - key: IPAPI_KEY
+        sync: false
+      - key: VIRUSTOTAL_API_KEY
+        sync: false
+      - key: NUMLOOKUP_API_KEY
+        sync: false
+      - key: ETHERSCAN_API_KEY
+        sync: false
+
+databases:
+  # Using existing ncii-postgres database (shared by all services)
+  # If this database doesn't exist yet, Render will create it
+  # Otherwise, it will use the existing one
+  - name: ncii-postgres
+    databaseName: ncii
+    user: ncii_user
+    plan: free
+

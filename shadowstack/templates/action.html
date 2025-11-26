@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Take Action – ShadowStack</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Concrete steps for stopping AI-generated sexual abuse: how to report sites, support survivors, and pressure infrastructure providers using ShadowStack." />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('static', filename='images/favicon.svg') }}" />
+
+  <style>
+    :root {
+      --bg-deep: #05070b;
+      --bg-dark: #0b0f16;
+      --bg-panel: #111827;
+      --accent-red: #d9353e;
+      --accent-red-soft: rgba(217, 53, 62, 0.18);
+      --text-main: #f3f4f7;
+      --text-muted: #9ca3af;
+      --border-subtle: #1f2933;
+      --max-width: 1120px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.65);
+      --transition-fast: 150ms ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text-main);
+      background: radial-gradient(circle at top, #141825 0, #020308 60%);
+    }
+
+    body {
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page { min-height: 80vh; display: flex; flex-direction: column; }
+    main { flex: 1; }
+    .section { padding: 4rem 1.5rem; }
+    .section--tight { padding-top: 2.5rem; padding-bottom: 3.5rem; }
+    .section--destroying { padding: 5rem 1.5rem; }
+    .section--analysis { padding: 5rem 1.5rem; }
+    .section__inner { max-width: var(--max-width); margin: 0 auto; }
+
+    /* HERO */
+    .hero { position: relative; min-height: 49vh; display: flex; flex-direction: column; padding: 2.5rem 1.5rem 5rem; overflow: hidden; background: #03040a; }
+    .hero--sub { min-height: 49vh; }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url("{{ url_for('static', filename='images/action.png') }}");
+      background-size: cover;
+      background-position: left center;
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    .hero__content { position: relative; z-index: 1; max-width: var(--max-width); margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; flex: 1; padding-top: 2rem; }
+    .hero__nav { display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; }
+    .hero__brand { display: inline-flex; align-items: center; gap: 0.6rem; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--text-muted); }
+    .hero__brand-mark { width: 26px; height: 26px; border-radius: 999px; background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%); box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8); }
+    .hero__nav-links { display: flex; gap: 1rem; }
+    .hero__link { font-size: 0.9rem; color: var(--text-muted); padding: 0.35rem 0.9rem; border-radius: 999px; border: 1px solid rgba(156, 163, 175, 0.35); backdrop-filter: blur(10px); background: rgba(15, 23, 42, 0.5); transition: all 0.2s ease; }
+    .hero__link:hover { border-color: rgba(156, 163, 175, 0.6); background: rgba(15, 23, 42, 0.7); }
+
+    .hero__grid { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr); gap: 3rem; align-items: center; }
+    @media (max-width: 880px) { .hero__grid { grid-template-columns: minmax(0, 1fr); } }
+
+    .hero__headline { font-size: 3rem; line-height: 1.18; letter-spacing: 0.5px; margin-bottom: 2.5rem; color: var(--text-main); }
+    .hero__subtitle { font-size: 1.2rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; }
+    .btn { padding: 0.9rem 1.7rem; border-radius: 999px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; cursor: pointer; display: inline-flex; gap: 0.45rem; text-decoration: none; transition: transform 0.2s ease, box-shadow 0.2s ease; border: none; font-size: 0.9rem; }
+    .btn--primary { background: linear-gradient(to right, #f97373, var(--accent-red)); color: white; }
+    .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(217, 53, 62, 0.4); }
+    .btn--secondary { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.2); color: var(--text-main); }
+    .btn--secondary:hover { background: rgba(15, 23, 42, 1); border-color: rgba(255, 255, 255, 0.3); transform: translateY(-2px); }
+    .btn-group { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    /* SECTION STYLES */
+    .section-kicker { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+    .section-title { font-size: 1.9rem; line-height: 1.3; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); }
+    .section-lead { font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 600px; }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero { min-height: 38vh; padding: 2rem 1rem 3rem; }
+      .hero__headline { font-size: 2rem; margin-bottom: 1.5rem; }
+      .hero__subtitle { font-size: 1rem; margin-bottom: 2rem; }
+      .section { padding: 3rem 1rem; }
+      .section--tight { padding-top: 2rem; padding-bottom: 2.5rem; }
+      .section-title { font-size: 1.5rem; }
+      .section-lead { font-size: 1rem; }
+      .responsive-grid { 
+        grid-template-columns: 1fr !important; 
+        gap: 2rem !important; 
+      }
+      article, .section__inner > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+      aside {
+        margin-top: 1rem;
+      }
+      pre {
+        font-size: 0.75rem !important;
+        padding: 0.7rem !important;
+        overflow-x: auto;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+      }
+      .section__inner {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .btn-group { flex-direction: column; }
+      .btn-group .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body class="page">
+  {% from "_navigation.html" import render_nav %}
+  {{ render_nav('action') }}
+  <main>
+    <!-- HERO / INTRO -->
+    <header class="hero hero--sub" aria-labelledby="action-hero-title">
+      <div class="hero__content">
+        <div class="hero__nav" style="display: none;">
+          <!-- Navigation moved to top of page -->
+        </div>
+
+        <div class="hero__grid">
+          <div>
+            <h1 id="action-hero-title" class="hero__headline">You can help stop AI‑generated sexual abuse.</h1>
+            <p class="hero__subtitle">This page turns outrage into action: clear steps for reporting abuse, supporting survivors, and putting pressure on the companies that keep these sites online.</p>
+            <div class="btn-group">
+              <a href="/shadowstack/check" class="btn btn--primary">Check a URL</a>
+              <a href="/shadowstack/dashboard" class="btn btn--secondary">See the data</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- SECTION: STEP OVERVIEW -->
+    <section class="section section--tight" aria-labelledby="steps-title">
+      <div class="section__inner" style="max-width:960px;display:flex;flex-direction:column;gap:2.5rem;">
+        <header>
+          <div class="section-kicker" style="display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;">
+            <svg width="16" height="16" fill="#d9353e"><circle cx="8" cy="8" r="8"/></svg>
+            Take action
+          </div>
+          <h2 id="steps-title" class="section-title" style="font-size:2rem;line-height:1.25;max-width:620px;">Three ways to push back: report, support, and hold infrastructure accountable.</h2>
+          <p class="section-lead" style="max-width:720px;">NCII and AI pornography thrive because they are profitable, scalable, and hard to see. ShadowStack exists to make the invisible visible. Use it to document what you find, then follow the steps below.</p>
+        </header>
+
+        <!-- STEP GRID -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.6rem;">
+
+          <!-- Step 1: Report -->
+          <article style="padding:1.4rem;border-radius:14px;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.8rem;">
+            <h3 style="font-size:1.3rem;display:flex;align-items:center;gap:0.5rem;color:var(--text-main);"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;border:1px solid rgba(248,113,113,0.9);font-size:0.85rem;color:var(--text-main);">1</span> Report what you see</h3>
+            <p style="color:var(--text-muted);font-size:0.95rem;">If you encounter AI‑generated sexual abuse, treat it as evidence, not content.</p>
+            <ul style="color:var(--text-muted);font-size:0.93rem;line-height:1.6;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.45rem;">
+              <li><strong>Do not download</strong> illegal content (especially if minors are involved). Capture URLs, timestamps, and screenshots of infrastructure data instead.</li>
+              <li>Use ShadowStack to map <strong>hosting, CDN, DNS, and payment providers</strong> linked to the URL.</li>
+              <li>In Canada, report child‑exploitation content to <strong>Cybertip.ca</strong> and non‑consensual intimate imagery to local law enforcement where safe.</li>
+              <li>Use the platform's reporting tools (e.g., Meta, X, Reddit, Discord) and paste relevant URLs and screenshots.</li>
+            </ul>
+          </article>
+
+          <!-- Step 2: Support survivors -->
+          <article style="padding:1.4rem;border-radius:14px;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.8rem;">
+            <h3 style="font-size:1.3rem;display:flex;align-items:center;gap:0.5rem;color:var(--text-main);"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;border:1px solid rgba(248,113,113,0.9);font-size:0.85rem;color:var(--text-main);">2</span> Stand with survivors</h3>
+            <p style="color:var(--text-muted);font-size:0.95rem;">Most people who experience NCII never go public. The first response they get matters.</p>
+            <ul style="color:var(--text-muted);font-size:0.93rem;line-height:1.6;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.45rem;">
+              <li>Believe them. Avoid questions that sound like blame: <em>"Why did you send that?"</em> or <em>"Why were you online with them?"</em></li>
+              <li>Help them document evidence and file reports instead of asking them to handle it alone.</li>
+              <li>Share trusted support resources (e.g., Canadian Centre for Child Protection, Women's Shelters Canada, local crisis lines).</li>
+              <li>Offer to be the contact person with platforms or providers if it feels overwhelming for them.</li>
+            </ul>
+          </article>
+
+          <!-- Step 3: Pressure infrastructure -->
+          <article style="padding:1.4rem;border-radius:14px;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.8rem;">
+            <h3 style="font-size:1.3rem;display:flex;align-items:center;gap:0.5rem;color:var(--text-main);"><span style="display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:999px;border:1px solid rgba(248,113,113,0.9);font-size:0.85rem;color:var(--text-main);">3</span> Hold infrastructure to account</h3>
+            <p style="color:var(--text-muted);font-size:0.95rem;">Websites don't survive on their own. They depend on CDNs, hosts, registrars, and payment rails that can choose to cut them off.</p>
+            <ul style="color:var(--text-muted);font-size:0.93rem;line-height:1.6;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.45rem;">
+              <li>Run the URL through ShadowStack and note <strong>which providers appear again and again</strong> on abusive sites.</li>
+              <li>Use that evidence to contact providers' <strong>abuse or trust &amp; safety teams</strong> with clear, specific complaints.</li>
+              <li>Where possible, coordinate with NGOs, journalists, or legal advocates so that multiple reports arrive together.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION: CLOUDflare / PLATFORM TEMPLATE -->
+    <section class="section section--destroying" aria-labelledby="providers-title">
+      <div class="section__inner responsive-grid" style="max-width:980px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:2.5rem;align-items:flex-start;">
+        <div style="display:flex;flex-direction:column;gap:1rem;">
+          <div class="section-kicker" style="display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;">
+            <svg width="16" height="16" fill="#d9353e"><rect width="16" height="16" rx="4"/></svg>
+            Using the map
+          </div>
+          <h2 id="providers-title" class="section-title" style="font-size:1.8rem;line-height:1.3;">Turn an infrastructure map into a pressure campaign.</h2>
+          <p style="color:var(--text-muted);font-size:0.98rem;line-height:1.7;">ShadowStack is built to generate <strong>actionable dossiers</strong> on the companies that keep abusive sites online. The goal is not just to know who they are, but to give advocates and regulators everything they need to demand change.</p>
+          <ol style="color:var(--text-muted);font-size:0.95rem;line-height:1.6;padding-left:1.2rem;display:flex;flex-direction:column;gap:0.4rem;">
+            <li><strong>Map the site:</strong> <a href="/shadowstack/check" style="color: #f97373; text-decoration: underline;">Run the URL through our infrastructure checker</a>. Export the graph and metadata (CSV/JSON) to capture the full stack: CDN, host, registrar, payment processor, analytics, and trackers.</li>
+            <li><strong>Identify repeat enablers:</strong> Look for providers that appear on multiple abusive domains or provide both CDN and DNS to the same cluster.</li>
+            <li><strong>Attach evidence:</strong> Include screenshots of the site (redacted where necessary), timestamps, geolocation (if relevant), and a short summary of the harm.</li>
+            <li><strong>Send coordinated complaints:</strong> Use the template on the right to contact trust &amp; safety / abuse teams at providers like Cloudflare, other CDNs, hosting companies, and payment processors.</li>
+          </ol>
+        </div>
+
+        <aside style="padding:1.3rem 1.4rem;background:rgba(15,23,42,0.6);border-radius:14px;border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.9rem;font-size:0.9rem;">
+          <h3 style="font-size:1.05rem;display:flex;align-items:center;gap:0.45rem;color:var(--text-main);">
+            <svg width="16" height="16" fill="#d9353e"><circle cx="8" cy="8" r="8"/></svg>
+            Sample email to an infrastructure provider
+          </h3>
+          <p style="color:var(--text-muted);">You can adapt this language for Cloudflare, other CDNs, hosting providers, or registrars. Replace the bracketed sections with details from the map.</p>
+          <pre style="white-space:pre-wrap;background:rgba(15,23,42,0.8);border-radius:10px;padding:0.9rem;font-family:system-ui, -apple-system, BlinkMacSystemFont, 'SF Mono', ui-monospace;font-size:0.82rem;line-height:1.5;overflow:auto;color:var(--text-main);">
+Subject: Urgent abuse report – AI-generated sexual abuse using your services
+
+Dear Abuse / Trust &amp; Safety team,
+
+I am writing to report a website that is using your services to distribute non-consensual, AI-generated sexual imagery.
+
+• Domain: [domain]
+• First seen: [date/time, timezone]
+• Your role: [CDN / DNS / hosting / registrar / payment processor]
+
+The attached screenshots and the linked infrastructure report show that this site is hosting or amplifying AI-generated sexual abuse, including [brief description – e.g., "deepfake pornography of named individuals" or "nudified images of what appear to be minors"].
+
+Under your acceptable use and abuse policies, as well as international human rights standards, I am asking you to:
+
+1. Investigate this domain and related subdomains or mirror sites; and
+2. Suspend service or require immediate removal of the abusive content.
+
+I am happy to provide further technical details or full logs from ShadowStack if helpful.
+
+Sincerely,
+[Name or organisation]
+[Contact information]</pre>
+        </aside>
+      </div>
+    </section>
+
+    <!-- SECTION: LONG-TERM INVOLVEMENT -->
+    <section class="section section--analysis" aria-labelledby="involved-title">
+      <div class="section__inner" style="max-width:960px;display:flex;flex-direction:column;gap:2.2rem;">
+        <header>
+          <div class="section-kicker" style="display:flex;align-items:center;gap:0.6rem;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.12em;">
+            <svg width="16" height="16" fill="#d9353e"><circle cx="8" cy="8" r="8"/></svg>
+            Join the movement
+          </div>
+          <h2 id="involved-title" class="section-title" style="font-size:1.9rem;max-width:640px;">No one tool can fix this. But together, we can move the infrastructure.</h2>
+          <p class="section-lead" style="max-width:720px;">NCII and AI pornography sit at the intersection of gender‑based violence, privacy, and platform accountability. This project is designed to plug into that broader ecosystem, not replace it.</p>
+        </header>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.6rem;">
+          <div style="padding:1.3rem;border-radius:14px;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.6rem;">
+            <h3 style="font-size:1.15rem;color:var(--text-main);">For NGOs &amp; advocates</h3>
+            <p style="color:var(--text-muted);font-size:0.94rem;">Use the mapping tool to build case files on repeat enablers. Attach exports to policy briefs, media stories, and regulator submissions.</p>
+          </div>
+          <div style="padding:1.3rem;border-radius:14px;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.6rem;">
+            <h3 style="font-size:1.15rem;color:var(--text-main);">For technologists &amp; researchers</h3>
+            <p style="color:var(--text-muted);font-size:0.94rem;">Contribute crawlers, enrichment plugins, or datasets. Help us improve detection of NCII clusters and measure which interventions actually work.</p>
+          </div>
+          <div style="padding:1.3rem;border-radius:14px;background:rgba(15,23,42,0.7);border:1px solid rgba(255,255,255,0.08);backdrop-filter:blur(10px);display:flex;flex-direction:column;gap:0.6rem;">
+            <h3 style="font-size:1.15rem;color:var(--text-main);">For funders &amp; policymakers</h3>
+            <p style="color:var(--text-muted);font-size:0.94rem;">Use infrastructure data to design targeted obligations: transparency from CDNs, abuse‑handling standards, and real penalties when providers repeatedly enable AI sexual abuse.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
+
