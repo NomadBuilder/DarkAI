@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
-  <link rel="alternate icon" type="image/png" href="/static/favicon.svg" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
+  <link rel="alternate icon" type="image/png" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
   
   <!-- D3.js for graph visualization -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -346,7 +346,7 @@
             <button type="button" id="uploadCsvBtn" class="btn btn--primary" style="display: inline-flex; align-items: center; gap: 0.4rem;">
               📤 Upload & Trace CSV
             </button>
-            <a href="/static/csv-template.csv" download style="
+            <a href="{{ url_for('blackwire.static', filename='csv-template.csv') }}" download style="
               color: var(--accent);
               text-decoration: none;
               font-size: 0.9rem;

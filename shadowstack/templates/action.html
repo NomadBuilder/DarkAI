@@ -5,8 +5,8 @@
   <title>Take Action – ShadowStack</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="Concrete steps for stopping AI-generated sexual abuse: how to report sites, support survivors, and pressure infrastructure providers using ShadowStack." />
-  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='images/favicon.svg') }}" />
-  <link rel="alternate icon" href="{{ url_for('static', filename='images/favicon.svg') }}" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
 
   <style>
     :root {
@@ -63,7 +63,7 @@
       content: "";
       position: absolute;
       inset: 0;
-      background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url("{{ url_for('static', filename='images/action.png') }}");
+      background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url("{{ url_for('shadowstack.static', filename='images/action.png') }}");
       background-size: cover;
       background-position: left center;
       opacity: 0.8;
