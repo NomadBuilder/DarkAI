@@ -34,6 +34,10 @@ class PostgresClient:
         if database_url:
             # Parse DATABASE_URL (Render format)
             connect_params = _parse_database_url(database_url)
+            # Override database name if SHADOWSTACK_POSTGRES_DB is set (for shared database servers)
+            shadowstack_db = os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE")
+            if shadowstack_db:
+                connect_params["database"] = shadowstack_db
         else:
             # Use individual POSTGRES_* vars (standalone format)
             connect_params = {
