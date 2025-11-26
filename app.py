@@ -141,6 +141,18 @@ def serve_static(filename):
     return send_from_directory('static', filename)
 
 
+# Health check endpoint for Render
+@app.route('/healthz')
+@app.route('/health')
+def health():
+    """Health check endpoint for Render monitoring."""
+    return jsonify({
+        "status": "ok",
+        "service": "darkai-consolidated",
+        "timestamp": datetime.now().isoformat()
+    }), 200
+
+
 if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
