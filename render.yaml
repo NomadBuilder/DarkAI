@@ -13,26 +13,26 @@ services:
         value: production
       
       # Shared Database - All services use the same database
-      # Using the existing ncii-postgres database (same as standalone ShadowStack)
+      # Using the existing blackwire database
       - key: POSTGRES_HOST
         fromDatabase:
-          name: ncii-postgres
+          name: blackwire
           property: host
       - key: POSTGRES_PORT
         fromDatabase:
-          name: ncii-postgres
+          name: blackwire
           property: port
       - key: POSTGRES_USER
         fromDatabase:
-          name: ncii-postgres
+          name: blackwire
           property: user
       - key: POSTGRES_PASSWORD
         fromDatabase:
-          name: ncii-postgres
+          name: blackwire
           property: password
       - key: POSTGRES_DB
         fromDatabase:
-          name: ncii-postgres
+          name: blackwire
           property: database
       
       # All services (PersonaForge, BlackWire, ShadowStack) will use the same POSTGRES_* vars
@@ -71,11 +71,10 @@ services:
         sync: false
 
 databases:
-  # Using existing ncii-postgres database (shared by all services)
-  # If this database doesn't exist yet, Render will create it
-  # Otherwise, it will use the existing one
-  - name: ncii-postgres
-    databaseName: ncii
-    user: ncii_user
+  # Using existing blackwire database (shared by all services)
+  # The blackwire database already exists in Render
+  - name: blackwire
+    databaseName: blackwire
+    user: blackwire_user
     plan: free
 
