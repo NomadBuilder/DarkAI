@@ -6,26 +6,47 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 load_dotenv()
+
+
+def _parse_database_url(database_url: str) -> dict:
+    """Parse DATABASE_URL into connection parameters."""
+    parsed = urlparse(database_url)
+    return {
+        "host": parsed.hostname,
+        "port": parsed.port or 5432,
+        "user": parsed.username,
+        "password": parsed.password,
+        "database": parsed.path.lstrip('/')
+    }
 
 
 class PostgresClient:
     """Client for interacting with PostgreSQL database."""
     
     def __init__(self):
-        # Use the same database config as standalone ShadowStack
-        # Try standard POSTGRES_* vars first (same as standalone), then prefixed vars, then defaults
-        connect_params = {
-            "host": os.getenv("POSTGRES_HOST") or os.getenv("SHADOWSTACK_POSTGRES_HOST") or os.getenv("POSTGRES_HOSTNAME", "localhost"),
-            "port": os.getenv("POSTGRES_PORT") or os.getenv("SHADOWSTACK_POSTGRES_PORT") or "5432",
-            "user": os.getenv("POSTGRES_USER") or os.getenv("SHADOWSTACK_POSTGRES_USER") or os.getenv("POSTGRES_USERNAME", "ncii_user"),
-            "password": os.getenv("POSTGRES_PASSWORD") or os.getenv("SHADOWSTACK_POSTGRES_PASSWORD") or "ncii123password",
-            "database": os.getenv("POSTGRES_DB") or os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE", "ncii_infra")
-        }
+        # Render provides DATABASE_URL when linking a database
+        # Try DATABASE_URL first, then individual POSTGRES_* vars, then defaults
+        database_url = os.getenv("DATABASE_URL")
+        
+        if database_url:
+            # Parse DATABASE_URL (Render format)
+            connect_params = _parse_database_url(database_url)
+        else:
+            # Use individual POSTGRES_* vars (standalone format)
+            connect_params = {
+                "host": os.getenv("POSTGRES_HOST") or os.getenv("SHADOWSTACK_POSTGRES_HOST") or os.getenv("POSTGRES_HOSTNAME", "localhost"),
+                "port": os.getenv("POSTGRES_PORT") or os.getenv("SHADOWSTACK_POSTGRES_PORT") or "5432",
+                "user": os.getenv("POSTGRES_USER") or os.getenv("SHADOWSTACK_POSTGRES_USER") or os.getenv("POSTGRES_USERNAME", "ncii_user"),
+                "password": os.getenv("POSTGRES_PASSWORD") or os.getenv("SHADOWSTACK_POSTGRES_PASSWORD") or "ncii123password",
+                "database": os.getenv("POSTGRES_DB") or os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE", "ncii_infra")
+            }
+        
         # Add SSL for Render PostgreSQL (required for external connections)
         postgres_host = connect_params["host"]
-        if postgres_host.endswith(".render.com"):
+        if postgres_host and (postgres_host.endswith(".render.com") or "render.com" in postgres_host):
             connect_params["sslmode"] = "require"
         
         # Add connection timeout to fail fast (5 seconds)
@@ -52,19 +73,23 @@ class PostgresClient:
                 self.conn.close()
             except:
                 pass
-            # Use the same database config as standalone ShadowStack
-            connect_params = {
-                "host": os.getenv("POSTGRES_HOST") or os.getenv("SHADOWSTACK_POSTGRES_HOST") or os.getenv("POSTGRES_HOSTNAME", "localhost"),
-                "port": os.getenv("POSTGRES_PORT") or os.getenv("SHADOWSTACK_POSTGRES_PORT") or "5432",
-                "user": os.getenv("POSTGRES_USER") or os.getenv("SHADOWSTACK_POSTGRES_USER") or os.getenv("POSTGRES_USERNAME", "ncii_user"),
-                "password": os.getenv("POSTGRES_PASSWORD") or os.getenv("SHADOWSTACK_POSTGRES_PASSWORD") or "ncii123password",
-                "database": os.getenv("POSTGRES_DB") or os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE", "ncii_infra"),
-                "connect_timeout": 5  # Fail fast - 5 second timeout
-            }
+            # Use same logic as __init__ to get connection params
+            database_url = os.getenv("DATABASE_URL")
+            if database_url:
+                connect_params = _parse_database_url(database_url)
+            else:
+                connect_params = {
+                    "host": os.getenv("POSTGRES_HOST") or os.getenv("SHADOWSTACK_POSTGRES_HOST") or os.getenv("POSTGRES_HOSTNAME", "localhost"),
+                    "port": os.getenv("POSTGRES_PORT") or os.getenv("SHADOWSTACK_POSTGRES_PORT") or "5432",
+                    "user": os.getenv("POSTGRES_USER") or os.getenv("SHADOWSTACK_POSTGRES_USER") or os.getenv("POSTGRES_USERNAME", "ncii_user"),
+                    "password": os.getenv("POSTGRES_PASSWORD") or os.getenv("SHADOWSTACK_POSTGRES_PASSWORD") or "ncii123password",
+                    "database": os.getenv("POSTGRES_DB") or os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE", "ncii_infra"),
+                }
             # Add SSL for Render PostgreSQL (required for external connections)
             postgres_host = connect_params["host"]
-            if postgres_host.endswith(".render.com"):
+            if postgres_host and (postgres_host.endswith(".render.com") or "render.com" in postgres_host):
                 connect_params["sslmode"] = "require"
+            connect_params["connect_timeout"] = 5  # Fail fast - 5 second timeout
             
             self.conn = psycopg2.connect(**connect_params)
     

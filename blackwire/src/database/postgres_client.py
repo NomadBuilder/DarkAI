@@ -6,25 +6,47 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 load_dotenv()
+
+
+def _parse_database_url(database_url: str) -> dict:
+    """Parse DATABASE_URL into connection parameters."""
+    parsed = urlparse(database_url)
+    return {
+        "host": parsed.hostname,
+        "port": parsed.port or 5432,
+        "user": parsed.username,
+        "password": parsed.password,
+        "database": parsed.path.lstrip('/')
+    }
 
 
 class PostgresClient:
     """Client for interacting with PostgreSQL database for BlackWire."""
     
     def __init__(self):
-        # Support prefixed env vars for consolidated app, fallback to standard
-        connect_params = {
-            "host": os.getenv("BLACKWIRE_POSTGRES_HOST") or os.getenv("POSTGRES_HOST", "localhost"),
-            "port": os.getenv("BLACKWIRE_POSTGRES_PORT") or os.getenv("POSTGRES_PORT", "5432"),
-            "user": os.getenv("BLACKWIRE_POSTGRES_USER") or os.getenv("POSTGRES_USER", "blackwire_user"),
-            "password": os.getenv("BLACKWIRE_POSTGRES_PASSWORD") or os.getenv("POSTGRES_PASSWORD", "blackwire123password"),
-            "database": os.getenv("BLACKWIRE_POSTGRES_DB") or os.getenv("POSTGRES_DB", "blackwire")
-        }
+        # Render provides DATABASE_URL when linking a database
+        # Try DATABASE_URL first, then prefixed vars, then standard vars, then defaults
+        database_url = os.getenv("DATABASE_URL")
+        
+        if database_url:
+            # Parse DATABASE_URL (Render format)
+            connect_params = _parse_database_url(database_url)
+        else:
+            # Support prefixed env vars for consolidated app, fallback to standard
+            connect_params = {
+                "host": os.getenv("BLACKWIRE_POSTGRES_HOST") or os.getenv("POSTGRES_HOST", "localhost"),
+                "port": os.getenv("BLACKWIRE_POSTGRES_PORT") or os.getenv("POSTGRES_PORT", "5432"),
+                "user": os.getenv("BLACKWIRE_POSTGRES_USER") or os.getenv("POSTGRES_USER", "blackwire_user"),
+                "password": os.getenv("BLACKWIRE_POSTGRES_PASSWORD") or os.getenv("POSTGRES_PASSWORD", "blackwire123password"),
+                "database": os.getenv("BLACKWIRE_POSTGRES_DB") or os.getenv("POSTGRES_DB", "blackwire")
+            }
+        
         # Add SSL for Render PostgreSQL (required for external connections)
         postgres_host = connect_params["host"]
-        if postgres_host.endswith(".render.com"):
+        if postgres_host and (postgres_host.endswith(".render.com") or "render.com" in postgres_host):
             connect_params["sslmode"] = "require"
         
         try:

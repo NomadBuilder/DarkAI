@@ -6,8 +6,21 @@ import psycopg2
 from psycopg2.extras import RealDictCursor, Json
 from typing import Dict, List, Optional
 from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 load_dotenv()
+
+
+def _parse_database_url(database_url: str) -> dict:
+    """Parse DATABASE_URL into connection parameters."""
+    parsed = urlparse(database_url)
+    return {
+        "host": parsed.hostname,
+        "port": parsed.port or 5432,
+        "user": parsed.username,
+        "password": parsed.password,
+        "database": parsed.path.lstrip('/')
+    }
 
 # Import Config after load_dotenv
 try:
@@ -28,15 +41,26 @@ class PostgresClient:
     """Client for interacting with PostgreSQL database for PersonaForge."""
     
     def __init__(self):
-        connect_params = {
-            "host": Config.POSTGRES_HOST,
-            "port": Config.POSTGRES_PORT,
-            "user": Config.POSTGRES_USER,
-            "password": Config.POSTGRES_PASSWORD,
-            "database": Config.POSTGRES_DB
-        }
+        # Render provides DATABASE_URL when linking a database
+        # Try DATABASE_URL first, then Config/individual vars, then defaults
+        database_url = os.getenv("DATABASE_URL")
+        
+        if database_url:
+            # Parse DATABASE_URL (Render format)
+            connect_params = _parse_database_url(database_url)
+        else:
+            # Use Config or individual env vars
+            connect_params = {
+                "host": Config.POSTGRES_HOST,
+                "port": Config.POSTGRES_PORT,
+                "user": Config.POSTGRES_USER,
+                "password": Config.POSTGRES_PASSWORD,
+                "database": Config.POSTGRES_DB
+            }
+        
         # Add SSL for Render PostgreSQL (required for external connections)
-        if Config.POSTGRES_HOST.endswith(".render.com"):
+        postgres_host = connect_params["host"]
+        if postgres_host and (postgres_host.endswith(".render.com") or "render.com" in postgres_host):
             connect_params["sslmode"] = "require"
         
         try:
