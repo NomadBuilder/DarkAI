@@ -900,14 +900,41 @@ def get_analytics():
         
         # Calculate statistics
         # Handle None, empty string, and falsy values properly
+        # Debug: Check a few sample domains to see what the data looks like
+        if domains:
+            sample = domains[0]
+            print(f"🔍 Sample domain data: cms={repr(sample.get('cms'))}, cdn={repr(sample.get('cdn'))}, isp={repr(sample.get('isp'))}, host_name={repr(sample.get('host_name'))}")
+        
+        def has_value(field_value):
+            """Check if a field has a valid (non-empty) value."""
+            if field_value is None:
+                return False
+            if isinstance(field_value, str):
+                cleaned = field_value.strip()
+                return cleaned and cleaned.lower() != 'none' and cleaned != ''
+            return bool(field_value)
+        
+        # Count domains with each enrichment field
+        domains_with_cms = sum(1 for d in domains if has_value(d.get('cms')))
+        domains_with_cdn = sum(1 for d in domains if has_value(d.get('cdn')))
+        domains_with_payment = sum(1 for d in domains if has_value(d.get('payment_processor')))
+        unique_isps = len(set(d.get('isp') for d in domains if has_value(d.get('isp'))))
+        unique_hosts = len(set(d.get('host_name') for d in domains if has_value(d.get('host_name'))))
+        
         stats = {
             'total_domains': total,
-            'domains_with_cms': sum(1 for d in domains if d.get('cms') and d.get('cms') != 'None' and str(d.get('cms')).strip()),
-            'domains_with_cdn': sum(1 for d in domains if d.get('cdn') and d.get('cdn') != 'None' and str(d.get('cdn')).strip()),
-            'domains_with_payment': sum(1 for d in domains if d.get('payment_processor') and d.get('payment_processor') != 'None' and str(d.get('payment_processor')).strip()),
-            'unique_isps': len(set(d.get('isp') for d in domains if d.get('isp') and d.get('isp') != 'None' and str(d.get('isp')).strip())),
-            'unique_hosts': len(set(d.get('host_name') for d in domains if d.get('host_name') and d.get('host_name') != 'None' and str(d.get('host_name')).strip()))
+            'domains_with_cms': domains_with_cms,
+            'domains_with_cdn': domains_with_cdn,
+            'domains_with_payment': domains_with_payment,
+            'unique_isps': unique_isps,
+            'unique_hosts': unique_hosts
         }
+        
+        print(f"📊 Analytics stats calculated: {stats}")
+        print(f"   Sample check - first 5 domains with cms: {[d.get('cms') for d in domains[:5]]}")
+        print(f"   Sample check - first 5 domains with cdn: {[d.get('cdn') for d in domains[:5]]}")
+        print(f"   Sample check - first 5 domains with isp: {[d.get('isp') for d in domains[:5]]}")
+        print(f"   Sample check - first 5 domains with host_name: {[d.get('host_name') for d in domains[:5]]}")
         
         return jsonify({
             "outliers": outliers,
