@@ -99,9 +99,12 @@
 
     .hero__headline {
       font-size: clamp(2.2rem, 4vw, 2.9rem);
-      line-height: 1.1;
+      line-height: 1.3;
       letter-spacing: -0.035em;
       margin: 0 0 1.1rem;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+      hyphens: auto;
     }
 
     .hero__kicker {
@@ -168,19 +171,8 @@
 <!-- HERO SECTION -->
 <header class="hero">
   <div class="hero__content">
-    <nav class="hero__nav">
-      <div class="hero__brand" style="display: flex; align-items: center; gap: 0.6rem;">
-        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
-        <div class="hero__brand-mark"></div>
-      </a>
-        <a href="/blackwire/" style="text-decoration: none; color: inherit;">BlackWire Intelligence</a>
-      </div>
-      <div class="hero__nav-links">
-        <a href="/blackwire/" class="hero__link">Home</a>
-        <a href="/blackwire/support" class="hero__link">Report &amp; Escalate</a>
-        <a href="/blackwire/trace" class="hero__link hero__link--accent">Start Tracing</a>
-      </div>
-    </nav>
+    {% from "_navigation.html" import render_nav %}
+    {{ render_nav('support') }}
 
     <div>
       <div class="hero__kicker">Support & Reporting</div>

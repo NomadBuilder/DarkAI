@@ -7,6 +7,7 @@
   <meta name="description" content="ShadowStack – exposing the infrastructure behind AI-generated sexual abuse so NGOs, researchers, and authorities can take action." />
   <link rel="icon" type="image/svg+xml" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
   <link rel="alternate icon" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
+  {% from "_navigation.html" import render_nav %}
 
   <style>
     :root {
@@ -93,11 +94,22 @@
     /* RESPONSIVE STYLES */
     @media (max-width: 768px) {
       .hero { min-height: 38vh; padding: 2rem 1rem 3rem; }
-      .hero__headline { font-size: 2rem; margin-bottom: 1.5rem; }
-      .hero__headline + p { font-size: 1rem; margin-bottom: 2rem; }
+      .hero__headline { 
+        font-size: 1.75rem !important; 
+        line-height: 1.3 !important;
+        margin-bottom: 1.5rem;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+      }
+      .hero__headline + p { 
+        font-size: 1rem; 
+        line-height: 1.7; 
+        margin-bottom: 2rem; 
+      }
       .section { padding: 3rem 1rem; }
       .section--tight { padding-top: 2rem; padding-bottom: 2.5rem; }
-      .section-title { font-size: 1.5rem; }
+      .section-title { font-size: 1.5rem; line-height: 1.3; }
       .section-lead { font-size: 1rem; }
       .destroying-grid, .responsive-grid { grid-template-columns: 1fr !important; gap: 2rem !important; }
       .analysis-panel { padding: 2rem 1.5rem; }

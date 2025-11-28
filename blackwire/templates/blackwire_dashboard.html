@@ -39,42 +39,7 @@
 
     .page { display: flex; flex-direction: column; height: 100vh; }
 
-    /* Navigation */
-    .nav {
-      height: var(--nav-height);
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 1.5rem; padding: 0 1.5rem;
-      border-bottom: 1px solid var(--border-soft);
-      background: rgba(5, 7, 17, 0.9);
-      z-index: 100;
-    }
-
-    .nav__brand {
-      display: flex; align-items: center; gap: .6rem;
-      font-size: .94rem; letter-spacing: .06em; text-transform: uppercase;
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-    .nav__brand-mark {
-      width: 26px; height: 26px; border-radius: 50%;
-      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
-      box-shadow: 0 0 22px rgba(248,113,113,0.8);
-    }
-
-    .nav__links { display: flex; gap: 1.2rem; font-size: .92rem; }
-    .nav__link {
-      padding: .4rem .6rem; border-radius: 999px;
-      color: var(--text-muted);
-      text-decoration: none;
-      transition: color .16s, background .16s;
-    }
-    .nav__link:hover { color: var(--text-main); background: rgba(148,163,184,0.12); }
-    .nav__link--accent {
-      border-radius: 999px; padding: .45rem .9rem;
-      background: rgba(248,113,113,0.16);
-      color: #fee2e2;
-      border: 1px solid rgba(248,113,113,0.4);
-    }
+    /* Navigation - using shared component */
 
     /* Main container */
     .dashboard-container {
@@ -256,6 +221,8 @@
   </style>
 </head>
 <body class="page">
+  {% from "_navigation.html" import render_nav %}
+  {{ render_nav('dashboard') }}
   <nav class="nav">
     <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
       <a href="/" style="text-decoration: none; display: flex; align-items: center;">
