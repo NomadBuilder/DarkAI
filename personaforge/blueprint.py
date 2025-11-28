@@ -710,7 +710,26 @@ def discover_vendors():
     Discover vendors from public sources and automatically enrich them.
     """
     try:
-        from src.enrichment.vendor_discovery import discover_all_sources, ask_ai_for_data_sources
+        # Use importlib to avoid sys.path issues
+        import importlib.util
+        import sys
+        
+        # Import vendor_discovery
+        vendor_discovery_path = blueprint_dir / 'src' / 'enrichment' / 'vendor_discovery.py'
+        if not vendor_discovery_path.exists():
+            return jsonify({"error": "vendor_discovery module not found"}), 500
+        
+        spec = importlib.util.spec_from_file_location("vendor_discovery", vendor_discovery_path)
+        vendor_discovery_module = importlib.util.module_from_spec(spec)
+        original_path = sys.path[:]
+        if str(blueprint_dir) not in sys.path:
+            sys.path.insert(0, str(blueprint_dir))
+        try:
+            spec.loader.exec_module(vendor_discovery_module)
+            discover_all_sources = vendor_discovery_module.discover_all_sources
+            ask_ai_for_data_sources = vendor_discovery_module.ask_ai_for_data_sources
+        finally:
+            sys.path[:] = original_path
         
         data = request.get_json() or {}
         limit_per_source = data.get('limit_per_source', 20)
@@ -796,9 +815,25 @@ def run_initial_discovery():
             
             if dummy_count == 0:
                 app_logger.info("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
-                from src.database.seed_dummy_data import seed_dummy_data
-                count = seed_dummy_data(num_domains=50)
-                app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
+                # Use importlib to avoid sys.path issues
+                import importlib.util
+                seed_dummy_data_path = blueprint_dir / 'src' / 'database' / 'seed_dummy_data.py'
+                if seed_dummy_data_path.exists():
+                    spec = importlib.util.spec_from_file_location("seed_dummy_data", seed_dummy_data_path)
+                    seed_dummy_data_module = importlib.util.module_from_spec(spec)
+                    # Add blueprint_dir to sys.path temporarily for any internal imports
+                    import sys
+                    original_path = sys.path[:]
+                    if str(blueprint_dir) not in sys.path:
+                        sys.path.insert(0, str(blueprint_dir))
+                    try:
+                        spec.loader.exec_module(seed_dummy_data_module)
+                        count = seed_dummy_data_module.seed_dummy_data(num_domains=50)
+                        app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
+                    finally:
+                        sys.path[:] = original_path
+                else:
+                    app_logger.error(f"seed_dummy_data module not found at {seed_dummy_data_path}")
             else:
                 app_logger.info(f"✅ Dummy data already exists ({dummy_count} domains) - skipping seed")
         except Exception as e:
@@ -812,8 +847,43 @@ def run_initial_discovery():
         if len(real_domains) == 0:
             app_logger.info("🔍 Database is empty - running initial discovery...")
             try:
-                from src.enrichment.vendor_discovery import discover_all_sources
-                from src.enrichment.enrichment_pipeline import enrich_domain
+                # Use importlib to avoid sys.path issues
+                import importlib.util
+                import sys
+                
+                # Import vendor_discovery
+                vendor_discovery_path = blueprint_dir / 'src' / 'enrichment' / 'vendor_discovery.py'
+                if vendor_discovery_path.exists():
+                    spec = importlib.util.spec_from_file_location("vendor_discovery", vendor_discovery_path)
+                    vendor_discovery_module = importlib.util.module_from_spec(spec)
+                    original_path = sys.path[:]
+                    if str(blueprint_dir) not in sys.path:
+                        sys.path.insert(0, str(blueprint_dir))
+                    try:
+                        spec.loader.exec_module(vendor_discovery_module)
+                        discover_all_sources = vendor_discovery_module.discover_all_sources
+                    finally:
+                        sys.path[:] = original_path
+                else:
+                    app_logger.error(f"vendor_discovery module not found at {vendor_discovery_path}")
+                    return
+                
+                # Import enrichment_pipeline
+                enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+                if enrichment_pipeline_path.exists():
+                    spec = importlib.util.spec_from_file_location("enrichment_pipeline", enrichment_pipeline_path)
+                    enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+                    original_path = sys.path[:]
+                    if str(blueprint_dir) not in sys.path:
+                        sys.path.insert(0, str(blueprint_dir))
+                    try:
+                        spec.loader.exec_module(enrichment_pipeline_module)
+                        enrich_domain = enrichment_pipeline_module.enrich_domain
+                    finally:
+                        sys.path[:] = original_path
+                else:
+                    app_logger.error(f"enrichment_pipeline module not found at {enrichment_pipeline_path}")
+                    return
                 
                 # Run discovery
                 discovery_results = discover_all_sources(limit_per_source=10)
