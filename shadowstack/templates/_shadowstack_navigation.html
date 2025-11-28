@@ -7,6 +7,11 @@
       </a>
       <a href="/shadowstack/" style="text-decoration: none; color: inherit;">ShadowStack</a>
       </div>
+    <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+    </button>
     <div class="nav-links">
       <a href="/shadowstack/" class="nav-link {% if current_page == 'home' %}active{% endif %}">Home</a>
       <a href="/shadowstack/check" class="nav-link {% if current_page == 'check' %}active{% endif %}">Check URL</a>
@@ -104,33 +109,126 @@
   color: #f3f4f7;
 }
 
+/* Hamburger Menu Styles */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+  position: relative;
+}
+
+.hamburger-box {
+  width: 30px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+}
+
+.hamburger-inner {
+  display: block;
+  top: 50%;
+  margin-top: -2px;
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  width: 30px;
+  height: 3px;
+  background-color: #f3f4f7;
+  border-radius: 2px;
+  position: absolute;
+  transition: transform 0.15s ease;
+}
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+  content: '';
+  display: block;
+}
+
+.hamburger-inner::before {
+  top: -10px;
+}
+
+.hamburger-inner::after {
+  bottom: -10px;
+}
+
+.hamburger.is-active .hamburger-inner {
+  transform: rotate(45deg);
+}
+
+.hamburger.is-active .hamburger-inner::before {
+  top: 0;
+  transform: rotate(-90deg);
+}
+
+.hamburger.is-active .hamburger-inner::after {
+  bottom: 0;
+  transform: rotate(-90deg);
+}
+
 @media (max-width: 768px) {
   .site-nav {
     padding: 1rem;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
   }
   
   .nav-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    position: relative;
+    width: 100%;
   }
   
   .nav-brand {
-    width: 100%;
     font-size: 0.9rem;
+    flex: 1;
+  }
+  
+  .hamburger {
+    display: flex;
   }
   
   .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     width: 100%;
-    justify-content: flex-start;
-    flex-wrap: wrap;
+    background: rgba(3, 4, 10, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
     gap: 0.5rem;
+    font-size: 0.9rem;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+  
+  .nav-links.is-active {
+    display: flex;
   }
   
   .nav-link {
     font-size: 0.9rem;
-    padding: 0.6rem 0.9rem;
+    padding: 0.75rem 1rem;
+    width: 100%;
+    text-align: left;
+    border-radius: 8px;
     min-height: 44px;
+    display: flex;
+    align-items: center;
     white-space: nowrap;
   }
 }
@@ -145,14 +243,59 @@
   }
   
   .nav-links {
-    gap: 0.4rem;
+    padding: 0.75rem;
+    margin-left: -0.75rem;
+    margin-right: -0.75rem;
   }
   
   .nav-link {
     font-size: 0.85rem;
-    padding: 0.6rem 0.8rem;
+    padding: 0.7rem 0.9rem;
   }
 }
+
+body.no-scroll {
+  overflow: hidden;
+}
 </style>
+
+<script>
+(function() {
+  // Hamburger menu toggle for ShadowStack navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.site-nav .hamburger');
+    const navLinks = document.querySelector('.site-nav .nav-links');
+    
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburger.classList.toggle('is-active');
+        navLinks.classList.toggle('is-active');
+        document.body.classList.toggle('no-scroll');
+      });
+      
+      // Close menu when clicking on a link
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+          hamburger.classList.remove('is-active');
+          navLinks.classList.remove('is-active');
+          document.body.classList.remove('no-scroll');
+        });
+      });
+      
+      // Close menu if clicked outside
+      document.addEventListener('click', function(event) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          if (hamburger.classList.contains('is-active')) {
+            hamburger.classList.remove('is-active');
+            navLinks.classList.remove('is-active');
+            document.body.classList.remove('no-scroll');
+          }
+        }
+      });
+    }
+  });
+})();
+</script>
 {% endmacro %}
 

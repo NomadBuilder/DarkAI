@@ -6,6 +6,11 @@
     </a>
     <a href="/blackwire/" style="text-decoration: none; color: inherit;">BlackWire Intelligence</a>
   </div>
+  <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+    <span class="hamburger-box">
+      <span class="hamburger-inner"></span>
+    </span>
+  </button>
   <div class="nav__links">
     <a href="/blackwire/" class="nav__link {% if current_page == 'home' %}nav__link--accent{% endif %}">Home</a>
     <a href="/blackwire/support" class="nav__link {% if current_page == 'support' %}nav__link--accent{% endif %}">Report & Escalate</a>
@@ -98,38 +103,126 @@
   border: 1px solid rgba(248,113,113,0.4);
 }
 
+/* Hamburger Menu Styles */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001;
+  position: relative;
+}
+
+.hamburger-box {
+  width: 30px;
+  height: 24px;
+  position: relative;
+  display: inline-block;
+}
+
+.hamburger-inner {
+  display: block;
+  top: 50%;
+  margin-top: -2px;
+}
+
+.hamburger-inner,
+.hamburger-inner::before,
+.hamburger-inner::after {
+  width: 30px;
+  height: 3px;
+  background-color: var(--text-main, #f9fafb);
+  border-radius: 2px;
+  position: absolute;
+  transition: transform 0.15s ease;
+}
+
+.hamburger-inner::before,
+.hamburger-inner::after {
+  content: '';
+  display: block;
+}
+
+.hamburger-inner::before {
+  top: -10px;
+}
+
+.hamburger-inner::after {
+  bottom: -10px;
+}
+
+.hamburger.is-active .hamburger-inner {
+  transform: rotate(45deg);
+}
+
+.hamburger.is-active .hamburger-inner::before {
+  top: 0;
+  transform: rotate(-90deg);
+}
+
+.hamburger.is-active .hamburger-inner::after {
+  bottom: 0;
+  transform: rotate(-90deg);
+}
+
 @media (max-width: 768px) {
   .nav {
     padding: 0.75rem 1rem;
-    min-height: auto;
-    height: auto;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
+    min-height: 64px;
+    position: relative;
+    width: 100%;
+    max-width: 100%;
   }
   
   .nav__brand {
     font-size: 0.9rem;
-    width: 100%;
+    flex: 1;
+  }
+  
+  .hamburger {
+    display: flex;
   }
   
   .nav__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     width: 100%;
+    background: rgba(5, 7, 17, 0.98);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border-soft, rgba(148,163,184,0.3));
+    flex-direction: column;
+    align-items: stretch;
+    padding: 1rem;
     gap: 0.5rem;
     font-size: 0.9rem;
-    justify-content: flex-start;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+  
+  .nav__links.is-active {
+    display: flex;
   }
   
   .nav__link {
-    padding: 0.6rem 0.9rem;
+    padding: 0.75rem 1rem;
     font-size: 0.9rem;
+    width: 100%;
+    text-align: left;
+    border-radius: 8px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
   }
 }
 
 @media (max-width: 480px) {
   .nav {
     padding: 0.75rem;
-    gap: 0.5rem;
   }
   
   .nav__brand {
@@ -137,12 +230,12 @@
   }
   
   .nav__links {
-    font-size: 0.85rem;
+    padding: 0.75rem;
   }
   
   .nav__link {
-    padding: 0.6rem 0.8rem;
     font-size: 0.85rem;
+    padding: 0.7rem 0.9rem;
   }
 }
 </style>

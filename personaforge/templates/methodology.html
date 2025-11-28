@@ -59,6 +59,12 @@
         <a href="/personaforge/" style="text-decoration: none; color: inherit;">PERSONAFORGE</a>
       </div>
       <div class="nav__links">
+      <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+      <div class="nav__links">
         <a href="/personaforge/" class="nav__link">Home</a>
         <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
         <a href="/personaforge/vendors" class="nav__link">Vendors</a>
@@ -294,5 +300,43 @@
       </div>
     </div>
   </div>
+<script>
+(function() {
+  // Hamburger menu toggle for PersonaForge navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.nav .hamburger');
+    const navLinks = document.querySelector('.nav .nav__links');
+    
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        hamburger.classList.toggle('is-active');
+        navLinks.classList.toggle('is-active');
+        document.body.classList.toggle('no-scroll');
+      });
+      
+      // Close menu when clicking on a link
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+          hamburger.classList.remove('is-active');
+          navLinks.classList.remove('is-active');
+          document.body.classList.remove('no-scroll');
+        });
+      });
+      
+      // Close menu if clicked outside
+      document.addEventListener('click', function(event) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          if (hamburger.classList.contains('is-active')) {
+            hamburger.classList.remove('is-active');
+            navLinks.classList.remove('is-active');
+            document.body.classList.remove('no-scroll');
+          }
+        }
+      });
+    }
+  });
+})();
+</script>
 </body>
 </html>

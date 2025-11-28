@@ -685,12 +685,18 @@ Thank you for your prompt attention to this matter.
 Best regards,
 [YOUR NAME]
 [CONTACT INFORMATION]`;
+    }
     
-    textarea.value = defaultPacket;
-    packetDiv.style.display = 'block';
-    
-    // Smooth scroll to the packet
-    packetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    // Set textarea value and show packet div (regardless of whether we have entitiesData)
+    if (textarea && packetDiv) {
+      textarea.value = defaultPacket;
+      packetDiv.style.display = 'block';
+      
+      // Smooth scroll to the packet
+      packetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    } else {
+      console.error('Escalation packet elements not found');
+    }
   }
   
   function downloadAsTXT() {
