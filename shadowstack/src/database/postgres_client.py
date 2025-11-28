@@ -34,10 +34,13 @@ class PostgresClient:
         if database_url:
             # Parse DATABASE_URL (Render format)
             connect_params = _parse_database_url(database_url)
-            # Override database name if SHADOWSTACK_POSTGRES_DB is set (for shared database servers)
+            # On Render, all services share the same database (blackwire)
+            # But we use different table names, so we keep the database from DATABASE_URL
+            # Only override if SHADOWSTACK_POSTGRES_DB is explicitly set
             shadowstack_db = os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE")
             if shadowstack_db:
                 connect_params["database"] = shadowstack_db
+            print(f"🔌 ShadowStack: Using DATABASE_URL, database: {connect_params.get('database', 'default')}")
         else:
             # Use individual POSTGRES_* vars (standalone format)
             connect_params = {
@@ -47,17 +50,25 @@ class PostgresClient:
                 "password": os.getenv("POSTGRES_PASSWORD") or os.getenv("SHADOWSTACK_POSTGRES_PASSWORD") or "ncii123password",
                 "database": os.getenv("POSTGRES_DB") or os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE", "ncii_infra")
             }
+            print(f"🔌 ShadowStack: Using env vars, database: {connect_params['database']}")
         
         # Add SSL for Render PostgreSQL (required for external connections)
         postgres_host = connect_params["host"]
         if postgres_host and (postgres_host.endswith(".render.com") or "render.com" in postgres_host):
             connect_params["sslmode"] = "require"
+            print(f"🔒 ShadowStack: Adding SSL for Render database")
         
         # Add connection timeout to fail fast (5 seconds)
         connect_params["connect_timeout"] = 5
         
-        self.conn = psycopg2.connect(**connect_params)
-        self._create_tables()
+        try:
+            self.conn = psycopg2.connect(**connect_params)
+            print(f"✅ ShadowStack: Connected to PostgreSQL database: {connect_params.get('database', 'unknown')}")
+            self._create_tables()
+        except psycopg2.OperationalError as e:
+            print(f"❌ ShadowStack: Failed to connect to PostgreSQL: {e}")
+            print(f"   Connection params: host={connect_params.get('host')}, database={connect_params.get('database')}")
+            raise
     
     def close(self):
         """Close the database connection."""
@@ -264,6 +275,13 @@ class PostgresClient:
         """Get all domains with their enrichment data, excluding dummy/test data."""
         cursor = self.conn.cursor(cursor_factory=RealDictCursor)
         
+        # First check if tables exist and have data
+        cursor.execute("""
+            SELECT COUNT(*) as total FROM domains
+        """)
+        total_count = cursor.fetchone()['total']
+        print(f"📊 ShadowStack: Total domains in database: {total_count}")
+        
         cursor.execute("""
             SELECT 
                 d.id,
@@ -303,6 +321,7 @@ class PostgresClient:
         """)
         
         results = cursor.fetchall()
+        print(f"📊 ShadowStack: Returning {len(results)} enriched domains (excluding dummy data)")
         cursor.close()
         
         # Convert results to dicts and parse JSONB fields

@@ -576,7 +576,18 @@ def get_domains():
     """Get all enriched domains from database."""
     try:
         postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            print("⚠️  ShadowStack: PostgreSQL connection is None")
+            return jsonify({
+                "domains": [],
+                "count": 0,
+                "error": "Database not connected",
+                "message": "PostgreSQL connection failed. Check database configuration."
+            }), 200
+        
+        print(f"✅ ShadowStack: Connected to database, querying domains...")
         domains = postgres.get_all_enriched_domains()
+        print(f"📊 ShadowStack: Found {len(domains)} domains in database")
         postgres.close()
         
         return jsonify({
@@ -585,7 +596,8 @@ def get_domains():
         })
     except Exception as e:
         import traceback
-        print(f"Error in get_domains: {e}")
+        error_msg = f"Error in get_domains: {e}"
+        print(error_msg)
         traceback.print_exc()
         # Return JSON error response, not HTML
         return Response(
