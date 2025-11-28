@@ -1438,7 +1438,7 @@ header h1 {
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Tablet and below (max-width: 1200px) */
+/* Tablet and below (max-width: 1200px) - Only affects grid layouts, not dashboard */
 @media (max-width: 1200px) {
     .container {
         margin-left: 1rem;
@@ -1447,17 +1447,6 @@ header h1 {
     
     .summary-cards {
         grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .dashboard-layout {
-        flex-direction: column;
-    }
-    
-    .sidebar-panel {
-        width: 100%;
-        max-height: 400px;
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     }
 }
 
@@ -1523,7 +1512,7 @@ header h1 {
         font-size: 1.75rem;
     }
     
-    /* Dashboard Layout */
+    /* Dashboard Layout - Only changes on mobile, desktop stays the same */
     .dashboard-layout {
         flex-direction: column;
     }

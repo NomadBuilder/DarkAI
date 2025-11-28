@@ -775,25 +775,10 @@ html, body {
    RESPONSIVE DESIGN
    ============================================ */
 
-/* Tablet and below (max-width: 1200px) */
+/* Tablet and below (max-width: 1200px) - Only affects grid layouts, not dashboard */
 @media (max-width: 1200px) {
   .info-box-grid--4cols {
     grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .dashboard-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    max-height: 300px;
-    border-right: none;
-    border-bottom: 1px solid var(--border-soft);
-  }
-  
-  .content-container {
-    padding: 1.5rem;
   }
   
   .section {
@@ -826,7 +811,7 @@ html, body {
     padding: 0.35rem 0.5rem;
   }
   
-  /* Dashboard Layout */
+  /* Dashboard Layout - Only changes on mobile, desktop stays the same */
   .dashboard-container {
     flex-direction: column;
     height: auto;
@@ -838,6 +823,10 @@ html, body {
     max-height: none;
     border-right: none;
     border-bottom: 1px solid var(--border-soft);
+    padding: 1rem;
+  }
+  
+  .content-container {
     padding: 1rem;
   }
   
@@ -855,11 +844,6 @@ html, body {
   
   .graph-header h2 {
     font-size: 1.1rem;
-  }
-  
-  /* Content */
-  .content-container {
-    padding: 1rem;
   }
   
   .page-header h1 {
