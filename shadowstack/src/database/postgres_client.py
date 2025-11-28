@@ -329,13 +329,7 @@ class PostgresClient:
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
               AND d.source IS NOT NULL
               AND d.source != ''
-              AND (
-                   d.source LIKE 'SHADOWSTACK%' 
-                   OR d.source = 'IMPORT'
-                   OR d.source = 'CSV Import'
-                   OR d.source = 'API Import'
-                   OR d.source = 'Web API'
-              )
+              AND d.source LIKE 'SHADOWSTACK%'
             ORDER BY d.domain
         """
         
@@ -364,6 +358,7 @@ class PostgresClient:
             print(f"   Host: {db_params.get('host', 'unknown')}")
             
             # Verify count matches expected (before cursor closes)
+            # Use same filter as main query
             cursor.execute("""
                 SELECT COUNT(*) as count
                 FROM domains 
