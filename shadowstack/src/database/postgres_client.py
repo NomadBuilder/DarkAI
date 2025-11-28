@@ -330,7 +330,9 @@ class PostgresClient:
                    OR d.source = 'Web API'
                    OR d.source = 'SHADOWSTACK_PRE_ENRICHED'
                    OR d.source = 'SHADOWSTACK_AUTO_SEED'
-                   OR d.source = 'SHADOWSTACK_LOCAL_SEED')
+                   OR d.source = 'SHADOWSTACK_LOCAL_SEED'
+                   OR d.source = 'SHADOWSTACK_IMPORT'
+                   OR d.source LIKE 'SHADOWSTACK%')
             ORDER BY d.domain
         """)
         
