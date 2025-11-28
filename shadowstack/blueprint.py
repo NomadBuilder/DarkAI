@@ -941,8 +941,12 @@ def get_analytics():
     """Get analytics and outlier detection."""
     try:
         try:
-            postgres = PostgresClient()
+            # Use ShadowStack's PostgresClient explicitly
+            postgres = ShadowStackPostgresClient()
             domains = postgres.get_all_enriched_domains()
+            print(f"🔍 get_analytics: Retrieved {len(domains)} domains from database")
+            if domains:
+                print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
             postgres.close()
         except Exception as db_error:
             # Database connection failed, return empty analytics
