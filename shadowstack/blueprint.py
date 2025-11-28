@@ -1726,12 +1726,14 @@ def import_pre_enriched_data():
     try:
         import json
         from pathlib import Path
+        import os
+        
+        # IMPORTANT: Use ShadowStack's PostgresClient, not PersonaForge's
+        # Make sure we're importing from the correct location
+        from src.database.postgres_client import PostgresClient as ShadowStackPostgresClient
         
         # Look for exported enriched data file
         # Try multiple possible locations (Render vs local paths)
-        import os
-        from pathlib import Path
-        
         # Get the root directory (where app.py is)
         current_file = Path(__file__).resolve()
         repo_root = current_file.parent.parent  # shadowstack -> DarkAI-consolidated
@@ -1764,7 +1766,8 @@ def import_pre_enriched_data():
         
         print(f"📥 ShadowStack: Found pre-enriched data file: {data_file}")
         
-        postgres = PostgresClient()
+        # Use ShadowStack's PostgresClient explicitly
+        postgres = ShadowStackPostgresClient()
         if not postgres or not postgres.conn:
             print("⚠️  ShadowStack: PostgreSQL not available")
             return False
