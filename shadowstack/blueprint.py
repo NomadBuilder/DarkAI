@@ -1718,11 +1718,101 @@ def seed_shadowstack_data():
         }), 500
 
 
+def import_pre_enriched_data():
+    """
+    Import pre-enriched ShadowStack data from JSON file.
+    This is faster and more reliable than enriching on Render.
+    """
+    try:
+        import json
+        from pathlib import Path
+        
+        # Look for exported enriched data file
+        data_file = blueprint_dir.parent / 'shadowstack_enriched_data.json'
+        
+        if not data_file.exists():
+            return False
+        
+        print(f"📥 ShadowStack: Found pre-enriched data file: {data_file}")
+        
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            print("⚠️  ShadowStack: PostgreSQL not available")
+            return False
+        
+        # Load JSON data
+        with open(data_file, 'r') as f:
+            data = json.load(f)
+        
+        domains_data = data.get('domains', [])
+        enrichment_data = data.get('enrichment', [])
+        
+        print(f"📊 ShadowStack: Importing {len(domains_data)} domains with {len(enrichment_data)} enrichment records...")
+        
+        # Create lookup for enrichment by domain name
+        enrichment_lookup = {e['domain']: e for e in enrichment_data}
+        
+        imported = 0
+        enriched = 0
+        skipped = 0
+        
+        for domain_record in domains_data:
+            domain = domain_record.get('domain')
+            if not domain:
+                continue
+            
+            try:
+                # Check if domain already exists
+                cursor = postgres.conn.cursor()
+                cursor.execute("SELECT id FROM domains WHERE domain = %s", (domain,))
+                existing = cursor.fetchone()
+                
+                if existing:
+                    domain_id = existing[0]
+                    skipped += 1
+                else:
+                    # Insert domain
+                    domain_id = postgres.insert_domain(
+                        domain=domain,
+                        source=domain_record.get('source', 'SHADOWSTACK_PRE_ENRICHED'),
+                        notes=domain_record.get('notes', 'Pre-enriched data imported from local')
+                    )
+                    imported += 1
+                
+                # Check if enrichment exists
+                cursor.execute("SELECT domain_id FROM domain_enrichment WHERE domain_id = %s", (domain_id,))
+                has_enrichment = cursor.fetchone()
+                
+                # Import enrichment if available and not already exists
+                if not has_enrichment and domain in enrichment_lookup:
+                    enrichment = enrichment_lookup[domain]
+                    postgres.insert_enrichment(domain_id, enrichment)
+                    enriched += 1
+                
+                cursor.close()
+                
+            except Exception as e:
+                print(f"  ⚠️  Error importing {domain}: {e}")
+        
+        postgres.conn.commit()
+        postgres.close()
+        
+        print(f"✅ ShadowStack: Pre-enriched data import complete!")
+        print(f"   Imported: {imported} new domains, Skipped: {skipped} existing")
+        print(f"   Enriched: {enriched} domains with infrastructure data")
+        
+        return True
+        
+    except Exception as e:
+        print(f"⚠️  ShadowStack: Error importing pre-enriched data: {e}")
+        return False
+
+
 def run_shadowstack_data_seed():
     """
     Auto-seed ShadowStack real data on startup if database is empty.
-    This ONLY affects ShadowStack's 'domains' table and does NOT touch
-    PersonaForge (personaforge_domains) or BlackWire (blackwire_domains) tables.
+    First tries to import pre-enriched data from JSON file (faster).
+    Falls back to seeding and enriching on-the-fly if no pre-enriched data exists.
     """
     try:
         # Create a new connection for seeding (don't use global to avoid conflicts)
@@ -1742,8 +1832,16 @@ def run_shadowstack_data_seed():
             postgres.close()
             return
         
-        # Database is empty - seed with real ShadowStack domains
-        print(f"📊 ShadowStack: Database is empty - seeding {len(SHADOWSTACK_DOMAINS)} real domains...")
+        # Database is empty - try to import pre-enriched data first
+        print(f"📊 ShadowStack: Database is empty - checking for pre-enriched data...")
+        
+        if import_pre_enriched_data():
+            postgres.close()
+            return  # Successfully imported pre-enriched data
+        
+        # Fallback: Seed and enrich on-the-fly (slower, but works if no pre-enriched data)
+        print(f"📊 ShadowStack: No pre-enriched data found - seeding {len(SHADOWSTACK_DOMAINS)} domains...")
+        print(f"   ⚠️  This will take time. For faster startup, run seed_and_enrich_shadowstack_local.py locally")
         
         imported = 0
         skipped = 0
