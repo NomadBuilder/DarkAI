@@ -14,6 +14,20 @@ from dotenv import load_dotenv
 
 # Add src to path (relative to blueprint location)
 blueprint_dir = Path(__file__).parent.absolute()
+
+# CRITICAL: Remove other blueprint paths from sys.path to prevent import conflicts
+# This ensures ShadowStack imports its own src modules, not other blueprints'
+other_blueprints = ['personaforge', 'blackwire']
+for other in other_blueprints:
+    other_path = str((blueprint_dir.parent / other).absolute())
+    if other_path in sys.path:
+        sys.path.remove(other_path)
+    # Also remove any src subdirectories from other blueprints
+    other_src_path = str((blueprint_dir.parent / other / 'src').absolute())
+    if other_src_path in sys.path:
+        sys.path.remove(other_src_path)
+
+# Now add ShadowStack's path first to ensure it takes priority
 sys.path.insert(0, str(blueprint_dir))
 
 # Load environment variables early - try from consolidated app root first, then blueprint directory
@@ -33,7 +47,14 @@ except ImportError:
 from src.database.postgres_client import PostgresClient as ShadowStackPostgresClient
 # Alias for backward compatibility
 PostgresClient = ShadowStackPostgresClient
-from src.enrichment.enrichment_pipeline import enrich_domain
+
+# Import ShadowStack's enrichment_pipeline (must be after path cleanup)
+try:
+    from src.enrichment.enrichment_pipeline import enrich_domain
+except ImportError as e:
+    print(f"⚠️  ShadowStack: Could not import enrich_domain: {e}")
+    print(f"   Current sys.path entries: {[p for p in sys.path if 'shadowstack' in p.lower() or 'blackwire' in p.lower() or 'personaforge' in p.lower()]}")
+    enrich_domain = None
 from collections import Counter
 
 # OpenAI import
