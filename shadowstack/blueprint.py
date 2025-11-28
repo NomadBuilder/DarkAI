@@ -1984,6 +1984,31 @@ shadowstack_seed_thread = threading.Thread(target=delayed_shadowstack_seed, daem
 shadowstack_seed_thread.start()
 
 
+@shadowstack_bp.route('/api/force-import', methods=['POST'])
+def force_import_pre_enriched():
+    """
+    Force import of pre-enriched ShadowStack data.
+    This will update existing domains and import missing ones.
+    """
+    try:
+        if import_pre_enriched_data():
+            return jsonify({
+                "status": "success",
+                "message": "Pre-enriched data imported successfully"
+            })
+        else:
+            return jsonify({
+                "status": "error",
+                "message": "Pre-enriched data file not found or import failed"
+            }), 404
+    except Exception as e:
+        shadowstack_logger.error(f"Error forcing import: {e}", exc_info=True)
+        return jsonify({
+            "status": "error",
+            "message": str(e)
+        }), 500
+
+
 @shadowstack_bp.route('/api/enrich-all-domains', methods=['POST'])
 def enrich_all_domains_new():
     """
