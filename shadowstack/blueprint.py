@@ -237,8 +237,10 @@ def get_graph_from_postgres():
     from collections import Counter
     
     try:
-        postgres = PostgresClient()
+        # Use ShadowStack's PostgresClient explicitly to ensure correct database
+        postgres = ShadowStackPostgresClient()
         domains = postgres.get_all_enriched_domains()
+        print(f"🔍 get_graph_from_postgres: Retrieved {len(domains)} domains from database")
         postgres.close()
     except Exception as e:
         # Database connection failed, return empty graph
