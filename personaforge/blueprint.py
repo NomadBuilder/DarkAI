@@ -177,35 +177,39 @@ def load_module_safely(module_path, module_name):
     # Ensure all src modules are available first
     ensure_src_modules_available()
     
-    # Determine the package path from the module path
+    # Determine the full module name from the module path
     # e.g., /opt/render/project/src/personaforge/src/database/seed_dummy_data.py
-    # should have package 'src.database'
+    # should be 'src.database.seed_dummy_data'
     module_path_str = str(module_path)
     blueprint_dir_str = str(blueprint_dir)
     
     if module_path_str.startswith(blueprint_dir_str):
         # Get relative path from blueprint_dir
         rel_path = module_path.relative_to(blueprint_dir)
-        # Convert to package name: src/database/seed_dummy_data.py -> src.database
-        parts = list(rel_path.parts[:-1])  # Remove filename
-        package_name = '.'.join(parts) if parts else None
+        # Convert to full module name: src/database/seed_dummy_data.py -> src.database.seed_dummy_data
+        parts = list(rel_path.parts)
+        # Remove .py extension from last part
+        if parts and parts[-1].endswith('.py'):
+            parts[-1] = parts[-1][:-3]
+        full_module_name = '.'.join(parts) if parts else module_name
+        package_name = '.'.join(parts[:-1]) if len(parts) > 1 else None
     else:
+        full_module_name = module_name
         package_name = None
     
-    # Create spec and module
-    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    # CRITICAL: Use the full dotted name in spec_from_file_location
+    # This ensures the loader can handle the name we set in __name__
+    spec = importlib.util.spec_from_file_location(full_module_name, module_path)
     if spec is None or spec.loader is None:
         app_logger.error(f"Could not create spec for {module_path}")
         return None
     
     module = importlib.util.module_from_spec(spec)
     
-    # CRITICAL: Set __package__ and __name__ so relative imports work
+    # Set __package__ and __name__ to match the spec
+    module.__name__ = full_module_name
     if package_name:
         module.__package__ = package_name
-        module.__name__ = f"{package_name}.{module_name}"
-    else:
-        module.__name__ = module_name
     
     # Store original sys.path
     original_path = sys.path[:]
