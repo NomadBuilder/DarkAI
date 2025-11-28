@@ -28,7 +28,11 @@ except ImportError:
     NEO4J_AVAILABLE = False
     Neo4jClient = None
 
-from src.database.postgres_client import PostgresClient
+# Import ShadowStack's PostgresClient
+# Use explicit import to avoid conflicts with PersonaForge's PostgresClient
+from src.database.postgres_client import PostgresClient as ShadowStackPostgresClient
+# Alias for backward compatibility
+PostgresClient = ShadowStackPostgresClient
 from src.enrichment.enrichment_pipeline import enrich_domain
 from collections import Counter
 
