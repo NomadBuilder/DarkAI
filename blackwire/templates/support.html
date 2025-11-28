@@ -23,7 +23,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
   <link rel="alternate icon" type="image/png" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
-  {% from "_navigation.html" import render_nav %}
+  {% from "_blackwire_navigation.html" import render_nav %}
 
   <!-- Full Style Block Inserted -->
   <style>
@@ -294,7 +294,7 @@
 
 <!-- HERO SECTION -->
 <header class="hero">
-  {% from "_navigation.html" import render_nav %}
+  {% from "_blackwire_navigation.html" import render_nav %}
   {{ render_nav('support') }}
   
   <div class="hero__content" style="padding-top: calc(var(--nav-height, 64px) + 2rem);">
