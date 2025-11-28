@@ -63,6 +63,17 @@
     }
 
     .hero__content { position: relative; max-width: var(--max-width); margin: 0 auto; z-index: 1; }
+    
+    /* Ensure nav is full width even when inside hero__content */
+    .hero__content > .nav {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      padding: 0 2rem;
+    }
     .hero__nav {
       height: var(--nav-height);
       display: flex; align-items: center; justify-content: space-between;
