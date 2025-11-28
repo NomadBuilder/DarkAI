@@ -1666,14 +1666,14 @@ shadowstack_seed_thread = threading.Thread(target=delayed_shadowstack_seed, daem
 shadowstack_seed_thread.start()
 
 
-@shadowstack_bp.route('/api/enrich-all', methods=['POST'])
-def enrich_all_domains():
+@shadowstack_bp.route('/api/enrich-all-domains', methods=['POST'])
+def enrich_all_domains_new():
     """
     Enrich all unenriched domains in the database.
     This will fetch infrastructure data (IPs, hosting, CDNs, etc.) for all domains
     that don't have enrichment data yet.
     
-    POST /api/enrich-all
+    POST /api/enrich-all-domains
     Body (optional): {
         "limit": 10,  # Maximum number of domains to enrich (default: all)
         "force": false  # Re-enrich even if data exists (default: false)
