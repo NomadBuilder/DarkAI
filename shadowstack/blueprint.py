@@ -1880,8 +1880,83 @@ def import_pre_enriched_data():
                 if domain in enrichment_lookup:
                     enrichment = enrichment_lookup[domain]
                     try:
-                        # Use ON CONFLICT to update existing enrichment
-                        postgres.insert_enrichment(domain_id, enrichment)
+                        # CRITICAL: Insert directly into domain_enrichment table (ShadowStack)
+                        # Don't use postgres.insert_enrichment() as it might use wrong client
+                        cursor = postgres.conn.cursor()
+                        from psycopg2.extras import Json
+                        
+                        def to_json(value):
+                            if value is None:
+                                return None
+                            return Json(value) if isinstance(value, (dict, list)) else value
+                        
+                        # Insert directly into ShadowStack's domain_enrichment table
+                        cursor.execute("""
+                            INSERT INTO domain_enrichment (
+                                domain_id, ip_address, ip_addresses, ipv6_addresses, host_name, asn, isp,
+                                cdn, cms, payment_processor, registrar, creation_date, expiration_date, updated_date,
+                                name_servers, mx_records, whois_status, web_server, frameworks, analytics, languages,
+                                tech_stack, http_headers, ssl_info, whois_data, dns_records
+                            )
+                            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                            ON CONFLICT (domain_id)
+                            DO UPDATE SET
+                                ip_address = EXCLUDED.ip_address,
+                                ip_addresses = EXCLUDED.ip_addresses,
+                                ipv6_addresses = EXCLUDED.ipv6_addresses,
+                                host_name = EXCLUDED.host_name,
+                                asn = EXCLUDED.asn,
+                                isp = EXCLUDED.isp,
+                                cdn = EXCLUDED.cdn,
+                                cms = EXCLUDED.cms,
+                                payment_processor = EXCLUDED.payment_processor,
+                                registrar = EXCLUDED.registrar,
+                                creation_date = EXCLUDED.creation_date,
+                                expiration_date = EXCLUDED.expiration_date,
+                                updated_date = EXCLUDED.updated_date,
+                                name_servers = EXCLUDED.name_servers,
+                                mx_records = EXCLUDED.mx_records,
+                                whois_status = EXCLUDED.whois_status,
+                                web_server = EXCLUDED.web_server,
+                                frameworks = EXCLUDED.frameworks,
+                                analytics = EXCLUDED.analytics,
+                                languages = EXCLUDED.languages,
+                                tech_stack = EXCLUDED.tech_stack,
+                                http_headers = EXCLUDED.http_headers,
+                                ssl_info = EXCLUDED.ssl_info,
+                                whois_data = EXCLUDED.whois_data,
+                                dns_records = EXCLUDED.dns_records,
+                                enriched_at = CURRENT_TIMESTAMP
+                        """, (
+                            domain_id,
+                            enrichment.get("ip_address"),
+                            to_json(enrichment.get("ip_addresses")),
+                            to_json(enrichment.get("ipv6_addresses")),
+                            enrichment.get("host_name"),
+                            enrichment.get("asn"),
+                            enrichment.get("isp"),
+                            enrichment.get("cdn"),
+                            enrichment.get("cms"),
+                            enrichment.get("payment_processor"),
+                            enrichment.get("registrar"),
+                            enrichment.get("creation_date"),
+                            enrichment.get("expiration_date"),
+                            enrichment.get("updated_date"),
+                            to_json(enrichment.get("name_servers")),
+                            to_json(enrichment.get("mx_records")),
+                            enrichment.get("whois_status"),
+                            enrichment.get("web_server"),
+                            to_json(enrichment.get("frameworks")),
+                            to_json(enrichment.get("analytics")),
+                            to_json(enrichment.get("languages")),
+                            to_json(enrichment.get("tech_stack")),
+                            to_json(enrichment.get("http_headers")),
+                            to_json(enrichment.get("ssl_info")),
+                            to_json(enrichment.get("whois_data")),
+                            to_json(enrichment.get("dns_records"))
+                        ))
+                        cursor.close()
+                        
                         if not has_enrichment:
                             enriched += 1
                         else:
