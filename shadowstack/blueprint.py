@@ -1748,6 +1748,15 @@ def run_shadowstack_data_seed():
         imported = 0
         skipped = 0
         
+        # Import enrich_domain function
+        try:
+            from src.enrichment.enrichment_pipeline import enrich_domain
+            ENRICHMENT_AVAILABLE = True
+        except ImportError:
+            print("⚠️  ShadowStack: Enrichment pipeline not available - domains will be imported without enrichment")
+            ENRICHMENT_AVAILABLE = False
+            enrich_domain = None
+        
         for domain in SHADOWSTACK_DOMAINS:
             domain = domain.strip()
             if not domain:
@@ -1771,9 +1780,18 @@ def run_shadowstack_data_seed():
                     notes="Auto-seeded on startup - real ShadowStack data"
                 )
                 
+                # Enrich domain immediately if enrichment is available
+                if ENRICHMENT_AVAILABLE and enrich_domain:
+                    try:
+                        print(f"  🔍 Enriching {domain}...")
+                        enrichment_data = enrich_domain(domain)
+                        postgres.insert_enrichment(domain_id, enrichment_data)
+                    except Exception as e:
+                        print(f"  ⚠️  Could not enrich {domain}: {e}")
+                
                 imported += 1
-                if imported % 20 == 0:
-                    print(f"  ✅ ShadowStack: Imported {imported} domains...")
+                if imported % 10 == 0:
+                    print(f"  ✅ ShadowStack: Imported and enriched {imported} domains...")
                     
             except Exception as e:
                 print(f"  ⚠️  ShadowStack: Error importing {domain}: {e}")
@@ -1781,6 +1799,8 @@ def run_shadowstack_data_seed():
         postgres.conn.commit()
         postgres.close()
         print(f"✅ ShadowStack: Auto-seed complete! Imported: {imported}, Skipped: {skipped}")
+        if ENRICHMENT_AVAILABLE:
+            print(f"✅ ShadowStack: All domains have been enriched with infrastructure data")
         
     except Exception as e:
         print(f"⚠️  ShadowStack: Error during auto-seed: {e}", exc_info=True)
