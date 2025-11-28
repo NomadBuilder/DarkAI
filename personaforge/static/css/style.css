@@ -34,7 +34,7 @@ html, body {
 
 /* Navigation */
 .nav {
-  height: 64px;
+  min-height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -45,6 +45,7 @@ html, body {
   position: sticky;
   top: 0;
   z-index: 100;
+  flex-wrap: wrap;
 }
 
 .nav__brand {
@@ -78,6 +79,8 @@ html, body {
   display: flex;
   gap: 1.2rem;
   font-size: 0.92rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .nav__link {
@@ -822,29 +825,39 @@ html, body {
 @media (max-width: 768px) {
   /* Navigation */
   .nav {
-    padding: 0 1rem;
-    height: 56px;
+    padding: 0.75rem 1rem;
+    min-height: auto;
+    height: auto;
     /* Smooth mobile navigation */
     position: sticky;
     top: 0;
     z-index: 1000;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
   }
   
   .nav__brand {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    width: 100%;
+    margin-bottom: 0.25rem;
   }
   
   .nav__links {
     gap: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     flex-wrap: wrap;
+    width: 100%;
+    justify-content: flex-start;
   }
   
   .nav__link {
-    padding: 0.5rem 0.75rem; /* Larger tap target */
+    padding: 0.6rem 0.9rem; /* Larger tap target */
     min-height: 44px;
+    font-size: 0.9rem;
+    white-space: nowrap;
   }
   
   /* Smooth scrolling for mobile */
