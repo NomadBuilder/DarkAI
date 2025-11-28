@@ -417,6 +417,15 @@ header h1 {
     letter-spacing: 0.2px;
     position: relative;
     backdrop-filter: blur(10px);
+    /* Touch-friendly */
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .view-btn:hover {
@@ -1576,8 +1585,41 @@ header h1 {
     /* Buttons */
     .btn {
         width: 100%;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem; /* More spacing */
+        padding: 0.875rem 1rem; /* Larger padding for easier tapping */
+        min-height: 48px; /* Larger tap target */
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Input fields - prevent zoom on iOS */
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="search"],
+    input[type="url"],
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents zoom on iOS */
         padding: 0.75rem 1rem;
+        min-height: 44px;
+    }
+    
+    /* Smooth scrolling containers */
+    .data-table {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    
+    .modal-content {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+    }
+    
+    /* Better touch targets */
+    .view-btn {
+        min-height: 48px;
+        padding: 0.875rem 1.25rem;
     }
 }
 
