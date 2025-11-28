@@ -334,8 +334,25 @@ def get_vendors():
         vendors = postgres_client.get_vendors(min_domains=min_domains)
         
         # Get clusters
-        from src.clustering.vendor_clustering import detect_vendor_clusters
-        clusters = detect_vendor_clusters(postgres_client)
+        # Use importlib to avoid sys.path issues
+        import importlib.util
+        clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+        if clustering_path.exists():
+            spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
+            vendor_clustering = importlib.util.module_from_spec(spec)
+            # Add blueprint_dir to sys.path temporarily for any internal imports
+            import sys
+            original_path = sys.path[:]
+            if str(blueprint_dir) not in sys.path:
+                sys.path.insert(0, str(blueprint_dir))
+            try:
+                spec.loader.exec_module(vendor_clustering)
+                clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
+            finally:
+                sys.path[:] = original_path
+        else:
+            app_logger.error(f"Clustering module not found at {clustering_path}")
+            clusters = []
         
         # Filter clusters by min_size
         filtered_clusters = [c for c in clusters if len(c.get('domains', [])) >= min_size]
