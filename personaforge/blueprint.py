@@ -7,29 +7,28 @@ This blueprint handles all PersonaForge routes under /personaforge prefix.
 import os
 import sys
 from pathlib import Path
-
-# Add src to path (relative to blueprint location)
-# MUST happen before any other imports that use src
-blueprint_dir = Path(__file__).parent.absolute()
-if str(blueprint_dir) not in sys.path:
-    sys.path.insert(0, str(blueprint_dir))
-
-from flask import Blueprint, render_template, jsonify, request, Response, url_for
+from flask import Blueprint, render_template, jsonify, request, Response
+import json
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Load environment variables - try consolidated root first, then blueprint directory
+# Add src to path (relative to blueprint location)
 blueprint_dir = Path(__file__).parent.absolute()
+sys.path.insert(0, str(blueprint_dir))
+
+# Load environment variables early - try from consolidated app root first, then blueprint directory
 consolidated_root = blueprint_dir.parent.parent
 load_dotenv(dotenv_path=consolidated_root / '.env')  # Try consolidated app root first
 load_dotenv(dotenv_path=blueprint_dir / '.env', override=False)  # Then blueprint directory (don't override)
-import csv
-import json
-import io
-from collections import Counter
 
-# Import Config first (needed by logger)
-from src.utils.config import Config
+# Import with error handling
+try:
+    from src.utils.config import Config
+except ImportError:
+    # If direct import fails, try adding to path
+    if str(blueprint_dir) not in sys.path:
+        sys.path.insert(0, str(blueprint_dir))
+    from src.utils.config import Config
 
 try:
     from src.database.neo4j_client import Neo4jClient
@@ -42,7 +41,6 @@ from src.database.postgres_client import PostgresClient
 from src.enrichment.enrichment_pipeline import enrich_domain
 from src.utils.logger import setup_logger, logger
 from src.utils.validation import validate_domain
-from datetime import datetime
 
 # Create blueprint
 # Use absolute path for template_folder to ensure Flask can find templates
@@ -67,257 +65,213 @@ if NEO4J_AVAILABLE:
         neo4j_client = Neo4jClient()
         if neo4j_client and neo4j_client.driver:
             app_logger.info("✅ PersonaForge Neo4j client initialized and connected")
-        else:
-            app_logger.warning("⚠️  PersonaForge Neo4j client initialized but not connected")
     except Exception as e:
-        app_logger.warning(f"⚠️  PersonaForge Neo4j not available: {e}")
+        app_logger.warning(f"⚠️  PersonaForge Neo4j client initialization failed: {e}")
 
 try:
     postgres_client = PostgresClient()
     if postgres_client and postgres_client.conn:
         app_logger.info("✅ PersonaForge PostgreSQL client initialized")
-    else:
-        app_logger.warning("⚠️  PersonaForge PostgreSQL not available")
 except Exception as e:
-    app_logger.warning(f"⚠️  PersonaForge PostgreSQL not available: {e}")
-
+    app_logger.warning(f"⚠️  PersonaForge PostgreSQL client initialization failed: {e}")
+    postgres_client = None
 
 # Register error handlers
 try:
     from src.utils.error_handler import register_error_handlers
     register_error_handlers(personaforge_bp)
 except ImportError:
-    app_logger.warning("Error handlers not available")
+    pass  # Error handlers optional
 
 
-@personaforge_bp.route('/api/homepage-stats', methods=['GET'])
-def get_homepage_stats():
-    """Get statistics and data for homepage display."""
-    stats = {
-        "total_domains": 0,
-        "total_vendors": 0,
-        "vendor_types": {},
-        "top_vendors": [],
-        "recent_discoveries": [],
-        "infrastructure_clusters": 0,
-        "high_risk_domains": 0,
-        "database_available": False
-    }
+def ensure_src_modules_available():
+    """
+    Ensure all src modules are available in sys.modules before loading dependent modules.
+    This is a robust way to make sure imports work in importlib context.
+    """
+    import importlib
     
-    stats["database_available"] = postgres_client is not None and postgres_client.conn is not None
+    # Ensure blueprint_dir is in sys.path
+    if str(blueprint_dir) not in sys.path:
+        sys.path.insert(0, str(blueprint_dir))
     
-    if postgres_client and postgres_client.conn:
+    # List of modules to pre-import (in dependency order)
+    modules_to_import = [
+        'src',
+        'src.utils',
+        'src.utils.logger',
+        'src.utils.config',
+        'src.utils.rate_limiter',
+        'src.utils.validation',
+        'src.utils.cache',
+        'src.database',
+        'src.database.postgres_client',
+        'src.database.neo4j_client',
+        'src.enrichment',
+        'src.clustering',
+    ]
+    
+    imported = []
+    failed = []
+    
+    for module_name in modules_to_import:
         try:
-            domains = postgres_client.get_all_enriched_domains()
-            vendors = postgres_client.get_vendors(min_domains=1)
-            
-            stats["total_domains"] = len(domains)
-            stats["total_vendors"] = len(vendors)
-            
-            # Vendor type distribution
-            vendor_types = Counter()
-            high_risk = 0
-            for domain in domains:
-                if domain.get('vendor_type'):
-                    vendor_types[domain['vendor_type']] += 1
-                
-                # Get risk score (check both direct field and enrichment_data)
-                risk = domain.get('vendor_risk_score', 0)
-                if risk == 0:
-                    # Try to get from enrichment_data
-                    enrichment = domain.get('enrichment_data', {})
-                    if isinstance(enrichment, str):
-                        try:
-                            import json
-                            enrichment = json.loads(enrichment)
-                        except:
-                            enrichment = {}
-                    risk = enrichment.get('vendor_risk_score', 0)
-                
-                if risk >= 70:
-                    high_risk += 1
-            
-            stats["vendor_types"] = dict(vendor_types)
-            stats["high_risk_domains"] = high_risk
-            
-            # Top vendors by domain count
-            # If vendors table is empty, create vendor entries from domains grouped by vendor_type
-            if len(vendors) == 0 and len(domains) > 0:
-                # Group domains by vendor_type and create vendor entries
-                from collections import defaultdict
-                vendor_groups = defaultdict(list)
-                for d in domains:
-                    vtype = d.get('vendor_type') or d.get('enrichment_data', {}).get('vendor_type')
-                    if vtype:
-                        vendor_groups[vtype].append(d)
-                
-                # Create top vendors from grouped domains
-                top_vendors = []
-                for vtype, domain_list in sorted(vendor_groups.items(), key=lambda x: len(x[1]), reverse=True)[:10]:
-                    # Calculate average risk score
-                    risks = []
-                    for d in domain_list:
-                        risk = d.get('vendor_risk_score', 0)
-                        if risk == 0:
-                            enrichment = d.get('enrichment_data', {})
-                            if isinstance(enrichment, str):
-                                try:
-                                    import json
-                                    enrichment = json.loads(enrichment)
-                                except:
-                                    enrichment = {}
-                            risk = enrichment.get('vendor_risk_score', 0)
-                        if risk > 0:
-                            risks.append(risk)
-                    
-                    avg_risk = sum(risks) / len(risks) if risks else 0
-                    vendor_name = vtype.replace('_', ' ').title() + ' Vendors'
-                    
-                    top_vendors.append({
-                        "vendor_name": vendor_name,
-                        "domain_count": len(domain_list),
-                        "vendor_type": vtype,
-                        "avg_risk_score": int(avg_risk)
-                    })
-                stats["top_vendors"] = top_vendors
-            else:
-                stats["top_vendors"] = [
-                    {
-                        "vendor_name": v.get('vendor_name', 'Unknown'),
-                        "domain_count": v.get('domain_count', 0),
-                        "vendor_type": v.get('vendor_type', 'unknown'),
-                        "avg_risk_score": v.get('avg_risk_score', 0)
-                    }
-                    for v in sorted(vendors, key=lambda x: x.get('domain_count', 0), reverse=True)[:10]
-                ]
-            
-            # Recent discoveries (last 10 domains, sorted by creation/update time)
-            def get_sort_key(domain):
-                enriched_at = domain.get('enriched_at')
-                updated_at = domain.get('updated_at')
-                created_at = domain.get('created_at')
-                # Use the most recent timestamp available, default to epoch if none
-                timestamp = enriched_at or updated_at or created_at or '1970-01-01T00:00:00'
-                # Ensure it's a string for comparison
-                return str(timestamp) if timestamp else '1970-01-01T00:00:00'
-            
-            sorted_domains = sorted(domains, key=get_sort_key, reverse=True)
-            
-            recent_discoveries = []
-            for d in sorted_domains[:10]:
-                # Get risk score from enrichment_data if not in direct field
-                risk = d.get('vendor_risk_score', 0)
-                vendor_type = d.get('vendor_type')
-                if risk == 0 or not vendor_type:
-                    enrichment = d.get('enrichment_data', {})
-                    if isinstance(enrichment, str):
-                        try:
-                            import json
-                            enrichment = json.loads(enrichment)
-                        except:
-                            enrichment = {}
-                    if risk == 0:
-                        risk = enrichment.get('vendor_risk_score', 0)
-                    if not vendor_type:
-                        vendor_type = enrichment.get('vendor_type')
-                
-                recent_discoveries.append({
-                    "domain": d.get('domain'),
-                    "vendor_type": vendor_type,
-                    "risk_score": risk,
-                    "source": d.get('source', 'Unknown')
-                })
-            stats["recent_discoveries"] = recent_discoveries
-            
-            # Infrastructure clusters
-            try:
-                # Import clustering module using importlib to avoid sys.path issues
-                import importlib.util
-                clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
-                if clustering_path.exists():
-                    spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
-                    vendor_clustering = importlib.util.module_from_spec(spec)
-                    # Add blueprint_dir to sys.path temporarily for any internal imports
-                    import sys
-                    original_path = sys.path[:]
-                    if str(blueprint_dir) not in sys.path:
-                        sys.path.insert(0, str(blueprint_dir))
-                    try:
-                        spec.loader.exec_module(vendor_clustering)
-                        clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
-                        stats["infrastructure_clusters"] = len(clusters)
-                        app_logger.debug(f"Found {len(clusters)} infrastructure clusters")
-                    finally:
-                        sys.path[:] = original_path
-                else:
-                    app_logger.warning(f"Clustering module not found at {clustering_path}")
-                    stats["infrastructure_clusters"] = 0
-            except Exception as e:
-                app_logger.error(f"Error detecting clusters: {e}")
-                import traceback
-                traceback.print_exc()
-                stats["infrastructure_clusters"] = 0
-                
-        except Exception as e:
-            app_logger.error(f"Error getting homepage stats: {e}")
+            if module_name not in sys.modules:
+                importlib.import_module(module_name)
+                imported.append(module_name)
+        except ImportError as e:
+            failed.append(f"{module_name}: {e}")
+            # Continue - some modules might not be needed
     
-    return jsonify(stats), 200
+    if imported:
+        app_logger.debug(f"Pre-imported {len(imported)} modules: {', '.join(imported)}")
+    if failed:
+        app_logger.warning(f"Failed to pre-import {len(failed)} modules: {', '.join(failed)}")
+    
+    return len(imported), len(failed)
+
+
+def load_module_safely(module_path, module_name):
+    """
+    Safely load a module using importlib with all dependencies pre-loaded.
+    
+    Args:
+        module_path: Path to the module file
+        module_name: Simple name for the module (e.g., "seed_dummy_data")
+    
+    Returns:
+        The loaded module or None if failed
+    """
+    import importlib.util
+    
+    if not module_path.exists():
+        app_logger.error(f"Module not found: {module_path}")
+        return None
+    
+    # Ensure all src modules are available first
+    ensure_src_modules_available()
+    
+    # Create spec and module
+    spec = importlib.util.spec_from_file_location(module_name, module_path)
+    if spec is None or spec.loader is None:
+        app_logger.error(f"Could not create spec for {module_path}")
+        return None
+    
+    module = importlib.util.module_from_spec(spec)
+    
+    # Store original sys.path
+    original_path = sys.path[:]
+    
+    # Ensure blueprint_dir is in sys.path
+    if str(blueprint_dir) not in sys.path:
+        sys.path.insert(0, str(blueprint_dir))
+    
+    try:
+        # Execute the module - all dependencies should now be available
+        spec.loader.exec_module(module)
+        return module
+    except Exception as e:
+        app_logger.error(f"Error loading module {module_path}: {e}", exc_info=True)
+        return None
+    finally:
+        # Restore sys.path
+        sys.path[:] = original_path
 
 
 @personaforge_bp.route('/')
 def index():
-    """Render the landing page."""
-    # Use absolute path for template lookup
-    template_path = blueprint_dir / 'templates' / 'index.html'
-    root_index_path = blueprint_dir / 'index.html'
-    
-    # Try templates first, fallback to root index.html
-    if template_path.exists():
-        return render_template('index.html')
-    elif root_index_path.exists():
-        with open(root_index_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        return Response(content, mimetype='text/html')
-    else:
-        return jsonify({"message": "PersonaForge API", "endpoints": ["/api/enrich", "/api/check", "/api/domains", "/api/vendors", "/api/clusters", "/api/graph"]})
+    """Render the PersonaForge homepage."""
+    return render_template('index.html')
 
 
 @personaforge_bp.route('/dashboard')
 def dashboard():
-    """Render the graph visualization dashboard."""
-    # Explicitly use this blueprint's template by checking it exists first
-    template_path = blueprint_dir / 'templates' / 'dashboard.html'
-    if template_path.exists():
-        # Use render_template - Flask should use this blueprint's template_folder
-        # But to be safe, we can also try using the blueprint's template directly
-        return render_template('dashboard.html')
-    else:
-        return jsonify({"message": "Dashboard coming soon"})
+    """Render the main visualization dashboard."""
+    return render_template('dashboard.html')
 
 
 @personaforge_bp.route('/vendors')
 def vendors():
-    """Render the vendors listing page."""
-    return render_template('vendors.html') if os.path.exists(os.path.join(blueprint_dir, 'templates/vendors.html')) else jsonify({"message": "Vendors page coming soon"})
-
-
-@personaforge_bp.route('/methodology')
-def methodology():
-    """Render the sources and methodology page."""
-    return render_template('methodology.html') if os.path.exists(os.path.join(blueprint_dir, 'templates/methodology.html')) else jsonify({"message": "Methodology page coming soon"})
+    """Render the vendors/clusters page."""
+    return render_template('vendors.html')
 
 
 @personaforge_bp.route('/analytics')
 def analytics():
     """Render the analytics page."""
-    return render_template('analytics.html') if os.path.exists(os.path.join(blueprint_dir, 'templates/analytics.html')) else jsonify({"message": "Analytics coming soon"})
+    return render_template('analytics.html')
 
 
-# API Routes - copied from original app.py
+@personaforge_bp.route('/methodology')
+def methodology():
+    """Render the methodology page."""
+    return render_template('methodology.html')
+
+
+@personaforge_bp.route('/api/homepage-stats', methods=['GET'])
+def get_homepage_stats():
+    """Get statistics for the homepage."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "total_domains": 0,
+            "total_vendors": 0,
+            "high_risk_domains": 0,
+            "infrastructure_clusters": 0,
+            "top_vendors": []
+        }), 200
+    
+    try:
+        # Get basic stats
+        domains = postgres_client.get_all_enriched_domains()
+        vendors = postgres_client.get_vendors(min_domains=1)
+        
+        # Count high-risk domains (you can define this based on your criteria)
+        high_risk = len([d for d in domains if d.get('vendor_type') == 'high_risk'])
+        
+        # Get top vendors
+        top_vendors = sorted(vendors, key=lambda v: v.get('domain_count', 0), reverse=True)[:10]
+        
+        # Get infrastructure clusters count
+        stats = {
+            "total_domains": len(domains),
+            "total_vendors": len(vendors),
+            "high_risk_domains": high_risk,
+            "top_vendors": [
+                {
+                    "name": v.get('name', 'Unknown'),
+                    "domain_count": v.get('domain_count', 0)
+                }
+                for v in top_vendors
+            ],
+            "infrastructure_clusters": 0  # Will be updated if clustering works
+        }
+        
+        # Try to get cluster count
+        try:
+            clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+            if clustering_path.exists():
+                clustering_module = load_module_safely(clustering_path, "vendor_clustering")
+                if clustering_module and hasattr(clustering_module, 'detect_vendor_clusters'):
+                    clusters = clustering_module.detect_vendor_clusters(postgres_client)
+                    stats["infrastructure_clusters"] = len(clusters)
+        except Exception as e:
+            app_logger.debug(f"Could not get cluster count: {e}")
+        
+        return jsonify(stats), 200
+    except Exception as e:
+        app_logger.error(f"Error getting homepage stats: {e}", exc_info=True)
+        return jsonify({
+            "total_domains": 0,
+            "total_vendors": 0,
+            "high_risk_domains": 0,
+            "infrastructure_clusters": 0,
+            "top_vendors": []
+        }), 200
+
 
 @personaforge_bp.route('/api/vendors', methods=['GET'])
 def get_vendors():
-    """Get all vendors with their domain counts."""
+    """Get vendors and clusters."""
     if not postgres_client or not postgres_client.conn:
         return jsonify({
             "vendors": [],
@@ -334,25 +288,12 @@ def get_vendors():
         vendors = postgres_client.get_vendors(min_domains=min_domains)
         
         # Get clusters
-        # Use importlib to avoid sys.path issues
-        import importlib.util
         clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+        clusters = []
         if clustering_path.exists():
-            spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
-            vendor_clustering = importlib.util.module_from_spec(spec)
-            # Add blueprint_dir to sys.path temporarily for any internal imports
-            import sys
-            original_path = sys.path[:]
-            if str(blueprint_dir) not in sys.path:
-                sys.path.insert(0, str(blueprint_dir))
-            try:
-                spec.loader.exec_module(vendor_clustering)
-                clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
-            finally:
-                sys.path[:] = original_path
-        else:
-            app_logger.error(f"Clustering module not found at {clustering_path}")
-            clusters = []
+            clustering_module = load_module_safely(clustering_path, "vendor_clustering")
+            if clustering_module and hasattr(clustering_module, 'detect_vendor_clusters'):
+                clusters = clustering_module.detect_vendor_clusters(postgres_client)
         
         # Filter clusters by min_size
         filtered_clusters = [c for c in clusters if len(c.get('domains', [])) >= min_size]
@@ -364,11 +305,16 @@ def get_vendors():
             "vendors": vendors,
             "clusters": filtered_clusters,
             "total_domains": len(domains),
-            "count": len(vendors)
+            "infrastructure_clusters": len(filtered_clusters)
         }), 200
     except Exception as e:
-        app_logger.error(f"Error getting vendors: {e}")
-        return jsonify({"error": str(e), "vendors": [], "clusters": []}), 500
+        app_logger.error(f"Error getting vendors: {e}", exc_info=True)
+        return jsonify({
+            "vendors": [],
+            "clusters": [],
+            "total_domains": 0,
+            "error": str(e)
+        }), 500
 
 
 @personaforge_bp.route('/api/clusters', methods=['GET'])
@@ -381,32 +327,22 @@ def get_clusters():
         }), 200
     
     try:
-        # Import clustering module using importlib to avoid sys.path issues
-        import importlib.util
-        import sys
         clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
         if not clustering_path.exists():
-            app_logger.warning("Clustering module not found")
-            return jsonify({
-                "clusters": [],
-                "count": 0
-            }), 200
+            return jsonify({"clusters": [], "error": "Clustering module not found"}), 500
         
-        spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
-        vendor_clustering = importlib.util.module_from_spec(spec)
-        # Add blueprint_dir to sys.path temporarily for any internal imports
-        original_path = sys.path[:]
-        if str(blueprint_dir) not in sys.path:
-            sys.path.insert(0, str(blueprint_dir))
-        try:
-            spec.loader.exec_module(vendor_clustering)
-            clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
-            return jsonify({
-                "clusters": clusters,
-                "count": len(clusters)
-            }), 200
-        finally:
-            sys.path[:] = original_path
+        clustering_module = load_module_safely(clustering_path, "vendor_clustering")
+        if not clustering_module:
+            return jsonify({"clusters": [], "error": "Could not load clustering module"}), 500
+        
+        if not hasattr(clustering_module, 'detect_vendor_clusters'):
+            return jsonify({"clusters": [], "error": "detect_vendor_clusters function not found"}), 500
+        
+        clusters = clustering_module.detect_vendor_clusters(postgres_client)
+        return jsonify({
+            "clusters": clusters,
+            "count": len(clusters)
+        }), 200
     except Exception as e:
         app_logger.error(f"Error getting clusters: {e}", exc_info=True)
         return jsonify({
@@ -417,299 +353,162 @@ def get_clusters():
 
 @personaforge_bp.route('/api/graph', methods=['GET'])
 def get_graph():
-    """Get graph data from Neo4j or generate from PostgreSQL for visualization."""
-    # Try Neo4j first if available
-    if NEO4J_AVAILABLE and neo4j_client and neo4j_client.driver:
-        try:
-            graph_data = neo4j_client.get_all_nodes_and_relationships()
-            if graph_data.get('nodes') and len(graph_data.get('nodes', [])) > 0:
-                return jsonify(graph_data), 200
-        except Exception as e:
-            app_logger.warning(f"Neo4j graph data failed, falling back to PostgreSQL: {e}")
+    """Get graph data for visualization."""
+    try:
+        return get_graph_from_postgres()
+    except Exception as e:
+        app_logger.error(f"Error generating graph: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "nodes": [],
+            "edges": []
+        }), 500
+
+
+def get_graph_from_postgres():
+    """Generate graph data from PostgreSQL."""
+    from collections import Counter
     
-    # Fallback: Generate graph from PostgreSQL
     if not postgres_client or not postgres_client.conn:
         return jsonify({
             "nodes": [],
             "edges": [],
-            "message": "No database available"
+            "stats": {
+                "total_domains": 0,
+                "total_services": 0,
+                "total_edges": 0
+            }
         }), 200
     
     try:
         domains = postgres_client.get_all_enriched_domains()
         
-        if len(domains) == 0:
-            return jsonify({
-                "nodes": [],
-                "edges": [],
-                "message": "No domains available"
-            }), 200
-        
-        # Use clustering to organize the graph better
-        # Import clustering module using importlib to avoid sys.path issues
-        import importlib.util
-        clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
-        if clustering_path.exists():
-            spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
-            vendor_clustering = importlib.util.module_from_spec(spec)
-            # Add blueprint_dir to sys.path temporarily for any internal imports
-            import sys
-            original_path = sys.path[:]
-            if str(blueprint_dir) not in sys.path:
-                sys.path.insert(0, str(blueprint_dir))
-            try:
-                spec.loader.exec_module(vendor_clustering)
-                clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
-            finally:
-                sys.path[:] = original_path
-        else:
-            app_logger.warning(f"Clustering module not found at {clustering_path}")
+        # Limit to 30 nodes for readability
+        if len(domains) > 30:
+            # Prioritize: Clusters > Vendors > Infrastructure > Domains
             clusters = []
+            try:
+                clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+                if clustering_path.exists():
+                    clustering_module = load_module_safely(clustering_path, "vendor_clustering")
+                    if clustering_module and hasattr(clustering_module, 'detect_vendor_clusters'):
+                        clusters = clustering_module.detect_vendor_clusters(postgres_client)
+            except:
+                pass
+            
+            # Get domains from top clusters first
+            cluster_domains = set()
+            for cluster in clusters[:5]:  # Top 5 clusters
+                cluster_domains.update(cluster.get('domains', []))
+            
+            # Get vendor domains
+            vendors = postgres_client.get_vendors(min_domains=2)
+            vendor_domains = set()
+            for vendor in vendors[:10]:  # Top 10 vendors
+                vendor_domains.update(vendor.get('domains', []))
+            
+            # Combine and limit
+            priority_domains = list(cluster_domains | vendor_domains)[:30]
+            domains = [d for d in domains if d.get('domain') in priority_domains]
         
-        # Build graph from PostgreSQL data with clustering
         nodes = []
         edges = []
-        node_map = {}  # Track nodes by ID to avoid duplicates
+        node_id_map = {}
+        node_counter = 0
         
-        # Limit to top domains by risk score or most recent
-        sorted_domains = sorted(domains, key=lambda d: (
-            d.get('vendor_risk_score', 0) or 
-            d.get('enrichment_data', {}).get('vendor_risk_score', 0) if isinstance(d.get('enrichment_data'), dict) else 0
-        ), reverse=True)
+        # Service frequency counters
+        service_counts = Counter()
         
-        # Take top 40 domains for cleaner visualization
-        top_domains = sorted_domains[:40]
-        top_domain_names = {d.get('domain') for d in top_domains if d.get('domain')}
-        
-        # Only create cluster nodes for clusters that have at least one domain in top_domains
-        cluster_node_map = {}
-        clusters_with_top_domains = []
-        
-        for cluster in clusters:
-            # Check if any domain in this cluster is in the top domains
-            cluster_domains = set(cluster.get('domains', []))
-            if cluster_domains & top_domain_names:  # Intersection - at least one domain matches
-                clusters_with_top_domains.append(cluster)
-        
-        # Create cluster nodes only for clusters with domains in the graph
-        for cluster in clusters_with_top_domains[:10]:  # Top 10 clusters that have domains in graph
-            cluster_id = f"cluster_{hash(cluster['signature']) % 10000}"
-            cluster_node_map[cluster['signature']] = cluster_id
+        # Add domain nodes
+        for domain in domains:
+            domain_name = domain.get('domain', '')
+            if not domain_name:
+                continue
             
-            # Count how many domains from this cluster are actually in the graph
-            cluster_domains = set(cluster.get('domains', []))
-            domains_in_graph = list(cluster_domains & top_domain_names)  # Keep as list for display
-            domains_in_graph_count = len(domains_in_graph)
+            node_id = f"domain_{domain_name}"
+            node_id_map[('domain', domain_name)] = node_id
             
             nodes.append({
-                "id": cluster_id,
-                "label": "Cluster",
+                "id": node_id,
+                "label": "Domain",
+                "node_type": "domain",
                 "properties": {
-                    "name": f"Cluster ({domains_in_graph_count} domains)",
-                    "domain_count": domains_in_graph_count,
-                    "signature": cluster['signature'],
-                    "domains": sorted(domains_in_graph)  # Store actual domain names
+                    "domain": domain_name,
+                    "name": domain_name
                 }
             })
-            node_map[cluster_id] = True
-        
-        # Add domain nodes and create relationships
-        for domain in top_domains:
-            domain_name = domain.get('domain')
-            if not domain_name:
-                continue
             
-            domain_id = f"domain_{domain.get('id', domain_name)}"
+            # Add service nodes and edges
+            services = []
             
-            # Get enrichment data (needed for both node creation and cluster matching)
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            # Add domain node
-            if domain_id not in node_map:
-                vendor_type = domain.get('vendor_type') or enrichment.get('vendor_type')
-                risk_score = domain.get('vendor_risk_score', 0) or enrichment.get('vendor_risk_score', 0)
-                
-                nodes.append({
-                    "id": domain_id,
-                    "label": "Domain",
-                    "properties": {
-                        "domain": domain_name,
-                        "vendor_type": vendor_type,
-                        "risk_score": risk_score
-                    }
-                })
-                node_map[domain_id] = True
-            
-            # Add vendor node and edge (group by vendor_type)
-            vendor_type = domain.get('vendor_type') or enrichment.get('vendor_type')
-            if vendor_type:
-                vendor_id = f"vendor_{vendor_type}"
-                if vendor_id not in node_map:
+            # Host
+            if domain.get('host_name'):
+                host_name = domain.get('host_name')
+                service_id = f"host_{host_name}"
+                if service_id not in node_id_map:
+                    node_id_map[('host', host_name)] = service_id
                     nodes.append({
-                        "id": vendor_id,
-                        "label": "Vendor",
-                        "properties": {
-                            "name": vendor_type.replace('_', ' ').title(),
-                            "vendor_type": vendor_type
-                        }
-                    })
-                    node_map[vendor_id] = True
-                
-                edges.append({
-                    "source": domain_id,
-                    "target": vendor_id,
-                    "type": "OWNED_BY"
-                })
-            
-            # Link domain to cluster if it belongs to one
-            # Build domain signature the same way clusters are built
-            domain_signature_parts = []
-            domain_host = enrichment.get('host_name') or domain.get('host_name')
-            domain_cdn = enrichment.get('cdn') or domain.get('cdn')
-            domain_registrar = enrichment.get('registrar') or domain.get('registrar')
-            domain_payment = enrichment.get('payment_processor') or domain.get('payment_processor')
-            
-            if domain_host:
-                domain_signature_parts.append(f"host:{domain_host}")
-            if domain_cdn:
-                domain_signature_parts.append(f"cdn:{domain_cdn}")
-            if domain_registrar:
-                domain_signature_parts.append(f"registrar:{domain_registrar}")
-            if domain_payment:
-                domain_signature_parts.append(f"payment:{domain_payment}")
-            
-            # Match domain signature to cluster signature (exact match)
-            if domain_signature_parts:
-                domain_signature = "|".join(sorted(domain_signature_parts))
-                if domain_signature in cluster_node_map:
-                    cluster_id = cluster_node_map[domain_signature]
-                    edges.append({
-                        "source": domain_id,
-                        "target": cluster_id,
-                        "type": "IN_CLUSTER"
-                    })
-        
-        # Now create infrastructure nodes with complete domain lists
-        # First pass: collect all infrastructure usage
-        infra_tracking = {'hosts': {}, 'cdns': {}, 'payments': {}}
-        for domain in top_domains:
-            domain_name = domain.get('domain')
-            if not domain_name:
-                continue
-            
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            host_name = enrichment.get('host_name') or domain.get('host_name')
-            cdn = enrichment.get('cdn') or domain.get('cdn')
-            payment = enrichment.get('payment_processor') or domain.get('payment_processor')
-            
-            if host_name:
-                host_id = f"host_{host_name}"
-                if host_id not in infra_tracking['hosts']:
-                    infra_tracking['hosts'][host_id] = {'name': host_name, 'domains': []}
-                if domain_name not in infra_tracking['hosts'][host_id]['domains']:
-                    infra_tracking['hosts'][host_id]['domains'].append(domain_name)
-            
-            if cdn:
-                cdn_id = f"cdn_{cdn}"
-                if cdn_id not in infra_tracking['cdns']:
-                    infra_tracking['cdns'][cdn_id] = {'name': cdn, 'domains': []}
-                if domain_name not in infra_tracking['cdns'][cdn_id]['domains']:
-                    infra_tracking['cdns'][cdn_id]['domains'].append(domain_name)
-            
-            if payment:
-                payment_id = f"payment_{payment}"
-                if payment_id not in infra_tracking['payments']:
-                    infra_tracking['payments'][payment_id] = {'name': payment, 'domains': []}
-                if domain_name not in infra_tracking['payments'][payment_id]['domains']:
-                    infra_tracking['payments'][payment_id]['domains'].append(domain_name)
-        
-        # Second pass: create infrastructure nodes and edges for those with 2+ domains
-        for host_id, host_data in infra_tracking['hosts'].items():
-            if len(host_data['domains']) >= 2:
-                if host_id not in node_map:
-                    nodes.append({
-                        "id": host_id,
+                        "id": service_id,
                         "label": "Host",
-                        "properties": {
-                            "name": host_data['name'],
-                            "domain_count": len(host_data['domains']),
-                            "domains": host_data['domains']
-                        }
+                        "node_type": "host",
+                        "properties": {"name": host_name}
                     })
-                    node_map[host_id] = True
-                
-                # Create edges for all domains using this host
-                for domain_name in host_data['domains']:
-                    domain_node = next((n for n in nodes if n.get("properties", {}).get("domain") == domain_name), None)
-                    if domain_node:
-                        edges.append({
-                            "source": domain_node["id"],
-                            "target": host_id,
-                            "type": "HOSTED_ON"
-                        })
-        
-        for cdn_id, cdn_data in infra_tracking['cdns'].items():
-            if len(cdn_data['domains']) >= 2:
-                if cdn_id not in node_map:
+                    service_counts['host'] += 1
+                edges.append({"source": node_id, "target": service_id, "type": "hosted_by"})
+            
+            # CDN
+            if domain.get('cdn'):
+                cdn_name = domain.get('cdn')
+                service_id = f"cdn_{cdn_name}"
+                if service_id not in node_id_map:
+                    node_id_map[('cdn', cdn_name)] = service_id
                     nodes.append({
-                        "id": cdn_id,
+                        "id": service_id,
                         "label": "CDN",
-                        "properties": {
-                            "name": cdn_data['name'],
-                            "domain_count": len(cdn_data['domains']),
-                            "domains": cdn_data['domains']
-                        }
+                        "node_type": "cdn",
+                        "properties": {"name": cdn_name}
                     })
-                    node_map[cdn_id] = True
-                
-                for domain_name in cdn_data['domains']:
-                    domain_node = next((n for n in nodes if n.get("properties", {}).get("domain") == domain_name), None)
-                    if domain_node:
-                        edges.append({
-                            "source": domain_node["id"],
-                            "target": cdn_id,
-                            "type": "USES_CDN"
-                        })
-        
-        for payment_id, payment_data in infra_tracking['payments'].items():
-            if len(payment_data['domains']) >= 2:
-                if payment_id not in node_map:
+                    service_counts['cdn'] += 1
+                edges.append({"source": node_id, "target": service_id, "type": "uses_cdn"})
+            
+            # CMS
+            if domain.get('cms'):
+                cms_name = domain.get('cms')
+                service_id = f"cms_{cms_name}"
+                if service_id not in node_id_map:
+                    node_id_map[('cms', cms_name)] = service_id
                     nodes.append({
-                        "id": payment_id,
-                        "label": "PaymentProcessor",
-                        "properties": {
-                            "name": payment_data['name'],
-                            "domain_count": len(payment_data['domains']),
-                            "domains": payment_data['domains']
-                        }
+                        "id": service_id,
+                        "label": "CMS",
+                        "node_type": "cms",
+                        "properties": {"name": cms_name}
                     })
-                    node_map[payment_id] = True
-                
-                for domain_name in payment_data['domains']:
-                    domain_node = next((n for n in nodes if n.get("properties", {}).get("domain") == domain_name), None)
-                    if domain_node:
-                        edges.append({
-                            "source": domain_node["id"],
-                            "target": payment_id,
-                            "type": "USES_PAYMENT"
-                        })
+                    service_counts['cms'] += 1
+                edges.append({"source": node_id, "target": service_id, "type": "uses_cms"})
+            
+            # Registrar
+            if domain.get('registrar'):
+                registrar_name = domain.get('registrar')
+                service_id = f"registrar_{registrar_name}"
+                if service_id not in node_id_map:
+                    node_id_map[('registrar', registrar_name)] = service_id
+                    nodes.append({
+                        "id": service_id,
+                        "label": "Registrar",
+                        "node_type": "registrar",
+                        "properties": {"name": registrar_name}
+                    })
+                    service_counts['registrar'] += 1
+                edges.append({"source": node_id, "target": service_id, "type": "registered_with"})
         
         return jsonify({
             "nodes": nodes,
-            "edges": edges
+            "edges": edges,
+            "stats": {
+                "total_domains": len([n for n in nodes if n.get('node_type') == 'domain']),
+                "total_services": len([n for n in nodes if n.get('node_type') != 'domain']),
+                "total_edges": len(edges)
+            }
         }), 200
         
     except Exception as e:
@@ -727,41 +526,19 @@ def discover_vendors():
     Discover vendors from public sources and automatically enrich them.
     """
     try:
-        # Use importlib to avoid sys.path issues
-        import importlib.util
-        import sys
-        
-        # Import vendor_discovery
         vendor_discovery_path = blueprint_dir / 'src' / 'enrichment' / 'vendor_discovery.py'
         if not vendor_discovery_path.exists():
             return jsonify({"error": "vendor_discovery module not found"}), 500
         
-        spec = importlib.util.spec_from_file_location("vendor_discovery", vendor_discovery_path)
-        vendor_discovery_module = importlib.util.module_from_spec(spec)
-        original_path = sys.path[:]
-        if str(blueprint_dir) not in sys.path:
-            sys.path.insert(0, str(blueprint_dir))
-        try:
-            # Pre-import src modules to make them available
-            import importlib
-            # Import src as a package first to make it available
-            try:
-                importlib.import_module('src')
-                importlib.import_module('src.utils')
-                importlib.import_module('src.utils.config')
-                importlib.import_module('src.utils.logger')
-                importlib.import_module('src.utils.rate_limiter')
-                importlib.import_module('src.enrichment')
-            except ImportError as e:
-                app_logger.warning(f"Could not pre-import src modules: {e}")
-                # Continue anyway - might work if already imported
-            
-            # Don't set __name__ or __package__ - let importlib handle it
-            spec.loader.exec_module(vendor_discovery_module)
-            discover_all_sources = vendor_discovery_module.discover_all_sources
-            ask_ai_for_data_sources = vendor_discovery_module.ask_ai_for_data_sources
-        finally:
-            sys.path[:] = original_path
+        vendor_discovery_module = load_module_safely(vendor_discovery_path, "vendor_discovery")
+        if not vendor_discovery_module:
+            return jsonify({"error": "Could not load vendor_discovery module"}), 500
+        
+        if not hasattr(vendor_discovery_module, 'discover_all_sources'):
+            return jsonify({"error": "discover_all_sources function not found"}), 500
+        
+        discover_all_sources = vendor_discovery_module.discover_all_sources
+        ask_ai_for_data_sources = getattr(vendor_discovery_module, 'ask_ai_for_data_sources', None)
         
         data = request.get_json() or {}
         limit_per_source = data.get('limit_per_source', 20)
@@ -770,47 +547,54 @@ def discover_vendors():
         app_logger.info(f"🔍 Starting vendor discovery (limit: {limit_per_source})...")
         
         # First, ask AI for data sources and strategies
-        ai_sources = ask_ai_for_data_sources()
-        app_logger.info(f"🤖 AI suggested {len(ai_sources.get('sources', []))} data sources")
+        ai_sources = {}
+        if ask_ai_for_data_sources:
+            try:
+                ai_sources = ask_ai_for_data_sources()
+                app_logger.info(f"🤖 AI suggested {len(ai_sources.get('sources', []))} data sources")
+            except Exception as e:
+                app_logger.warning(f"AI source suggestion failed: {e}")
         
         # Discover from all sources (including AI)
         discovery_results = discover_all_sources(limit_per_source=limit_per_source)
         
         # Combine all discovered domains
         all_domains = set()
-        for domains in discovery_results.values():
-            all_domains.update(domains)
+        for domains_list in discovery_results.values():
+            all_domains.update(domains_list)
         
         enriched_domains = []
         errors = []
         
-        # Optionally auto-enrich discovered domains
-        if auto_enrich and all_domains:
-            app_logger.info(f"📊 Auto-enriching {len(all_domains)} discovered domains...")
+        if auto_enrich:
+            enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+            enrichment_pipeline_module = load_module_safely(enrichment_pipeline_path, "enrichment_pipeline")
+            enrich_domain_func = None
+            if enrichment_pipeline_module and hasattr(enrichment_pipeline_module, 'enrich_domain'):
+                enrich_domain_func = enrichment_pipeline_module.enrich_domain
             
-            for domain in list(all_domains)[:50]:  # Limit to 50 to avoid timeout
+            for domain in all_domains:
                 try:
-                    # Enrich the domain
-                    enrichment_data = enrich_domain(domain)
+                    # Insert domain
+                    domain_id = postgres_client.insert_domain(
+                        domain=domain,
+                        source="DISCOVERY",
+                        notes="Discovered via vendor discovery API"
+                    )
                     
-                    # Store in database
-                    if postgres_client and postgres_client.conn:
-                        try:
-                            domain_id = postgres_client.insert_domain(
-                                domain,
-                                'Auto-discovery',
-                                f"Discovered from public sources",
-                                enrichment_data.get('vendor_type')
-                            )
-                            postgres_client.insert_enrichment(domain_id, enrichment_data)
-                            enriched_domains.append({
-                                'domain': domain,
-                                'vendor_type': enrichment_data.get('vendor_type'),
-                                'risk_score': enrichment_data.get('vendor_risk_score', 0)
-                            })
-                        except Exception as e:
-                            app_logger.error(f"Error storing discovered domain {domain}: {e}")
-                            errors.append(f"{domain}: Storage failed")
+                    # Enrich if function available
+                    if enrich_domain_func:
+                        enrichment_data = enrich_domain_func(domain)
+                        postgres_client.insert_enrichment(domain_id, enrichment_data)
+                        enriched_domains.append({
+                            "domain": domain,
+                            "enriched": True
+                        })
+                    else:
+                        enriched_domains.append({
+                            "domain": domain,
+                            "enriched": False
+                        })
                 except Exception as e:
                     app_logger.error(f"Error enriching discovered domain {domain}: {e}")
                     errors.append(f"{domain}: Enrichment failed")
@@ -847,40 +631,15 @@ def run_initial_discovery():
             
             if dummy_count == 0:
                 app_logger.info("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
-                # Use importlib to avoid sys.path issues
-                import importlib.util
-                import sys
+                
                 seed_dummy_data_path = blueprint_dir / 'src' / 'database' / 'seed_dummy_data.py'
                 if seed_dummy_data_path.exists():
-                    spec = importlib.util.spec_from_file_location("seed_dummy_data", seed_dummy_data_path)
-                    seed_dummy_data_module = importlib.util.module_from_spec(spec)
-                    # Add blueprint_dir to sys.path temporarily for any internal imports
-                    # This ensures 'src.utils' can be found when the module imports it
-                    original_path = sys.path[:]
-                    if str(blueprint_dir) not in sys.path:
-                        sys.path.insert(0, str(blueprint_dir))
-                    try:
-                        # Pre-import src modules to make them available
-                        # This ensures src.utils can be found when seed_dummy_data imports it
-                        import importlib
-                        # Import src as a package first to make it available
-                        try:
-                            importlib.import_module('src')
-                            importlib.import_module('src.utils')
-                            importlib.import_module('src.utils.logger')
-                            importlib.import_module('src.database')
-                            importlib.import_module('src.database.postgres_client')
-                        except ImportError as e:
-                            app_logger.warning(f"Could not pre-import src modules: {e}")
-                            # Continue anyway - might work if already imported
-                        
-                        # Don't set __name__ or __package__ - let importlib handle it
-                        # The module name should match what we passed to spec_from_file_location
-                        spec.loader.exec_module(seed_dummy_data_module)
+                    seed_dummy_data_module = load_module_safely(seed_dummy_data_path, "seed_dummy_data")
+                    if seed_dummy_data_module and hasattr(seed_dummy_data_module, 'seed_dummy_data'):
                         count = seed_dummy_data_module.seed_dummy_data(num_domains=50)
                         app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
-                    finally:
-                        sys.path[:] = original_path
+                    else:
+                        app_logger.error("Could not load seed_dummy_data function")
                 else:
                     app_logger.error(f"seed_dummy_data module not found at {seed_dummy_data_path}")
             else:
@@ -896,70 +655,26 @@ def run_initial_discovery():
         if len(real_domains) == 0:
             app_logger.info("🔍 Database is empty - running initial discovery...")
             try:
-                # Use importlib to avoid sys.path issues
-                import importlib.util
-                import sys
-                
-                # Import vendor_discovery
                 vendor_discovery_path = blueprint_dir / 'src' / 'enrichment' / 'vendor_discovery.py'
-                if vendor_discovery_path.exists():
-                    spec = importlib.util.spec_from_file_location("vendor_discovery", vendor_discovery_path)
-                    vendor_discovery_module = importlib.util.module_from_spec(spec)
-                    original_path = sys.path[:]
-                    if str(blueprint_dir) not in sys.path:
-                        sys.path.insert(0, str(blueprint_dir))
-                    try:
-                        # Pre-import src modules to make them available
-                        # Import src as a package first to make it available
-                        try:
-                            importlib.import_module('src')
-                            importlib.import_module('src.utils')
-                            importlib.import_module('src.utils.config')
-                            importlib.import_module('src.utils.logger')
-                            importlib.import_module('src.utils.rate_limiter')
-                            importlib.import_module('src.enrichment')
-                        except ImportError as e:
-                            app_logger.warning(f"Could not pre-import src modules: {e}")
-                            # Continue anyway - might work if already imported
-                        
-                        # Don't set __name__ or __package__ - let importlib handle it
-                        spec.loader.exec_module(vendor_discovery_module)
-                        discover_all_sources = vendor_discovery_module.discover_all_sources
-                    finally:
-                        sys.path[:] = original_path
-                else:
-                    app_logger.error(f"vendor_discovery module not found at {vendor_discovery_path}")
+                enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+                
+                if not vendor_discovery_path.exists() or not enrichment_pipeline_path.exists():
+                    app_logger.warning("Discovery modules not found - skipping initial discovery")
                     return
                 
-                # Import enrichment_pipeline
-                enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
-                if enrichment_pipeline_path.exists():
-                    spec = importlib.util.spec_from_file_location("enrichment_pipeline", enrichment_pipeline_path)
-                    enrichment_pipeline_module = importlib.util.module_from_spec(spec)
-                    original_path = sys.path[:]
-                    if str(blueprint_dir) not in sys.path:
-                        sys.path.insert(0, str(blueprint_dir))
-                    try:
-                        # Pre-import src modules to make them available
-                        # Import src as a package first to make it available
-                        try:
-                            importlib.import_module('src')
-                            importlib.import_module('src.utils')
-                            importlib.import_module('src.utils.config')
-                            importlib.import_module('src.utils.logger')
-                            importlib.import_module('src.enrichment')
-                        except ImportError as e:
-                            app_logger.warning(f"Could not pre-import src modules: {e}")
-                            # Continue anyway - might work if already imported
-                        
-                        # Don't set __name__ or __package__ - let importlib handle it
-                        spec.loader.exec_module(enrichment_pipeline_module)
-                        enrich_domain = enrichment_pipeline_module.enrich_domain
-                    finally:
-                        sys.path[:] = original_path
-                else:
-                    app_logger.error(f"enrichment_pipeline module not found at {enrichment_pipeline_path}")
+                vendor_discovery_module = load_module_safely(vendor_discovery_path, "vendor_discovery")
+                enrichment_pipeline_module = load_module_safely(enrichment_pipeline_path, "enrichment_pipeline")
+                
+                if not vendor_discovery_module or not hasattr(vendor_discovery_module, 'discover_all_sources'):
+                    app_logger.warning("Could not load vendor_discovery module - skipping initial discovery")
                     return
+                
+                if not enrichment_pipeline_module or not hasattr(enrichment_pipeline_module, 'enrich_domain'):
+                    app_logger.warning("Could not load enrichment_pipeline module - skipping initial discovery")
+                    return
+                
+                discover_all_sources = vendor_discovery_module.discover_all_sources
+                enrich_domain = enrichment_pipeline_module.enrich_domain
                 
                 # Run discovery
                 discovery_results = discover_all_sources(limit_per_source=10)
@@ -969,51 +684,34 @@ def run_initial_discovery():
                 for domains_list in discovery_results.values():
                     all_domains.update(domains_list)
                 
-                app_logger.info(f"📊 Discovered {len(all_domains)} domains, enriching top 20...")
-                
-                # Enrich and store top domains
-                enriched = 0
-                for domain in list(all_domains)[:20]:
+                # Enrich and store domains
+                for domain in list(all_domains)[:20]:  # Limit to 20 for initial discovery
                     try:
-                        enrichment_data = enrich_domain(domain)
                         domain_id = postgres_client.insert_domain(
-                            domain,
-                            'Auto-discovery',
-                            'Initial discovery on startup',
-                            enrichment_data.get('vendor_type')
+                            domain=domain,
+                            source="INITIAL_DISCOVERY",
+                            notes="Auto-discovered on startup"
                         )
+                        enrichment_data = enrich_domain(domain)
                         postgres_client.insert_enrichment(domain_id, enrichment_data)
-                        enriched += 1
                     except Exception as e:
-                        app_logger.debug(f"Error enriching {domain}: {e}")
+                        app_logger.error(f"Error storing discovered domain {domain}: {e}")
                 
-                app_logger.info(f"✅ Initial discovery complete - enriched {enriched} domains")
-                
-                # If discovery found nothing, enrich a few test domains to demonstrate the system
-                if enriched == 0:
-                    app_logger.info("🔍 Discovery found no domains - enriching test domains to demonstrate system...")
-                    test_domains = [
-                        "example.com",
-                        "test.com", 
-                        "demo.com"
-                    ]
-                    for domain in test_domains:
-                        try:
-                            enrichment_data = enrich_domain(domain)
-                            domain_id = postgres_client.insert_domain(
-                                domain,
-                                'Test data',
-                                'Initial test to demonstrate system',
-                                enrichment_data.get('vendor_type')
-                            )
-                            postgres_client.insert_enrichment(domain_id, enrichment_data)
-                            app_logger.info(f"  ✓ Enriched test domain: {domain}")
-                        except Exception as e:
-                            app_logger.debug(f"Error enriching test domain {domain}: {e}")
+                app_logger.info(f"✅ Initial discovery complete - added {len(all_domains)} domains")
             except Exception as e:
                 app_logger.error(f"Initial discovery failed: {e}", exc_info=True)
-        else:
-            app_logger.info(f"✅ Database has {len(domains)} domains - skipping initial discovery")
     except Exception as e:
-        app_logger.error(f"Error checking database for initial discovery: {e}")
+        app_logger.error(f"Error in run_initial_discovery: {e}", exc_info=True)
 
+
+# Run initial discovery in background thread
+import threading
+import time
+
+def delayed_discovery():
+    """Run initial discovery after app starts."""
+    time.sleep(5)  # Wait for app to fully start
+    run_initial_discovery()
+
+discovery_thread = threading.Thread(target=delayed_discovery, daemon=True)
+discovery_thread.start()
