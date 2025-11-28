@@ -70,5 +70,3 @@ data/
 tmp/
 temp/
 *.tmp
-
-shadowstack_enriched_data.json
