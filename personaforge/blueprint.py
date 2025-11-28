@@ -857,6 +857,15 @@ def run_initial_discovery():
                     if str(blueprint_dir) not in sys.path:
                         sys.path.insert(0, str(blueprint_dir))
                     try:
+                        # Pre-import src modules to make them available
+                        # This ensures src.utils can be found when seed_dummy_data imports it
+                        import importlib
+                        try:
+                            importlib.import_module('src.utils.logger')
+                            importlib.import_module('src.database.postgres_client')
+                        except ImportError:
+                            pass  # If they're already imported or don't exist, continue
+                        
                         # Set __package__ and __name__ to help with relative imports
                         seed_dummy_data_module.__package__ = 'src.database'
                         seed_dummy_data_module.__name__ = 'src.database.seed_dummy_data'
