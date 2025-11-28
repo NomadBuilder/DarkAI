@@ -1800,14 +1800,19 @@ def import_pre_enriched_data():
                 if existing:
                     domain_id = existing[0]
                     existing_source = existing[1]
-                    # Update source to ShadowStack if it's not already
-                    if not existing_source or existing_source == 'DUMMY_DATA_FOR_TESTING' or not existing_source.startswith('SHADOWSTACK'):
+                    # Always update source to ShadowStack source (ensures correct filtering)
+                    new_source = domain_record.get('source', 'SHADOWSTACK_PRE_ENRICHED')
+                    # Normalize source to ensure it matches filter criteria
+                    if not new_source.startswith('SHADOWSTACK'):
+                        new_source = 'SHADOWSTACK_PRE_ENRICHED'
+                    
+                    if existing_source != new_source:
                         cursor.execute("""
                             UPDATE domains 
                             SET source = %s, notes = %s 
                             WHERE id = %s
                         """, (
-                            domain_record.get('source', 'SHADOWSTACK_PRE_ENRICHED'),
+                            new_source,
                             domain_record.get('notes', 'Pre-enriched data imported from local'),
                             domain_id
                         ))
@@ -1815,10 +1820,15 @@ def import_pre_enriched_data():
                     else:
                         skipped += 1
                 else:
-                    # Insert domain
+                    # Insert domain with normalized source
+                    new_source = domain_record.get('source', 'SHADOWSTACK_PRE_ENRICHED')
+                    # Normalize source to ensure it matches filter criteria
+                    if not new_source.startswith('SHADOWSTACK'):
+                        new_source = 'SHADOWSTACK_PRE_ENRICHED'
+                    
                     domain_id = postgres.insert_domain(
                         domain=domain,
-                        source=domain_record.get('source', 'SHADOWSTACK_PRE_ENRICHED'),
+                        source=new_source,
                         notes=domain_record.get('notes', 'Pre-enriched data imported from local')
                     )
                     imported += 1
