@@ -336,6 +336,7 @@ class PostgresClient:
         cursor.execute(query)
         
         results = cursor.fetchall()
+        print(f"🔍 get_all_enriched_domains: Raw query returned {len(results)} rows")
         
         # Convert to list of dicts - RealDictCursor should already return dicts, but ensure compatibility
         domains_list = []
@@ -345,6 +346,8 @@ class PostgresClient:
             else:
                 # Convert tuple/row to dict if needed
                 domains_list.append(dict(row))
+        
+        print(f"🔍 get_all_enriched_domains: After conversion, have {len(domains_list)} domains")
         
         # Debug: Check source values of returned domains
         db_params = self.conn.get_dsn_parameters()
