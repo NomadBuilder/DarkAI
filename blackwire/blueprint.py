@@ -1113,8 +1113,29 @@ def _create_relationships_in_neo4j(relationships: List[Dict], neo4j_client):
 @blackwire_bp.route('/api/graph', methods=['GET'])
 def get_graph():
     """Get graph data for visualization."""
-    if not neo4j_client or not neo4j_client.driver:
-        app_logger.warning("Graph API called but Neo4j not available")
+    if not neo4j_client:
+        app_logger.warning("Graph API called but neo4j_client is None")
+        return jsonify({
+            "nodes": [],
+            "edges": [],
+            "message": "Neo4j client not initialized",
+            "error": "Neo4j client not initialized. Check Neo4j configuration."
+        }), 503
+    
+    if not neo4j_client.driver:
+        app_logger.warning("Graph API called but Neo4j driver not available")
+        # Try to verify connection status
+        try:
+            if hasattr(neo4j_client, 'driver') and neo4j_client.driver:
+                # Driver exists, test connection
+                with neo4j_client.driver.session() as test_session:
+                    test_session.run("RETURN 1").consume()
+                app_logger.info("Neo4j driver connection test passed")
+            else:
+                app_logger.warning("Neo4j driver is None")
+        except Exception as conn_test:
+            app_logger.error(f"Neo4j connection test failed: {conn_test}")
+        
         return jsonify({
             "nodes": [],
             "edges": [],
@@ -1141,10 +1162,28 @@ def get_graph():
             # Get all nodes (for dashboard view)
             graph_data = neo4j_client.get_all_nodes_and_relationships()
         
-        app_logger.info(f"Graph API: Returning {len(graph_data.get('nodes', []))} nodes, {len(graph_data.get('edges', []))} edges")
+        nodes_count = len(graph_data.get('nodes', []))
+        edges_count = len(graph_data.get('edges', []))
+        app_logger.info(f"Graph API: Returning {nodes_count} nodes, {edges_count} edges")
+        
+        if nodes_count == 0:
+            app_logger.warning("Graph API: No nodes found in Neo4j. Entities may not have been stored.")
+            # Try to count nodes in Neo4j to verify
+            try:
+                with neo4j_client.driver.session() as count_session:
+                    result = count_session.run("MATCH (n) RETURN count(n) as total")
+                    total_nodes = result.single()["total"]
+                    app_logger.info(f"Neo4j database contains {total_nodes} total nodes")
+                    if total_nodes > 0:
+                        app_logger.warning(f"Neo4j has {total_nodes} nodes but graph query returned 0. Check query filters.")
+            except Exception as count_error:
+                app_logger.error(f"Error counting Neo4j nodes: {count_error}")
+        
         return jsonify(graph_data), 200
     except Exception as e:
         app_logger.error(f"Graph API error: {e}", exc_info=True)
+        import traceback
+        app_logger.error(f"Graph API traceback: {traceback.format_exc()}")
         return jsonify({
             "error": str(e),
             "nodes": [],
