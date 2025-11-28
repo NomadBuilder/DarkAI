@@ -337,7 +337,19 @@ class PostgresClient:
         """)
         
         results = cursor.fetchall()
-        print(f"📊 ShadowStack: Returning {len(results)} enriched domains (excluding dummy data)")
+        
+        # Debug: Check source values of returned domains
+        if results:
+            sources = [r.get('source') for r in results[:10]]
+            print(f"📊 ShadowStack: Returning {len(results)} enriched domains (excluding dummy data)")
+            print(f"   Sample sources: {sources}")
+        else:
+            print(f"📊 ShadowStack: Returning 0 enriched domains (excluding dummy data)")
+            # Debug: Check what sources exist in database
+            cursor.execute("SELECT DISTINCT source FROM domains WHERE source IS NOT NULL AND source != '' LIMIT 20")
+            all_sources = [row[0] for row in cursor.fetchall()]
+            print(f"   Available sources in database: {all_sources}")
+        
         cursor.close()
         
         # Convert results to dicts and parse JSONB fields
