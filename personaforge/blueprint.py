@@ -744,12 +744,17 @@ def discover_vendors():
         try:
             # Pre-import src modules to make them available
             import importlib
+            # Import src as a package first to make it available
             try:
+                importlib.import_module('src')
+                importlib.import_module('src.utils')
                 importlib.import_module('src.utils.config')
                 importlib.import_module('src.utils.logger')
                 importlib.import_module('src.utils.rate_limiter')
-            except ImportError:
-                pass  # If they're already imported or don't exist, continue
+                importlib.import_module('src.enrichment')
+            except ImportError as e:
+                app_logger.warning(f"Could not pre-import src modules: {e}")
+                # Continue anyway - might work if already imported
             
             # Don't set __name__ or __package__ - let importlib handle it
             spec.loader.exec_module(vendor_discovery_module)
@@ -858,11 +863,16 @@ def run_initial_discovery():
                         # Pre-import src modules to make them available
                         # This ensures src.utils can be found when seed_dummy_data imports it
                         import importlib
+                        # Import src as a package first to make it available
                         try:
+                            importlib.import_module('src')
+                            importlib.import_module('src.utils')
                             importlib.import_module('src.utils.logger')
+                            importlib.import_module('src.database')
                             importlib.import_module('src.database.postgres_client')
-                        except ImportError:
-                            pass  # If they're already imported or don't exist, continue
+                        except ImportError as e:
+                            app_logger.warning(f"Could not pre-import src modules: {e}")
+                            # Continue anyway - might work if already imported
                         
                         # Don't set __name__ or __package__ - let importlib handle it
                         # The module name should match what we passed to spec_from_file_location
@@ -900,12 +910,17 @@ def run_initial_discovery():
                         sys.path.insert(0, str(blueprint_dir))
                     try:
                         # Pre-import src modules to make them available
+                        # Import src as a package first to make it available
                         try:
+                            importlib.import_module('src')
+                            importlib.import_module('src.utils')
                             importlib.import_module('src.utils.config')
                             importlib.import_module('src.utils.logger')
                             importlib.import_module('src.utils.rate_limiter')
-                        except ImportError:
-                            pass  # If they're already imported or don't exist, continue
+                            importlib.import_module('src.enrichment')
+                        except ImportError as e:
+                            app_logger.warning(f"Could not pre-import src modules: {e}")
+                            # Continue anyway - might work if already imported
                         
                         # Don't set __name__ or __package__ - let importlib handle it
                         spec.loader.exec_module(vendor_discovery_module)
@@ -926,11 +941,16 @@ def run_initial_discovery():
                         sys.path.insert(0, str(blueprint_dir))
                     try:
                         # Pre-import src modules to make them available
+                        # Import src as a package first to make it available
                         try:
+                            importlib.import_module('src')
+                            importlib.import_module('src.utils')
                             importlib.import_module('src.utils.config')
                             importlib.import_module('src.utils.logger')
-                        except ImportError:
-                            pass  # If they're already imported or don't exist, continue
+                            importlib.import_module('src.enrichment')
+                        except ImportError as e:
+                            app_logger.warning(f"Could not pre-import src modules: {e}")
+                            # Continue anyway - might work if already imported
                         
                         # Don't set __name__ or __package__ - let importlib handle it
                         spec.loader.exec_module(enrichment_pipeline_module)
