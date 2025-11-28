@@ -688,7 +688,8 @@ def enrich_and_store():
 def get_domains():
     """Get all enriched domains from database."""
     try:
-        postgres = PostgresClient()
+        # Use ShadowStack's PostgresClient explicitly to ensure correct database
+        postgres = ShadowStackPostgresClient()
         if not postgres or not postgres.conn:
             print("⚠️  ShadowStack: PostgreSQL connection is None")
             return jsonify({
@@ -700,7 +701,10 @@ def get_domains():
         
         print(f"✅ ShadowStack: Connected to database, querying domains...")
         domains = postgres.get_all_enriched_domains()
-        print(f"📊 ShadowStack: Found {len(domains)} domains in database")
+        print(f"🔍 get_domains: Retrieved {len(domains)} domains from database")
+        if domains:
+            print(f"   Sample domains: {[d.get('domain') for d in domains[:5]]}")
+            print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
         postgres.close()
         
         return jsonify({
@@ -728,7 +732,8 @@ def get_domains():
 @shadowstack_bp.route('/api/domains/<domain>', methods=['GET'])
 def get_domain(domain):
     """Get enrichment data for a specific domain."""
-    postgres = PostgresClient()
+    # Use ShadowStack's PostgresClient explicitly to ensure correct database
+    postgres = ShadowStackPostgresClient()
     
     try:
         all_domains = postgres.get_all_enriched_domains()
