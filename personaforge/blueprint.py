@@ -38,9 +38,38 @@ except ImportError:
     Neo4jClient = None
 
 from src.database.postgres_client import PostgresClient
-from src.enrichment.enrichment_pipeline import enrich_domain
 from src.utils.logger import setup_logger, logger
 from src.utils.validation import validate_domain
+
+# Import modules that might be needed dynamically - import them normally here
+# This avoids importlib issues
+try:
+    from src.database.seed_dummy_data import seed_dummy_data
+    SEED_DUMMY_DATA_AVAILABLE = True
+except ImportError:
+    SEED_DUMMY_DATA_AVAILABLE = False
+    seed_dummy_data = None
+
+try:
+    from src.enrichment.enrichment_pipeline import enrich_domain
+    ENRICHMENT_PIPELINE_AVAILABLE = True
+except ImportError:
+    ENRICHMENT_PIPELINE_AVAILABLE = False
+    enrich_domain = None
+
+try:
+    from src.enrichment.vendor_discovery import discover_all_sources
+    VENDOR_DISCOVERY_AVAILABLE = True
+except ImportError:
+    VENDOR_DISCOVERY_AVAILABLE = False
+    discover_all_sources = None
+
+try:
+    from src.clustering.vendor_clustering import detect_vendor_clusters
+    VENDOR_CLUSTERING_AVAILABLE = True
+except ImportError:
+    VENDOR_CLUSTERING_AVAILABLE = False
+    detect_vendor_clusters = None
 
 # Create blueprint
 # Use absolute path for template_folder to ensure Flask can find templates
@@ -300,12 +329,9 @@ def get_homepage_stats():
         
         # Try to get cluster count
         try:
-            clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
-            if clustering_path.exists():
-                clustering_module = load_module_safely(clustering_path, "vendor_clustering")
-                if clustering_module and hasattr(clustering_module, 'detect_vendor_clusters'):
-                    clusters = clustering_module.detect_vendor_clusters(postgres_client)
-                    stats["infrastructure_clusters"] = len(clusters)
+            if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+                clusters = detect_vendor_clusters(postgres_client)
+                stats["infrastructure_clusters"] = len(clusters)
         except Exception as e:
             app_logger.debug(f"Could not get cluster count: {e}")
         
@@ -340,12 +366,12 @@ def get_vendors():
         vendors = postgres_client.get_vendors(min_domains=min_domains)
         
         # Get clusters
-        clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
         clusters = []
-        if clustering_path.exists():
-            clustering_module = load_module_safely(clustering_path, "vendor_clustering")
-            if clustering_module and hasattr(clustering_module, 'detect_vendor_clusters'):
-                clusters = clustering_module.detect_vendor_clusters(postgres_client)
+        if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+            try:
+                clusters = detect_vendor_clusters(postgres_client)
+            except Exception as e:
+                app_logger.error(f"Error getting clusters: {e}", exc_info=True)
         
         # Filter clusters by min_size
         filtered_clusters = [c for c in clusters if len(c.get('domains', [])) >= min_size]
@@ -379,18 +405,10 @@ def get_clusters():
         }), 200
     
     try:
-        clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
-        if not clustering_path.exists():
-            return jsonify({"clusters": [], "error": "Clustering module not found"}), 500
+        if not VENDOR_CLUSTERING_AVAILABLE or not detect_vendor_clusters:
+            return jsonify({"clusters": [], "error": "Clustering module not available"}), 500
         
-        clustering_module = load_module_safely(clustering_path, "vendor_clustering")
-        if not clustering_module:
-            return jsonify({"clusters": [], "error": "Could not load clustering module"}), 500
-        
-        if not hasattr(clustering_module, 'detect_vendor_clusters'):
-            return jsonify({"clusters": [], "error": "detect_vendor_clusters function not found"}), 500
-        
-        clusters = clustering_module.detect_vendor_clusters(postgres_client)
+        clusters = detect_vendor_clusters(postgres_client)
         return jsonify({
             "clusters": clusters,
             "count": len(clusters)
@@ -435,16 +453,13 @@ def get_graph_from_postgres():
     try:
         domains = postgres_client.get_all_enriched_domains()
         
-        # Limit to 30 nodes for readability
+            # Limit to 30 nodes for readability
         if len(domains) > 30:
             # Prioritize: Clusters > Vendors > Infrastructure > Domains
             clusters = []
             try:
-                clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
-                if clustering_path.exists():
-                    clustering_module = load_module_safely(clustering_path, "vendor_clustering")
-                    if clustering_module and hasattr(clustering_module, 'detect_vendor_clusters'):
-                        clusters = clustering_module.detect_vendor_clusters(postgres_client)
+                if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+                    clusters = detect_vendor_clusters(postgres_client)
             except:
                 pass
             
@@ -578,19 +593,14 @@ def discover_vendors():
     Discover vendors from public sources and automatically enrich them.
     """
     try:
-        vendor_discovery_path = blueprint_dir / 'src' / 'enrichment' / 'vendor_discovery.py'
-        if not vendor_discovery_path.exists():
-            return jsonify({"error": "vendor_discovery module not found"}), 500
+        if not VENDOR_DISCOVERY_AVAILABLE or not discover_all_sources:
+            return jsonify({"error": "vendor_discovery module not available"}), 500
         
-        vendor_discovery_module = load_module_safely(vendor_discovery_path, "vendor_discovery")
-        if not vendor_discovery_module:
-            return jsonify({"error": "Could not load vendor_discovery module"}), 500
-        
-        if not hasattr(vendor_discovery_module, 'discover_all_sources'):
-            return jsonify({"error": "discover_all_sources function not found"}), 500
-        
-        discover_all_sources = vendor_discovery_module.discover_all_sources
-        ask_ai_for_data_sources = getattr(vendor_discovery_module, 'ask_ai_for_data_sources', None)
+        # Try to get ask_ai_for_data_sources if available
+        try:
+            from src.enrichment.vendor_discovery import ask_ai_for_data_sources
+        except ImportError:
+            ask_ai_for_data_sources = None
         
         data = request.get_json() or {}
         limit_per_source = data.get('limit_per_source', 20)
@@ -619,11 +629,7 @@ def discover_vendors():
         errors = []
         
         if auto_enrich:
-            enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
-            enrichment_pipeline_module = load_module_safely(enrichment_pipeline_path, "enrichment_pipeline")
-            enrich_domain_func = None
-            if enrichment_pipeline_module and hasattr(enrichment_pipeline_module, 'enrich_domain'):
-                enrich_domain_func = enrichment_pipeline_module.enrich_domain
+            enrich_domain_func = enrich_domain if ENRICHMENT_PIPELINE_AVAILABLE else None
             
             for domain in all_domains:
                 try:
@@ -684,16 +690,14 @@ def run_initial_discovery():
             if dummy_count == 0:
                 app_logger.info("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
                 
-                seed_dummy_data_path = blueprint_dir / 'src' / 'database' / 'seed_dummy_data.py'
-                if seed_dummy_data_path.exists():
-                    seed_dummy_data_module = load_module_safely(seed_dummy_data_path, "seed_dummy_data")
-                    if seed_dummy_data_module and hasattr(seed_dummy_data_module, 'seed_dummy_data'):
-                        count = seed_dummy_data_module.seed_dummy_data(num_domains=50)
+                if SEED_DUMMY_DATA_AVAILABLE and seed_dummy_data:
+                    try:
+                        count = seed_dummy_data(num_domains=50)
                         app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
-                    else:
-                        app_logger.error("Could not load seed_dummy_data function")
+                    except Exception as e:
+                        app_logger.error(f"Error seeding dummy data: {e}", exc_info=True)
                 else:
-                    app_logger.error(f"seed_dummy_data module not found at {seed_dummy_data_path}")
+                    app_logger.warning("seed_dummy_data function not available - skipping dummy data seed")
             else:
                 app_logger.info(f"✅ Dummy data already exists ({dummy_count} domains) - skipping seed")
         except Exception as e:
@@ -707,26 +711,13 @@ def run_initial_discovery():
         if len(real_domains) == 0:
             app_logger.info("🔍 Database is empty - running initial discovery...")
             try:
-                vendor_discovery_path = blueprint_dir / 'src' / 'enrichment' / 'vendor_discovery.py'
-                enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
-                
-                if not vendor_discovery_path.exists() or not enrichment_pipeline_path.exists():
-                    app_logger.warning("Discovery modules not found - skipping initial discovery")
+                if not VENDOR_DISCOVERY_AVAILABLE or not discover_all_sources:
+                    app_logger.warning("vendor_discovery module not available - skipping initial discovery")
                     return
                 
-                vendor_discovery_module = load_module_safely(vendor_discovery_path, "vendor_discovery")
-                enrichment_pipeline_module = load_module_safely(enrichment_pipeline_path, "enrichment_pipeline")
-                
-                if not vendor_discovery_module or not hasattr(vendor_discovery_module, 'discover_all_sources'):
-                    app_logger.warning("Could not load vendor_discovery module - skipping initial discovery")
+                if not ENRICHMENT_PIPELINE_AVAILABLE or not enrich_domain:
+                    app_logger.warning("enrichment_pipeline module not available - skipping initial discovery")
                     return
-                
-                if not enrichment_pipeline_module or not hasattr(enrichment_pipeline_module, 'enrich_domain'):
-                    app_logger.warning("Could not load enrichment_pipeline module - skipping initial discovery")
-                    return
-                
-                discover_all_sources = vendor_discovery_module.discover_all_sources
-                enrich_domain = enrichment_pipeline_module.enrich_domain
                 
                 # Run discovery
                 discovery_results = discover_all_sources(limit_per_source=10)
