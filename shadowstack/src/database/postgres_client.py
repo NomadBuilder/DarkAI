@@ -288,7 +288,11 @@ class PostgresClient:
         total_count = cursor.fetchone()['total']
         print(f"📊 ShadowStack: Total domains in database: {total_count}")
         
-        cursor.execute("""
+        # Get database info for debugging
+        db_params = self.conn.get_dsn_parameters()
+        db_name = db_params.get('dbname', 'unknown')
+        
+        query = """
             SELECT 
                 d.id,
                 d.domain,
@@ -333,7 +337,9 @@ class PostgresClient:
                    OR d.source = 'Web API'
               )
             ORDER BY d.domain
-        """)
+        """
+        
+        cursor.execute(query)
         
         results = cursor.fetchall()
         
