@@ -113,7 +113,29 @@ def set_security_headers(response):
 @blackwire_bp.route('/')
 def index():
     """Render the landing page."""
-    return render_template('blackwire_index.html')
+    try:
+        return render_template('blackwire_index.html')
+    except Exception as e:
+        app_logger.error(f"Error rendering blackwire_index.html: {e}", exc_info=True)
+        # Fallback response
+        return f"""
+        <html>
+        <head><title>BlackWire</title></head>
+        <body>
+            <h1>BlackWire Intelligence</h1>
+            <p>Template rendering error: {str(e)}</p>
+            <p>Template path: {blackwire_bp.template_folder}</p>
+            <p>Available routes:</p>
+            <ul>
+                <li><a href="/blackwire/">Home</a></li>
+                <li><a href="/blackwire/dashboard">Dashboard</a></li>
+                <li><a href="/blackwire/trace">Trace</a></li>
+                <li><a href="/blackwire/clusters">Clusters</a></li>
+                <li><a href="/blackwire/support">Support</a></li>
+            </ul>
+        </body>
+        </html>
+        """, 200
 
 
 @blackwire_bp.route('/support')
