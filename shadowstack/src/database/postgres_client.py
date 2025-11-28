@@ -337,13 +337,24 @@ class PostgresClient:
         
         results = cursor.fetchall()
         
+        # Convert to list of dicts - RealDictCursor should already return dicts, but ensure compatibility
+        domains_list = []
+        for row in results:
+            if isinstance(row, dict):
+                domains_list.append(row)
+            else:
+                # Convert tuple/row to dict if needed
+                domains_list.append(dict(row))
+        
         # Debug: Check source values of returned domains
-        if results:
-            sources = [r.get('source') for r in results[:10]]
-            print(f"📊 ShadowStack: Returning {len(results)} enriched domains (excluding dummy data)")
+        if domains_list:
+            sources = [r.get('source') for r in domains_list[:10]]
+            print(f"📊 ShadowStack: Returning {len(domains_list)} enriched domains (excluding dummy data)")
             print(f"   Sample sources: {sources}")
+            print(f"   Database: {self.conn.get_dsn_parameters().get('dbname', 'unknown')}")
         else:
             print(f"📊 ShadowStack: Returning 0 enriched domains (excluding dummy data)")
+            print(f"   Database: {self.conn.get_dsn_parameters().get('dbname', 'unknown')}")
             # Debug: Check what sources exist in database
             cursor.execute("SELECT DISTINCT source FROM domains WHERE source IS NOT NULL AND source != '' LIMIT 20")
             all_sources = [row[0] for row in cursor.fetchall()]
@@ -361,6 +372,9 @@ class PostgresClient:
             print(f"   Domains by source: {dict(source_counts)}")
         
         cursor.close()
+        
+        # Parse JSONB fields and return
+        return self._parse_enrichment_results(domains_list)
         
         # Convert results to dicts and parse JSONB fields
         domains = []
