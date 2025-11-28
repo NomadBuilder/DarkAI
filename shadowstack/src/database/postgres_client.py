@@ -323,16 +323,13 @@ class PostgresClient:
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
               AND d.source IS NOT NULL
               AND d.source != ''
-              AND (d.source LIKE 'SHADOWSTACK%' 
+              AND (
+                   d.source LIKE 'SHADOWSTACK%' 
                    OR d.source = 'IMPORT'
                    OR d.source = 'CSV Import'
                    OR d.source = 'API Import'
                    OR d.source = 'Web API'
-                   OR d.source = 'SHADOWSTACK_PRE_ENRICHED'
-                   OR d.source = 'SHADOWSTACK_AUTO_SEED'
-                   OR d.source = 'SHADOWSTACK_LOCAL_SEED'
-                   OR d.source = 'SHADOWSTACK_IMPORT'
-                   OR d.source LIKE 'SHADOWSTACK%')
+              )
             ORDER BY d.domain
         """)
         
