@@ -59,21 +59,53 @@ except ImportError:
 # Don't import enrich_entity at top level - import it lazily in functions to avoid module conflicts
 
 # Try to import database clients (optional)
+# Ensure we import from BlackWire's directory, not other blueprints
+import sys
+from pathlib import Path
+
+# Get BlackWire blueprint directory and ensure it's first in path
+blueprint_dir = Path(__file__).parent.absolute()
+blueprint_path = str(blueprint_dir)
+
+# Remove other blueprint paths to avoid conflicts
+for other in ['personaforge', 'shadowstack']:
+    other_path = str((blueprint_dir.parent / other).absolute())
+    if other_path in sys.path:
+        sys.path.remove(other_path)
+
+# Ensure BlackWire's path is first
+if blueprint_path in sys.path:
+    sys.path.remove(blueprint_path)
+sys.path.insert(0, blueprint_path)
+
+# Clear any cached src modules to force fresh import
+modules_to_clear = [k for k in list(sys.modules.keys()) if k == 'src' or k.startswith('src.')]
+for mod in modules_to_clear:
+    del sys.modules[mod]
+
 try:
     from src.database.neo4j_client import Neo4jClient
+    # Verify it's the right client by checking for BlackWire-specific methods
+    if not hasattr(Neo4jClient, 'create_phone'):
+        raise ImportError("Imported Neo4jClient does not have create_phone method - wrong client imported")
     NEO4J_AVAILABLE = True
-except ImportError:
+    logger.info("✅ BlackWire Neo4jClient imported successfully")
+except ImportError as e:
     NEO4J_AVAILABLE = False
     Neo4jClient = None
-    logger.warning("Neo4j client not available")
+    logger.warning(f"Neo4j client not available: {e}")
 
 try:
     from src.database.postgres_client import PostgresClient
+    # Verify it's the right client by checking for BlackWire-specific methods
+    if not hasattr(PostgresClient, 'insert_phone'):
+        raise ImportError("Imported PostgresClient does not have insert_phone method - wrong client imported")
     POSTGRES_AVAILABLE = True
-except ImportError:
+    logger.info("✅ BlackWire PostgresClient imported successfully")
+except ImportError as e:
     POSTGRES_AVAILABLE = False
     PostgresClient = None
-    logger.warning("PostgreSQL client not available")
+    logger.warning(f"PostgreSQL client not available: {e}")
 
 load_dotenv()
 
