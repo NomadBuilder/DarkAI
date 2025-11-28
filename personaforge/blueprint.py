@@ -95,9 +95,25 @@ def ensure_src_modules_available():
     if str(blueprint_dir) not in sys.path:
         sys.path.insert(0, str(blueprint_dir))
     
+    # CRITICAL: Import src as a package first by directly importing its __init__.py
+    # This makes src available as a package in sys.modules
+    src_init_path = blueprint_dir / 'src' / '__init__.py'
+    if src_init_path.exists() and 'src' not in sys.modules:
+        try:
+            spec = importlib.util.spec_from_file_location("src", src_init_path)
+            if spec and spec.loader:
+                src_module = importlib.util.module_from_spec(spec)
+                # Set __package__ to make it a proper package
+                src_module.__package__ = 'src'
+                src_module.__path__ = [str(blueprint_dir / 'src')]
+                spec.loader.exec_module(src_module)
+                sys.modules['src'] = src_module
+                app_logger.debug("✅ Imported src package")
+        except Exception as e:
+            app_logger.warning(f"Could not import src package: {e}")
+    
     # List of modules to pre-import (in dependency order)
     modules_to_import = [
-        'src',
         'src.utils',
         'src.utils.logger',
         'src.utils.config',
@@ -151,6 +167,21 @@ def load_module_safely(module_path, module_name):
     # Ensure all src modules are available first
     ensure_src_modules_available()
     
+    # Determine the package path from the module path
+    # e.g., /opt/render/project/src/personaforge/src/database/seed_dummy_data.py
+    # should have package 'src.database'
+    module_path_str = str(module_path)
+    blueprint_dir_str = str(blueprint_dir)
+    
+    if module_path_str.startswith(blueprint_dir_str):
+        # Get relative path from blueprint_dir
+        rel_path = module_path.relative_to(blueprint_dir)
+        # Convert to package name: src/database/seed_dummy_data.py -> src.database
+        parts = list(rel_path.parts[:-1])  # Remove filename
+        package_name = '.'.join(parts) if parts else None
+    else:
+        package_name = None
+    
     # Create spec and module
     spec = importlib.util.spec_from_file_location(module_name, module_path)
     if spec is None or spec.loader is None:
@@ -158,6 +189,13 @@ def load_module_safely(module_path, module_name):
         return None
     
     module = importlib.util.module_from_spec(spec)
+    
+    # CRITICAL: Set __package__ and __name__ so relative imports work
+    if package_name:
+        module.__package__ = package_name
+        module.__name__ = f"{package_name}.{module_name}"
+    else:
+        module.__name__ = module_name
     
     # Store original sys.path
     original_path = sys.path[:]
