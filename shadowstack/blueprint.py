@@ -1843,17 +1843,29 @@ def import_pre_enriched_data():
                 # Import enrichment if available (update if exists, insert if not)
                 if domain in enrichment_lookup:
                     enrichment = enrichment_lookup[domain]
-                    # Use ON CONFLICT to update existing enrichment
-                    postgres.insert_enrichment(domain_id, enrichment)
-                    if not has_enrichment:
-                        enriched += 1
-                    else:
-                        enriched += 1  # Count as enriched even if updating
+                    try:
+                        # Use ON CONFLICT to update existing enrichment
+                        postgres.insert_enrichment(domain_id, enrichment)
+                        if not has_enrichment:
+                            enriched += 1
+                        else:
+                            enriched += 1  # Count as enriched even if updating
+                    except Exception as enrich_error:
+                        print(f"  ⚠️  Error enriching {domain}: {enrich_error}")
+                        # Rollback this domain's transaction and continue
+                        postgres.conn.rollback()
+                        # Re-commit previous successful imports
+                        postgres.conn.commit()
                 
                 cursor.close()
                 
             except Exception as e:
                 print(f"  ⚠️  Error importing {domain}: {e}")
+                # Rollback and continue with next domain
+                try:
+                    postgres.conn.rollback()
+                except:
+                    pass
         
         postgres.conn.commit()
         postgres.close()
