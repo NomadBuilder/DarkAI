@@ -93,6 +93,101 @@ def check():
     return render_template('check.html')
 
 
+# List of legitimate domains that should NEVER be in ShadowStack
+LEGITIMATE_DOMAINS_BLOCKLIST = {
+    'usatoday.com', 'vanityfair.com', 'politico.com', 'marketwatch.com',
+    'frbservices.org', 'pa.gov', 'cnn.com', 'bbc.com', 'nytimes.com',
+    'washingtonpost.com', 'reuters.com', 'ap.org', 'bloomberg.com',
+    'wsj.com', 'forbes.com', 'techcrunch.com', 'theguardian.com',
+    'npr.org', 'abc.com', 'cbs.com', 'nbc.com', 'foxnews.com',
+    'msnbc.com', 'huffpost.com', 'buzzfeed.com', 'vox.com',
+    'theatlantic.com', 'newyorker.com', 'time.com', 'newsweek.com',
+    'usnews.com', 'businessinsider.com', 'fortune.com', 'economist.com',
+    'ft.com', 'latimes.com', 'chicagotribune.com', 'bostonglobe.com',
+    'wired.com', 'ars-technica.com', 'theverge.com', 'engadget.com',
+    'gizmodo.com', 'mashable.com', 'slate.com', 'salon.com',
+    'thedailybeast.com', 'thedailybeast.com', 'independent.co.uk',
+    'telegraph.co.uk', 'dailymail.co.uk', 'mirror.co.uk',
+    'gov', 'edu', 'mil', 'org', 'com', 'net',  # TLDs that are often legitimate
+}
+
+def is_legitimate_domain(domain: str) -> bool:
+    """Check if a domain is a legitimate news/government site that shouldn't be in ShadowStack."""
+    domain_lower = domain.lower().strip()
+    
+    # Check exact match
+    if domain_lower in LEGITIMATE_DOMAINS_BLOCKLIST:
+        return True
+    
+    # Check if it's a known news/gov domain pattern
+    legitimate_patterns = [
+        '.gov', '.edu', '.mil',  # Government/education
+        'news.', 'media.', 'press.',  # News organizations
+        'bbc.', 'cnn.', 'npr.', 'abc.', 'cbs.', 'nbc.',  # Major news networks
+    ]
+    
+    for pattern in legitimate_patterns:
+        if pattern in domain_lower:
+            return True
+    
+    return False
+
+
+@shadowstack_bp.route('/api/cleanup-invalid-domains', methods=['POST'])
+def cleanup_invalid_domains():
+    """
+    Remove invalid/legitimate domains that shouldn't be in ShadowStack.
+    This removes domains that are clearly legitimate news sites, government sites, etc.
+    """
+    try:
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            return jsonify({"error": "Database connection failed"}), 500
+        
+        cursor = postgres.conn.cursor()
+        
+        # Get all domains and check which are legitimate
+        all_domains = postgres.get_all_enriched_domains()
+        invalid_domains = []
+        
+        for domain_data in all_domains:
+            domain = domain_data.get('domain', '')
+            if is_legitimate_domain(domain):
+                invalid_domains.append(domain)
+        
+        deleted_count = 0
+        if invalid_domains:
+            # Delete invalid domains
+            placeholders = ','.join(['%s'] * len(invalid_domains))
+            cursor.execute(f"""
+                DELETE FROM domains 
+                WHERE domain IN ({placeholders})
+            """, invalid_domains)
+            deleted_count = cursor.rowcount
+            
+            # Also delete their enrichment data
+            cursor.execute(f"""
+                DELETE FROM domain_enrichment
+                WHERE domain_id IN (
+                    SELECT id FROM domains WHERE domain IN ({placeholders})
+                )
+            """, invalid_domains + invalid_domains)
+        
+        postgres.conn.commit()
+        cursor.close()
+        postgres.close()
+        
+        return jsonify({
+            "message": f"Cleaned up {deleted_count} invalid domains",
+            "deleted": deleted_count,
+            "invalid_domains": invalid_domains[:20]  # Show first 20
+        }), 200
+        
+    except Exception as e:
+        shadowstack_logger.error(f"Error cleaning up invalid domains: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
 @shadowstack_bp.route('/api/check', methods=['POST'])
 def check_domain_only():
     """
@@ -686,6 +781,11 @@ def import_domains():
                         from urllib.parse import urlparse
                         domain = urlparse(domain).netloc or domain.replace('http://', '').replace('https://', '').split('/')[0]
                     
+                    # Skip legitimate domains
+                    if is_legitimate_domain(domain):
+                        errors.append({"domain": domain, "error": "Legitimate domain - not appropriate for ShadowStack"})
+                        continue
+                    
                     source = row.get('source', 'CSV Import')
                     notes = row.get('notes', '') or row.get('Notes', '')
                     
@@ -711,6 +811,11 @@ def import_domains():
                 if domain.startswith('http://') or domain.startswith('https://'):
                     from urllib.parse import urlparse
                     domain = urlparse(domain).netloc or domain.replace('http://', '').replace('https://', '').split('/')[0]
+                
+                # Skip legitimate domains
+                if is_legitimate_domain(domain):
+                    errors.append({"domain": domain, "error": "Legitimate domain - not appropriate for ShadowStack"})
+                    continue
                 
                 try:
                     domain_id = postgres.insert_domain(domain, source, data.get('notes', ''))
