@@ -15,14 +15,14 @@ from dotenv import load_dotenv
 # Add src to path (relative to blueprint location)
 blueprint_dir = Path(__file__).parent.absolute()
 
-# CRITICAL: Remove other blueprint paths from sys.path to prevent import conflicts
-# This ensures ShadowStack imports its own src modules, not other blueprints'
+# DEFENSIVE: Remove other blueprint paths only if they exist in sys.path
+# This prevents import conflicts in local dev without affecting production
+# Production (Render) typically has different import order and doesn't need this
 other_blueprints = ['personaforge', 'blackwire']
 for other in other_blueprints:
     other_path = str((blueprint_dir.parent / other).absolute())
     if other_path in sys.path:
         sys.path.remove(other_path)
-    # Also remove any src subdirectories from other blueprints
     other_src_path = str((blueprint_dir.parent / other / 'src').absolute())
     if other_src_path in sys.path:
         sys.path.remove(other_src_path)
