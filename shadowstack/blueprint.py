@@ -1666,3 +1666,137 @@ shadowstack_seed_thread = threading.Thread(target=delayed_shadowstack_seed, daem
 shadowstack_seed_thread.start()
 
 
+@shadowstack_bp.route('/api/enrich-all', methods=['POST'])
+def enrich_all_domains():
+    """
+    Enrich all unenriched domains in the database.
+    This will fetch infrastructure data (IPs, hosting, CDNs, etc.) for all domains
+    that don't have enrichment data yet.
+    
+    POST /api/enrich-all
+    Body (optional): {
+        "limit": 10,  # Maximum number of domains to enrich (default: all)
+        "force": false  # Re-enrich even if data exists (default: false)
+    }
+    
+    This ONLY affects ShadowStack's 'domains' and 'domain_enrichment' tables.
+    """
+    try:
+        data = request.get_json() or {}
+        limit = data.get('limit', None)  # None means no limit
+        force = data.get('force', False)
+        
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            return jsonify({
+                "error": "Database connection failed",
+                "message": "Could not connect to PostgreSQL"
+            }), 500
+        
+        # Get domains that need enrichment
+        cursor = postgres.conn.cursor()
+        if force:
+            # Get all domains
+            cursor.execute("""
+                SELECT id, domain FROM domains 
+                WHERE source != 'DUMMY_DATA_FOR_TESTING'
+                ORDER BY id
+            """)
+        else:
+            # Get only domains without enrichment data
+            cursor.execute("""
+                SELECT d.id, d.domain 
+                FROM domains d
+                LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+                WHERE de.domain_id IS NULL 
+                AND d.source != 'DUMMY_DATA_FOR_TESTING'
+                ORDER BY d.id
+            """)
+        
+        domains_to_enrich = cursor.fetchall()
+        cursor.close()
+        
+        if limit:
+            domains_to_enrich = domains_to_enrich[:limit]
+        
+        if not domains_to_enrich:
+            postgres.close()
+            return jsonify({
+                "success": True,
+                "message": "No domains need enrichment",
+                "enriched": 0,
+                "skipped": 0,
+                "errors": 0
+            }), 200
+        
+        print(f"📊 ShadowStack: Starting enrichment for {len(domains_to_enrich)} domains...")
+        
+        # Load enrichment pipeline using importlib
+        import importlib.util
+        enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+        if not enrichment_pipeline_path.exists():
+            postgres.close()
+            return jsonify({
+                "error": "Enrichment pipeline not found",
+                "message": f"Could not find enrichment_pipeline.py at {enrichment_pipeline_path}"
+            }), 500
+        
+        spec = importlib.util.spec_from_file_location("enrichment_pipeline", enrichment_pipeline_path)
+        enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+        import sys
+        original_path = sys.path[:]
+        if str(blueprint_dir) not in sys.path:
+            sys.path.insert(0, str(blueprint_dir))
+        
+        try:
+            spec.loader.exec_module(enrichment_pipeline_module)
+            enrich_domain = enrichment_pipeline_module.enrich_domain
+        finally:
+            sys.path[:] = original_path
+        
+        enriched = 0
+        skipped = 0
+        errors = []
+        
+        for domain_id, domain_name in domains_to_enrich:
+            try:
+                print(f"  🔍 Enriching {domain_name}...")
+                enrichment_data = enrich_domain(domain_name)
+                
+                # Store enrichment data
+                postgres.insert_enrichment(domain_id, enrichment_data)
+                
+                enriched += 1
+                if enriched % 5 == 0:
+                    print(f"  ✅ Enriched {enriched} domains...")
+                    
+            except Exception as e:
+                error_msg = f"Error enriching {domain_name}: {str(e)}"
+                errors.append(error_msg)
+                print(f"  ❌ {error_msg}")
+        
+        postgres.conn.commit()
+        postgres.close()
+        
+        print(f"✅ ShadowStack: Enrichment complete! Enriched: {enriched}, Errors: {len(errors)}")
+        
+        return jsonify({
+            "success": True,
+            "enriched": enriched,
+            "skipped": skipped,
+            "errors": len(errors),
+            "error_details": errors[:10] if errors else [],  # First 10 errors
+            "message": f"Enriched {enriched} domains ({(enriched/len(domains_to_enrich)*100):.1f}% success rate)"
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        error_msg = f"Error in enrich_all_domains: {e}"
+        print(error_msg)
+        traceback.print_exc()
+        return jsonify({
+            "error": "Enrichment failed",
+            "message": str(e)
+        }), 500
+
+
