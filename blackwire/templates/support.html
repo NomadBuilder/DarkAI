@@ -9,6 +9,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
   <link rel="alternate icon" type="image/png" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
+  {% from "_navigation.html" import render_nav %}
 
   <!-- Full Style Block Inserted -->
   <style>
@@ -174,7 +175,7 @@
     {% from "_navigation.html" import render_nav %}
     {{ render_nav('support') }}
 
-    <div>
+    <div style="margin-top: 2rem;">
       <div class="hero__kicker">Support & Reporting</div>
       <h1 class="hero__headline">If you're being targeted, we're here to help.</h1>
       <p class="hero__subtitle">Immediate steps to reduce harm, document safely, and get the support you need.</p>
