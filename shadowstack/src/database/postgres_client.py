@@ -203,8 +203,12 @@ class PostgresClient:
                 return None
             return Json(value) if isinstance(value, (dict, list)) else value
         
-        cursor.execute("""
-            INSERT INTO domain_enrichment (
+        # CRITICAL: Use domain_enrichment table (ShadowStack), NOT personaforge_domain_enrichment
+        # This ensures we're using ShadowStack's table, not PersonaForge's
+        table_name = "domain_enrichment"
+        
+        cursor.execute(f"""
+            INSERT INTO {table_name} (
                 domain_id, ip_address, ip_addresses, ipv6_addresses, host_name, asn, isp,
                 cdn, cms, payment_processor, registrar, creation_date, expiration_date, updated_date,
                 name_servers, mx_records, whois_status, web_server, frameworks, analytics, languages,
