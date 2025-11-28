@@ -317,9 +317,13 @@ class PostgresClient:
             FROM domains d
             LEFT JOIN domain_enrichment de ON d.id = de.domain_id
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
-              AND d.source NOT LIKE 'PERSONAFORGE%'
-              AND d.source NOT IN ('DISCOVERY', 'INITIAL_DISCOVERY', 'MANUAL_ENTRY')
-              AND (d.source IS NULL OR d.source = '' OR d.source LIKE 'SHADOWSTACK%' OR d.source = 'IMPORT')
+              AND (d.source IS NULL 
+                   OR d.source = '' 
+                   OR d.source LIKE 'SHADOWSTACK%' 
+                   OR d.source = 'IMPORT'
+                   OR d.source = 'CSV Import'
+                   OR d.source = 'API Import'
+                   OR d.source = 'Web API')
             ORDER BY d.domain
         """)
         
