@@ -353,14 +353,34 @@ class PostgresClient:
                 domains_list.append(dict(row))
         
         # Debug: Check source values of returned domains
+        db_params = self.conn.get_dsn_parameters()
+        db_name = db_params.get('dbname', 'unknown')
+        
         if domains_list:
             sources = [r.get('source') for r in domains_list[:10]]
             print(f"📊 ShadowStack: Returning {len(domains_list)} enriched domains (excluding dummy data)")
             print(f"   Sample sources: {sources}")
-            print(f"   Database: {self.conn.get_dsn_parameters().get('dbname', 'unknown')}")
+            print(f"   Database: {db_name}")
+            print(f"   Host: {db_params.get('host', 'unknown')}")
+            
+            # Verify count matches expected (before cursor closes)
+            cursor.execute("""
+                SELECT COUNT(*) 
+                FROM domains 
+                WHERE source != 'DUMMY_DATA_FOR_TESTING'
+                  AND source IS NOT NULL
+                  AND source != ''
+                  AND source LIKE 'SHADOWSTACK%'
+            """)
+            expected_count = cursor.fetchone()[0]
+            if expected_count != len(domains_list):
+                print(f"   ⚠️  WARNING: Expected {expected_count} domains but query returned {len(domains_list)}")
+            else:
+                print(f"   ✅ Count matches expected: {expected_count} domains")
         else:
             print(f"📊 ShadowStack: Returning 0 enriched domains (excluding dummy data)")
-            print(f"   Database: {self.conn.get_dsn_parameters().get('dbname', 'unknown')}")
+            print(f"   Database: {db_name}")
+            print(f"   Host: {db_params.get('host', 'unknown')}")
             # Debug: Check what sources exist in database
             cursor.execute("SELECT DISTINCT source FROM domains WHERE source IS NOT NULL AND source != '' LIMIT 20")
             all_sources = [row[0] for row in cursor.fetchall()]
