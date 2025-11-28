@@ -328,21 +328,10 @@
 <!-- HERO SECTION -->
 <header class="hero">
   <div class="hero__content">
-    <nav class="hero__nav">
-      <div class="hero__brand" style="display: flex; align-items: center; gap: 0.6rem;">
-        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
-        <div class="hero__brand-mark"></div>
-      </a>
-        <a href="/blackwire/" style="text-decoration: none; color: inherit;">BlackWire Intelligence</a>
-      </div>
-      <div class="hero__nav-links">
-        <a href="/blackwire/" class="hero__link">Home</a>
-        <a href="/blackwire/support" class="hero__link">Report &amp; Escalate</a>
-        <a href="/blackwire/trace" class="hero__link hero__link--accent">Start Tracing</a>
-      </div>
-    </nav>
+    {% from "_navigation.html" import render_nav %}
+    {{ render_nav('home') }}
 
-    <div class="hero__grid">
+    <div class="hero__grid" style="margin-top: 2.5rem;">
       <div>
         <div class="hero__kicker">Exposing Sextortion Infrastructure</div>
         <h1 class="hero__headline">They threaten you in seconds. We trace the infrastructure behind them.</h1>
