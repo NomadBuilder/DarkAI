@@ -233,6 +233,9 @@ def check_domain_only():
     
     try:
         # Enrich domain but DON'T store it
+        if not enrich_domain:
+            return jsonify({"error": "Enrichment pipeline not available"}), 500
+        
         print(f"Checking domain (no storage): {domain}")
         enrichment_data = enrich_domain(domain)
         
@@ -729,6 +732,9 @@ def enrich_and_store():
             }), 200
         
         # Enrich domain
+        if not enrich_domain:
+            return jsonify({"error": "Enrichment pipeline not available"}), 500
+        
         print(f"Enriching domain: {domain}")
         enrichment_data = enrich_domain(domain)
         
