@@ -317,13 +317,16 @@ class PostgresClient:
             FROM domains d
             LEFT JOIN domain_enrichment de ON d.id = de.domain_id
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
-              AND (d.source IS NULL 
-                   OR d.source = '' 
-                   OR d.source LIKE 'SHADOWSTACK%' 
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source LIKE 'SHADOWSTACK%' 
                    OR d.source = 'IMPORT'
                    OR d.source = 'CSV Import'
                    OR d.source = 'API Import'
-                   OR d.source = 'Web API')
+                   OR d.source = 'Web API'
+                   OR d.source = 'SHADOWSTACK_PRE_ENRICHED'
+                   OR d.source = 'SHADOWSTACK_AUTO_SEED'
+                   OR d.source = 'SHADOWSTACK_LOCAL_SEED')
             ORDER BY d.domain
         """)
         

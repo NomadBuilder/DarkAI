@@ -1783,11 +1783,15 @@ def import_pre_enriched_data():
                 cursor.execute("SELECT domain_id FROM domain_enrichment WHERE domain_id = %s", (domain_id,))
                 has_enrichment = cursor.fetchone()
                 
-                # Import enrichment if available and not already exists
-                if not has_enrichment and domain in enrichment_lookup:
+                # Import enrichment if available (update if exists, insert if not)
+                if domain in enrichment_lookup:
                     enrichment = enrichment_lookup[domain]
+                    # Use ON CONFLICT to update existing enrichment
                     postgres.insert_enrichment(domain_id, enrichment)
-                    enriched += 1
+                    if not has_enrichment:
+                        enriched += 1
+                    else:
+                        enriched += 1  # Count as enriched even if updating
                 
                 cursor.close()
                 
@@ -1808,6 +1812,41 @@ def import_pre_enriched_data():
         return False
 
 
+def cleanup_personaforge_dummy_data():
+    """
+    Remove PersonaForge dummy data from ShadowStack's view.
+    This ensures ShadowStack only shows its own real data.
+    """
+    try:
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            return
+        
+        cursor = postgres.conn.cursor()
+        
+        # Count PersonaForge dummy data
+        cursor.execute("SELECT COUNT(*) FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
+        dummy_count = cursor.fetchone()[0]
+        
+        # Count domains with NULL/empty source (likely PersonaForge dummy data)
+        cursor.execute("""
+            SELECT COUNT(*) FROM domains 
+            WHERE (source IS NULL OR source = '') 
+            AND source != 'DUMMY_DATA_FOR_TESTING'
+        """)
+        null_source_count = cursor.fetchone()[0]
+        
+        if dummy_count > 0 or null_source_count > 0:
+            print(f"🧹 ShadowStack: Found {dummy_count} PersonaForge dummy domains and {null_source_count} domains with NULL/empty source")
+            print(f"   These will be filtered out from ShadowStack views")
+        
+        cursor.close()
+        postgres.close()
+        
+    except Exception as e:
+        print(f"⚠️  ShadowStack: Error during cleanup check: {e}")
+
+
 def run_shadowstack_data_seed():
     """
     Auto-seed ShadowStack real data on startup if database is empty.
@@ -1815,20 +1854,33 @@ def run_shadowstack_data_seed():
     Falls back to seeding and enriching on-the-fly if no pre-enriched data exists.
     """
     try:
+        # Clean up PersonaForge dummy data visibility
+        cleanup_personaforge_dummy_data()
+        
         # Create a new connection for seeding (don't use global to avoid conflicts)
         postgres = PostgresClient()
         if not postgres or not postgres.conn:
             print("⚠️  ShadowStack: PostgreSQL not available - skipping data seed")
             return
         
-        # Check if we already have data
+        # Check if we already have ShadowStack-specific data (not just any data)
         cursor = postgres.conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM domains WHERE source != 'DUMMY_DATA_FOR_TESTING'")
-        domain_count = cursor.fetchone()[0]
+        cursor.execute("""
+            SELECT COUNT(*) FROM domains 
+            WHERE source IS NOT NULL 
+            AND source != '' 
+            AND source != 'DUMMY_DATA_FOR_TESTING'
+            AND (source LIKE 'SHADOWSTACK%' 
+                 OR source = 'IMPORT'
+                 OR source = 'CSV Import'
+                 OR source = 'API Import'
+                 OR source = 'Web API')
+        """)
+        shadowstack_domain_count = cursor.fetchone()[0]
         cursor.close()
         
-        if domain_count > 0:
-            print(f"✅ ShadowStack: Database has {domain_count} domains - skipping data seed")
+        if shadowstack_domain_count > 0:
+            print(f"✅ ShadowStack: Database has {shadowstack_domain_count} ShadowStack domains - skipping data seed")
             postgres.close()
             return
         
