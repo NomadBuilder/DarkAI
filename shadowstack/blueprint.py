@@ -1728,9 +1728,23 @@ def import_pre_enriched_data():
         from pathlib import Path
         
         # Look for exported enriched data file
-        data_file = blueprint_dir.parent / 'shadowstack_enriched_data.json'
+        # Try multiple possible locations
+        possible_paths = [
+            blueprint_dir.parent / 'shadowstack_enriched_data.json',  # Root of repo
+            blueprint_dir / 'shadowstack_enriched_data.json',  # In shadowstack folder
+            Path(__file__).parent.parent.parent / 'shadowstack_enriched_data.json',  # Absolute from blueprint
+        ]
         
-        if not data_file.exists():
+        data_file = None
+        for path in possible_paths:
+            if path.exists():
+                data_file = path
+                break
+        
+        if not data_file or not data_file.exists():
+            print(f"⚠️  ShadowStack: Pre-enriched data file not found. Tried:")
+            for path in possible_paths:
+                print(f"   - {path} (exists: {path.exists()})")
             return False
         
         print(f"📥 ShadowStack: Found pre-enriched data file: {data_file}")
