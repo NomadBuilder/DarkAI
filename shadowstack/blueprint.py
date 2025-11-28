@@ -1736,8 +1736,14 @@ def import_pre_enriched_data():
         # Get the absolute path to ShadowStack's postgres_client
         shadowstack_postgres_path = blueprint_dir / 'src' / 'database' / 'postgres_client.py'
         
+        if not shadowstack_postgres_path.exists():
+            print(f"❌ ShadowStack: PostgresClient file not found at {shadowstack_postgres_path}")
+            return False
+        
+        print(f"📥 ShadowStack: Loading PostgresClient from {shadowstack_postgres_path}")
+        
         # Load the module directly from file to avoid import conflicts
-        spec = importlib.util.spec_from_file_location("shadowstack_postgres_client", shadowstack_postgres_path)
+        spec = importlib.util.spec_from_file_location("shadowstack_postgres_client", str(shadowstack_postgres_path))
         shadowstack_postgres_module = importlib.util.module_from_spec(spec)
         
         # Temporarily add blueprint_dir to path for any internal imports
@@ -1748,6 +1754,17 @@ def import_pre_enriched_data():
         try:
             spec.loader.exec_module(shadowstack_postgres_module)
             ShadowStackPostgresClient = shadowstack_postgres_module.PostgresClient
+            
+            # Verify it's the right client by checking the insert_enrichment method
+            import inspect
+            source = inspect.getsource(ShadowStackPostgresClient.insert_enrichment)
+            if 'personaforge_domain_enrichment' in source:
+                print("❌ ERROR: Loaded PostgresClient uses personaforge_domain_enrichment!")
+                return False
+            elif 'domain_enrichment' in source:
+                print("✅ Verified: Loaded PostgresClient uses domain_enrichment")
+            else:
+                print("⚠️  Warning: Could not verify table name in PostgresClient")
         finally:
             sys.path[:] = original_path
         
