@@ -34,13 +34,21 @@ except ImportError:
     def sanitize_input(text):
         return str(text).strip() if text else ""
     def validate_phone(phone):
-        return bool(phone and len(str(phone)) > 5)
+        if not phone or len(str(phone)) <= 5:
+            return False, "Phone number must be at least 5 characters"
+        return True, None
     def validate_domain(domain):
-        return bool(domain and '.' in str(domain))
+        if not domain or '.' not in str(domain):
+            return False, "Domain must contain a dot (.)"
+        return True, None
     def validate_wallet(wallet):
-        return bool(wallet and len(str(wallet)) > 10)
+        if not wallet or len(str(wallet)) <= 10:
+            return False, "Wallet address must be at least 10 characters"
+        return True, None
     def validate_handle(handle):
-        return bool(handle and len(str(handle)) > 0)
+        if not handle or len(str(handle)) == 0:
+            return False, "Handle cannot be empty"
+        return True, None
 
 try:
     from src.utils.cache import get_cache_stats
