@@ -1763,16 +1763,23 @@ def import_pre_enriched_data():
             spec.loader.exec_module(shadowstack_postgres_module)
             ShadowStackPostgresClient = shadowstack_postgres_module.PostgresClient
             
-            # Verify it's the right client by checking the insert_enrichment method
-            import inspect
-            source = inspect.getsource(ShadowStackPostgresClient.insert_enrichment)
-            if 'personaforge_domain_enrichment' in source:
-                print("❌ ERROR: Loaded PostgresClient uses personaforge_domain_enrichment!")
-                return False
-            elif 'domain_enrichment' in source:
-                print("✅ Verified: Loaded PostgresClient uses domain_enrichment")
-            else:
-                print("⚠️  Warning: Could not verify table name in PostgresClient")
+            # Verify it's the right client by checking the file path and table name
+            # Read the actual file to verify, not the loaded module (which might be cached)
+            with open(shadowstack_postgres_path, 'r') as f:
+                file_content = f.read()
+                # Check for actual INSERT statement using domain_enrichment (not just in comments)
+                if 'INSERT INTO domain_enrichment' in file_content or 'INSERT INTO {table_name}' in file_content:
+                    # Also verify it's NOT using personaforge_domain_enrichment in the INSERT
+                    if 'INSERT INTO personaforge_domain_enrichment' in file_content:
+                        print("❌ ERROR: PostgresClient file uses personaforge_domain_enrichment in INSERT!")
+                        return False
+                    else:
+                        print("✅ Verified: PostgresClient file uses domain_enrichment")
+                elif 'INSERT INTO personaforge_domain_enrichment' in file_content:
+                    print("❌ ERROR: PostgresClient file uses personaforge_domain_enrichment!")
+                    return False
+                else:
+                    print("⚠️  Warning: Could not verify table name in PostgresClient file")
         finally:
             sys.path[:] = original_path
         
