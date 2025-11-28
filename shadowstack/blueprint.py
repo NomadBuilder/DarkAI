@@ -707,10 +707,15 @@ def get_domains():
             print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
         postgres.close()
         
-        return jsonify({
+        response = jsonify({
             "domains": domains,
             "count": len(domains)
         })
+        # Add cache-busting headers
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
+        return response
     except Exception as e:
         import traceback
         error_msg = f"Error in get_domains: {e}"

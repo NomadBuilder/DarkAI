@@ -461,7 +461,14 @@ function renderAnalytics(analytics) {
 // Load domains data
 async function loadDomains() {
     try {
-        const response = await fetch("/shadowstack/api/domains");
+        // Add cache-busting query parameter
+        const cacheBuster = new Date().getTime();
+        const response = await fetch(`/shadowstack/api/domains?t=${cacheBuster}`, {
+            cache: 'no-store',
+            headers: {
+                'Cache-Control': 'no-cache'
+            }
+        });
         const data = await response.json();
         domainsData = data.domains || [];
         filteredDomains = [...domainsData];
