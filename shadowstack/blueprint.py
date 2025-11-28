@@ -1782,11 +1782,16 @@ def import_pre_enriched_data():
         current_file = Path(__file__).resolve()
         repo_root = current_file.parent.parent  # shadowstack -> DarkAI-consolidated
         
+        # On Render, the working directory is usually /opt/render/project/src
+        # The JSON file should be at the root of the repo
         possible_paths = [
-            repo_root / 'shadowstack_enriched_data.json',  # Root of repo (most likely on Render)
+            Path('/opt/render/project/src/shadowstack_enriched_data.json'),  # Render deployment path
+            Path('/opt/render/project/src') / 'shadowstack_enriched_data.json',  # Render with Path join
+            repo_root / 'shadowstack_enriched_data.json',  # Root of repo (relative to blueprint)
             blueprint_dir.parent / 'shadowstack_enriched_data.json',  # Parent of shadowstack folder
             blueprint_dir / 'shadowstack_enriched_data.json',  # In shadowstack folder
             Path.cwd() / 'shadowstack_enriched_data.json',  # Current working directory
+            Path.cwd().parent / 'shadowstack_enriched_data.json',  # Parent of cwd
         ]
         
         data_file = None
@@ -1794,18 +1799,36 @@ def import_pre_enriched_data():
             try:
                 if path.exists() and path.is_file():
                     data_file = path
+                    print(f"✅ Found JSON file at: {data_file}")
                     break
-            except Exception:
+            except Exception as e:
                 continue
         
         if not data_file or not data_file.exists():
             print(f"⚠️  ShadowStack: Pre-enriched data file not found. Tried:")
             for path in possible_paths:
-                exists = "✅" if path.exists() else "❌"
-                print(f"   {exists} {path}")
+                try:
+                    exists = "✅" if path.exists() else "❌"
+                    print(f"   {exists} {path}")
+                except:
+                    print(f"   ❌ {path} (error checking)")
             print(f"   Current working directory: {Path.cwd()}")
             print(f"   Blueprint directory: {blueprint_dir}")
             print(f"   Repo root: {repo_root}")
+            print(f"   __file__ location: {current_file}")
+            
+            # Try to list files in common locations
+            try:
+                cwd_files = list(Path.cwd().glob('*.json'))
+                print(f"   JSON files in cwd: {cwd_files}")
+            except:
+                pass
+            try:
+                repo_files = list(repo_root.glob('*.json'))
+                print(f"   JSON files in repo_root: {repo_files}")
+            except:
+                pass
+            
             return False
         
         print(f"📥 ShadowStack: Found pre-enriched data file: {data_file}")
