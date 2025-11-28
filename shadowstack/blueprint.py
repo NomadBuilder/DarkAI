@@ -1729,8 +1729,27 @@ def import_pre_enriched_data():
         import os
         
         # IMPORTANT: Use ShadowStack's PostgresClient, not PersonaForge's
-        # Make sure we're importing from the correct location
-        from src.database.postgres_client import PostgresClient as ShadowStackPostgresClient
+        # Force import from ShadowStack's directory to avoid conflicts
+        import sys
+        import importlib.util
+        
+        # Get the absolute path to ShadowStack's postgres_client
+        shadowstack_postgres_path = blueprint_dir / 'src' / 'database' / 'postgres_client.py'
+        
+        # Load the module directly from file to avoid import conflicts
+        spec = importlib.util.spec_from_file_location("shadowstack_postgres_client", shadowstack_postgres_path)
+        shadowstack_postgres_module = importlib.util.module_from_spec(spec)
+        
+        # Temporarily add blueprint_dir to path for any internal imports
+        original_path = sys.path[:]
+        if str(blueprint_dir) not in sys.path:
+            sys.path.insert(0, str(blueprint_dir))
+        
+        try:
+            spec.loader.exec_module(shadowstack_postgres_module)
+            ShadowStackPostgresClient = shadowstack_postgres_module.PostgresClient
+        finally:
+            sys.path[:] = original_path
         
         # Look for exported enriched data file
         # Try multiple possible locations (Render vs local paths)
