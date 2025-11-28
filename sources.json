@@ -1,0 +1,243 @@
+{
+  "statistics": [
+    {
+      "id": "synthetic_id_fraud_20b",
+      "statistic": "$20B+ in Synthetic ID Fraud",
+      "value": "$20B+",
+      "description": "Synthetic identity fraud is the fastest-growing financial crime in North America",
+      "source": {
+        "title": "U.S. Federal Reserve",
+        "organization": "U.S. Federal Reserve",
+        "url": null,
+        "date": null,
+        "type": "government_report",
+        "verification_status": "needs_verification",
+        "notes": "Commonly cited statistic, needs direct source link"
+      }
+    },
+    {
+      "id": "deepfake_files_2025",
+      "statistic": "8M deepfake files projected in 2025",
+      "value": "8M",
+      "description": "Deepfake files surged from 500K (2023) → 8M (2025)",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "fraud_attempts_2023",
+      "statistic": "3,000% increase in fraud attempts (2023)",
+      "value": "3,000%",
+      "description": "Fraud attempts spiked 3,000% in 2023, with 1,740% growth in North America",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "human_detection_rate",
+      "statistic": "24.5% human detection accuracy",
+      "value": "24.5%",
+      "description": "Human detection rates are just 24.5% for high-quality video deepfakes",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "avg_incident_cost_2024",
+      "statistic": "$500K average per incident",
+      "value": "$500K",
+      "description": "Businesses lost an average of nearly $500,000 per deepfake-related incident in 2024",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "generative_ai_fraud_2027",
+      "statistic": "$40B projected fraud by 2027",
+      "value": "$40B",
+      "description": "Generative AI fraud in the U.S. alone expected to hit $40 billion by 2027 (Deloitte Center for Financial Services)",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post",
+        "original_source": "Deloitte Center for Financial Services"
+      }
+    },
+    {
+      "id": "voice_clone_scams",
+      "statistic": "1 in 4 adults targeted",
+      "value": "25%",
+      "description": "1 in 4 adults have experienced an AI voice scam, with 1 in 10 having been personally targeted (McAfee 2024)",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post",
+        "original_source": "McAfee 2024 study"
+      }
+    },
+    {
+      "id": "crypto_deepfake_fraud",
+      "statistic": "88% of deepfake fraud in crypto",
+      "value": "88%",
+      "description": "Cryptocurrency sector accounts for 88% of all detected deepfake fraud cases in 2023",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "arup_fraud_case",
+      "statistic": "$25M single incident",
+      "value": "$25M",
+      "description": "February 2024: Finance worker at Arup tricked into wiring $25 million via deepfaked video conference",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "ncii_percentage",
+      "statistic": "96-98% of deepfakes are NCII",
+      "value": "96-98%",
+      "description": "96-98% of all deepfake videos online are Non-Consensual Intimate Imagery (NCII), with 99-100% of victims being female",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "idv_bypass_increase",
+      "statistic": "704% increase in IDV bypass",
+      "value": "704%",
+      "description": "Deepfake attacks bypassing identity verification increased by 704% in 2023",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "ceo_fraud_daily",
+      "statistic": "400 companies targeted daily",
+      "value": "400/day",
+      "description": "CEO fraud now targets at least 400 companies per day",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "attack_rate_2024",
+      "statistic": "One attack every 5 minutes",
+      "value": "1/5min",
+      "description": "In 2024, deepfake attacks occurred at a rate of one every five minutes",
+      "source": {
+        "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+        "author": "Mohammed Khalil",
+        "organization": "DeepStrike",
+        "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+        "date": "2025-09-08",
+        "type": "blog_post"
+      }
+    },
+    {
+      "id": "youth_deepfake_1in10",
+      "statistic": "1 in 10 minors affected",
+      "value": "1 in 10",
+      "description": "1 in 10 minors report that their peers have used AI to generate deepfake nudes of other kids",
+      "source": {
+        "title": "Report: 1 in 10 Minors Say Peers Have Used AI to Generate Nudes of Other Kids",
+        "author": "Thorn",
+        "organization": "Thorn",
+        "url": "https://www.prnewswire.com/news-releases/report-1-in-10-minors-say-peers-have-used-ai-to-generate-nudes-of-other-kids-302221658.html",
+        "date": "2024-08-14",
+        "type": "research_report",
+        "verification_status": "verified",
+        "notes": "Thorn's Youth Perspectives on Online Safety, 2023 report. Surveyed 1,040 minors aged 9-17 from across the United States."
+      }
+    },
+    {
+      "id": "impersonation_attempts_3.8m",
+      "statistic": "3.8M Impersonation Attempts",
+      "value": "3.8M",
+      "description": "Security firms estimate nearly 4 million AI-assisted impersonation attempts occurred globally in 2024",
+      "source": {
+        "title": "Trend Micro / ENISA Report",
+        "organization": "Trend Micro, ENISA",
+        "url": null,
+        "date": "2024",
+        "type": "security_report",
+        "verification_status": "needs_verification",
+        "notes": "Statistic cited but specific report URL needs to be found"
+      }
+    }
+  ],
+  "sources": [
+    {
+      "id": "deepstrike_2025",
+      "title": "Deepfake Statistics 2025: AI Fraud Data & Trends",
+      "author": "Mohammed Khalil",
+      "organization": "DeepStrike",
+      "url": "https://deepstrike.io/blog/deepfake-statistics-2025",
+      "date": "2025-09-08",
+      "type": "blog_post",
+      "description": "Comprehensive analysis of deepfake fraud statistics, attack vectors, and defense strategies for 2025"
+    },
+    {
+      "id": "thorn_2024",
+      "title": "Youth Perspectives on Online Safety, 2023",
+      "author": "Thorn",
+      "organization": "Thorn",
+      "url": "https://www.prnewswire.com/news-releases/report-1-in-10-minors-say-peers-have-used-ai-to-generate-nudes-of-other-kids-302221658.html",
+      "date": "2024-08-14",
+      "type": "research_report",
+      "description": "Research from Thorn surveying 1,040 minors aged 9-17 about online safety, including AI-generated deepfake nudes"
+    }
+  ]
+}
+
