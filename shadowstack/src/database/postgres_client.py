@@ -365,14 +365,19 @@ class PostgresClient:
             
             # Verify count matches expected (before cursor closes)
             cursor.execute("""
-                SELECT COUNT(*) 
+                SELECT COUNT(*) as count
                 FROM domains 
                 WHERE source != 'DUMMY_DATA_FOR_TESTING'
                   AND source IS NOT NULL
                   AND source != ''
                   AND source LIKE 'SHADOWSTACK%'
             """)
-            expected_count = cursor.fetchone()[0]
+            result = cursor.fetchone()
+            # RealDictCursor returns a dict, regular cursor returns tuple
+            if isinstance(result, dict):
+                expected_count = result.get('count', 0)
+            else:
+                expected_count = result[0] if result else 0
             if expected_count != len(domains_list):
                 print(f"   ⚠️  WARNING: Expected {expected_count} domains but query returned {len(domains_list)}")
             else:

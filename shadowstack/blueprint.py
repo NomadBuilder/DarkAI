@@ -947,6 +947,8 @@ def get_analytics():
             print(f"🔍 get_analytics: Retrieved {len(domains)} domains from database")
             if domains:
                 print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
+                print(f"   First domain: {domains[0].get('domain')} (source: {domains[0].get('source')})")
+                print(f"   Last domain: {domains[-1].get('domain')} (source: {domains[-1].get('source')})")
             postgres.close()
         except Exception as db_error:
             # Database connection failed, return empty analytics
