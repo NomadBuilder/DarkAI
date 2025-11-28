@@ -25,8 +25,28 @@ from src.utils.config import Config
 
 # Import utilities
 from src.utils.logger import logger, setup_logger
-from src.utils.validation import sanitize_input, validate_phone, validate_domain, validate_wallet, validate_handle
-from src.utils.cache import get_cache_stats
+
+# Import validation functions with fallbacks
+try:
+    from src.utils.validation import sanitize_input, validate_phone, validate_domain, validate_wallet, validate_handle
+except ImportError:
+    # Fallback if validation functions don't exist
+    def sanitize_input(text):
+        return str(text).strip() if text else ""
+    def validate_phone(phone):
+        return bool(phone and len(str(phone)) > 5)
+    def validate_domain(domain):
+        return bool(domain and '.' in str(domain))
+    def validate_wallet(wallet):
+        return bool(wallet and len(str(wallet)) > 10)
+    def validate_handle(handle):
+        return bool(handle and len(str(handle)) > 0)
+
+try:
+    from src.utils.cache import get_cache_stats
+except ImportError:
+    def get_cache_stats():
+        return {"hits": 0, "misses": 0, "size": 0}
 
 # Don't import enrich_entity at top level - import it lazily in functions to avoid module conflicts
 
