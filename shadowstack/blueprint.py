@@ -899,13 +899,14 @@ def get_analytics():
                     })
         
         # Calculate statistics
+        # Handle None, empty string, and falsy values properly
         stats = {
             'total_domains': total,
-            'domains_with_cms': sum(1 for d in domains if d.get('cms')),
-            'domains_with_cdn': sum(1 for d in domains if d.get('cdn')),
-            'domains_with_payment': sum(1 for d in domains if d.get('payment_processor')),
-            'unique_isps': len(set(d.get('isp') for d in domains if d.get('isp'))),
-            'unique_hosts': len(set(d.get('host_name') for d in domains if d.get('host_name')))
+            'domains_with_cms': sum(1 for d in domains if d.get('cms') and d.get('cms') != 'None' and str(d.get('cms')).strip()),
+            'domains_with_cdn': sum(1 for d in domains if d.get('cdn') and d.get('cdn') != 'None' and str(d.get('cdn')).strip()),
+            'domains_with_payment': sum(1 for d in domains if d.get('payment_processor') and d.get('payment_processor') != 'None' and str(d.get('payment_processor')).strip()),
+            'unique_isps': len(set(d.get('isp') for d in domains if d.get('isp') and d.get('isp') != 'None' and str(d.get('isp')).strip())),
+            'unique_hosts': len(set(d.get('host_name') for d in domains if d.get('host_name') and d.get('host_name') != 'None' and str(d.get('host_name')).strip()))
         }
         
         return jsonify({
