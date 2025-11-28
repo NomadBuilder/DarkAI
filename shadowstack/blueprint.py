@@ -56,6 +56,18 @@ shadowstack_bp = Blueprint(
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
 openai_client = OpenAI(api_key=OPENAI_API_KEY) if (OPENAI_AVAILABLE and OPENAI_API_KEY) else None
 
+# Initialize global PostgresClient for auto-seeding (similar to PersonaForge)
+try:
+    postgres_client = PostgresClient()
+    if not postgres_client or not postgres_client.conn:
+        print("⚠️  ShadowStack: PostgreSQL not available - some features may be limited")
+        postgres_client = None
+    else:
+        print("✅ ShadowStack: PostgreSQL client initialized")
+except Exception as e:
+    print(f"⚠️  ShadowStack: Could not initialize PostgreSQL client: {e}")
+    postgres_client = None
+
 @shadowstack_bp.route('/')
 def index():
     """Render the splash/landing page."""
@@ -1376,5 +1388,281 @@ CRITICAL: Service providers (CDNs, hosts, ISPs) are being paid to enable these s
 """
     
     return analysis
+
+
+# Import ShadowStack real domain data
+try:
+    # Use importlib to avoid sys.path issues
+    import importlib.util
+    domains_data_path = blueprint_dir / 'src' / 'data' / 'domains.py'
+    if domains_data_path.exists():
+        spec = importlib.util.spec_from_file_location("domains_data", domains_data_path)
+        domains_data_module = importlib.util.module_from_spec(spec)
+        import sys
+        original_path = sys.path[:]
+        if str(blueprint_dir) not in sys.path:
+            sys.path.insert(0, str(blueprint_dir))
+        try:
+            spec.loader.exec_module(domains_data_module)
+            SHADOWSTACK_DOMAINS = domains_data_module.SHADOWSTACK_DOMAINS
+        finally:
+            sys.path[:] = original_path
+    else:
+        SHADOWSTACK_DOMAINS = []
+except Exception as e:
+    print(f"⚠️  Could not load ShadowStack domains data: {e}")
+    SHADOWSTACK_DOMAINS = []
+
+@shadowstack_bp.route('/api/import-data', methods=['POST'])
+def import_shadowstack_data():
+    """
+    Import ShadowStack real data into the database.
+    This endpoint can be called once to seed the database with the 110 domains.
+    
+    POST /api/import-data
+    Body (optional): {
+        "domains": ["domain1.com", "domain2.com", ...]  # If not provided, uses hardcoded list
+        "enrich": false  # Whether to enrich domains immediately (default: false, takes time)
+    }
+    
+    This ONLY affects ShadowStack's 'domains' table and does NOT touch
+    PersonaForge (personaforge_domains) or BlackWire (blackwire_domains) tables.
+    """
+    try:
+        data = request.get_json() or {}
+        domains_to_import = data.get('domains', [])
+        should_enrich = data.get('enrich', False)
+        
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            return jsonify({
+                "error": "Database connection failed",
+                "message": "Could not connect to PostgreSQL"
+            }), 500
+        
+        # If no domains provided, use the hardcoded ShadowStack domains list
+        if not domains_to_import:
+            domains_to_import = SHADOWSTACK_DOMAINS
+        
+        if not domains_to_import:
+            return jsonify({
+                "error": "No domains available",
+                "message": "No domains provided and no default domains configured"
+            }), 400
+        
+        # Get existing domains to avoid duplicates
+        existing = postgres.get_all_enriched_domains()
+        existing_domains = {d.get('domain') for d in existing if d.get('domain')}
+        
+        imported = 0
+        skipped = 0
+        errors = []
+        
+        print(f"📊 ShadowStack: Starting data import. {len(domains_to_import)} domains provided, {len(existing_domains)} already exist")
+        
+        for domain in domains_to_import:
+            domain = domain.strip()
+            if not domain:
+                continue
+            
+            try:
+                # Skip if already exists
+                if domain in existing_domains:
+                    skipped += 1
+                    continue
+                
+                # Insert domain (ONLY into ShadowStack's 'domains' table)
+                domain_id = postgres.insert_domain(
+                    domain=domain,
+                    source="SHADOWSTACK_IMPORT",
+                    notes="Imported via /api/import-data endpoint"
+                )
+                
+                # Optionally enrich (this takes time, so disabled by default)
+                if should_enrich:
+                    try:
+                        # Use importlib to avoid sys.path issues
+                        import importlib.util
+                        enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+                        if enrichment_pipeline_path.exists():
+                            spec = importlib.util.spec_from_file_location("enrichment_pipeline", enrichment_pipeline_path)
+                            enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+                            import sys
+                            original_path = sys.path[:]
+                            if str(blueprint_dir) not in sys.path:
+                                sys.path.insert(0, str(blueprint_dir))
+                            try:
+                                spec.loader.exec_module(enrichment_pipeline_module)
+                                enrich_domain = enrichment_pipeline_module.enrich_domain
+                                enrichment_data = enrich_domain(domain)
+                                postgres.insert_enrichment(domain_id, enrichment_data)
+                            finally:
+                                sys.path[:] = original_path
+                    except Exception as e:
+                        print(f"  ⚠️  Could not enrich {domain}: {e}")
+                
+                imported += 1
+                if imported % 10 == 0:
+                    print(f"  ✅ Imported {imported} domains...")
+                    
+            except Exception as e:
+                error_msg = f"Error importing {domain}: {str(e)}"
+                errors.append(error_msg)
+                print(f"  ❌ {error_msg}")
+        
+        postgres.conn.commit()
+        postgres.close()
+        
+        print(f"✅ ShadowStack: Import complete! Imported: {imported}, Skipped: {skipped}, Errors: {len(errors)}")
+        
+        return jsonify({
+            "success": True,
+            "imported": imported,
+            "skipped": skipped,
+            "errors": len(errors),
+            "error_details": errors[:10] if errors else [],  # First 10 errors
+            "message": f"Imported {imported} new domains into ShadowStack database (skipped {skipped} duplicates)"
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        error_msg = f"Error in import_shadowstack_data: {e}"
+        print(error_msg)
+        traceback.print_exc()
+        return jsonify({
+            "error": "Import failed",
+            "message": str(e)
+        }), 500
+
+
+@shadowstack_bp.route('/api/seed-data', methods=['POST'])
+def seed_shadowstack_data():
+    """
+    One-time seed endpoint for ShadowStack real data.
+    Checks if database is empty and seeds with default domains if needed.
+    
+    This is safe to call multiple times - it checks for existing data first.
+    ONLY affects ShadowStack's 'domains' table.
+    """
+    try:
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            return jsonify({
+                "error": "Database connection failed"
+            }), 500
+        
+        # Check if we already have data
+        existing = postgres.get_all_enriched_domains()
+        existing_count = len(existing)
+        
+        if existing_count > 0:
+            return jsonify({
+                "success": True,
+                "message": f"Database already has {existing_count} domains. No seeding needed.",
+                "existing_count": existing_count,
+                "seeded": 0
+            }), 200
+        
+        # Database is empty - seed with default domains
+        # In production, you would load this from a file or external source
+        # For now, return instructions
+        postgres.close()
+        
+        return jsonify({
+            "success": False,
+            "message": "Database is empty. Please use /api/import-data endpoint with a list of domains.",
+            "instructions": "POST to /api/import-data with body: {\"domains\": [\"domain1.com\", \"domain2.com\", ...]}",
+            "note": "This endpoint only affects ShadowStack's 'domains' table and does not touch PersonaForge or BlackWire data."
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        print(f"Error in seed_shadowstack_data: {e}")
+        traceback.print_exc()
+        return jsonify({
+            "error": "Seed check failed",
+            "message": str(e)
+        }), 500
+
+
+def run_shadowstack_data_seed():
+    """
+    Auto-seed ShadowStack real data on startup if database is empty.
+    This ONLY affects ShadowStack's 'domains' table and does NOT touch
+    PersonaForge (personaforge_domains) or BlackWire (blackwire_domains) tables.
+    """
+    try:
+        # Create a new connection for seeding (don't use global to avoid conflicts)
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            print("⚠️  ShadowStack: PostgreSQL not available - skipping data seed")
+            return
+        
+        # Check if we already have data
+        cursor = postgres.conn.cursor()
+        cursor.execute("SELECT COUNT(*) FROM domains WHERE source != 'DUMMY_DATA_FOR_TESTING'")
+        domain_count = cursor.fetchone()[0]
+        cursor.close()
+        
+        if domain_count > 0:
+            print(f"✅ ShadowStack: Database has {domain_count} domains - skipping data seed")
+            postgres.close()
+            return
+        
+        # Database is empty - seed with real ShadowStack domains
+        print(f"📊 ShadowStack: Database is empty - seeding {len(SHADOWSTACK_DOMAINS)} real domains...")
+        
+        imported = 0
+        skipped = 0
+        
+        for domain in SHADOWSTACK_DOMAINS:
+            domain = domain.strip()
+            if not domain:
+                continue
+            
+            try:
+                # Check if domain already exists (shouldn't, but check anyway)
+                cursor = postgres.conn.cursor()
+                cursor.execute("SELECT id FROM domains WHERE domain = %s", (domain,))
+                existing = cursor.fetchone()
+                cursor.close()
+                
+                if existing:
+                    skipped += 1
+                    continue
+                
+                # Insert domain (ONLY into ShadowStack's 'domains' table)
+                domain_id = postgres.insert_domain(
+                    domain=domain,
+                    source="SHADOWSTACK_AUTO_SEED",
+                    notes="Auto-seeded on startup - real ShadowStack data"
+                )
+                
+                imported += 1
+                if imported % 20 == 0:
+                    print(f"  ✅ ShadowStack: Imported {imported} domains...")
+                    
+            except Exception as e:
+                print(f"  ⚠️  ShadowStack: Error importing {domain}: {e}")
+        
+        postgres.conn.commit()
+        postgres.close()
+        print(f"✅ ShadowStack: Auto-seed complete! Imported: {imported}, Skipped: {skipped}")
+        
+    except Exception as e:
+        print(f"⚠️  ShadowStack: Error during auto-seed: {e}", exc_info=True)
+
+
+# Run auto-seed in background thread after a delay (similar to PersonaForge)
+import threading
+import time
+
+def delayed_shadowstack_seed():
+    """Run ShadowStack data seed after app starts."""
+    time.sleep(5)  # Wait for app to fully start
+    run_shadowstack_data_seed()
+
+shadowstack_seed_thread = threading.Thread(target=delayed_shadowstack_seed, daemon=True)
+shadowstack_seed_thread.start()
 
 
