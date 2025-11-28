@@ -1753,6 +1753,7 @@ def import_pre_enriched_data():
         enrichment_lookup = {e['domain']: e for e in enrichment_data}
         
         imported = 0
+        updated = 0
         enriched = 0
         skipped = 0
         
@@ -1764,12 +1765,26 @@ def import_pre_enriched_data():
             try:
                 # Check if domain already exists
                 cursor = postgres.conn.cursor()
-                cursor.execute("SELECT id FROM domains WHERE domain = %s", (domain,))
+                cursor.execute("SELECT id, source FROM domains WHERE domain = %s", (domain,))
                 existing = cursor.fetchone()
                 
                 if existing:
                     domain_id = existing[0]
-                    skipped += 1
+                    existing_source = existing[1]
+                    # Update source to ShadowStack if it's not already
+                    if not existing_source or existing_source == 'DUMMY_DATA_FOR_TESTING' or not existing_source.startswith('SHADOWSTACK'):
+                        cursor.execute("""
+                            UPDATE domains 
+                            SET source = %s, notes = %s 
+                            WHERE id = %s
+                        """, (
+                            domain_record.get('source', 'SHADOWSTACK_PRE_ENRICHED'),
+                            domain_record.get('notes', 'Pre-enriched data imported from local'),
+                            domain_id
+                        ))
+                        updated += 1
+                    else:
+                        skipped += 1
                 else:
                     # Insert domain
                     domain_id = postgres.insert_domain(
@@ -1802,7 +1817,7 @@ def import_pre_enriched_data():
         postgres.close()
         
         print(f"✅ ShadowStack: Pre-enriched data import complete!")
-        print(f"   Imported: {imported} new domains, Skipped: {skipped} existing")
+        print(f"   Imported: {imported} new domains, Updated: {updated} existing domains, Skipped: {skipped} already ShadowStack")
         print(f"   Enriched: {enriched} domains with infrastructure data")
         
         return True
