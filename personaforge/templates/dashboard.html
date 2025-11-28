@@ -163,9 +163,16 @@
 <script>
 (function() {
   // Hamburger menu toggle for PersonaForge navigation
+  // Scoped to PersonaForge's nav to avoid conflicts with BlackWire
   document.addEventListener('DOMContentLoaded', function() {
-    const hamburger = document.querySelector('.nav .hamburger');
-    const navLinks = document.querySelector('.nav .nav__links');
+    const nav = document.querySelector('nav.nav');
+    // Only proceed if this is a PersonaForge page (check for PersonaForge-specific content)
+    if (!nav || !nav.querySelector('a[href*="/personaforge/"]')) {
+      return; // Not a PersonaForge page, exit early
+    }
+    
+    const hamburger = nav.querySelector('.hamburger');
+    const navLinks = nav.querySelector('.nav__links');
     
     if (hamburger && navLinks) {
       hamburger.addEventListener('click', function(e) {
