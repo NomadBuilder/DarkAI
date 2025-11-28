@@ -117,7 +117,7 @@ dummy_data_thread.start()
 
 @app.route('/')
 def index():
-    """Dark-AI homepage."""
+    """Dark AI homepage."""
     from flask import render_template
     try:
         return render_template('darkai_home.html')
@@ -128,7 +128,7 @@ def index():
 
 @app.route('/about')
 def about():
-    """Dark-AI about page."""
+    """Dark AI about page."""
     from flask import render_template
     try:
         return render_template('about.html')
@@ -137,7 +137,7 @@ def about():
         return send_from_directory('templates', 'about.html')
 
 
-# Serve static files from root (for Dark-AI homepage)
+# Serve static files from root (for Dark AI homepage)
 @app.route('/static/<path:filename>')
 def serve_static(filename):
     """Serve static files."""
