@@ -1034,17 +1034,105 @@ def enrich_all_domains():
 @shadowstack_bp.route('/api/analytics')
 def get_analytics():
     """Get analytics and outlier detection."""
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+    from urllib.parse import urlparse
+    
     try:
         try:
-            # Use ShadowStack's PostgresClient explicitly
-            postgres = ShadowStackPostgresClient()
-            domains = postgres.get_all_enriched_domains()
-            print(f"🔍 get_analytics: Retrieved {len(domains)} domains from database")
+            # Use direct SQL like /api/domains to avoid PostgresClient issues
+            database_url = os.getenv("DATABASE_URL")
+            if not database_url:
+                raise Exception("DATABASE_URL not set")
+            
+            parsed = urlparse(database_url)
+            conn = psycopg2.connect(
+                host=parsed.hostname,
+                port=parsed.port or 5432,
+                user=parsed.username,
+                password=parsed.password,
+                database=parsed.path.lstrip('/'),
+                sslmode='require'
+            )
+            
+            cursor = conn.cursor(cursor_factory=RealDictCursor)
+            
+            # Same query as /api/domains
+            query = """
+                SELECT 
+                    d.id,
+                    d.domain,
+                    d.source,
+                    d.notes,
+                    de.ip_address,
+                    de.ip_addresses,
+                    de.ipv6_addresses,
+                    de.host_name,
+                    de.asn,
+                    de.isp,
+                    de.cdn,
+                    de.cms,
+                    de.payment_processor,
+                    de.registrar,
+                    de.creation_date,
+                    de.expiration_date,
+                    de.updated_date,
+                    de.name_servers,
+                    de.mx_records,
+                    de.whois_status,
+                    de.web_server,
+                    de.frameworks,
+                    de.analytics,
+                    de.languages,
+                    de.tech_stack,
+                    de.http_headers,
+                    de.ssl_info,
+                    de.whois_data,
+                    de.dns_records,
+                    de.enriched_at
+                FROM domains d
+                LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+                WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+                  AND d.source IS NOT NULL
+                  AND d.source != ''
+                  AND d.source LIKE 'SHADOWSTACK%'
+                ORDER BY d.domain
+            """
+            
+            cursor.execute(query)
+            results = cursor.fetchall()
+            
+            # Convert to list of dicts
+            domains = []
+            for row in results:
+                domain_dict = dict(row)
+                
+                # Parse JSONB fields
+                jsonb_fields = [
+                    'ip_addresses', 'ipv6_addresses', 'name_servers', 'mx_records',
+                    'frameworks', 'analytics', 'languages', 'tech_stack',
+                    'http_headers', 'ssl_info', 'whois_data', 'dns_records'
+                ]
+                
+                for field in jsonb_fields:
+                    value = domain_dict.get(field)
+                    if value is not None and isinstance(value, str):
+                        try:
+                            import json
+                            domain_dict[field] = json.loads(value)
+                        except (json.JSONDecodeError, TypeError):
+                            pass
+                
+                domains.append(domain_dict)
+            
+            cursor.close()
+            conn.close()
+            
+            print(f"🔍 get_analytics (direct SQL): Retrieved {len(domains)} domains from database")
             if domains:
                 print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
                 print(f"   First domain: {domains[0].get('domain')} (source: {domains[0].get('source')})")
                 print(f"   Last domain: {domains[-1].get('domain')} (source: {domains[-1].get('source')})")
-            postgres.close()
         except Exception as db_error:
             # Database connection failed, return empty analytics
             print(f"PostgreSQL connection failed in get_analytics: {db_error}")
