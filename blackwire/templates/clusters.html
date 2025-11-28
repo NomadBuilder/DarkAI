@@ -237,20 +237,8 @@
   </style>
 </head>
 <body class="page">
+  {% from "_navigation.html" import render_nav %}
   {{ render_nav('clusters') }}
-  <nav class="nav">
-    <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
-      <a href="/" style="text-decoration: none; display: flex; align-items: center;">
-      <div class="nav__brand-mark"></div>
-    </a>
-      <a href="/blackwire/" style="text-decoration: none; color: inherit;">BlackWire Intelligence</a>
-    </div>
-    <div class="nav__links">
-      <a href="/blackwire/" class="nav__link">Home</a>
-      <a href="/blackwire/support" class="nav__link">Report &amp; Escalate</a>
-      <a href="/blackwire/trace" class="nav__link nav__link--accent">Start Tracing</a>
-    </div>
-  </nav>
 
   <main>
     <div class="container">
