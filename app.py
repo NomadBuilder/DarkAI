@@ -38,11 +38,9 @@ def import_blueprint(blueprint_name, url_prefix):
             if other_path in sys.path:
                 sys.path.remove(other_path)
     
-    # Clear ALL src modules to force fresh import from correct path
-    # This ensures each blueprint uses its own modules
-    modules_to_remove = [k for k in list(sys.modules.keys()) if k == 'src' or k.startswith('src.')]
-    for mod in modules_to_remove:
-        del sys.modules[mod]
+    # CRITICAL: Don't delete src modules - they need to be available for dynamic loading
+    # Instead, just ensure this blueprint's path is prioritized
+    # Each blueprint will import its own src modules when needed
     
     # Prioritize this blueprint's path
     if blueprint_path_str in sys.path:
