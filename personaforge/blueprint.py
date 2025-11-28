@@ -866,9 +866,8 @@ def run_initial_discovery():
                         except ImportError:
                             pass  # If they're already imported or don't exist, continue
                         
-                        # Set __package__ and __name__ to help with relative imports
-                        seed_dummy_data_module.__package__ = 'src.database'
-                        seed_dummy_data_module.__name__ = 'src.database.seed_dummy_data'
+                        # Don't set __name__ or __package__ - let importlib handle it
+                        # The module name should match what we passed to spec_from_file_location
                         spec.loader.exec_module(seed_dummy_data_module)
                         count = seed_dummy_data_module.seed_dummy_data(num_domains=50)
                         app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
@@ -910,9 +909,7 @@ def run_initial_discovery():
                         except ImportError:
                             pass  # If they're already imported or don't exist, continue
                         
-                        # Set __package__ and __name__ to help with relative imports
-                        vendor_discovery_module.__package__ = 'src.enrichment'
-                        vendor_discovery_module.__name__ = 'src.enrichment.vendor_discovery'
+                        # Don't set __name__ or __package__ - let importlib handle it
                         spec.loader.exec_module(vendor_discovery_module)
                         discover_all_sources = vendor_discovery_module.discover_all_sources
                     finally:
@@ -937,9 +934,7 @@ def run_initial_discovery():
                         except ImportError:
                             pass  # If they're already imported or don't exist, continue
                         
-                        # Set __package__ and __name__ to help with relative imports
-                        enrichment_pipeline_module.__package__ = 'src.enrichment'
-                        enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
+                        # Don't set __name__ or __package__ - let importlib handle it
                         spec.loader.exec_module(enrichment_pipeline_module)
                         enrich_domain = enrichment_pipeline_module.enrich_domain
                     finally:
