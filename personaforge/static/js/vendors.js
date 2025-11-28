@@ -60,6 +60,17 @@ async function loadClusters() {
     if (clustersData.clusters) {
       // Filter clusters by min domains
       clusters = clustersData.clusters.filter(c => (c.domain_count || 0) >= minDomains);
+      console.log('Loaded clusters:', clustersData.clusters.length, 'Filtered clusters:', clusters.length, 'Min domains:', minDomains);
+      renderClusters();
+    } else if (clustersData.error) {
+      console.error('Clusters API error:', clustersData.error);
+      document.getElementById('clusters-container').innerHTML = 
+        `<div style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 8px; padding: 2rem; text-align: center;">
+          <p style="color: #ff4444; margin-bottom: 1rem;">Error loading clusters: ${clustersData.error}</p>
+        </div>`;
+    } else {
+      console.warn('No clusters data in response:', clustersData);
+      clusters = [];
       renderClusters();
     }
     
@@ -89,7 +100,9 @@ function updateStatsFromHomepage(data) {
   document.getElementById('total-vendors').textContent = vendorCount;
   
   document.getElementById('total-high-risk').textContent = data.high_risk_domains || 0;
-  document.getElementById('total-clusters').textContent = clusters.length; // Use filtered clusters count
+  // Use infrastructure_clusters from API, or fallback to filtered clusters count
+  const clusterCount = data.infrastructure_clusters || clusters.length || 0;
+  document.getElementById('total-clusters').textContent = clusterCount;
 }
 
 // Render vendors list (deprecated - now using clusters)

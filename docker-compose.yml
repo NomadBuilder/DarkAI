@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: darkai-postgres
+    environment:
+      POSTGRES_USER: darkai_user
+      POSTGRES_PASSWORD: darkai123password
+      POSTGRES_DB: darkai
+    ports:
+      - "5434:5432"  # Using 5434 to avoid conflict with existing PostgreSQL
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U darkai_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  neo4j:
+    image: neo4j:5.15.0
+    container_name: darkai-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/neo4j123password
+      NEO4J_PLUGINS: '["apoc"]'
+    ports:
+      - "7475:7474"  # HTTP (using 7475 to avoid conflicts)
+      - "7688:7687"  # Bolt (using 7688 to avoid conflicts)
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "neo4j123password", "RETURN 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  neo4j_data:
+  neo4j_logs:
+

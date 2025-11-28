@@ -94,14 +94,20 @@ class PostgresClient:
             except:
                 pass
             
-            connect_params = {
-                "host": Config.POSTGRES_HOST,
-                "port": Config.POSTGRES_PORT,
-                "user": Config.POSTGRES_USER,
-                "password": Config.POSTGRES_PASSWORD,
-                "database": Config.POSTGRES_DB
-            }
-            if Config.POSTGRES_HOST.endswith(".render.com"):
+            # Reconnect using same logic as __init__
+            database_url = os.getenv("DATABASE_URL")
+            if database_url:
+                connect_params = _parse_database_url(database_url)
+            else:
+                connect_params = {
+                    "host": Config.POSTGRES_HOST,
+                    "port": Config.POSTGRES_PORT,
+                    "user": Config.POSTGRES_USER,
+                    "password": Config.POSTGRES_PASSWORD,
+                    "database": Config.POSTGRES_DB
+                }
+            postgres_host = connect_params["host"]
+            if postgres_host and (postgres_host.endswith(".render.com") or "render.com" in postgres_host):
                 connect_params["sslmode"] = "require"
             
             try:
@@ -118,9 +124,9 @@ class PostgresClient:
             
         cursor = self.conn.cursor()
         
-        # Domains table
+        # Domains table (prefixed to avoid conflicts with ShadowStack)
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS domains (
+            CREATE TABLE IF NOT EXISTS personaforge_domains (
                 id SERIAL PRIMARY KEY,
                 domain VARCHAR(255) UNIQUE NOT NULL,
                 source VARCHAR(255),
@@ -131,11 +137,11 @@ class PostgresClient:
             )
         """)
         
-        # Domain enrichment table
+        # Domain enrichment table (prefixed to avoid conflicts with ShadowStack)
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS domain_enrichment (
+            CREATE TABLE IF NOT EXISTS personaforge_domain_enrichment (
                 id SERIAL PRIMARY KEY,
-                domain_id INTEGER REFERENCES domains(id),
+                domain_id INTEGER REFERENCES personaforge_domains(id),
                 ip_address VARCHAR(45),
                 ip_addresses JSONB,
                 ipv6_addresses JSONB,
@@ -166,9 +172,9 @@ class PostgresClient:
             )
         """)
         
-        # Vendors table (clustered vendors)
+        # Vendors table (clustered vendors) - prefixed to avoid conflicts
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS vendors (
+            CREATE TABLE IF NOT EXISTS personaforge_vendors (
                 id SERIAL PRIMARY KEY,
                 vendor_name VARCHAR(255),
                 vendor_type VARCHAR(100),
@@ -181,18 +187,18 @@ class PostgresClient:
             )
         """)
         
-        # Vendor domains junction table
+        # Vendor domains junction table - prefixed to avoid conflicts
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS vendor_domains (
-                vendor_id INTEGER REFERENCES vendors(id),
-                domain_id INTEGER REFERENCES domains(id),
+            CREATE TABLE IF NOT EXISTS personaforge_vendor_domains (
+                vendor_id INTEGER REFERENCES personaforge_vendors(id),
+                domain_id INTEGER REFERENCES personaforge_domains(id),
                 PRIMARY KEY (vendor_id, domain_id)
             )
         """)
         
-        # Analysis cache table
+        # Analysis cache table - prefixed to avoid conflicts
         cursor.execute("""
-            CREATE TABLE IF NOT EXISTS analysis_cache (
+            CREATE TABLE IF NOT EXISTS personaforge_analysis_cache (
                 id SERIAL PRIMARY KEY,
                 analysis_type VARCHAR(50) DEFAULT 'vendor_clusters',
                 analysis_data JSONB NOT NULL,
@@ -213,7 +219,7 @@ class PostgresClient:
         cursor = self.conn.cursor()
         
         cursor.execute("""
-            INSERT INTO domains (domain, source, notes, vendor_type, updated_at)
+            INSERT INTO personaforge_domains (domain, source, notes, vendor_type, updated_at)
             VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP)
             ON CONFLICT (domain) 
             DO UPDATE SET 
@@ -243,7 +249,7 @@ class PostgresClient:
             return Json(value) if isinstance(value, (dict, list)) else value
         
         cursor.execute("""
-            INSERT INTO domain_enrichment (
+            INSERT INTO personaforge_domain_enrichment (
                 domain_id, ip_address, ip_addresses, ipv6_addresses, host_name, asn, isp,
                 cdn, cms, payment_processor, registrar, creation_date, expiration_date, updated_date,
                 name_servers, mx_records, whois_status, web_server, frameworks, analytics, languages,
@@ -311,7 +317,7 @@ class PostgresClient:
         # (since we don't have dedicated columns for these)
         if enrichment_data.get("vendor_risk_score") or enrichment_data.get("vendor_type"):
             cursor.execute("""
-                UPDATE domain_enrichment
+                UPDATE personaforge_domain_enrichment
                 SET whois_data = COALESCE(whois_data, '{}'::jsonb) || jsonb_build_object(
                     'vendor_risk_score', %s,
                     'vendor_type', %s,
@@ -341,8 +347,8 @@ class PostgresClient:
                 de.cdn, de.cms, de.payment_processor, de.registrar,
                 de.creation_date, de.expiration_date, de.name_servers,
                 de.whois_data, de.enriched_at
-            FROM domains d
-            LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+            FROM personaforge_domains d
+            LEFT JOIN personaforge_domain_enrichment de ON d.id = de.domain_id
             ORDER BY d.updated_at DESC
         """)
         
@@ -405,7 +411,7 @@ class PostgresClient:
                 v.id, v.vendor_name, v.vendor_type, v.domain_count,
                 v.shared_infrastructure, v.payment_processors,
                 v.first_seen, v.last_seen, v.cluster_id
-            FROM vendors v
+            FROM personaforge_vendors v
             WHERE v.domain_count >= %s
             ORDER BY v.domain_count DESC
         """, (min_domains,))

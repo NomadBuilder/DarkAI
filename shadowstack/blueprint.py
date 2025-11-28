@@ -304,20 +304,8 @@ def get_graph():
     from collections import Counter
     
     try:
-        # Try Neo4j first, fallback to PostgreSQL
-        if NEO4J_AVAILABLE:
-            try:
-                neo4j = Neo4jClient()
-                graph_data = neo4j.get_all_nodes_and_relationships()
-                neo4j.close()
-            except Exception as e:
-                print(f"Neo4j unavailable, using PostgreSQL: {e}")
-                graph_data = get_graph_from_postgres()
-        else:
-            graph_data = get_graph_from_postgres()
-        
-        if not graph_data:
-            graph_data = get_graph_from_postgres()
+        # ShadowStack ONLY uses PostgreSQL - never Neo4j (to avoid conflicts with BlackWire)
+        graph_data = get_graph_from_postgres()
         
         # If graph_data already has the structure from PostgreSQL, return it
         if "stats" in graph_data and "nodes" in graph_data:
@@ -726,6 +714,87 @@ def import_domains():
             "error_details": errors
         })
     
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    finally:
+        postgres.close()
+
+
+@shadowstack_bp.route('/api/enrich-all', methods=['POST'])
+def enrich_all_domains():
+    """
+    Enrich all domains that don't have enrichment data yet.
+    This will add CDN, host, registrar, etc. data so the graph can show clusters.
+    """
+    postgres = PostgresClient()
+    
+    try:
+        # Get all domains
+        all_domains = postgres.get_all_enriched_domains()
+        
+        # Filter to domains without enrichment data
+        unenriched = [
+            d for d in all_domains 
+            if not d.get('ip_address') and not d.get('host_name') and not d.get('cdn')
+        ]
+        
+        if not unenriched:
+            return jsonify({
+                "message": "All domains already enriched",
+                "enriched": 0,
+                "total": len(all_domains)
+            }), 200
+        
+        enriched_count = 0
+        errors = []
+        
+        for domain_data in unenriched:
+            domain = domain_data.get('domain')
+            if not domain:
+                continue
+            
+            try:
+                # Get domain ID - try from domain_data first, then query database
+                domain_id = domain_data.get('id')
+                if not domain_id:
+                    cursor = postgres.conn.cursor()
+                    cursor.execute("SELECT id FROM domains WHERE domain = %s", (domain,))
+                    result = cursor.fetchone()
+                    cursor.close()
+                    
+                    if not result:
+                        continue
+                    
+                    domain_id = result[0]
+                
+                # Enrich the domain
+                print(f"Enriching {domain}...")
+                enrichment_data = enrich_domain(domain)
+                
+                # Store enrichment
+                postgres.insert_enrichment(domain_id, enrichment_data)
+                enriched_count += 1
+                
+                if enriched_count % 10 == 0:
+                    print(f"Enriched {enriched_count}/{len(unenriched)} domains...")
+                    
+            except Exception as e:
+                print(f"Error enriching {domain}: {e}")
+                errors.append({"domain": domain, "error": str(e)})
+                continue
+        
+        postgres.close()
+        
+        return jsonify({
+            "message": f"Enriched {enriched_count} domains",
+            "enriched": enriched_count,
+            "total": len(all_domains),
+            "errors": len(errors),
+            "error_details": errors[:10]  # Limit error details
+        }), 200
+        
     except Exception as e:
         import traceback
         traceback.print_exc()

@@ -7,9 +7,9 @@ DO NOT use this data for any real analysis or reporting.
 This data should be REMOVED before production use.
 
 To remove all dummy data, run:
-    DELETE FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING';
-    DELETE FROM domain_enrichment WHERE domain_id IN (
-        SELECT id FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING'
+    DELETE FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING';
+    DELETE FROM personaforge_domain_enrichment WHERE domain_id IN (
+        SELECT id FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'
     );
 """
 
@@ -193,7 +193,7 @@ def seed_dummy_data(num_domains: int = 50) -> int:
         Number of domains successfully seeded
         
     WARNING: This creates FAKE data. Remove with:
-        DELETE FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING';
+        DELETE FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING';
     """
     logger.warning("⚠️ SEEDING DUMMY DATA - FOR TESTING ONLY ⚠️")
     
@@ -262,7 +262,7 @@ def seed_dummy_data(num_domains: int = 50) -> int:
             continue
     
     logger.warning(f"⚠️ Seeded {seeded_count} DUMMY domains for testing. REMOVE BEFORE PRODUCTION!")
-    logger.warning("⚠️ To remove: DELETE FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING';")
+    logger.warning("⚠️ To remove: DELETE FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING';")
     
     return seeded_count
 
@@ -284,19 +284,19 @@ def remove_dummy_data() -> int:
     
     try:
         # Count before deletion
-        cursor.execute("SELECT COUNT(*) FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
+        cursor.execute("SELECT COUNT(*) FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
         count = cursor.fetchone()[0]
         
         # Delete enrichments first (foreign key constraint)
         cursor.execute("""
-            DELETE FROM domain_enrichment 
+            DELETE FROM personaforge_domain_enrichment 
             WHERE domain_id IN (
-                SELECT id FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING'
+                SELECT id FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'
             )
         """)
         
         # Delete domains
-        cursor.execute("DELETE FROM domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
+        cursor.execute("DELETE FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
         
         client.conn.commit()
         

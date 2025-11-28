@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dark-AI.ca – Exposing Hidden AI Harms</title>
-  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/static/favicon.svg" />
 
   <style>
     body {
@@ -61,6 +62,11 @@
       box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
       position: relative;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    nav .logo-mark:hover {
+      transform: scale(1.1);
     }
     nav a {
       text-decoration: none;
@@ -70,6 +76,9 @@
     }
     nav a:hover {
       color: #ff6b6b;
+    }
+    nav .logo a {
+      margin-left: 0;
     }
 
     header.hero {
@@ -196,23 +205,25 @@
 <body>
 
 <nav>
-  <a href="/" class="logo" style="text-decoration: none; color: inherit;">
-    <span class="logo-mark"></span>
-    Dark-AI
-  </a>
+  <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
+    <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+      <span class="logo-mark"></span>
+    </a>
+    <a href="./" style="text-decoration: none; color: inherit;">Dark-AI</a>
+  </div>
   <div>
-    <a href="/about">About</a>
-    <a href="/shadowstack">ShadowStack</a>
-    <a href="/blackwire">BlackWire</a>
-    <a href="/personaforge">PersonaForge</a>
-    <a href="/about#contact">Contact</a>
+    <a href="about">About</a>
+    <a href="shadowstack">ShadowStack</a>
+    <a href="blackwire">BlackWire</a>
+    <a href="personaforge">PersonaForge</a>
+    <a href="about#contact">Contact</a>
   </div>
 </nav>
 
 <header class="hero">
   <h1>Exposing AI-powered harms hidden beneath the surface of the internet.</h1>
   <p>Dark-AI develops investigative tools that map synthetic identities, exploitative AI imagery, and cyber-enabled extortion networks — helping journalists, researchers, and platforms uncover what AI is making possible.</p>
-  <a href="/shadowstack" class="btn-primary">Explore the tools</a>
+  <a href="shadowstack" class="btn-primary">Explore the tools</a>
 </header>
 
 <section class="about" id="about">
@@ -234,34 +245,34 @@
 
     <div style="flex:1 1 calc(33% - 1rem); background:#0b0d16; padding:1.8rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); min-width:260px;">
       <h3 style="margin:0 0 .5rem;">💳 $20B+ in Synthetic ID Fraud</h3>
-      <p style="color:#b4bac3; line-height:1.55;">Synthetic identity fraud is the fastest-growing financial crime in North America.<br><em>Source: U.S. Federal Reserve</em></p>
+      <p style="color:#b4bac3; line-height:1.55;">Synthetic identity fraud is the fastest-growing financial crime in North America.<br><em>Source: <a href="https://www.federalreserve.gov/econres/notes/feds-notes/synthetic-identity-fraud-in-the-u-s-payment-system-20190510.htm" target="_blank" style="color:#ff6b6b; text-decoration:underline;">U.S. Federal Reserve</a></em></p>
     </div>
 
     <div style="flex:1 1 calc(33% - 1rem); background:#0b0d16; padding:1.8rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); min-width:260px;">
-      <h3 style="margin:0 0 .5rem;">🎭 500k+ Deepfake Scams Annually</h3>
-      <p style="color:#b4bac3; line-height:1.55;">Deepfake impersonation scam reports have surged 400% since 2022.<br><em>Source: Europol / FTC</em></p>
+      <h3 style="margin:0 0 .5rem;">🎭 8M Deepfakes Projected (2025)</h3>
+      <p style="color:#b4bac3; line-height:1.55;">Deepfake files surged from 500K (2023) to 8M projected in 2025 — a 900% annual growth rate.<br><em>Source: <a href="https://deepstrike.io/blog/deepfake-statistics-2025" target="_blank" style="color:#ff6b6b; text-decoration:underline;">DeepStrike 2025</a></em></p>
     </div>
 
     <div style="flex:1 1 calc(33% - 1rem); background:#0b0d16; padding:1.8rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); min-width:260px;">
-      <h3 style="margin:0 0 .5rem; color:#ff6b6b; font-size:2rem;">+550%</h3>
-      <p style="color:#fff; font-weight:600; margin-top:-.5rem;">Growth</p>
-      <p style="color:#b4bac3; line-height:1.55;">A 2025 policy brief shows a 550% increase in explicit AI deepfake videos since 2019, reaching 96,000+ videos recorded in 2023 alone.</p>
+      <h3 style="margin:0 0 .5rem; color:#ff6b6b; font-size:2rem;">+3,000%</h3>
+      <p style="color:#fff; font-weight:600; margin-top:-.5rem;">Fraud Surge</p>
+      <p style="color:#b4bac3; line-height:1.55;">Identity fraud attempts using deepfakes surged by 3,000% in 2023, with North America seeing a 1,740% increase during the same period.<br><em>Source: <a href="https://deepstrike.io/blog/deepfake-statistics-2025" target="_blank" style="color:#ff6b6b; text-decoration:underline;">DeepStrike 2025</a></em></p>
     </div>
 
     <div style="flex:1 1 calc(33% - 1rem); background:#0b0d16; padding:1.8rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); min-width:260px;">
-      <h3 style="margin:0 0 .5rem; color:#ff6b6b; font-size:2rem;">6%</h3>
-      <p style="color:#fff; font-weight:600; margin-top:-.5rem;">of youth</p>
-      <p style="color:#b4bac3; line-height:1.55;">Research shows that 1 in 17 (≈6%) of young people have had deepfake nudes created of them — an unprecedented level of AI-driven harm.</p>
+      <h3 style="margin:0 0 .5rem; color:#ff6b6b; font-size:2rem;">1 in 10</h3>
+      <p style="color:#fff; font-weight:600; margin-top:-.5rem;">minors affected</p>
+      <p style="color:#b4bac3; line-height:1.55;">1 in 10 minors report that their peers have used AI to generate deepfake nudes of other kids — marking an evolution in how child sexual abuse material is produced.<br><em>Source: <a href="https://www.prnewswire.com/news-releases/report-1-in-10-minors-say-peers-have-used-ai-to-generate-nudes-of-other-kids-302221658.html" target="_blank" style="color:#ff6b6b; text-decoration:underline;">Thorn 2024</a></em></p>
     </div>
 
     <div style="flex:1 1 calc(33% - 1rem); background:#0b0d16; padding:1.8rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); min-width:260px;">
       <h3 style="margin:0 0 .5rem;">🕵️‍♂️ 3.8M Impersonation Attempts</h3>
-      <p style="color:#b4bac3; line-height:1.55;">Security firms estimate nearly 4 million AI-assisted impersonation attempts occurred globally in 2024.<br><em>Source: Trend Micro / ENISA</em></p>
+      <p style="color:#b4bac3; line-height:1.55;">Security firms estimate nearly 4 million AI-assisted impersonation attempts occurred globally in 2024.<br><em>Source: <a href="https://www.trendmicro.com/en_us/research" target="_blank" style="color:#ff6b6b; text-decoration:underline;">Trend Micro</a> / <a href="https://www.enisa.europa.eu/publications" target="_blank" style="color:#ff6b6b; text-decoration:underline;">ENISA</a></em></p>
     </div>
 
     <div style="flex:1 1 calc(33% - 1rem); background:#0b0d16; padding:1.8rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08); min-width:260px;">
-      <h3 style="margin:0 0 .5rem;">💰 $1.3B Lost to AI‑Enhanced Fraud</h3>
-      <p style="color:#b4bac3; line-height:1.55;">Financial fraud augmented by AI tools cost victims over $1.3B in 2023 alone.<br><em>Source: FBI IC3</em></p>
+      <h3 style="margin:0 0 .5rem;">💰 $40B Fraud Projected by 2027</h3>
+      <p style="color:#b4bac3; line-height:1.55;">Generative AI fraud in the U.S. alone expected to hit $40 billion by 2027, up from $12.3B in 2023.<br><em>Source: <a href="https://deepstrike.io/blog/deepfake-statistics-2025" target="_blank" style="color:#ff6b6b; text-decoration:underline;">Deloitte / DeepStrike 2025</a></em></p>
     </div>
 
   </div>
@@ -278,21 +289,21 @@
     <div style="flex:1; min-width:300px; background:#0b0d16; padding:2rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08);">
       <h3 style="margin:0 0 .5rem; font-size:1.4rem;">ShadowStack</h3>
       <p style="color:#b4bac3; line-height:1.55; margin-bottom:1.2rem;">Maps the hosting infrastructure, CDNs, payment processors, and advertising networks enabling the spread of AI‑generated sexual exploitation.</p>
-      <a href="/shadowstack" class="btn-primary" style="padding:.6rem 1.2rem; font-size:.9rem;">Open ShadowStack</a>
+      <a href="shadowstack" class="btn-primary" style="padding:.6rem 1.2rem; font-size:.9rem;">Open ShadowStack</a>
     </div>
 
     <!-- BlackWire -->
     <div style="flex:1; min-width:300px; background:#0b0d16; padding:2rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08);">
       <h3 style="margin:0 0 .5rem; font-size:1.4rem;">BlackWire</h3>
       <p style="color:#b4bac3; line-height:1.55; margin-bottom:1.2rem;">Tracks VOIP numbers, fraud domains, messaging handles, and crypto wallets used in AI‑scaled sextortion attempts — exposing attacker networks.</p>
-      <a href="/blackwire" class="btn-primary" style="padding:.6rem 1.2rem; font-size:.9rem;">Open BlackWire</a>
+      <a href="blackwire" class="btn-primary" style="padding:.6rem 1.2rem; font-size:.9rem;">Open BlackWire</a>
     </div>
 
     <!-- PersonaForge -->
     <div style="flex:1; min-width:300px; background:#0b0d16; padding:2rem; border-radius:14px; border:1px solid rgba(255,255,255,0.08);">
       <h3 style="margin:0 0 .5rem; font-size:1.4rem;">PersonaForge</h3>
       <p style="color:#b4bac3; line-height:1.55; margin-bottom:1.2rem;">Identifies vendors, marketplaces, and bot‑driven distribution networks selling synthetic identities and deepfake impersonation kits.</p>
-      <a href="/personaforge" class="btn-primary" style="padding:.6rem 1.2rem; font-size:.9rem;">Open PersonaForge</a>
+      <a href="personaforge" class="btn-primary" style="padding:.6rem 1.2rem; font-size:.9rem;">Open PersonaForge</a>
     </div>
 
   </div>
@@ -302,7 +313,7 @@
 <section class="cta-final" style="padding:4rem 2rem; text-align:center; max-width:900px; margin:0 auto;">
   <h2 style="font-size:2rem; margin-bottom:1rem;">Ready to Investigate AI-Driven Harm?</h2>
   <p style="color:#9aa0a6; margin-bottom:2rem; font-size:1.1rem;">Explore detailed dashboards, infrastructure maps, and live intelligence across all Dark‑AI tools.</p>
-  <a href="/shadowstack" class="btn-primary" style="padding:1rem 2rem; font-size:1.1rem;">Start Investigating</a>
+  <a href="shadowstack" class="btn-primary" style="padding:1rem 2rem; font-size:1.1rem;">Start Investigating</a>
 </section>
 
 </body>

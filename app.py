@@ -82,7 +82,7 @@ def delayed_personaforge_discovery():
 discovery_thread = threading.Thread(target=delayed_personaforge_discovery, daemon=True)
 discovery_thread.start()
 
-# Also try to seed dummy data for local development (if database is available)
+# Also try to seed dummy data for PersonaForge ONCE (if database is available)
 def delayed_dummy_data_seed():
     time.sleep(7)  # Wait a bit longer for database connections
     try:
@@ -95,14 +95,18 @@ def delayed_dummy_data_seed():
         
         client = PostgresClient()
         if client and client.conn:
-            # Check if database is empty
-            domains = client.get_all_enriched_domains()
-            if len(domains) == 0:
-                print("🔍 Database is empty - seeding dummy data for visualization testing...")
-                seed_dummy_data(num_domains=50)
-                print("✅ Dummy data seeded successfully")
+            # Check specifically for dummy data (not all domains)
+            cursor = client.conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
+            dummy_count = cursor.fetchone()[0]
+            cursor.close()
+            
+            if dummy_count == 0:
+                print("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
+                count = seed_dummy_data(num_domains=50)
+                print(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
             else:
-                print(f"✅ Database has {len(domains)} domains - skipping dummy data seed")
+                print(f"✅ Dummy data already exists ({dummy_count} domains) - skipping seed")
             client.close()
         else:
             print("⚠️  Database not available - skipping dummy data seed")

@@ -887,6 +887,7 @@ class Neo4jClient:
             logger.info(f"✅ Found {len(entity_ids)} entity IDs to display in graph")
             
             # Get our entities and their relationship nodes only (NOT other entity nodes)
+            # Exclude Nameservers - too much detail, clutter the graph
             # Use UNION to ensure we get all entities first, then their relationships
             all_nodes_query = """
             // First part: Always return all our entities (even if they have no relationships)
@@ -897,13 +898,14 @@ class Neo4jClient:
             UNION ALL
             
             // Second part: Get relationship nodes for entities that have them
+            // Exclude Nameservers - too much detail
             MATCH (start)
             WHERE id(start) IN $entity_ids
             MATCH (start)-[r]-(rel_node)
             WHERE (rel_node:Country OR rel_node:Currency OR rel_node:Host OR rel_node:CDN 
-                   OR rel_node:Registrar OR rel_node:CMS OR rel_node:Nameserver 
+                   OR rel_node:Registrar OR rel_node:CMS 
                    OR rel_node:Platform OR rel_node:VOIPProvider)
-               AND NOT (rel_node:PhoneNumber OR rel_node:Domain OR rel_node:Wallet OR rel_node:MessagingHandle)
+               AND NOT (rel_node:PhoneNumber OR rel_node:Domain OR rel_node:Wallet OR rel_node:MessagingHandle OR rel_node:Nameserver)
             RETURN DISTINCT id(start) as start_id, start, 
                    id(rel_node) as rel_id, 
                    rel_node
@@ -950,11 +952,13 @@ class Neo4jClient:
                             }
             
             # Get relationships between collected nodes
+            # Only include edges where both nodes exist in our filtered node set
             node_ids_list = list(nodes.keys())
             if node_ids_list:
                 edges_query = """
                 MATCH (n)-[r]->(m)
                 WHERE id(n) IN $node_ids AND id(m) IN $node_ids
+                  AND NOT n:Nameserver AND NOT m:Nameserver
                 RETURN id(n) as source, id(m) as target, type(r) as rel_type
                 """
                 edges_result = session.run(edges_query, {"node_ids": [int(nid) for nid in node_ids_list]})
@@ -969,9 +973,28 @@ class Neo4jClient:
                             "target": target_id,
                             "type": record["rel_type"]
                         })
+            
+            # Filter out orphaned nodes (nodes with no edges)
+            # Collect all node IDs that have at least one edge
+            connected_node_ids = set()
+            for edge in edges:
+                connected_node_ids.add(edge["source"])
+                connected_node_ids.add(edge["target"])
+            
+            # Only include nodes that are connected (or are our primary entities)
+            # Primary entities (PhoneNumber, Domain, Wallet, MessagingHandle) should always be shown
+            filtered_nodes = []
+            for node in nodes.values():
+                node_id = node["id"]
+                label = node.get("label", "")
+                is_primary_entity = label in ["PhoneNumber", "Domain", "Wallet", "MessagingHandle"]
+                
+                # Include if it's a primary entity OR if it has edges
+                if is_primary_entity or node_id in connected_node_ids:
+                    filtered_nodes.append(node)
         
         return {
-            "nodes": list(nodes.values()),
+            "nodes": filtered_nodes,
             "edges": edges
         }
     
@@ -1032,8 +1055,8 @@ class Neo4jClient:
                 return value
         
         with self.driver.session() as session:
-            # Get all nodes with their IDs
-            nodes_query = "MATCH (n) RETURN id(n) as nid, n"
+            # Get all nodes with their IDs, excluding Nameservers (too much detail)
+            nodes_query = "MATCH (n) WHERE NOT n:Nameserver RETURN id(n) as nid, n"
             nodes_result = session.run(nodes_query)
             
             for record in nodes_result:
@@ -1082,8 +1105,13 @@ class Neo4jClient:
                         "properties": serialized_props
                     }
             
-            # Get all relationships
-            edges_query = "MATCH (n)-[r]->(m) RETURN id(n) as source, id(m) as target, type(r) as rel_type"
+            # Get all relationships, excluding Nameservers
+            # Only include edges where both nodes exist in our filtered node set
+            edges_query = """
+            MATCH (n)-[r]->(m)
+            WHERE NOT n:Nameserver AND NOT m:Nameserver
+            RETURN id(n) as source, id(m) as target, type(r) as rel_type
+            """
             edges_result = session.run(edges_query)
             
             for record in edges_result:
@@ -1096,9 +1124,28 @@ class Neo4jClient:
                         "target": target_id,
                         "type": record["rel_type"]
                     })
+            
+            # Filter out orphaned nodes (nodes with no edges)
+            # Collect all node IDs that have at least one edge
+            connected_node_ids = set()
+            for edge in edges:
+                connected_node_ids.add(edge["source"])
+                connected_node_ids.add(edge["target"])
+            
+            # Only include nodes that are connected (or are our primary entities)
+            # Primary entities (PhoneNumber, Domain, Wallet, MessagingHandle) should always be shown
+            filtered_nodes = []
+            for node in nodes.values():
+                node_id = node["id"]
+                label = node.get("label", "")
+                is_primary_entity = label in ["PhoneNumber", "Domain", "Wallet", "MessagingHandle"]
+                
+                # Include if it's a primary entity OR if it has edges
+                if is_primary_entity or node_id in connected_node_ids:
+                    filtered_nodes.append(node)
         
         return {
-            "nodes": list(nodes.values()),
+            "nodes": filtered_nodes,
             "edges": edges
         }
     

@@ -261,11 +261,12 @@ class PostgresClient:
         cursor.close()
     
     def get_all_enriched_domains(self) -> List[Dict]:
-        """Get all domains with their enrichment data."""
+        """Get all domains with their enrichment data, excluding dummy/test data."""
         cursor = self.conn.cursor(cursor_factory=RealDictCursor)
         
         cursor.execute("""
             SELECT 
+                d.id,
                 d.domain,
                 d.source,
                 d.notes,
@@ -297,6 +298,7 @@ class PostgresClient:
                 de.enriched_at
             FROM domains d
             LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
             ORDER BY d.domain
         """)
         

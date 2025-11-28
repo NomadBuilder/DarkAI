@@ -1,12 +1,12 @@
 {% macro render_nav(current_page='') %}
 <nav class="site-nav">
   <div class="nav-container">
-    <a href="/shadowstack/" class="nav-brand-link">
-      <div class="nav-brand">
+    <div class="nav-brand" style="display: inline-flex; align-items: center; gap: 0.6rem;">
+      <a href="/" class="nav-brand-link" style="text-decoration: none; display: flex; align-items: center;">
         <span class="nav-brand-mark"></span>
-        <span>ShadowStack</span>
-      </div>
-    </a>
+      </a>
+      <a href="/shadowstack/" style="text-decoration: none; color: inherit;">ShadowStack</a>
+    </div>
     <div class="nav-links">
       <a href="/shadowstack/" class="nav-link {% if current_page == 'home' %}active{% endif %}">Home</a>
       <a href="/shadowstack/check" class="nav-link {% if current_page == 'check' %}active{% endif %}">Check URL</a>

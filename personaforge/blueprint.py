@@ -192,9 +192,16 @@ def get_homepage_stats():
                 ]
             
             # Recent discoveries (last 10 domains, sorted by creation/update time)
-            sorted_domains = sorted(domains, key=lambda x: (
-                x.get('enriched_at', x.get('updated_at', '1970-01-01T00:00:00'))
-            ), reverse=True)
+            def get_sort_key(domain):
+                enriched_at = domain.get('enriched_at')
+                updated_at = domain.get('updated_at')
+                created_at = domain.get('created_at')
+                # Use the most recent timestamp available, default to epoch if none
+                timestamp = enriched_at or updated_at or created_at or '1970-01-01T00:00:00'
+                # Ensure it's a string for comparison
+                return str(timestamp) if timestamp else '1970-01-01T00:00:00'
+            
+            sorted_domains = sorted(domains, key=get_sort_key, reverse=True)
             
             recent_discoveries = []
             for d in sorted_domains[:10]:
@@ -224,11 +231,32 @@ def get_homepage_stats():
             
             # Infrastructure clusters
             try:
-                from src.clustering.vendor_clustering import detect_vendor_clusters
-                clusters = detect_vendor_clusters(postgres_client)
-                stats["infrastructure_clusters"] = len(clusters)
-            except:
-                pass
+                # Import clustering module using importlib to avoid sys.path issues
+                import importlib.util
+                clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+                if clustering_path.exists():
+                    spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
+                    vendor_clustering = importlib.util.module_from_spec(spec)
+                    # Add blueprint_dir to sys.path temporarily for any internal imports
+                    import sys
+                    original_path = sys.path[:]
+                    if str(blueprint_dir) not in sys.path:
+                        sys.path.insert(0, str(blueprint_dir))
+                    try:
+                        spec.loader.exec_module(vendor_clustering)
+                        clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
+                        stats["infrastructure_clusters"] = len(clusters)
+                        app_logger.debug(f"Found {len(clusters)} infrastructure clusters")
+                    finally:
+                        sys.path[:] = original_path
+                else:
+                    app_logger.warning(f"Clustering module not found at {clustering_path}")
+                    stats["infrastructure_clusters"] = 0
+            except Exception as e:
+                app_logger.error(f"Error detecting clusters: {e}")
+                import traceback
+                traceback.print_exc()
+                stats["infrastructure_clusters"] = 0
                 
         except Exception as e:
             app_logger.error(f"Error getting homepage stats: {e}")
@@ -336,14 +364,34 @@ def get_clusters():
         }), 200
     
     try:
-        from src.clustering.vendor_clustering import detect_vendor_clusters
-        clusters = detect_vendor_clusters(postgres_client)
-        return jsonify({
-            "clusters": clusters,
-            "count": len(clusters)
-        }), 200
+        # Import clustering module using importlib to avoid sys.path issues
+        import importlib.util
+        import sys
+        clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+        if not clustering_path.exists():
+            app_logger.warning("Clustering module not found")
+            return jsonify({
+                "clusters": [],
+                "count": 0
+            }), 200
+        
+        spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
+        vendor_clustering = importlib.util.module_from_spec(spec)
+        # Add blueprint_dir to sys.path temporarily for any internal imports
+        original_path = sys.path[:]
+        if str(blueprint_dir) not in sys.path:
+            sys.path.insert(0, str(blueprint_dir))
+        try:
+            spec.loader.exec_module(vendor_clustering)
+            clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
+            return jsonify({
+                "clusters": clusters,
+                "count": len(clusters)
+            }), 200
+        finally:
+            sys.path[:] = original_path
     except Exception as e:
-        app_logger.error(f"Error getting clusters: {e}")
+        app_logger.error(f"Error getting clusters: {e}", exc_info=True)
         return jsonify({
             "clusters": [],
             "error": str(e)
@@ -381,8 +429,25 @@ def get_graph():
             }), 200
         
         # Use clustering to organize the graph better
-        from src.clustering.vendor_clustering import detect_vendor_clusters
-        clusters = detect_vendor_clusters(postgres_client)
+        # Import clustering module using importlib to avoid sys.path issues
+        import importlib.util
+        clustering_path = blueprint_dir / 'src' / 'clustering' / 'vendor_clustering.py'
+        if clustering_path.exists():
+            spec = importlib.util.spec_from_file_location("vendor_clustering", clustering_path)
+            vendor_clustering = importlib.util.module_from_spec(spec)
+            # Add blueprint_dir to sys.path temporarily for any internal imports
+            import sys
+            original_path = sys.path[:]
+            if str(blueprint_dir) not in sys.path:
+                sys.path.insert(0, str(blueprint_dir))
+            try:
+                spec.loader.exec_module(vendor_clustering)
+                clusters = vendor_clustering.detect_vendor_clusters(postgres_client)
+            finally:
+                sys.path[:] = original_path
+        else:
+            app_logger.warning(f"Clustering module not found at {clustering_path}")
+            clusters = []
         
         # Build graph from PostgreSQL data with clustering
         nodes = []
@@ -719,21 +784,32 @@ def run_initial_discovery():
     """Run discovery on startup if database is empty."""
     if not postgres_client or not postgres_client.conn:
         app_logger.info("⚠️  PostgreSQL not available - skipping initial discovery")
-        # Try to seed dummy data for local development/testing
-        try:
-            app_logger.info("🔍 Attempting to seed dummy data for visualization testing...")
-            from src.database.seed_dummy_data import seed_dummy_data
-            # This will fail if database isn't connected, but that's okay
-            seed_dummy_data(num_domains=50)
-            app_logger.info("✅ Dummy data seeded successfully")
-        except Exception as e:
-            app_logger.debug(f"Dummy data seeding failed (expected if DB not connected): {e}")
         return
     
     try:
-        # Check if we have any domains
+        # FIRST: Check for dummy data and seed ONCE if needed
+        try:
+            cursor = postgres_client.conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
+            dummy_count = cursor.fetchone()[0]
+            cursor.close()
+            
+            if dummy_count == 0:
+                app_logger.info("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
+                from src.database.seed_dummy_data import seed_dummy_data
+                count = seed_dummy_data(num_domains=50)
+                app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
+            else:
+                app_logger.info(f"✅ Dummy data already exists ({dummy_count} domains) - skipping seed")
+        except Exception as e:
+            app_logger.error(f"Error checking/seeding dummy data: {e}", exc_info=True)
+        
+        # THEN: Check if we have any real domains (not dummy data)
         domains = postgres_client.get_all_enriched_domains()
-        if len(domains) == 0:
+        # Filter out dummy data for discovery check
+        real_domains = [d for d in domains if d.get('source') != 'DUMMY_DATA_FOR_TESTING']
+        
+        if len(real_domains) == 0:
             app_logger.info("🔍 Database is empty - running initial discovery...")
             try:
                 from src.enrichment.vendor_discovery import discover_all_sources

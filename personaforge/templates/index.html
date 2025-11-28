@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PersonaForge – Synthetic Identity Intelligence</title>
   <link rel="icon" type="image/svg+xml" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
   <link rel="stylesheet" href="{{ url_for('personaforge.static', filename='css/style.css') }}">
   <style>
     /* Page-specific styles only - navigation uses external CSS */
@@ -286,10 +287,12 @@
   <div class="page">
     <!-- Navigation -->
     <nav class="nav">
-      <a href="/personaforge/" class="nav__brand">
-        <span class="nav__brand-mark"></span>
-        PERSONAFORGE
-      </a>
+      <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+          <span class="nav__brand-mark"></span>
+        </a>
+        <a href="/personaforge/" style="text-decoration: none; color: inherit;">PERSONAFORGE</a>
+      </div>
       <div class="nav__links">
         <a href="/personaforge/" class="nav__link nav__link--accent">Home</a>
         <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
@@ -388,10 +391,15 @@
     // Load homepage statistics on page load
     async function loadHomepageStats() {
       try {
-        console.log('Loading homepage stats...');
+        console.log('Loading homepage stats from /personaforge/api/homepage-stats...');
         const response = await fetch('/personaforge/api/homepage-stats');
+        if (!response.ok) {
+          console.error('API response not OK:', response.status, response.statusText);
+          return;
+        }
         const data = await response.json();
         console.log('Stats loaded:', data);
+        console.log('total_domains:', data.total_domains, 'total_vendors:', data.total_vendors);
         
         // If no data, trigger discovery
         if (data.total_domains === 0) {
@@ -412,15 +420,32 @@
         }
         
         // Update statistics
-        document.getElementById('stat-domains').textContent = data.total_domains || 0;
+        const statDomains = document.getElementById('stat-domains');
+        const statVendors = document.getElementById('stat-vendors');
+        const statHighRisk = document.getElementById('stat-high-risk');
+        const statClusters = document.getElementById('stat-clusters');
+        
+        if (statDomains) {
+          statDomains.textContent = data.total_domains || 0;
+          console.log('Updated stat-domains to:', data.total_domains || 0);
+        }
         // Use top_vendors count if vendors table is empty
         let vendorCount = data.total_vendors || 0;
         if (vendorCount === 0 && data.top_vendors && data.top_vendors.length > 0) {
           vendorCount = data.top_vendors.length;
         }
-        document.getElementById('stat-vendors').textContent = vendorCount;
-        document.getElementById('stat-high-risk').textContent = data.high_risk_domains || 0;
-        document.getElementById('stat-clusters').textContent = data.infrastructure_clusters || 0;
+        if (statVendors) {
+          statVendors.textContent = vendorCount;
+          console.log('Updated stat-vendors to:', vendorCount);
+        }
+        if (statHighRisk) {
+          statHighRisk.textContent = data.high_risk_domains || 0;
+          console.log('Updated stat-high-risk to:', data.high_risk_domains || 0);
+        }
+        if (statClusters) {
+          statClusters.textContent = data.infrastructure_clusters || 0;
+          console.log('Updated stat-clusters to:', data.infrastructure_clusters || 0);
+        }
         
         // Display top vendors
         const vendorsList = document.getElementById('vendors-list');

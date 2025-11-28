@@ -5,6 +5,8 @@
   <title>ShadowStack</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="description" content="ShadowStack – exposing the infrastructure behind AI-generated sexual abuse so NGOs, researchers, and authorities can take action." />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
 
   <style>
     :root {
@@ -139,7 +141,12 @@
       <div class="hero__content">
         <div class="hero__nav" style="display: none;">
           <!-- Navigation moved to top of page -->
-          <div class="hero__brand"><span class="hero__brand-mark"></span>ShadowStack</div>
+          <div class="hero__brand" style="display: flex; align-items: center; gap: 0.6rem;">
+            <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+              <span class="hero__brand-mark"></span>
+            </a>
+            <a href="/shadowstack/" style="text-decoration: none; color: inherit;">ShadowStack</a>
+          </div>
           <a href="#about" class="hero__link">About the project</a>
         </div>
 

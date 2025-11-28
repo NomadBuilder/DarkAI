@@ -1020,6 +1020,20 @@ function renderGraph() {
         .attr("stroke-opacity", 0.6)
         .attr("stroke-width", 1.5);
     
+    // Pre-calculate connection counts for service nodes to size them properly
+    const nodeConnectionCounts = new Map();
+    graphData.edges.forEach(edge => {
+        const sourceId = String(edge.source?.id || edge.source);
+        const targetId = String(edge.target?.id || edge.target);
+        nodeConnectionCounts.set(sourceId, (nodeConnectionCounts.get(sourceId) || 0) + 1);
+        nodeConnectionCounts.set(targetId, (nodeConnectionCounts.get(targetId) || 0) + 1);
+    });
+    
+    // Store connection counts on nodes for getNodeSize to use
+    graphData.nodes.forEach(node => {
+        node._connectionCount = nodeConnectionCounts.get(String(node.id)) || 0;
+    });
+    
     // Create nodes - domains first, then services
     const nodes = g.append("g")
         .attr("class", "nodes")
@@ -1035,7 +1049,7 @@ function renderGraph() {
         .attr("r", d => getNodeSize(d))
         .attr("stroke-width", d => {
             const nodeType = d.node_type || (d.label?.toLowerCase() === "domain" ? "domain" : "service");
-            return nodeType === "domain" ? 3 : 2;
+            return nodeType === "domain" ? 2 : 3;  // Thicker stroke for service nodes
         })
         .on("mouseover", showTooltip)
         .on("mousemove", moveTooltip)
@@ -1059,7 +1073,7 @@ function renderGraph() {
         })
         .attr("font-size", d => {
             const nodeType = d.node_type || (d.label?.toLowerCase() === "domain" ? "domain" : "service");
-            return nodeType === "domain" ? "13px" : "11px";
+            return nodeType === "domain" ? "12px" : "13px";  // Slightly larger for better readability
         })
         .text(d => {
             const props = d.properties || {};
@@ -1093,20 +1107,38 @@ function renderGraph() {
         }
     });
     
-    // Create link force with proper ID mapping
+    // Create link force with increased spacing
     const linkForce = d3.forceLink(graphData.edges)
         .id(d => String(d.id))
-        .distance(120)
-        .strength(0.3);
+        .distance(d => {
+            // Increased distances for better spacing
+            const sourceType = d.source.node_type || (d.source.label?.toLowerCase() === "domain" ? "domain" : "service");
+            const targetType = d.target.node_type || (d.target.label?.toLowerCase() === "domain" ? "domain" : "service");
+            
+            // If connecting domain to service, give more space
+            if ((sourceType === "domain" && targetType === "service") || 
+                (sourceType === "service" && targetType === "domain")) {
+                return 150;  // More space around services
+            }
+            return 200;  // More space for other connections
+        })
+        .strength(0.3);  // Weaker links for better spacing
     
     simulation = d3.forceSimulation(graphData.nodes)
         .force("link", linkForce)
-        .force("charge", d3.forceManyBody().strength(-500))
+        .force("charge", d3.forceManyBody().strength(d => {
+            // Increased repulsion to spread nodes out more
+            const nodeType = d.node_type || (d.label?.toLowerCase() === "domain" ? "domain" : "service");
+            if (nodeType === "service") {
+                return -2000;  // Stronger repulsion for service nodes
+            }
+            return -800;  // More repulsion for domains
+        }))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(d => getNodeSize(d) + 10))
+        .force("collision", d3.forceCollide().radius(d => getNodeSize(d) + 40))  // Much more space around nodes
         .alpha(1)
-        .alphaDecay(0.022)
-        .velocityDecay(0.4);
+        .alphaDecay(0.01)  // Slower decay for better layout
+        .velocityDecay(0.4);  // More damping for stability
     
     console.log("Force simulation created with", graphData.nodes.length, "nodes");
     
@@ -1127,7 +1159,7 @@ function renderGraph() {
         
         labels
             .attr("x", d => d.x)
-            .attr("y", d => d.y + 5);
+            .attr("y", d => d.y + getNodeSize(d) + 18);  // More space below node for label
         
         // Center on Cloudflare after simulation stabilizes (only once)
         if (!cloudflareCentered && simulation.alpha() < 0.1) {
@@ -1250,26 +1282,43 @@ function centerOnCloudflare() {
     console.log(`Centered on Cloudflare: scale=${scale.toFixed(2)}, center=(${centerX.toFixed(0)}, ${centerY.toFixed(0)})`);
 }
 
-// Get node size based on type
+// Get node size based on type and usage
 function getNodeSize(node) {
     const nodeType = node.node_type || node.label?.toLowerCase();
     const isDomain = nodeType === "domain";
     
-    // Domains are larger and more prominent
+    // Domains are medium-sized
     if (isDomain) {
-        return 14;  // Larger for domains
+        return 8;  // Smaller domains so services stand out as hubs
     }
     
-    // Services are smaller
+    // Services should be larger and scale by usage
     const labelLower = node.label?.toLowerCase() || "";
-    const sizes = {
-        "host": 8,
-        "cdn": 7,
-        "cms": 7,
-        "paymentprocessor": 7,
-        "payment": 7
+    
+    // Use pre-calculated connection count if available
+    const connectionCount = node._connectionCount || 0;
+    
+    // Base sizes for service types
+    const baseSizes = {
+        "host": 20,
+        "cdn": 18,
+        "cms": 12,
+        "registrar": 16,
+        "paymentprocessor": 12,
+        "payment": 12
     };
-    return sizes[labelLower] || 8;
+    
+    const baseSize = baseSizes[labelLower] || 15;
+    
+    // Scale up based on connections (more domains = bigger node)
+    // Cloudflare with 60+ connections will be ~40px, creating a clear hub
+    if (connectionCount > 0) {
+        // Scale: base size + (connections * 1.2), capped at 45px for very popular services
+        const scaledSize = Math.min(baseSize + (connectionCount * 1.2), 45);
+        return Math.max(scaledSize, baseSize);  // At least base size
+    }
+    
+    return baseSize;
 }
 
 // Drag behavior

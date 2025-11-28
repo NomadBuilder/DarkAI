@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>About – Dark-AI</title>
-  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/static/favicon.svg" />
 
   <style>
     html {
@@ -66,6 +67,11 @@
       box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
       position: relative;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    nav .logo-mark:hover {
+      transform: scale(1.1);
     }
     nav a {
       text-decoration: none;
@@ -75,6 +81,9 @@
     }
     nav a:hover {
       color: #ff6b6b;
+    }
+    nav .logo a {
+      margin-left: 0;
     }
 
     header.hero {
@@ -358,16 +367,18 @@
 <body>
 
 <nav>
-  <a href="DarkAi.html" class="logo" style="text-decoration: none; color: inherit;">
-    <span class="logo-mark"></span>
-    Dark-AI
-  </a>
+  <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
+    <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+      <span class="logo-mark"></span>
+    </a>
+    <a href="./" style="text-decoration: none; color: inherit;">Dark-AI</a>
+  </div>
   <div>
-    <a href="/about">About</a>
-    <a href="http://shadowstack.onrender.com/" target="_blank">ShadowStack</a>
-    <a href="https://blackwireintel.onrender.com/" target="_blank">BlackWire</a>
-    <a href="https://personaforge.onrender.com/" target="_blank">PersonaForge</a>
-    <a href="/about#contact">Contact</a>
+    <a href="about">About</a>
+    <a href="shadowstack">ShadowStack</a>
+    <a href="blackwire">BlackWire</a>
+    <a href="personaforge">PersonaForge</a>
+    <a href="about#contact">Contact</a>
   </div>
 </nav>
 

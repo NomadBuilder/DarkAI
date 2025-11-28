@@ -12,10 +12,10 @@ class Config:
     
     # Database
     POSTGRES_HOST = os.getenv("POSTGRES_HOST", "localhost")
-    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", "5433"))  # Default to 5433 to match docker-compose
-    POSTGRES_USER = os.getenv("POSTGRES_USER", "personaforge_user")
-    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "personaforge123password")
-    POSTGRES_DB = os.getenv("POSTGRES_DB", "personaforge")
+    POSTGRES_PORT = int(os.getenv("POSTGRES_PORT", "5432"))  # Default to 5432 to match docker-compose
+    POSTGRES_USER = os.getenv("POSTGRES_USER", "darkai_user")
+    POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "darkai123password")
+    POSTGRES_DB = os.getenv("POSTGRES_DB", "darkai")
     
     NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
     # Support both NEO4J_USER and NEO4J_USERNAME (Neo4j Aura uses USERNAME)

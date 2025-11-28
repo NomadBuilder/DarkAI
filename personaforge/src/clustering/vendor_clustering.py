@@ -93,7 +93,8 @@ def detect_vendor_clusters(postgres_client) -> List[Dict]:
                 })
         
         # Sort by domain count (largest clusters first), then by vendor type diversity
-        clusters.sort(key=lambda x: (x["domain_count"], x["vendor_type_count"]), reverse=True)
+        # Handle None values in sorting
+        clusters.sort(key=lambda x: (x.get("domain_count", 0) or 0, x.get("vendor_type_count", 0) or 0), reverse=True)
         
         return clusters
     

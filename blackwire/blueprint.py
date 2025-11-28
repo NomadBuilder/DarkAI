@@ -560,7 +560,9 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                 domain_normalized = domain_normalized.split('/')[0].split('?')[0].split('#')[0].rstrip('/')
                 app_logger.info(f"🌐 Storing domain in Neo4j: value={value}, normalized={domain_normalized}")
                 try:
-                    result = neo4j_client.create_domain(domain_normalized, **enrichment_data)
+                    # Remove 'domain' from enrichment_data to avoid conflict with positional argument
+                    domain_props = {k: v for k, v in enrichment_data.items() if k != 'domain'}
+                    result = neo4j_client.create_domain(domain_normalized, **domain_props)
                     if result:
                         app_logger.info(f"✅ Successfully stored domain {domain_normalized} in Neo4j")
                     else:
@@ -605,18 +607,8 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                     except Exception as e:
                         app_logger.debug(f"Error linking domain to CMS: {e}")
                 
-                # Link to nameservers
-                name_servers = enrichment_data.get("name_servers", [])
-                if name_servers:
-                    for ns in name_servers:
-                        if ns:  # Skip empty nameservers
-                            try:
-                                # Normalize nameserver name (remove trailing dots)
-                                ns_clean = ns.rstrip('.').lower()
-                                neo4j_client.create_nameserver(ns_clean)
-                                neo4j_client.link_domain_to_nameserver(domain_normalized, ns_clean)
-                            except Exception as e:
-                                app_logger.debug(f"Error linking domain to nameserver {ns}: {e}")
+                # Skip nameservers - too much detail, clutter the graph
+                # Nameservers are stored in enrichment_data but not shown in graph visualization
                 
                 # Link to related domains
                 for rel in related_entities:
@@ -664,7 +656,9 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                     handle_normalized = handle_normalized[1:]
                 app_logger.info(f"📱 Storing handle in Neo4j: value={value}, normalized={handle_normalized}, platform={platform}")
                 try:
-                    result = neo4j_client.create_messaging_handle(handle_normalized, platform, **enrichment_data)
+                    # Remove 'handle' and 'platform' from enrichment_data to avoid conflict with positional arguments
+                    handle_props = {k: v for k, v in enrichment_data.items() if k not in ('handle', 'platform')}
+                    result = neo4j_client.create_messaging_handle(handle_normalized, platform, **handle_props)
                     if result:
                         app_logger.info(f"✅ Successfully stored handle {handle_normalized} (platform: {platform}) in Neo4j")
                     else:
