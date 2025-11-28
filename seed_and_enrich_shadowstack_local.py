@@ -24,6 +24,7 @@ load_dotenv()
 from src.database.postgres_client import PostgresClient
 from src.enrichment.enrichment_pipeline import enrich_domain
 from src.data.domains import SHADOWSTACK_DOMAINS
+from psycopg2.extras import RealDictCursor
 
 def seed_and_enrich():
     """Seed domains and enrich them locally."""
@@ -128,15 +129,51 @@ def export_enriched_data():
         print("❌ Could not connect to database")
         return False
     
-    # Get all enriched domains
-    domains = client.get_all_enriched_domains()
+    # Get all domains directly from database (bypass filter)
+    cursor = client.conn.cursor(cursor_factory=RealDictCursor)
+    cursor.execute("""
+        SELECT 
+            d.id,
+            d.domain,
+            d.source,
+            d.notes,
+            de.ip_address,
+            de.ip_addresses,
+            de.ipv6_addresses,
+            de.host_name,
+            de.asn,
+            de.isp,
+            de.cdn,
+            de.cms,
+            de.payment_processor,
+            de.registrar,
+            de.creation_date,
+            de.expiration_date,
+            de.updated_date,
+            de.name_servers,
+            de.mx_records,
+            de.whois_status,
+            de.web_server,
+            de.frameworks,
+            de.analytics,
+            de.languages,
+            de.tech_stack,
+            de.http_headers,
+            de.ssl_info,
+            de.whois_data,
+            de.dns_records,
+            de.enriched_at
+        FROM domains d
+        LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+        WHERE d.domain IN %s
+        ORDER BY d.domain
+    """, (tuple(SHADOWSTACK_DOMAINS),))
     
-    # Filter to only ShadowStack domains
-    shadowstack_domains = [
-        d for d in domains 
-        if d.get('source', '').startswith('SHADOWSTACK') or 
-           d.get('source') in (None, '', 'IMPORT', 'CSV Import', 'API Import', 'Web API')
-    ]
+    domains = cursor.fetchall()
+    cursor.close()
+    
+    # Convert to list of dicts
+    shadowstack_domains = [dict(row) for row in domains]
     
     print(f"📊 Found {len(shadowstack_domains)} ShadowStack domains with enrichment data")
     

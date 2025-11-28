@@ -63,7 +63,8 @@ htmlcov/
 # Data directories
 data/
 *.csv
-*.json
+# Allow shadowstack_enriched_data.json (needed for Render auto-import)
+!shadowstack_enriched_data.json
 
 # Temporary files
 tmp/
