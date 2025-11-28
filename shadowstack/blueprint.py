@@ -1250,23 +1250,20 @@ def get_analytics():
         except Exception as db_error:
             # Database connection failed, return empty analytics
             print(f"PostgreSQL connection failed in get_analytics: {db_error}")
-            return Response(
-                json.dumps({
-                    "error": "Database connection failed",
-                    "message": str(db_error),
-                    "outliers": [],
-                    "statistics": {
-                        "total_domains": 0,
-                        "domains_with_cms": 0,
-                        "domains_with_cdn": 0,
-                        "domains_with_payment": 0,
-                        "unique_isps": 0,
-                        "unique_hosts": 0
-                    }
-                }),
-                status=200,
-                mimetype='application/json'
-            )
+            # Use jsonify instead of json.dumps to avoid import issues
+            return jsonify({
+                "error": "Database connection failed",
+                "message": str(db_error),
+                "outliers": [],
+                "statistics": {
+                    "total_domains": 0,
+                    "domains_with_cms": 0,
+                    "domains_with_cdn": 0,
+                    "domains_with_payment": 0,
+                    "unique_isps": 0,
+                    "unique_hosts": 0
+                }
+            })
         
         if not domains:
             return jsonify({
@@ -1356,24 +1353,20 @@ def get_analytics():
         import traceback
         print(f"Error in get_analytics: {e}")
         traceback.print_exc()
-        # Return JSON error response, not HTML
-        return Response(
-            json.dumps({
-                "error": "Database connection failed",
-                "message": str(e),
-                "outliers": [],
-                "statistics": {
-                    "total_domains": 0,
-                    "domains_with_cms": 0,
-                    "domains_with_cdn": 0,
-                    "domains_with_payment": 0,
-                    "unique_isps": 0,
-                    "unique_hosts": 0
-                }
-            }),
-            status=200,
-            mimetype='application/json'
-        )
+        # Return JSON error response using jsonify
+        return jsonify({
+            "error": "Database connection failed",
+            "message": str(e),
+            "outliers": [],
+            "statistics": {
+                "total_domains": 0,
+                "domains_with_cms": 0,
+                "domains_with_cdn": 0,
+                "domains_with_payment": 0,
+                "unique_isps": 0,
+                "unique_hosts": 0
+            }
+        })
 
 
 @shadowstack_bp.route('/api/analysis', methods=['GET'])
