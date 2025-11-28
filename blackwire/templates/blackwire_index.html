@@ -78,16 +78,6 @@
 
     .hero__content { position: relative; max-width: var(--max-width); margin: 0 auto; z-index: 1; }
     
-    /* Ensure nav is full width even when inside hero__content */
-    .hero__content > .nav {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      padding: 0 2rem;
-    }
     .hero__nav {
       height: var(--nav-height);
       display: flex; align-items: center; justify-content: space-between;
@@ -350,13 +340,14 @@
 </head>
 <body class="page">
 
+<!-- NAVIGATION - Full width, outside content containers -->
+{% from "_blackwire_navigation.html" import render_nav %}
+{{ render_nav('home') }}
+
 <!-- HERO SECTION -->
 <header class="hero">
   <div class="hero__content">
-    {% from "_blackwire_navigation.html" import render_nav %}
-    {{ render_nav('home') }}
-
-    <div class="hero__grid" style="margin-top: 2.5rem;">
+    <div class="hero__grid">
       <div>
         <div class="hero__kicker">Exposing Sextortion Infrastructure</div>
         <h1 class="hero__headline">They threaten you in seconds. We trace the infrastructure behind them.</h1>
