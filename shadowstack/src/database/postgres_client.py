@@ -40,7 +40,9 @@ class PostgresClient:
             shadowstack_db = os.getenv("SHADOWSTACK_POSTGRES_DB") or os.getenv("POSTGRES_DATABASE")
             if shadowstack_db:
                 connect_params["database"] = shadowstack_db
-            print(f"🔌 ShadowStack: Using DATABASE_URL, database: {connect_params.get('database', 'default')}")
+            db_name = connect_params.get('database', 'default')
+            print(f"🔌 ShadowStack: Using DATABASE_URL, database: {db_name}")
+            print(f"   Host: {connect_params.get('host', 'unknown')}")
         else:
             # Use individual POSTGRES_* vars (standalone format)
             connect_params = {
@@ -346,6 +348,17 @@ class PostgresClient:
             cursor.execute("SELECT DISTINCT source FROM domains WHERE source IS NOT NULL AND source != '' LIMIT 20")
             all_sources = [row[0] for row in cursor.fetchall()]
             print(f"   Available sources in database: {all_sources}")
+            
+            # Also check total count by source
+            cursor.execute("""
+                SELECT source, COUNT(*) as count 
+                FROM domains 
+                WHERE source IS NOT NULL AND source != ''
+                GROUP BY source
+                ORDER BY count DESC
+            """)
+            source_counts = cursor.fetchall()
+            print(f"   Domains by source: {dict(source_counts)}")
         
         cursor.close()
         
