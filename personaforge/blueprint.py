@@ -90,27 +90,37 @@ def ensure_src_modules_available():
     This is a robust way to make sure imports work in importlib context.
     """
     import importlib
+    import importlib.util
     
-    # Ensure blueprint_dir is in sys.path
-    if str(blueprint_dir) not in sys.path:
-        sys.path.insert(0, str(blueprint_dir))
+    # Ensure blueprint_dir is in sys.path (at the front)
+    blueprint_dir_str = str(blueprint_dir)
+    if blueprint_dir_str in sys.path:
+        sys.path.remove(blueprint_dir_str)
+    sys.path.insert(0, blueprint_dir_str)
     
-    # CRITICAL: Import src as a package first by directly importing its __init__.py
-    # This makes src available as a package in sys.modules
-    src_init_path = blueprint_dir / 'src' / '__init__.py'
-    if src_init_path.exists() and 'src' not in sys.modules:
+    # CRITICAL: First, ensure src is importable as a package
+    # Try normal import first (simplest and most reliable)
+    if 'src' not in sys.modules:
         try:
-            spec = importlib.util.spec_from_file_location("src", src_init_path)
-            if spec and spec.loader:
-                src_module = importlib.util.module_from_spec(spec)
-                # Set __package__ to make it a proper package
-                src_module.__package__ = 'src'
-                src_module.__path__ = [str(blueprint_dir / 'src')]
-                spec.loader.exec_module(src_module)
-                sys.modules['src'] = src_module
-                app_logger.debug("✅ Imported src package")
-        except Exception as e:
-            app_logger.warning(f"Could not import src package: {e}")
+            import src
+            app_logger.debug("✅ Imported src package via normal import")
+        except ImportError:
+            # If normal import fails, try loading __init__.py directly
+            try:
+                src_init_path = blueprint_dir / 'src' / '__init__.py'
+                if src_init_path.exists():
+                    spec = importlib.util.spec_from_file_location("src", src_init_path)
+                    if spec and spec.loader:
+                        src_module = importlib.util.module_from_spec(spec)
+                        src_module.__package__ = 'src'
+                        src_module.__path__ = [str(blueprint_dir / 'src')]
+                        src_module.__name__ = 'src'
+                        spec.loader.exec_module(src_module)
+                        sys.modules['src'] = src_module
+                        app_logger.debug("✅ Imported src package via importlib")
+            except Exception as e:
+                app_logger.warning(f"Could not import src package: {e}")
+                return 0, 1
     
     # List of modules to pre-import (in dependency order)
     modules_to_import = [
