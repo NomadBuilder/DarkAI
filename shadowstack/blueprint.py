@@ -1728,23 +1728,38 @@ def import_pre_enriched_data():
         from pathlib import Path
         
         # Look for exported enriched data file
-        # Try multiple possible locations
+        # Try multiple possible locations (Render vs local paths)
+        import os
+        from pathlib import Path
+        
+        # Get the root directory (where app.py is)
+        current_file = Path(__file__).resolve()
+        repo_root = current_file.parent.parent  # shadowstack -> DarkAI-consolidated
+        
         possible_paths = [
-            blueprint_dir.parent / 'shadowstack_enriched_data.json',  # Root of repo
+            repo_root / 'shadowstack_enriched_data.json',  # Root of repo (most likely on Render)
+            blueprint_dir.parent / 'shadowstack_enriched_data.json',  # Parent of shadowstack folder
             blueprint_dir / 'shadowstack_enriched_data.json',  # In shadowstack folder
-            Path(__file__).parent.parent.parent / 'shadowstack_enriched_data.json',  # Absolute from blueprint
+            Path.cwd() / 'shadowstack_enriched_data.json',  # Current working directory
         ]
         
         data_file = None
         for path in possible_paths:
-            if path.exists():
-                data_file = path
-                break
+            try:
+                if path.exists() and path.is_file():
+                    data_file = path
+                    break
+            except Exception:
+                continue
         
         if not data_file or not data_file.exists():
             print(f"⚠️  ShadowStack: Pre-enriched data file not found. Tried:")
             for path in possible_paths:
-                print(f"   - {path} (exists: {path.exists()})")
+                exists = "✅" if path.exists() else "❌"
+                print(f"   {exists} {path}")
+            print(f"   Current working directory: {Path.cwd()}")
+            print(f"   Blueprint directory: {blueprint_dir}")
+            print(f"   Repo root: {repo_root}")
             return False
         
         print(f"📥 ShadowStack: Found pre-enriched data file: {data_file}")
@@ -1892,7 +1907,30 @@ def run_shadowstack_data_seed():
             print("⚠️  ShadowStack: PostgreSQL not available - skipping data seed")
             return
         
-        # Check if we already have ShadowStack-specific data (not just any data)
+        # ALWAYS try to import pre-enriched data first (it will skip/update as needed)
+        print(f"📊 ShadowStack: Checking for pre-enriched data...")
+        
+        if import_pre_enriched_data():
+            # Check how many ShadowStack domains we have after import
+            cursor = postgres.conn.cursor()
+            cursor.execute("""
+                SELECT COUNT(*) FROM domains 
+                WHERE source IS NOT NULL 
+                AND source != '' 
+                AND source != 'DUMMY_DATA_FOR_TESTING'
+                AND (source LIKE 'SHADOWSTACK%' 
+                     OR source = 'IMPORT'
+                     OR source = 'CSV Import'
+                     OR source = 'API Import'
+                     OR source = 'Web API')
+            """)
+            shadowstack_domain_count = cursor.fetchone()[0]
+            cursor.close()
+            print(f"✅ ShadowStack: Pre-enriched data imported. Total ShadowStack domains: {shadowstack_domain_count}")
+            postgres.close()
+            return  # Successfully imported pre-enriched data
+        
+        # If pre-enriched data import failed, check if we already have ShadowStack data
         cursor = postgres.conn.cursor()
         cursor.execute("""
             SELECT COUNT(*) FROM domains 
@@ -1912,13 +1950,6 @@ def run_shadowstack_data_seed():
             print(f"✅ ShadowStack: Database has {shadowstack_domain_count} ShadowStack domains - skipping data seed")
             postgres.close()
             return
-        
-        # Database is empty - try to import pre-enriched data first
-        print(f"📊 ShadowStack: Database is empty - checking for pre-enriched data...")
-        
-        if import_pre_enriched_data():
-            postgres.close()
-            return  # Successfully imported pre-enriched data
         
         # Fallback: Seed and enrich on-the-fly (slower, but works if no pre-enriched data)
         print(f"📊 ShadowStack: No pre-enriched data found - seeding {len(SHADOWSTACK_DOMAINS)} domains...")
