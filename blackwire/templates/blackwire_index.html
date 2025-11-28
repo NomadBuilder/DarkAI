@@ -52,7 +52,14 @@
       background: radial-gradient(circle at top left, #0b1220 0, #020617 38%, #000 100%);
       scroll-behavior: smooth;
     }
-    body.page { min-height: 100vh; display: flex; flex-direction: column; }
+    body.page { 
+      min-height: 100vh; 
+      display: flex; 
+      flex-direction: column;
+      width: 100%;
+      max-width: 100%;
+      overflow-x: hidden;
+    }
     main { flex: 1; }
 
     /* PAGE LAYOUT */
