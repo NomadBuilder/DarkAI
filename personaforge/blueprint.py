@@ -742,6 +742,18 @@ def discover_vendors():
         if str(blueprint_dir) not in sys.path:
             sys.path.insert(0, str(blueprint_dir))
         try:
+            # Pre-import src modules to make them available
+            import importlib
+            try:
+                importlib.import_module('src.utils.config')
+                importlib.import_module('src.utils.logger')
+                importlib.import_module('src.utils.rate_limiter')
+            except ImportError:
+                pass  # If they're already imported or don't exist, continue
+            
+            # Set __package__ and __name__ to help with relative imports
+            vendor_discovery_module.__package__ = 'src.enrichment'
+            vendor_discovery_module.__name__ = 'src.enrichment.vendor_discovery'
             spec.loader.exec_module(vendor_discovery_module)
             discover_all_sources = vendor_discovery_module.discover_all_sources
             ask_ai_for_data_sources = vendor_discovery_module.ask_ai_for_data_sources
@@ -834,16 +846,20 @@ def run_initial_discovery():
                 app_logger.info("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
                 # Use importlib to avoid sys.path issues
                 import importlib.util
+                import sys
                 seed_dummy_data_path = blueprint_dir / 'src' / 'database' / 'seed_dummy_data.py'
                 if seed_dummy_data_path.exists():
                     spec = importlib.util.spec_from_file_location("seed_dummy_data", seed_dummy_data_path)
                     seed_dummy_data_module = importlib.util.module_from_spec(spec)
                     # Add blueprint_dir to sys.path temporarily for any internal imports
-                    import sys
+                    # This ensures 'src.utils' can be found when the module imports it
                     original_path = sys.path[:]
                     if str(blueprint_dir) not in sys.path:
                         sys.path.insert(0, str(blueprint_dir))
                     try:
+                        # Set __package__ and __name__ to help with relative imports
+                        seed_dummy_data_module.__package__ = 'src.database'
+                        seed_dummy_data_module.__name__ = 'src.database.seed_dummy_data'
                         spec.loader.exec_module(seed_dummy_data_module)
                         count = seed_dummy_data_module.seed_dummy_data(num_domains=50)
                         app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
@@ -877,6 +893,17 @@ def run_initial_discovery():
                     if str(blueprint_dir) not in sys.path:
                         sys.path.insert(0, str(blueprint_dir))
                     try:
+                        # Pre-import src modules to make them available
+                        try:
+                            importlib.import_module('src.utils.config')
+                            importlib.import_module('src.utils.logger')
+                            importlib.import_module('src.utils.rate_limiter')
+                        except ImportError:
+                            pass  # If they're already imported or don't exist, continue
+                        
+                        # Set __package__ and __name__ to help with relative imports
+                        vendor_discovery_module.__package__ = 'src.enrichment'
+                        vendor_discovery_module.__name__ = 'src.enrichment.vendor_discovery'
                         spec.loader.exec_module(vendor_discovery_module)
                         discover_all_sources = vendor_discovery_module.discover_all_sources
                     finally:
@@ -894,6 +921,16 @@ def run_initial_discovery():
                     if str(blueprint_dir) not in sys.path:
                         sys.path.insert(0, str(blueprint_dir))
                     try:
+                        # Pre-import src modules to make them available
+                        try:
+                            importlib.import_module('src.utils.config')
+                            importlib.import_module('src.utils.logger')
+                        except ImportError:
+                            pass  # If they're already imported or don't exist, continue
+                        
+                        # Set __package__ and __name__ to help with relative imports
+                        enrichment_pipeline_module.__package__ = 'src.enrichment'
+                        enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
                         spec.loader.exec_module(enrichment_pipeline_module)
                         enrich_domain = enrichment_pipeline_module.enrich_domain
                     finally:
