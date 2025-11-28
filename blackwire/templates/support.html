@@ -63,7 +63,7 @@
     /* HERO */
     .hero {
       position: relative;
-      padding: 1.5rem 1.5rem 4rem;
+      padding: 0 1.5rem 4rem;
       overflow: hidden;
     }
     .hero::before {
@@ -77,17 +77,18 @@
       opacity: 0.9;
     }
 
-    .hero__content { position: relative; max-width: var(--max-width); margin: 0 auto; z-index: 1; }
+    .hero__content { 
+      position: relative; 
+      max-width: var(--max-width); 
+      margin: 0 auto; 
+      z-index: 1; 
+    }
     
-    /* Ensure nav is full width even when inside hero__content */
-    .hero__content > .nav {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      padding: 0 2rem;
+    /* Navigation should be outside hero__content for proper layout */
+    .hero > .nav {
+      position: relative;
+      z-index: 10;
+      margin-bottom: 0;
     }
     .hero__nav {
       height: var(--nav-height);
@@ -157,6 +158,11 @@
       border:1px solid var(--border-soft);
       box-shadow:0 18px 40px rgba(0,0,0,.7);
     }
+    .card h3 { margin:0 0 .6rem; font-size:1.1rem; font-weight: 600; color: var(--text-main); }
+    .card h4 { margin:0 0 .5rem; font-size:1rem; font-weight: 600; color: var(--text-main); }
+    .card p { margin:0 0 .6rem; color:var(--text-muted); line-height: 1.6; font-size: 0.95rem; }
+    .card ul { margin:.6rem 0 0; padding-left:1.1rem; color: var(--text-muted); line-height: 1.7; }
+    .card ul li { margin-bottom: 0.4rem; }
 
     /* SUPPORT & INVESTIGATOR PANELS */
     .support-grid {
@@ -172,9 +178,10 @@
       border: 1px solid var(--border-soft);
       box-shadow: var(--shadow-soft);
     }
-    .support-panel h3 { margin:0 0 .7rem; font-size:1.08rem; }
-    .support-panel p { margin:0 0 .8rem; font-size:.9rem; color:var(--text-muted);}  
-    .support-panel ol { margin:.6rem 0 0; padding-left:1.1rem; }
+    .support-panel h3 { margin:0 0 .7rem; font-size:1.08rem; font-weight: 600; color: var(--text-main); }
+    .support-panel p { margin:0 0 .8rem; font-size:.9rem; color:var(--text-muted); line-height: 1.6;}  
+    .support-panel ol { margin:.6rem 0 0; padding-left:1.1rem; color: var(--text-muted); line-height: 1.7; }
+    .support-panel ol li { margin-bottom: 0.5rem; }
 
     .btn {
       display: inline-flex; align-items: center; gap: .4rem;
@@ -211,7 +218,8 @@
     @media (max-width: 768px) {
       .page-shell { padding: 0 1rem 2rem; }
       
-      .hero { padding: 1rem 1rem 3rem; }
+      .hero { padding: 0 1rem 3rem; }
+      .hero__content { padding-top: calc(var(--nav-height, 64px) + 1.5rem) !important; }
       
       .hero__headline { 
         font-size: 1.75rem !important; 
@@ -248,7 +256,8 @@
     @media (max-width: 480px) {
       .page-shell { padding: 0 0.75rem 1.5rem; }
       
-      .hero { padding: 0.75rem 0.75rem 2rem; }
+      .hero { padding: 0 0.75rem 2rem; }
+      .hero__content { padding-top: calc(var(--nav-height, 64px) + 1rem) !important; }
       .hero__headline { 
         font-size: 1.5rem !important; 
         line-height: 1.3 !important;
@@ -285,11 +294,11 @@
 
 <!-- HERO SECTION -->
 <header class="hero">
-  <div class="hero__content">
-    {% from "_navigation.html" import render_nav %}
-    {{ render_nav('support') }}
-
-    <div style="margin-top: 2rem;">
+  {% from "_navigation.html" import render_nav %}
+  {{ render_nav('support') }}
+  
+  <div class="hero__content" style="padding-top: calc(var(--nav-height, 64px) + 2rem);">
+    <div>
       <div class="hero__kicker">Support & Reporting</div>
       <h1 class="hero__headline">If you're being targeted, we're here to help.</h1>
       <p class="hero__subtitle">Immediate steps to reduce harm, document safely, and get the support you need.</p>
