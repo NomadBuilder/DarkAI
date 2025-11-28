@@ -751,9 +751,7 @@ def discover_vendors():
             except ImportError:
                 pass  # If they're already imported or don't exist, continue
             
-            # Set __package__ and __name__ to help with relative imports
-            vendor_discovery_module.__package__ = 'src.enrichment'
-            vendor_discovery_module.__name__ = 'src.enrichment.vendor_discovery'
+            # Don't set __name__ or __package__ - let importlib handle it
             spec.loader.exec_module(vendor_discovery_module)
             discover_all_sources = vendor_discovery_module.discover_all_sources
             ask_ai_for_data_sources = vendor_discovery_module.ask_ai_for_data_sources
