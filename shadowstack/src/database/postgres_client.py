@@ -373,9 +373,6 @@ class PostgresClient:
         
         cursor.close()
         
-        # Parse JSONB fields and return
-        return self._parse_enrichment_results(domains_list)
-        
         # Convert results to dicts and parse JSONB fields
         domains = []
         for row in results:
