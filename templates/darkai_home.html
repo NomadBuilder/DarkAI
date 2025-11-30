@@ -141,6 +141,48 @@
         right: 0;
       }
       
+      .nav-links a,
+      .nav-dropdown {
+        display: block;
+        width: 100%;
+        margin-left: 0;
+      }
+      
+      .nav-dropdown-toggle {
+        width: 100%;
+        padding: 1rem 0;
+        font-size: 1.1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: color 0.2s;
+      }
+      
+      .nav-dropdown-toggle:hover {
+        color: #ff6b6b;
+      }
+      
+      .nav-dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin-top: 0;
+        margin-left: 1rem;
+        display: none;
+      }
+      
+      .nav-dropdown.active .nav-dropdown-menu {
+        display: block;
+      }
+      
+      .nav-dropdown-menu a {
+        padding: 0.75rem 0;
+        margin: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
       .nav-links a {
         display: block;
         width: 100%;
@@ -269,6 +311,78 @@
     }
     nav .logo a {
       margin-left: 0;
+    }
+    
+    /* Dropdown styles */
+    .nav-dropdown {
+      position: relative;
+    }
+    
+    .nav-dropdown-toggle {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .nav-dropdown-toggle:hover {
+      color: #ff6b6b;
+    }
+    
+    .nav-dropdown-toggle::after {
+      content: '▼';
+      font-size: 0.7rem;
+      transition: transform 0.3s;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    
+    .nav-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.5rem;
+      background: rgba(5, 6, 11, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1002;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.75rem 1.25rem;
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.2s, color 0.2s;
+      border-radius: 4px;
+      margin: 0.25rem;
+      margin-left: 0;
+    }
+    
+    .nav-dropdown-menu a:hover {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff6b6b;
     }
 
     header.hero {
@@ -422,6 +536,12 @@
   </button>
   <div class="nav-links" id="navLinks">
     <a href="about">About</a>
+    <div class="nav-dropdown" id="reportsDropdown">
+      <span class="nav-dropdown-toggle">Reports</span>
+      <div class="nav-dropdown-menu">
+        <a href="/reports/2025-deepfake-report">2025 Deepfake Report</a>
+      </div>
+    </div>
     <a href="shadowstack">ShadowStack</a>
     <a href="blackwire">BlackWire</a>
     <a href="personaforge">PersonaForge</a>
@@ -529,7 +649,9 @@
   document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
+    const reportsDropdown = document.getElementById('reportsDropdown');
     
+    // Hamburger menu toggle
     if (hamburger && navLinks) {
       hamburger.addEventListener('click', function() {
         hamburger.classList.toggle('active');
@@ -549,6 +671,23 @@
         if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
           hamburger.classList.remove('active');
           navLinks.classList.remove('active');
+        }
+      });
+    }
+    
+    // Dropdown toggle
+    if (reportsDropdown) {
+      const dropdownToggle = reportsDropdown.querySelector('.nav-dropdown-toggle');
+      
+      dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        reportsDropdown.classList.toggle('active');
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!reportsDropdown.contains(event.target)) {
+          reportsDropdown.classList.remove('active');
         }
       });
     }

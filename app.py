@@ -137,6 +137,158 @@ def about():
         return send_from_directory('templates', 'about.html')
 
 
+@app.route('/reports/2025-deepfake-report')
+def deepfake_report_2025():
+    """2025 Deepfake Report page."""
+    from flask import render_template
+    try:
+        return render_template('report_2025_deepfake.html')
+    except:
+        # Fallback to send_from_directory if template not found
+        return send_from_directory('templates', 'report_2025_deepfake.html')
+
+
+@app.route('/api/reports/survey-data')
+def get_survey_data():
+    """Process and return survey data for visualizations."""
+    import csv
+    from collections import Counter
+    from pathlib import Path
+    
+    csv_path = Path(__file__).parent / 'SurveyData.csv'
+    
+    if not csv_path.exists():
+        return jsonify({"error": "Survey data file not found"}), 404
+    
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+        
+        total_responses = len(rows)
+        
+        # Process data
+        awareness = Counter()
+        know_someone = Counter()
+        personal_experience = Counter()
+        used_tools = Counter()
+        worried = Counter()
+        ease_of_access = Counter()
+        age_distribution = Counter()
+        gender_distribution = Counter()
+        location_distribution = Counter()
+        
+        # Gender vs Worry
+        gender_worry = {}
+        # Gender vs Access
+        gender_access = {}
+        # Gender vs Personal Experience
+        gender_experience = {}
+        # Age vs Worry
+        age_worry = {}
+        
+        # Find column keys dynamically (handles quote variations)
+        def find_key(keys, search_terms):
+            """Find a key that contains all search terms."""
+            for key in keys:
+                if all(term.lower() in key.lower() for term in search_terms):
+                    return key
+            return None
+        
+        # Get all keys from first row
+        sample_row = rows[0] if rows else {}
+        all_keys = list(sample_row.keys())
+        
+        # Find actual column names
+        awareness_key = find_key(all_keys, ['heard', 'deepfake', 'nudify']) or 'Before today, had you heard of AI deepfake or "nudify" tools that can create fake or sexualized images of real people?'
+        know_someone_key = find_key(all_keys, ['know someone', 'deepfake']) or 'Do you personally know someone who had a deepfake or non-consensual sexual AI image made of them?'
+        experience_key = find_key(all_keys, ['made of you', 'permission']) or 'Has a deepfake or "nudify" image ever been made of you without your permission?'
+        used_tools_key = find_key(all_keys, ['used', 'services']) or 'Have you ever used one of these deepfake or "nudify" services? '
+        worried_key = find_key(all_keys, ['worried', 'happening']) or 'Are you worried about this happening to you or those around you?'
+        access_key = find_key(all_keys, ['easy', 'access', 'tools']) or 'How easy do you think it is for someone your age to access deepfake or "nudify" tools?'
+        
+        for row in rows:
+            # Awareness
+            val = row.get(awareness_key, '').strip()
+            awareness[val if val else 'No response'] += 1
+            
+            # Know someone
+            know_val = row.get(know_someone_key, '').strip()
+            know_someone[know_val if know_val else 'No response'] += 1
+            
+            # Personal experience
+            exp_val = row.get(experience_key, '').strip()
+            personal_experience[exp_val if exp_val else 'No response'] += 1
+            
+            # Used tools
+            used_val = row.get(used_tools_key, '').strip()
+            if used_val:
+                used_tools[used_val] += 1
+            else:
+                used_tools['No'] += 1
+            
+            # Worried
+            worry_val = row.get(worried_key, '').strip()
+            worried[worry_val if worry_val else 'No response'] += 1
+            
+            # Ease of access
+            access_val = row.get(access_key, '').strip()
+            ease_of_access[access_val if access_val else 'No response'] += 1
+            
+            # Demographics
+            age = row.get('Age Range', '').strip() or 'No response'
+            age_distribution[age] += 1
+            
+            gender = row.get('Gender', '').strip() or 'No response'
+            gender_distribution[gender] += 1
+            
+            location = row.get('Where do you reside?', '').strip() or 'No response'
+            location_distribution[location] += 1
+            
+            # Cross-tabulations
+            if gender not in gender_worry:
+                gender_worry[gender] = Counter()
+            gender_worry[gender][worry_val] += 1
+            
+            if gender not in gender_access:
+                gender_access[gender] = Counter()
+            gender_access[gender][access_val] += 1
+            
+            if gender not in gender_experience:
+                gender_experience[gender] = Counter()
+            gender_experience[gender][exp_val] += 1
+            
+            if age not in age_worry:
+                age_worry[age] = Counter()
+            age_worry[age][worry_val] += 1
+        
+        # Convert to dict format for JSON
+        def counter_to_dict(c):
+            return dict(c)
+        
+        return jsonify({
+            "total_responses": total_responses,
+            "awareness": counter_to_dict(awareness),
+            "know_someone": counter_to_dict(know_someone),
+            "personal_experience": counter_to_dict(personal_experience),
+            "used_tools": counter_to_dict(used_tools),
+            "worried": counter_to_dict(worried),
+            "ease_of_access": counter_to_dict(ease_of_access),
+            "age_distribution": counter_to_dict(age_distribution),
+            "gender_distribution": counter_to_dict(gender_distribution),
+            "location_distribution": counter_to_dict(location_distribution),
+            "gender_worry": {k: counter_to_dict(v) for k, v in gender_worry.items()},
+            "gender_access": {k: counter_to_dict(v) for k, v in gender_access.items()},
+            "gender_experience": {k: counter_to_dict(v) for k, v in gender_experience.items()},
+            "age_worry": {k: counter_to_dict(v) for k, v in age_worry.items()}
+        }), 200
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": f"Error processing survey data: {str(e)}"}), 500
+
+
 # Serve static files from root (for Dark AI homepage)
 @app.route('/static/<path:filename>')
 def serve_static(filename):

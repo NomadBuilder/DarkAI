@@ -1,0 +1,1820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>2025 Deepfake Report – Dark AI</title>
+  <meta name="description" content="AI Sexual Image Abuse: What Young People Are Experiencing - Survey findings from November 2025 focused on Canadian students and young adults." />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://darkai.ca/reports/2025-deepfake-report" />
+  <meta property="og:title" content="2025 Deepfake Report – Dark AI" />
+  <meta property="og:description" content="AI Sexual Image Abuse: What Young People Are Experiencing - Survey findings from November 2025." />
+  <meta property="og:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://darkai.ca/reports/2025-deepfake-report" />
+  <meta name="twitter:title" content="2025 Deepfake Report – Dark AI" />
+  <meta name="twitter:description" content="AI Sexual Image Abuse: What Young People Are Experiencing - Survey findings from November 2025." />
+  <meta name="twitter:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/static/favicon.svg" />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    
+    @keyframes countUp {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+    
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+      background: #0a0b14;
+      color: #f2f3f5;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+    
+    /* Professional gradient background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.05) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0b14 0%, #05060b 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    body > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      background: rgba(10, 11, 20, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 107, 107, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      animation: fadeIn 0.5s ease-out;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 1001;
+    }
+    
+    .hamburger span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: #f2f3f5;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    
+    .nav-dropdown {
+      position: relative;
+    }
+    
+    .nav-dropdown-toggle {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.3s;
+    }
+    
+    .nav-dropdown-toggle:hover {
+      color: #ff6b6b;
+    }
+    
+    .nav-dropdown-toggle::after {
+      content: '▼';
+      font-size: 0.7rem;
+      transition: transform 0.3s;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    
+    .nav-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.5rem;
+      background: rgba(10, 11, 20, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      border-radius: 8px;
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      z-index: 1002;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.75rem 1.25rem;
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: all 0.2s;
+      border-radius: 4px;
+      margin: 0.25rem;
+    }
+    
+    .nav-dropdown-menu a:hover {
+      background: rgba(255, 107, 107, 0.15);
+      color: #ff6b6b;
+    }
+    
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: rgba(10, 11, 20, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5rem 2rem 2rem;
+        gap: 0;
+        transition: right 0.3s ease;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        overflow-y: auto;
+      }
+      
+      .nav-links.active {
+        right: 0;
+      }
+      
+      .nav-links a,
+      .nav-dropdown {
+        display: block;
+        width: 100%;
+        margin-left: 0;
+      }
+      
+      .nav-dropdown-toggle {
+        width: 100%;
+        padding: 1rem 0;
+        font-size: 1.1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      
+      .nav-dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin-top: 0;
+        margin-left: 1rem;
+        display: none;
+      }
+      
+      .nav-dropdown.active .nav-dropdown-menu {
+        display: block;
+      }
+      
+      .nav-dropdown-menu a {
+        padding: 0.75rem 0;
+        margin: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      nav .logo {
+        font-size: 1.1rem;
+        flex: 1;
+      }
+    }
+    
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    
+    nav .logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    nav .logo-mark:hover {
+      transform: scale(1.1);
+    }
+    nav a {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #ff6b6b;
+    }
+    nav .logo a {
+      margin-left: 0;
+    }
+
+    /* Professional Hero Section */
+    header.hero {
+      padding: 6rem 2rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+      animation: fadeInUp 0.8s ease-out;
+    }
+    header.hero h1 {
+      font-size: 3.2rem;
+      max-width: 900px;
+      line-height: 1.2;
+      margin: 0 auto 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ffffff 0%, #ff6b6b 50%, #ff4444 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    header.hero .subtitle {
+      max-width: 800px;
+      color: #9aa0a6;
+      font-size: 1.3rem;
+      margin: 0 auto 1rem;
+      font-weight: 500;
+    }
+    header.hero .meta {
+      color: #777c85;
+      font-size: 1rem;
+      margin-top: 1.5rem;
+      line-height: 1.8;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Professional Stat Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      margin: 4rem auto;
+      max-width: 1200px;
+      padding: 0 2rem;
+      animation: fadeInUp 1s ease-out 0.2s both;
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(11, 13, 22, 0.9) 0%, rgba(20, 22, 35, 0.9) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff6b6b, #ff4444, #ff6b6b);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(255, 107, 107, 0.4);
+      border-color: rgba(255, 107, 107, 0.4);
+    }
+    
+    .stat-card:hover::after {
+      opacity: 1;
+    }
+    
+    .stat-card .number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff6b6b, #ff4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    
+    .stat-card .label {
+      font-size: 1.05rem;
+      color: #b4bac3;
+      margin-top: 0.5rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* Professional Chart Containers */
+    .chart-section {
+      margin: 5rem auto;
+      max-width: 1200px;
+      padding: 0 2rem;
+    }
+    
+    .chart-container {
+      background: linear-gradient(135deg, rgba(11, 13, 22, 0.95) 0%, rgba(20, 22, 35, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s ease;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .chart-container:nth-child(1) { animation-delay: 0.1s; }
+    .chart-container:nth-child(2) { animation-delay: 0.2s; }
+    .chart-container:nth-child(3) { animation-delay: 0.3s; }
+    
+    .chart-container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(255, 107, 107, 0.2);
+      border-color: rgba(255, 107, 107, 0.3);
+    }
+    
+    .chart-container h3 {
+      font-size: 1.6rem;
+      color: #ff6b6b;
+      margin-bottom: 2rem;
+      margin-top: 0;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .chart-container h3::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(180deg, #ff6b6b, #ff4444);
+      border-radius: 2px;
+    }
+    
+    .chart-wrapper {
+      position: relative;
+      height: 450px;
+      margin-top: 1rem;
+    }
+    
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+      .chart-wrapper {
+        height: 350px;
+      }
+      .chart-container {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Professional Report Content */
+    .report-content {
+      padding: 4rem 2rem 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .report-section {
+      margin-bottom: 6rem;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .stat-inline {
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+    
+    .stat-inline .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff6b6b, #ff4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    
+    .stat-inline .stat-label {
+      font-size: 1rem;
+      color: #9aa0a6;
+      font-weight: 500;
+    }
+    
+    .content-with-chart {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: start;
+    }
+    
+    .text-content {
+      min-width: 0;
+    }
+    
+    .chart-inline {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .chart-container-inline {
+      background: linear-gradient(135deg, rgba(11, 13, 22, 0.95) 0%, rgba(20, 22, 35, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s ease;
+    }
+    
+    .chart-container-inline:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(255, 107, 107, 0.2);
+      border-color: rgba(255, 107, 107, 0.3);
+    }
+    
+    .chart-container-inline h3 {
+      font-size: 1.3rem;
+      color: #ff6b6b;
+      margin-bottom: 1.5rem;
+      margin-top: 0;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    
+    .chart-wrapper-inline {
+      position: relative;
+      height: 300px;
+    }
+    
+    @media (max-width: 968px) {
+      .content-with-chart {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .stat-inline {
+        margin-top: 1rem;
+      }
+      
+      .chart-wrapper-inline {
+        height: 250px;
+      }
+      
+      .goals-grid {
+        flex-direction: column;
+      }
+      
+      .goal-card {
+        min-width: 100%;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      header.hero {
+        padding: 4rem 1rem 3rem;
+      }
+      
+      header.hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .report-content {
+        padding: 2rem 1rem 4rem;
+      }
+      
+      .report-section {
+        margin-bottom: 4rem;
+      }
+      
+      .report-section h2 {
+        font-size: 1.8rem;
+        padding-left: 1rem;
+      }
+      
+      .report-section h3 {
+        font-size: 1.3rem;
+      }
+      
+      .stat-inline .stat-number {
+        font-size: 2rem;
+      }
+      
+      .stat-inline .stat-label {
+        font-size: 0.9rem;
+      }
+      
+      .chart-container-inline {
+        padding: 1.5rem;
+      }
+      
+      .chart-wrapper-inline {
+        height: 250px;
+      }
+      
+      .chart-container-inline h3 {
+        font-size: 1.1rem;
+      }
+      
+      .goals-grid {
+        gap: 1.5rem;
+      }
+      
+      .goal-card {
+        padding: 2rem;
+      }
+      
+      .goal-card h3 {
+        font-size: 1.2rem;
+      }
+      
+      .goal-number {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      header.hero h1 {
+        font-size: 1.8rem;
+      }
+      
+      header.hero .subtitle {
+        font-size: 1.1rem;
+      }
+      
+      .report-section h2 {
+        font-size: 1.5rem;
+      }
+      
+      .stat-inline {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+      }
+      
+      .stat-inline .stat-number {
+        font-size: 1.8rem;
+      }
+      
+      .goal-card {
+        padding: 1.5rem;
+      }
+      
+      .chart-wrapper-inline {
+        height: 200px;
+      }
+    }
+    
+    .report-section:nth-child(1) { animation-delay: 0.1s; }
+    .report-section:nth-child(2) { animation-delay: 0.2s; }
+    .report-section:nth-child(3) { animation-delay: 0.3s; }
+    .report-section:nth-child(4) { animation-delay: 0.4s; }
+    .report-section:nth-child(5) { animation-delay: 0.5s; }
+    .report-section:nth-child(6) { animation-delay: 0.6s; }
+    .report-section:nth-child(7) { animation-delay: 0.7s; }
+    .report-section:nth-child(8) { animation-delay: 0.8s; }
+    .report-section:nth-child(9) { animation-delay: 0.9s; }
+    
+    .report-section h2 {
+      font-size: 2.2rem;
+      color: #ff6b6b;
+      margin-bottom: 2rem;
+      margin-top: 4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      position: relative;
+      padding-left: 1.5rem;
+    }
+    
+    .report-section h2::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, #ff6b6b, #ff4444);
+      border-radius: 3px;
+    }
+    
+    .report-section h2:first-of-type {
+      margin-top: 0;
+    }
+    
+    .report-section h3 {
+      font-size: 1.5rem;
+      color: #fff;
+      margin-top: 2.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+    
+    .report-section p {
+      color: #d4d7dd;
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+    
+    .report-section ul {
+      color: #d4d7dd;
+      line-height: 2;
+      margin-bottom: 2rem;
+      padding-left: 2rem;
+    }
+    
+    .report-section li {
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+      position: relative;
+    }
+    
+    .report-section li::marker {
+      color: #ff6b6b;
+    }
+    
+    .report-section strong {
+      color: #fff;
+      font-weight: 700;
+    }
+    
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.15) 0%, rgba(255, 68, 68, 0.1) 100%);
+      border-left: 5px solid #ff6b6b;
+      padding: 2rem;
+      margin: 3rem 0;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(255, 107, 107, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .highlight-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(255, 107, 107, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      transform: translate(30%, -30%);
+    }
+    
+    .highlight-box p {
+      margin-bottom: 0.75rem;
+      font-size: 1.2rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .highlight-box p:last-child {
+      margin-bottom: 0;
+    }
+    
+    /* Goals Grid - 3 Column Pills */
+    .goals-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .goal-card {
+      flex: 1;
+      min-width: 280px;
+      background: linear-gradient(135deg, rgba(11, 13, 22, 0.95) 0%, rgba(20, 22, 35, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      padding: 2.5rem;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .goal-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff6b6b, #ff4444);
+      border-radius: 20px 20px 0 0;
+    }
+    
+    .goal-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(255, 107, 107, 0.3);
+      border-color: rgba(255, 107, 107, 0.3);
+    }
+    
+    .goal-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #ff6b6b, #ff4444);
+      border-radius: 12px;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    }
+    
+    .goal-card h3 {
+      font-size: 1.4rem;
+      color: #fff;
+      margin: 0 0 1rem 0;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    
+    .goal-card p {
+      color: #d4d7dd;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+      font-size: 1.05rem;
+    }
+    
+    .goal-card p:last-child {
+      margin-bottom: 0;
+    }
+    
+    .goal-list {
+      list-style: none;
+      padding-left: 0;
+      margin: 1rem 0;
+    }
+    
+    .goal-list li {
+      color: #d4d7dd;
+      line-height: 1.8;
+      margin-bottom: 0.75rem;
+      font-size: 1.05rem;
+      padding-left: 1.5rem;
+      position: relative;
+    }
+    
+    .goal-list li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #ff6b6b;
+      font-size: 1.5rem;
+      line-height: 1;
+    }
+
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: #777c85;
+      font-size: 0.9rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      animation: fadeIn 1s ease-out 1s both;
+    }
+    
+    @media (max-width: 768px) {
+      header.hero {
+        padding: 4rem 1rem 3rem;
+      }
+      
+      header.hero h1 {
+        font-size: 2.2rem;
+      }
+      
+      .report-content {
+        padding: 2rem 1rem 4rem;
+      }
+      
+      .report-section h2 {
+        font-size: 1.8rem;
+      }
+      
+      .report-section h3 {
+        font-size: 1.3rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+        padding: 0 1rem;
+        gap: 1.5rem;
+      }
+      
+      .chart-section {
+        padding: 0 1rem;
+      }
+      
+      .stat-card {
+        padding: 2rem;
+      }
+      
+      .stat-card .number {
+        font-size: 2.5rem;
+      }
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 4rem;
+      color: #9aa0a6;
+      font-size: 1.1rem;
+    }
+    
+    .loading::after {
+      content: '...';
+      animation: dots 1.5s steps(4, end) infinite;
+    }
+    
+    @keyframes dots {
+      0%, 20% { content: '.'; }
+      40% { content: '..'; }
+      60%, 100% { content: '...'; }
+    }
+  </style>
+</head>
+
+<body>
+
+<nav>
+  <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
+    <a href="/" class="logo-mark-link" style="text-decoration: none; display: flex; align-items: center;">
+      <span class="logo-mark"></span>
+    </a>
+    <a href="./" style="text-decoration: none; color: inherit;">Dark AI</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="about">About</a>
+    <div class="nav-dropdown" id="reportsDropdown">
+      <span class="nav-dropdown-toggle">Reports</span>
+      <div class="nav-dropdown-menu">
+        <a href="/reports/2025-deepfake-report">2025 Deepfake Report</a>
+      </div>
+    </div>
+    <a href="shadowstack">ShadowStack</a>
+    <a href="blackwire">BlackWire</a>
+    <a href="personaforge">PersonaForge</a>
+    <a href="about#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>AI Sexual Image Abuse: What Young People Are Experiencing</h1>
+  <p class="subtitle">Survey Snapshot – November 2025 (Canada-Focused)</p>
+  <p class="meta">In November 2025, we ran an anonymous survey focused on Canadian students and young adults, primarily recruited through university communities.</p>
+  <p class="meta">Over 100 people responded, most aged 18–25, with additional responses from teens and adults from Canada, the U.S., and Europe.</p>
+  <p class="meta">This page summarizes the key patterns emerging from the data — not in academic language, but in plain terms that reflect the real experiences people shared.</p>
+</header>
+
+<section class="report-content">
+  <!-- Section 1: Awareness -->
+  <div class="report-section">
+    <div class="section-header">
+      <h2>1. Awareness Is Nearly Universal</h2>
+      <div class="stat-inline">
+        <span class="stat-number" id="awarenessStat">95%</span>
+        <span class="stat-label">had heard of these tools</span>
+      </div>
+    </div>
+    <div class="content-with-chart">
+      <div class="text-content">
+        <p>Almost everyone had heard of deepfake or "nudify" tools.</p>
+        <p>This wasn't niche — it was common knowledge across:</p>
+        <ul>
+          <li>Teens</li>
+          <li>University students</li>
+          <li>Men and women</li>
+          <li>People from multiple countries</li>
+        </ul>
+        <p>For young people today, AI sexual editing tools are part of the online landscape.</p>
+      </div>
+      <div class="chart-inline">
+        <div class="chart-container-inline">
+          <h3>Awareness of Deepfake Tools</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="awarenessChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Harm to Teens -->
+  <div class="report-section">
+    <div class="section-header">
+      <h2>2. Harm Is Already Happening — Even to Teens</h2>
+      <div class="stat-inline">
+        <span class="stat-number" id="victimsPercent">-</span>
+        <span class="stat-label">reported being victimized</span>
+      </div>
+    </div>
+    <div class="content-with-chart">
+      <div class="text-content">
+        <p>Even with a modest sample, multiple respondents reported harm:</p>
+        <ul>
+          <li>Several young women said a deepfake had been made of them</li>
+          <li>One 15–17-year-old girl said <strong>yes, it happened to me</strong></li>
+          <li>Others said "maybe," often meaning rumours or unconfirmed images</li>
+        </ul>
+        <p>For teenagers in particular, the responses were stark:</p>
+        <ul>
+          <li>High awareness</li>
+          <li>High fear</li>
+          <li>Clear exposure</li>
+          <li>At least one confirmed victim</li>
+        </ul>
+        <p>This mirrors a pattern advocates have warned about: <strong>minors are already being targeted</strong>.</p>
+      </div>
+      <div class="chart-inline">
+        <div class="chart-container-inline">
+          <h3>Personal Experience</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="experienceChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Know Someone Affected -->
+  <div class="report-section">
+    <div class="section-header">
+      <h2>3. Many People Know Someone Affected</h2>
+      <div class="stat-inline">
+        <span class="stat-number" id="knowSomeoneStat">-</span>
+        <span class="stat-label">know someone affected</span>
+      </div>
+    </div>
+    <div class="content-with-chart">
+      <div class="text-content">
+        <p>About one-third of all respondents said yes or maybe when asked if they personally know someone victimized.</p>
+        <p>The "maybe" group is important — it often reflects:</p>
+        <ul>
+          <li>Rumours</li>
+          <li>Partial knowledge</li>
+          <li>Suspected images</li>
+          <li>Social circles where this behaviour is normalized</li>
+        </ul>
+        <p>This suggests a real social spread of harm, not isolated incidents.</p>
+      </div>
+      <div class="chart-inline">
+        <div class="chart-container-inline">
+          <h3>Do You Know Someone Affected?</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="knowSomeoneChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 4: Gender Patterns -->
+  <div class="report-section">
+    <div class="section-header">
+      <h2>4. Women Report More Fear. Men Report More Access.</h2>
+    </div>
+    <div class="content-with-chart">
+      <div class="text-content">
+        <p>A gender pattern appeared clearly:</p>
+        
+        <h3>Women</h3>
+        <ul>
+          <li>More likely to report fear</li>
+          <li>More likely to answer "maybe" about being targeted</li>
+          <li>More likely to know someone else affected</li>
+        </ul>
+        
+        <h3>Men (especially 18–25)</h3>
+        <ul>
+          <li>More likely to say tools are "very easy" to access</li>
+          <li>More likely to say they know someone targeted</li>
+          <li>More likely to report having used a tool themselves (a small number admitted this)</li>
+        </ul>
+        
+        <p>Even in a small survey, this mirrors what frontline advocates already know:</p>
+        <div class="highlight-box">
+          <p><strong>Access often skews male, and harm skews female.</strong></p>
+        </div>
+      </div>
+      <div class="chart-inline">
+        <div class="chart-container-inline">
+          <h3>Worry Level by Gender</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="genderWorryChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-container-inline">
+          <h3>Ease of Access by Gender</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="genderAccessChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Fear -->
+  <div class="report-section">
+    <div class="section-header">
+      <h2>5. Fear Is Widespread Even Among Those Not Directly Targeted</h2>
+      <div class="stat-inline">
+        <span class="stat-number" id="worriedStat">-</span>
+        <span class="stat-label">are worried or maybe worried</span>
+      </div>
+    </div>
+    <div class="content-with-chart">
+      <div class="text-content">
+        <p>Around three-quarters of respondents said they were:</p>
+        <ul>
+          <li>Worried, or</li>
+          <li>Maybe worried</li>
+        </ul>
+        <p>This includes people who have not been targeted.</p>
+        <p>They still fear:</p>
+        <ul>
+          <li>Their friends being victimized</li>
+          <li>Images being shared without consent</li>
+          <li>Tools circulating in their peer groups</li>
+        </ul>
+        <p><strong>Fear itself is a form of harm</strong> — and your data shows it's already widespread.</p>
+      </div>
+      <div class="chart-inline">
+        <div class="chart-container-inline">
+          <h3>Level of Worry</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="worryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Ease of Access -->
+  <div class="report-section">
+    <div class="section-header">
+      <h2>6. Young People Believe These Tools Are Extremely Easy to Use</h2>
+    </div>
+    <div class="content-with-chart">
+      <div class="text-content">
+        <p>The most consistent response across age groups:</p>
+        <div class="highlight-box">
+          <p><strong>"Very easy."</strong></p>
+        </div>
+        <p>Across all demographics, especially young men:</p>
+        <ul>
+          <li>Over half said very easy</li>
+          <li>Most of the rest said somewhat easy</li>
+          <li>Only a few said "hard" or "not sure"</li>
+        </ul>
+        <p>The perception is clear:</p>
+        <p><strong>If someone wants to make a deepfake, they can. Easily.</strong></p>
+      </div>
+      <div class="chart-inline">
+        <div class="chart-container-inline">
+          <h3>Ease of Access to Tools</h3>
+          <div class="chart-wrapper-inline">
+            <canvas id="accessChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h2>7. A Small Number Admitted to Using These Tools</h2>
+    <p>Even in an anonymous form:</p>
+    <ul>
+      <li>Several respondents said "Yes, I've used one."</li>
+    </ul>
+    <p>Given the stigma, the true number is likely higher.</p>
+    <p>This doesn't just show awareness.</p>
+    <p><strong>It shows active participation among some young men.</strong></p>
+  </div>
+
+  <div class="report-section">
+    <h2>Why This Matters</h2>
+    <p>From this dataset, we can already see:</p>
+    <ul>
+      <li>Victims exist even in a small sample — including minors.</li>
+      <li>Harm is spreading socially, through friend groups and peer networks.</li>
+      <li>Fear is high, especially among young women.</li>
+      <li>Access is trivial, especially for young men.</li>
+      <li>People suspect images may be circulating without their knowledge.</li>
+    </ul>
+    <p>This is exactly the environment where large-scale abuse emerges:</p>
+    <div class="highlight-box">
+      <p><strong>High access → high fear → low support → low accountability.</strong></p>
+    </div>
+  </div>
+
+  <div class="report-section">
+    <h2>What DarkAI Is Working Toward</h2>
+    <p style="margin-bottom: 3rem;">Based on the survey results, DarkAI aims to:</p>
+    
+    <div class="goals-grid">
+      <div class="goal-card">
+        <div class="goal-number">1</div>
+        <h3>Map the infrastructure enabling this abuse</h3>
+        <p>Where these services are hosted, how they hide, and how they spread.</p>
+      </div>
+      
+      <div class="goal-card">
+        <div class="goal-number">2</div>
+        <h3>Provide tools for victims and allies</h3>
+        <p>Including templates and guided workflows for contacting:</p>
+        <ul class="goal-list">
+          <li>CDNs</li>
+          <li>Hosting providers</li>
+          <li>Domain registrars</li>
+          <li>Payment processors</li>
+        </ul>
+        <p>to demand removal.</p>
+      </div>
+      
+      <div class="goal-card">
+        <div class="goal-number">3</div>
+        <h3>Support researchers, journalists, and policymakers</h3>
+        <p>The patterns here align closely with what advocacy groups already fear — but lack data for.</p>
+        <p><strong>DarkAI aims to provide that data.</strong></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Dark AI. All rights reserved.</p>
+</footer>
+
+<script>
+  // Professional Chart.js configuration
+  const chartColors = {
+    primary: '#ff6b6b',
+    secondary: '#ff4444',
+    accent: '#ff8c8c',
+    tertiary: '#ffaaaa',
+    background: 'rgba(255, 107, 107, 0.1)',
+    text: '#d4d7dd',
+    grid: 'rgba(255, 255, 255, 0.08)',
+    gradient1: ['#ff6b6b', '#ff4444'],
+    gradient2: ['#ff6b6b', '#ff8c8c', '#ffaaaa']
+  };
+  
+  const professionalChartConfig = {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: {
+      duration: 1500,
+      easing: 'easeOutQuart'
+    },
+    plugins: {
+      legend: {
+        labels: {
+          color: chartColors.text,
+          font: {
+            size: 13,
+            weight: '500',
+            family: 'system-ui'
+          },
+          padding: 15,
+          usePointStyle: true,
+          pointStyle: 'circle'
+        },
+        position: 'bottom'
+      },
+      tooltip: {
+        backgroundColor: 'rgba(10, 11, 20, 0.98)',
+        titleColor: '#fff',
+        bodyColor: chartColors.text,
+        borderColor: chartColors.primary,
+        borderWidth: 2,
+        padding: 16,
+        titleFont: {
+          size: 14,
+          weight: '600'
+        },
+        bodyFont: {
+          size: 13
+        },
+        cornerRadius: 12,
+        displayColors: true,
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = ((context.parsed / total) * 100).toFixed(1);
+            label += context.parsed + ' (' + percentage + '%)';
+            return label;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { 
+          color: chartColors.text,
+          font: { size: 12 }
+        },
+        grid: { 
+          color: chartColors.grid,
+          drawBorder: false
+        }
+      },
+      y: {
+        ticks: { 
+          color: chartColors.text,
+          font: { size: 12 }
+        },
+        grid: { 
+          color: chartColors.grid,
+          drawBorder: false
+        }
+      }
+    }
+  };
+  
+  let charts = {};
+  
+  // Animated number counter
+  function animateValue(element, start, end, duration) {
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+    const timer = setInterval(() => {
+      current += increment;
+      if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+        element.textContent = end + (element.textContent.includes('%') ? '%' : '');
+        clearInterval(timer);
+      } else {
+        element.textContent = Math.floor(current) + (element.textContent.includes('%') ? '%' : '');
+      }
+    }, 16);
+  }
+  
+  // Load and render data
+  async function loadData() {
+    try {
+      const response = await fetch('/api/reports/survey-data');
+      const data = await response.json();
+      
+      // Calculate and animate stats - ALL AS PERCENTAGES
+      const awarenessYes = data.awareness['Yes'] || 0;
+      const awarenessPercent = Math.round((awarenessYes / data.total_responses) * 100);
+      const awarenessEl = document.getElementById('awarenessStat');
+      if (awarenessEl) {
+        awarenessEl.textContent = awarenessPercent + '%';
+        animateValue(awarenessEl, 0, awarenessPercent, 1200);
+      }
+      
+      const victimsYes = data.personal_experience['Yes'] || 0;
+      const victimsPercent = Math.round((victimsYes / data.total_responses) * 100);
+      const victimsEl = document.getElementById('victimsPercent');
+      if (victimsEl) {
+        victimsEl.textContent = victimsPercent + '%';
+        animateValue(victimsEl, 0, victimsPercent, 1200);
+      }
+      
+      const knowSomeoneYes = (data.know_someone['Yes'] || 0) + (data.know_someone['Maybe'] || 0);
+      const knowSomeonePercent = Math.round((knowSomeoneYes / data.total_responses) * 100);
+      const knowSomeoneEl = document.getElementById('knowSomeoneStat');
+      if (knowSomeoneEl) {
+        knowSomeoneEl.textContent = knowSomeonePercent + '%';
+        animateValue(knowSomeoneEl, 0, knowSomeonePercent, 1200);
+      }
+      
+      const worriedYes = (data.worried['Yes'] || 0) + (data.worried['Maybe'] || 0);
+      const worriedPercent = Math.round((worriedYes / data.total_responses) * 100);
+      const worriedEl = document.getElementById('worriedStat');
+      if (worriedEl) {
+        worriedEl.textContent = worriedPercent + '%';
+        animateValue(worriedEl, 0, worriedPercent, 1200);
+      }
+      
+      // Create charts with staggered animations - only the ones we need
+      setTimeout(() => createAwarenessChart(data), 200);
+      setTimeout(() => createExperienceChart(data), 400);
+      setTimeout(() => createKnowSomeoneChart(data), 600);
+      setTimeout(() => createGenderWorryChart(data), 800);
+      setTimeout(() => createGenderAccessChart(data), 1000);
+      setTimeout(() => createWorryChart(data), 1200);
+      setTimeout(() => createAccessChart(data), 1400);
+      
+    } catch (error) {
+      console.error('Error loading data:', error);
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'loading';
+      errorMsg.textContent = 'Error loading data. Please refresh the page.';
+      document.querySelector('.report-content').prepend(errorMsg);
+    }
+  }
+  
+  function createAwarenessChart(data) {
+    const ctx = document.getElementById('awarenessChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const awarenessData = data.awareness;
+    const labels = Object.keys(awarenessData).filter(k => k !== 'No response');
+    const values = labels.map(k => awarenessData[k]);
+    
+    charts.awareness = new Chart(ctx2d, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            chartColors.primary,
+            chartColors.secondary,
+            chartColors.accent
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        ...professionalChartConfig,
+        cutout: '65%',
+        plugins: {
+          ...professionalChartConfig.plugins,
+          legend: {
+            ...professionalChartConfig.plugins.legend,
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  }
+  
+  function createKnowSomeoneChart(data) {
+    const ctx = document.getElementById('knowSomeoneChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const knowData = data.know_someone;
+    const labels = Object.keys(knowData).filter(k => k !== 'No response');
+    const values = labels.map(k => knowData[k]);
+    
+    charts.knowSomeone = new Chart(ctx2d, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Responses',
+          data: values,
+          backgroundColor: [
+            chartColors.secondary,
+            chartColors.primary,
+            chartColors.accent
+          ],
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: professionalChartConfig
+    });
+  }
+  
+  function createExperienceChart(data) {
+    const ctx = document.getElementById('experienceChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const expData = data.personal_experience;
+    const labels = Object.keys(expData).filter(k => k !== 'No response');
+    const values = labels.map(k => expData[k]);
+    
+    charts.experience = new Chart(ctx2d, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Responses',
+          data: values,
+          backgroundColor: [
+            chartColors.secondary,
+            chartColors.primary,
+            chartColors.accent
+          ],
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: professionalChartConfig
+    });
+  }
+  
+  function createAccessChart(data) {
+    const ctx = document.getElementById('accessChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const accessData = data.ease_of_access;
+    const labels = Object.keys(accessData).filter(k => k !== 'No response');
+    const values = labels.map(k => accessData[k]);
+    
+    charts.access = new Chart(ctx2d, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Responses',
+          data: values,
+          backgroundColor: chartColors.primary,
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: professionalChartConfig
+    });
+  }
+  
+  function createWorryChart(data) {
+    const ctx = document.getElementById('worryChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const worryData = data.worried;
+    const labels = Object.keys(worryData).filter(k => k !== 'No response');
+    const values = labels.map(k => worryData[k]);
+    
+    charts.worry = new Chart(ctx2d, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: [
+            chartColors.secondary,
+            chartColors.primary,
+            chartColors.accent
+          ],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        ...professionalChartConfig,
+        cutout: '65%',
+        plugins: {
+          ...professionalChartConfig.plugins,
+          legend: {
+            ...professionalChartConfig.plugins.legend,
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  }
+  
+  function createGenderWorryChart(data) {
+    const ctx = document.getElementById('genderWorryChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const genderWorry = data.gender_worry;
+    const genders = Object.keys(genderWorry).filter(g => g !== 'No response');
+    const worryLevels = ['Yes', 'Maybe', 'No'];
+    
+    const datasets = worryLevels.map((level, idx) => ({
+      label: level,
+      data: genders.map(gender => genderWorry[gender]?.[level] || 0),
+      backgroundColor: [
+        chartColors.secondary,
+        chartColors.primary,
+        chartColors.accent
+      ][idx],
+      borderRadius: 8
+    }));
+    
+    charts.genderWorry = new Chart(ctx2d, {
+      type: 'bar',
+      data: {
+        labels: genders,
+        datasets: datasets
+      },
+      options: {
+        ...professionalChartConfig,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { color: chartColors.text, font: { size: 12 } },
+            grid: { color: chartColors.grid, drawBorder: false }
+          },
+          y: {
+            stacked: true,
+            ticks: { color: chartColors.text, font: { size: 12 } },
+            grid: { color: chartColors.grid, drawBorder: false }
+          }
+        }
+      }
+    });
+  }
+  
+  function createGenderAccessChart(data) {
+    const ctx = document.getElementById('genderAccessChart');
+    if (!ctx) return;
+    const ctx2d = ctx.getContext('2d');
+    const genderAccess = data.gender_access;
+    const genders = Object.keys(genderAccess).filter(g => g !== 'No response');
+    const accessLevels = ['Very easy', 'Somewhat easy', 'Hard', 'Not sure'];
+    
+    const datasets = accessLevels.map((level, idx) => ({
+      label: level,
+      data: genders.map(gender => genderAccess[gender]?.[level] || 0),
+      backgroundColor: [
+        chartColors.secondary,
+        chartColors.primary,
+        chartColors.accent,
+        '#4a5568'
+      ][idx],
+      borderRadius: 8
+    }));
+    
+    charts.genderAccess = new Chart(ctx2d, {
+      type: 'bar',
+      data: {
+        labels: genders,
+        datasets: datasets
+      },
+      options: {
+        ...professionalChartConfig,
+        scales: {
+          x: {
+            stacked: true,
+            ticks: { color: chartColors.text, font: { size: 12 } },
+            grid: { color: chartColors.grid, drawBorder: false }
+          },
+          y: {
+            stacked: true,
+            ticks: { color: chartColors.text, font: { size: 12 } },
+            grid: { color: chartColors.grid, drawBorder: false }
+          }
+        }
+      }
+    });
+  }
+  
+  // Navigation
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    const reportsDropdown = document.getElementById('reportsDropdown');
+    
+    // Hamburger menu toggle
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+      });
+      
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+          hamburger.classList.remove('active');
+          navLinks.classList.remove('active');
+        });
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          hamburger.classList.remove('active');
+          navLinks.classList.remove('active');
+        }
+      });
+    }
+    
+    // Dropdown toggle
+    if (reportsDropdown) {
+      const dropdownToggle = reportsDropdown.querySelector('.nav-dropdown-toggle');
+      
+      dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        reportsDropdown.classList.toggle('active');
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!reportsDropdown.contains(event.target)) {
+          reportsDropdown.classList.remove('active');
+        }
+      });
+    }
+    
+    // Load data
+    loadData();
+    
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    document.querySelectorAll('.report-section').forEach(section => {
+      observer.observe(section);
+    });
+  });
+</script>
+
+</body>
+</html>
