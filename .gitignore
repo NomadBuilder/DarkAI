@@ -63,6 +63,8 @@ htmlcov/
 # Data directories
 data/
 *.csv
+# Allow specific CSV files needed for reports
+!SurveyData.csv
 # Allow shadowstack_enriched_data.json (needed for Render auto-import)
 !shadowstack_enriched_data.json
 

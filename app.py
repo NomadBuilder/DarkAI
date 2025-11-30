@@ -150,15 +150,32 @@ def deepfake_report_2025():
 
 @app.route('/api/reports/survey-data')
 def get_survey_data():
-    """Process and return survey data for visualizations."""
+    """Process and return survey data for visualizations.
+    
+    This endpoint is READ-ONLY and does not modify any data.
+    It only reads from SurveyData.csv and returns processed statistics.
+    """
     import csv
     from collections import Counter
     from pathlib import Path
     
-    csv_path = Path(__file__).parent / 'SurveyData.csv'
+    # Try multiple possible paths (works in both local and Render environments)
+    possible_paths = [
+        Path(__file__).parent / 'SurveyData.csv',  # Same directory as app.py
+        Path.cwd() / 'SurveyData.csv',  # Current working directory
+    ]
     
-    if not csv_path.exists():
-        return jsonify({"error": "Survey data file not found"}), 404
+    csv_path = None
+    for path in possible_paths:
+        if path.exists() and path.is_file():
+            csv_path = path
+            break
+    
+    if not csv_path:
+        return jsonify({
+            "error": "Survey data file not found",
+            "message": "SurveyData.csv is required for this report"
+        }), 404
     
     try:
         with open(csv_path, 'r', encoding='utf-8') as f:
