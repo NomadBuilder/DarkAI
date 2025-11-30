@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>PersonaForge – Synthetic Identity Intelligence</title>
@@ -267,110 +274,56 @@
       margin-top: 6rem;
     }
     
-    /* Data Notice Modal */
+    /* Data Notice - Top Banner */
     .modal-overlay {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 10000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
+      background: #0a0a0a;
+      border-bottom: 1px solid rgba(255, 68, 68, 0.3);
+      z-index: 10001;
+      display: none;
+      padding: 0.75rem 1rem;
     }
     
     .modal-overlay.show {
-      opacity: 1;
-      visibility: visible;
+      display: block !important;
     }
     
     .modal {
-      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-      border: 1px solid rgba(255, 68, 68, 0.3);
-      border-radius: 16px;
-      padding: 2.5rem;
-      max-width: 600px;
-      width: 100%;
-      position: relative;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(255, 68, 68, 0.1);
-      transform: scale(0.9) translateY(20px);
-      transition: transform 0.3s ease;
-    }
-    
-    .modal-overlay.show .modal {
-      transform: scale(1) translateY(0);
-    }
-    
-    .modal__close {
-      position: absolute;
-      top: 1.5rem;
-      right: 1.5rem;
-      background: transparent;
-      border: none;
-      color: #999;
-      font-size: 1.5rem;
-      cursor: pointer;
-      width: 32px;
-      height: 32px;
+      max-width: 1400px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: all 0.2s ease;
-      line-height: 1;
-      padding: 0;
+      gap: 1rem;
     }
     
-    .modal__close:hover {
-      background: rgba(255, 68, 68, 0.1);
-      color: #ff4444;
-      transform: rotate(90deg);
-    }
-    
-    .modal__icon {
-      width: 48px;
-      height: 48px;
-      background: rgba(255, 68, 68, 0.15);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-    }
-    
-    .modal__title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #fff;
-      line-height: 1.3;
-    }
-    
-    .modal__content {
+    .modal__text {
+      flex: 1;
       color: #ccc;
-      line-height: 1.7;
-      font-size: 1.05rem;
-    }
-    
-    .modal__content p {
-      margin-bottom: 1rem;
-    }
-    
-    .modal__content p:last-child {
-      margin-bottom: 0;
+      font-size: 0.875rem;
+      margin: 0;
     }
     
     .modal__highlight {
       color: #ff4444;
       font-weight: 600;
+    }
+    
+    .modal__close {
+      background: none;
+      border: none;
+      color: #999;
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    
+    .modal__close:hover {
+      color: #ff4444;
     }
     
     /* Responsive */
@@ -447,39 +400,31 @@
         color: #e0e0e0;
       }
       
+      .modal-overlay {
+        padding: 0.625rem 0.75rem;
+      }
+      
       .modal {
-        padding: 2rem 1.5rem;
-        max-width: 100%;
+        flex-wrap: wrap;
+        gap: 0.5rem;
       }
       
-      .modal__title {
-        font-size: 1.5rem;
-        padding-right: 2rem;
-      }
-      
-      .modal__content {
-        font-size: 1rem;
-      }
-      
-      .modal__close {
-        top: 1rem;
-        right: 1rem;
+      .modal__text {
+        font-size: 0.8rem;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Data Notice Modal -->
-  <div class="modal-overlay" id="dataNoticeModal">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <!-- Data Notice Banner -->
+  <div class="modal-overlay show" id="dataNoticeModal">
     <div class="modal">
-      <button class="modal__close" id="modalClose" aria-label="Close modal">×</button>
-      <div class="modal__icon">📊</div>
-      <h2 class="modal__title">Data Collection in Progress</h2>
-      <div class="modal__content">
-        <p>The data currently displayed is <span class="modal__highlight">dummy data</span> designed to demonstrate how PersonaForge will work once fully populated.</p>
-        <p>Our research team is actively collecting and enriching real vendor data. As new information becomes available, it will be automatically integrated into the platform.</p>
-        <p>This allows you to explore PersonaForge's capabilities while we continue building our comprehensive intelligence database.</p>
-      </div>
+      <p class="modal__text">📊 <strong>Data Collection in Progress:</strong> The data currently displayed is <span class="modal__highlight">dummy data</span> to demonstrate PersonaForge's capabilities. Our research team is actively collecting real vendor data, which will be automatically integrated as it becomes available.</p>
+      <button class="modal__close" id="modalClose" aria-label="Close">×</button>
     </div>
   </div>
 
@@ -770,7 +715,7 @@
       });
     }
     
-    // Data Notice Modal
+    // Data Notice Banner
     const modal = document.getElementById('dataNoticeModal');
     const closeButton = document.getElementById('modalClose');
     const modalKey = 'personaforge_data_notice_dismissed';
@@ -778,20 +723,18 @@
     // Check if modal has been dismissed
     const isDismissed = localStorage.getItem(modalKey) === 'true';
     
-    if (!isDismissed && modal) {
-      // Show modal after a brief delay for better UX
-      setTimeout(() => {
-        modal.classList.add('show');
-        document.body.style.overflow = 'hidden';
-      }, 500);
+    if (isDismissed && modal) {
+      // Hide if already dismissed
+      modal.classList.remove('show');
+    } else if (modal) {
+      // Show banner
+      modal.classList.add('show');
     }
     
-    // Close modal function
+    // Close banner function
     function closeModal() {
       if (modal) {
         modal.classList.remove('show');
-        document.body.style.overflow = '';
-        // Remember dismissal
         localStorage.setItem(modalKey, 'true');
       }
     }
@@ -800,22 +743,6 @@
     if (closeButton) {
       closeButton.addEventListener('click', closeModal);
     }
-    
-    // Close on overlay click (but not on modal content)
-    if (modal) {
-      modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-          closeModal();
-        }
-      });
-    }
-    
-    // Close on Escape key
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && modal && modal.classList.contains('show')) {
-        closeModal();
-      }
-    });
   });
 })();
 </script>

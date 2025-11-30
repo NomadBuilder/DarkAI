@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dark AI.ca – Exposing Hidden AI Harms</title>
@@ -521,13 +528,17 @@
 </head>
 
 <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
 
 <nav>
   <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
     <a href="/" class="logo-mark-link" style="text-decoration: none; display: flex; align-items: center;">
       <span class="logo-mark"></span>
     </a>
-    <a href="./" style="text-decoration: none; color: inherit;">Dark AI</a>
+    <a href="/" style="text-decoration: none; color: inherit;">Dark AI</a>
   </div>
   <button class="hamburger" id="hamburger" aria-label="Toggle menu">
     <span></span>
@@ -552,7 +563,7 @@
 <header class="hero">
   <h1>Exposing AI-powered harms hidden beneath the surface of the internet.</h1>
       <p>Dark AI develops investigative tools that map synthetic identities, exploitative AI imagery, and cyber-enabled extortion networks — helping journalists, researchers, and platforms uncover what AI is making possible.</p>
-  <a href="shadowstack" class="btn-primary">Explore the tools</a>
+  <a href="#tools" class="btn-primary" id="exploreToolsBtn">Explore the tools</a>
 </header>
 
 <section class="about" id="about">
@@ -608,7 +619,7 @@
 </section>
 
 <!-- Three Tool Section -->
-<section class="tools" style="padding:4rem 2rem; max-width:1200px; margin:0 auto;">
+<section class="tools" id="tools" style="padding:4rem 2rem; max-width:1200px; margin:0 auto;">
   <h2 style="font-size:2rem; margin-bottom:1rem;">Investigative Tools</h2>
   <p style="color:#9aa0a6; max-width:800px; margin-bottom:2rem;">Explore the products in the Dark‑AI suite — each built to reveal hidden AI‑driven harms across the internet.</p>
 
@@ -650,6 +661,21 @@
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
     const reportsDropdown = document.getElementById('reportsDropdown');
+    const exploreToolsBtn = document.getElementById('exploreToolsBtn');
+    
+    // Smooth scroll to tools section
+    if (exploreToolsBtn) {
+      exploreToolsBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const toolsSection = document.getElementById('tools');
+        if (toolsSection) {
+          toolsSection.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    }
     
     // Hamburger menu toggle
     if (hamburger && navLinks) {

@@ -69,6 +69,14 @@ services:
         sync: false
       - key: ETHERSCAN_API_KEY
         sync: false
+      
+      # Email Configuration (Contact Form)
+      - key: RESEND_API_KEY
+        sync: false
+      - key: FROM_EMAIL
+        value: onboarding@resend.dev
+      - key: CONTACT_EMAIL
+        value: aazirmun@gmail.com
 
 databases:
   # Using existing blackwire database (shared by all services)

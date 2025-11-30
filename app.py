@@ -9,9 +9,13 @@ Combines three services:
 
 import os
 from datetime import datetime
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request, render_template
 from flask_cors import CORS
 from dotenv import load_dotenv
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import requests
 
 load_dotenv()
 
@@ -135,6 +139,145 @@ def about():
     except:
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'about.html')
+
+
+@app.route('/contact', methods=['POST'])
+def contact():
+    """Handle contact form submission and send email."""
+    try:
+        data = request.get_json()
+        name = data.get('name', '').strip()
+        email = data.get('email', '').strip()
+        message = data.get('message', '').strip()
+        
+        if not name or not email or not message:
+            return jsonify({'success': False, 'error': 'All fields are required'}), 400
+        
+        # Email configuration from environment variables
+        # Try Resend API first (easier setup), fallback to SMTP
+        resend_api_key = os.getenv('RESEND_API_KEY', '')
+        recipient_email = os.getenv('CONTACT_EMAIL', 'aazirmun@gmail.com')
+        from_email = os.getenv('FROM_EMAIL', 'onboarding@resend.dev')  # Default Resend domain
+        
+        # Try Resend API
+        if resend_api_key:
+            print(f"📧 Sending email via Resend to {recipient_email}...")
+            url = "https://api.resend.com/emails"
+            headers = {
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "from": from_email,
+                "to": recipient_email,
+                "subject": f"Contact from Dark AI: {name}",
+                "html": f"""
+                <h2>New contact form submission from Dark AI website</h2>
+                <p><strong>Name:</strong> {name}</p>
+                <p><strong>Email:</strong> {email}</p>
+                <p><strong>Message:</strong></p>
+                <p>{message.replace(chr(10), '<br>')}</p>
+                <hr>
+                <p><em>This email was sent from the Dark AI contact form.</em></p>
+                """,
+                "text": f"""New contact form submission from Dark AI website:
+
+Name: {name}
+Email: {email}
+
+Message:
+{message}
+
+---
+This email was sent from the Dark AI contact form.
+"""
+            }
+            
+            response = requests.post(url, json=payload, headers=headers)
+            
+            if response.status_code == 200:
+                print(f"✅ Email sent successfully to {recipient_email}")
+                return jsonify({'success': True, 'message': 'Thank you for your message. We will get back to you soon.'})
+            else:
+                error_data = response.json() if response.content else {}
+                error_msg = error_data.get('message', f'HTTP {response.status_code}')
+                print(f"❌ Resend API error: {error_msg}")
+                return jsonify({'success': False, 'error': 'Failed to send email. Please try again later.'}), 500
+        
+        # Fallback to SMTP if Resend not configured
+        smtp_username = os.getenv('SMTP_USERNAME', '')
+        smtp_password = os.getenv('SMTP_PASSWORD', '')
+        
+        if smtp_username and smtp_password:
+            smtp_server = os.getenv('SMTP_SERVER', 'smtp.gmail.com')
+            smtp_port = int(os.getenv('SMTP_PORT', '587'))
+            
+            # Create email
+            msg = MIMEMultipart()
+            msg['From'] = smtp_username
+            msg['To'] = recipient_email
+            msg['Subject'] = f'Contact from Dark AI: {name}'
+            
+            body = f"""New contact form submission from Dark AI website:
+
+Name: {name}
+Email: {email}
+
+Message:
+{message}
+
+---
+This email was sent from the Dark AI contact form.
+"""
+            msg.attach(MIMEText(body, 'plain'))
+            
+            # Send email
+            print(f"📧 Attempting to send email via SMTP to {recipient_email}...")
+            server = smtplib.SMTP(smtp_server, smtp_port)
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.send_message(msg)
+            server.quit()
+            print(f"✅ Email sent successfully to {recipient_email}")
+            
+            return jsonify({'success': True, 'message': 'Thank you for your message. We will get back to you soon.'})
+        
+        # No email service configured
+        print("=" * 60)
+        print("⚠️  CONTACT FORM SUBMISSION (EMAIL NOT CONFIGURED)")
+        print("=" * 60)
+        print(f"Name: {name}")
+        print(f"Email: {email}")
+        print(f"Message: {message}")
+        print(f"Recipient: {recipient_email}")
+        print("=" * 60)
+        print("To enable email sending, add to .env file:")
+        print("  RESEND_API_KEY=re_xxxxxxxxxxxxx")
+        print("  FROM_EMAIL=noreply@yourdomain.com (or use Resend's default)")
+        print("  CONTACT_EMAIL=aazirmun@gmail.com")
+        print("=" * 60)
+        print("Get free API key at: https://resend.com/api-keys")
+        print("=" * 60)
+        return jsonify({'success': True, 'message': 'Thank you for your message. We will get back to you soon.'})
+        
+    except requests.RequestException as e:
+        error_msg = f"Resend API request failed: {e}"
+        print(f"❌ {error_msg}")
+        return jsonify({'success': False, 'error': 'Failed to send email. Please try again later.'}), 500
+    except smtplib.SMTPAuthenticationError as e:
+        error_msg = f"SMTP authentication failed: {e}"
+        print(f"❌ {error_msg}")
+        return jsonify({'success': False, 'error': 'Email authentication failed. Please check SMTP credentials.'}), 500
+    except smtplib.SMTPException as e:
+        error_msg = f"SMTP error: {e}"
+        print(f"❌ {error_msg}")
+        return jsonify({'success': False, 'error': 'Failed to send email. Please try again later.'}), 500
+    except Exception as e:
+        error_msg = f"Error sending contact email: {e}"
+        print(f"❌ {error_msg}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': 'Failed to send message. Please try again later.'}), 500
 
 
 @app.route('/reports/2025-deepfake-report')
