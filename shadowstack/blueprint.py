@@ -126,73 +126,61 @@ def get_enrich_domain_function():
             print(f"✅ ShadowStack: Added {blueprint_dir} to sys.path")
         
         try:
-            # Try importing as a proper module (this handles relative imports correctly)
-            try:
-                print("🔍 ShadowStack: Attempting module import...")
-                # First ensure the parent package is imported
-                try:
-                    import src.enrichment
-                    print("✅ ShadowStack: Parent package imported")
-                except ImportError:
-                    print("⚠️  ShadowStack: Parent package import failed, continuing...")
+            # Use file-based import with unique module name to avoid conflicts with other blueprints
+            # This ensures we load ShadowStack's enrichment_pipeline, not BlackWire's or PersonaForge's
+            print("🔍 ShadowStack: Attempting file-based import (to avoid blueprint conflicts)...")
+            
+            # Use a unique module name to avoid conflicts
+            unique_module_name = f"shadowstack_enrichment_pipeline_{id(enrichment_pipeline_path)}"
+            
+            spec = importlib.util.spec_from_file_location(
+                unique_module_name,
+                enrichment_pipeline_path
+            )
+            if spec and spec.loader:
+                enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+                # Set __package__ and __name__ to help with relative imports
+                enrichment_pipeline_module.__package__ = 'src.enrichment'
+                enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
+                enrichment_pipeline_module.__file__ = str(enrichment_pipeline_path)
                 
-                # Now import the module
-                import src.enrichment.enrichment_pipeline as enrichment_module
+                # CRITICAL: Set __path__ so relative imports work from ShadowStack's directory
+                enrichment_dir = enrichment_pipeline_path.parent
+                if not hasattr(enrichment_pipeline_module, '__path__'):
+                    enrichment_pipeline_module.__path__ = [str(enrichment_dir)]
                 
-                # Check if enrich_domain exists
-                if hasattr(enrichment_module, 'enrich_domain'):
-                    enrich_func = enrichment_module.enrich_domain
-                    print("✅ ShadowStack: Module import succeeded and enrich_domain found!")
+                # Before executing, ensure ShadowStack's directory is first in sys.path
+                # and clear conflicting cached modules
+                shadowstack_src_path = str(blueprint_dir / 'src')
+                if shadowstack_src_path not in sys.path:
+                    sys.path.insert(0, shadowstack_src_path)
+                
+                # Clear any cached src.enrichment modules that might be from other blueprints
+                modules_to_clear = []
+                for mod_name in list(sys.modules.keys()):
+                    if mod_name.startswith('src.enrichment.'):
+                        mod = sys.modules[mod_name]
+                        if hasattr(mod, '__file__') and mod.__file__:
+                            mod_file = str(mod.__file__)
+                            # If it's from a different blueprint, clear it
+                            if 'blackwire' in mod_file or 'personaforge' in mod_file:
+                                if 'shadowstack' not in mod_file:
+                                    modules_to_clear.append(mod_name)
+                
+                for mod_name in modules_to_clear:
+                    print(f"⚠️  ShadowStack: Clearing conflicting module {mod_name}")
+                    del sys.modules[mod_name]
+                
+                # Now execute the module - relative imports will use ShadowStack's directory
+                spec.loader.exec_module(enrichment_pipeline_module)
+                
+                if hasattr(enrichment_pipeline_module, 'enrich_domain'):
+                    enrich_func = enrichment_pipeline_module.enrich_domain
+                    print("✅ ShadowStack: File-based import succeeded and enrich_domain found!")
                 else:
-                    print(f"⚠️  ShadowStack: Module imported but enrich_domain not found. Available attributes: {dir(enrichment_module)}")
-                    # Try reloading the module
-                    import importlib
-                    enrichment_module = importlib.reload(enrichment_module)
-                    if hasattr(enrichment_module, 'enrich_domain'):
-                        enrich_func = enrichment_module.enrich_domain
-                        print("✅ ShadowStack: Module reloaded and enrich_domain found!")
-                    else:
-                        raise AttributeError("enrich_domain not found after reload")
-                        
-            except (ImportError, AttributeError) as e:
-                print(f"⚠️  ShadowStack: Module import failed: {e}")
-                import traceback
-                traceback.print_exc()
-                # Fallback: try loading the file directly (may fail with relative imports)
-                try:
-                    print("🔍 ShadowStack: Attempting file-based import...")
-                    spec = importlib.util.spec_from_file_location(
-                        "src.enrichment.enrichment_pipeline", 
-                        enrichment_pipeline_path
-                    )
-                    if spec and spec.loader:
-                        enrichment_pipeline_module = importlib.util.module_from_spec(spec)
-                        # Set __package__ to help with relative imports
-                        enrichment_pipeline_module.__package__ = 'src.enrichment'
-                        enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
-                        # Import parent modules first to help with relative imports
-                        try:
-                            import src.enrichment
-                            import src.enrichment.whois_enrichment
-                            import src.enrichment.ip_enrichment
-                            import src.enrichment.cms_enrichment
-                            import src.enrichment.payment_detection
-                            import src.enrichment.tech_stack_enrichment
-                        except ImportError as import_err:
-                            print(f"⚠️  ShadowStack: Some dependency imports failed: {import_err}")
-                        
-                        spec.loader.exec_module(enrichment_pipeline_module)
-                        if hasattr(enrichment_pipeline_module, 'enrich_domain'):
-                            enrich_func = enrichment_pipeline_module.enrich_domain
-                            print("✅ ShadowStack: File-based import succeeded!")
-                        else:
-                            print(f"❌ ShadowStack: File-based import succeeded but enrich_domain not found. Available: {dir(enrichment_pipeline_module)}")
-                    else:
-                        print("❌ ShadowStack: Failed to create spec for file import")
-                except Exception as e2:
-                    print(f"❌ ShadowStack: File-based import failed: {e2}")
-                    import traceback
-                    traceback.print_exc()
+                    print(f"❌ ShadowStack: File-based import succeeded but enrich_domain not found. Available: {[x for x in dir(enrichment_pipeline_module) if not x.startswith('_')]}")
+            else:
+                print("❌ ShadowStack: Failed to create spec for file import")
         except Exception as e:
             print(f"❌ ShadowStack: Dynamic import failed with exception: {e}")
             import traceback
