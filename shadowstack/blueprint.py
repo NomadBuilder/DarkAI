@@ -129,11 +129,35 @@ def get_enrich_domain_function():
             # Try importing as a proper module (this handles relative imports correctly)
             try:
                 print("🔍 ShadowStack: Attempting module import...")
+                # First ensure the parent package is imported
+                try:
+                    import src.enrichment
+                    print("✅ ShadowStack: Parent package imported")
+                except ImportError:
+                    print("⚠️  ShadowStack: Parent package import failed, continuing...")
+                
+                # Now import the module
                 import src.enrichment.enrichment_pipeline as enrichment_module
-                enrich_func = enrichment_module.enrich_domain
-                print("✅ ShadowStack: Module import succeeded!")
-            except ImportError as e:
+                
+                # Check if enrich_domain exists
+                if hasattr(enrichment_module, 'enrich_domain'):
+                    enrich_func = enrichment_module.enrich_domain
+                    print("✅ ShadowStack: Module import succeeded and enrich_domain found!")
+                else:
+                    print(f"⚠️  ShadowStack: Module imported but enrich_domain not found. Available attributes: {dir(enrichment_module)}")
+                    # Try reloading the module
+                    import importlib
+                    enrichment_module = importlib.reload(enrichment_module)
+                    if hasattr(enrichment_module, 'enrich_domain'):
+                        enrich_func = enrichment_module.enrich_domain
+                        print("✅ ShadowStack: Module reloaded and enrich_domain found!")
+                    else:
+                        raise AttributeError("enrich_domain not found after reload")
+                        
+            except (ImportError, AttributeError) as e:
                 print(f"⚠️  ShadowStack: Module import failed: {e}")
+                import traceback
+                traceback.print_exc()
                 # Fallback: try loading the file directly (may fail with relative imports)
                 try:
                     print("🔍 ShadowStack: Attempting file-based import...")
@@ -146,9 +170,23 @@ def get_enrich_domain_function():
                         # Set __package__ to help with relative imports
                         enrichment_pipeline_module.__package__ = 'src.enrichment'
                         enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
+                        # Import parent modules first to help with relative imports
+                        try:
+                            import src.enrichment
+                            import src.enrichment.whois_enrichment
+                            import src.enrichment.ip_enrichment
+                            import src.enrichment.cms_enrichment
+                            import src.enrichment.payment_detection
+                            import src.enrichment.tech_stack_enrichment
+                        except ImportError as import_err:
+                            print(f"⚠️  ShadowStack: Some dependency imports failed: {import_err}")
+                        
                         spec.loader.exec_module(enrichment_pipeline_module)
-                        enrich_func = enrichment_pipeline_module.enrich_domain
-                        print("✅ ShadowStack: File-based import succeeded!")
+                        if hasattr(enrichment_pipeline_module, 'enrich_domain'):
+                            enrich_func = enrichment_pipeline_module.enrich_domain
+                            print("✅ ShadowStack: File-based import succeeded!")
+                        else:
+                            print(f"❌ ShadowStack: File-based import succeeded but enrich_domain not found. Available: {dir(enrichment_pipeline_module)}")
                     else:
                         print("❌ ShadowStack: Failed to create spec for file import")
                 except Exception as e2:
