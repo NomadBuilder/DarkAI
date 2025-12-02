@@ -1413,9 +1413,47 @@
             if (label) {
               label += ': ';
             }
-            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-            const percentage = ((context.parsed / total) * 100).toFixed(1);
-            label += context.parsed + ' (' + percentage + '%)';
+            
+            // Get the value - try multiple methods to be robust
+            // Priority: context.raw (most reliable) > context.parsed.y (bar charts) > context.parsed (doughnut)
+            let value = 0;
+            
+            // Method 1: Try context.raw first (always the actual data value)
+            if (context.raw !== undefined && context.raw !== null) {
+              const rawValue = typeof context.raw === 'number' ? context.raw : parseFloat(context.raw);
+              if (!isNaN(rawValue) && isFinite(rawValue)) {
+                value = rawValue;
+              }
+            }
+            
+            // Method 2: If raw didn't work, try context.parsed.y (for bar charts)
+            if (value === 0 && context.parsed) {
+              if (typeof context.parsed === 'object' && context.parsed !== null) {
+                const parsedY = context.parsed.y;
+                if (typeof parsedY === 'number' && !isNaN(parsedY) && isFinite(parsedY)) {
+                  value = parsedY;
+                }
+              }
+            }
+            
+            // Method 3: Try context.parsed as number (for doughnut charts)
+            if (value === 0 && typeof context.parsed === 'number' && !isNaN(context.parsed) && isFinite(context.parsed)) {
+              value = context.parsed;
+            }
+            
+            // Ensure value is a valid number
+            const numValue = typeof value === 'number' && !isNaN(value) && isFinite(value) ? value : 0;
+            
+            // Calculate total from dataset data (simple array of numbers)
+            const dataArray = context.dataset.data || [];
+            const total = dataArray.reduce((sum, val) => {
+              const num = typeof val === 'number' ? val : parseFloat(val) || 0;
+              return sum + (typeof num === 'number' && !isNaN(num) && isFinite(num) ? num : 0);
+            }, 0);
+            
+            // Calculate percentage
+            const percentage = total > 0 ? ((numValue / total) * 100).toFixed(1) : '0.0';
+            label += numValue + ' (' + percentage + '%)';
             return label;
           }
         }

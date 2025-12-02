@@ -93,6 +93,58 @@ except Exception as e:
     print(f"⚠️  ShadowStack: Could not initialize PostgreSQL client: {e}")
     postgres_client = None
 
+
+def get_enrich_domain_function():
+    """
+    Get the enrich_domain function, using dynamic import if global import failed.
+    Returns the function or None if not available.
+    """
+    # Try to use the global enrich_domain first (if it was imported successfully)
+    enrich_func = enrich_domain
+    
+    # If global import failed, try dynamic import using importlib (more robust)
+    # Note: This handles cases where the module wasn't imported at load time
+    # (e.g., in production environments with different import paths)
+    if not enrich_func:
+        import importlib.util
+        import sys
+        
+        enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+        if not enrichment_pipeline_path.exists():
+            return None
+        
+        # For dynamic import with relative imports, we need to set up the package structure
+        # Instead of loading the file directly, we'll import it as a module
+        original_path = sys.path[:]
+        if str(blueprint_dir) not in sys.path:
+            sys.path.insert(0, str(blueprint_dir))
+        
+        try:
+            # Try importing as a proper module (this handles relative imports correctly)
+            try:
+                import src.enrichment.enrichment_pipeline as enrichment_module
+                enrich_func = enrichment_module.enrich_domain
+            except ImportError:
+                # Fallback: try loading the file directly (may fail with relative imports)
+                spec = importlib.util.spec_from_file_location(
+                    "src.enrichment.enrichment_pipeline", 
+                    enrichment_pipeline_path
+                )
+                if spec and spec.loader:
+                    enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+                    # Set __package__ to help with relative imports
+                    enrichment_pipeline_module.__package__ = 'src.enrichment'
+                    enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
+                    spec.loader.exec_module(enrichment_pipeline_module)
+                    enrich_func = enrichment_pipeline_module.enrich_domain
+        except Exception as e:
+            print(f"⚠️  ShadowStack: Dynamic import also failed: {e}")
+            enrich_func = None
+        finally:
+            sys.path[:] = original_path
+    
+    return enrich_func
+
 @shadowstack_bp.route('/')
 def index():
     """Render the splash/landing page."""
@@ -232,12 +284,17 @@ def check_domain_only():
     domain = data['domain'].strip()
     
     try:
-        # Enrich domain but DON'T store it
-        if not enrich_domain:
-            return jsonify({"error": "Enrichment pipeline not available"}), 500
+        # Get enrich_domain function (tries dynamic import if global import failed)
+        enrich_func = get_enrich_domain_function()
+        
+        if not enrich_func:
+            return jsonify({
+                "error": "Enrichment pipeline not available",
+                "message": "Could not load enrichment pipeline. Please check server logs."
+            }), 500
         
         print(f"Checking domain (no storage): {domain}")
-        enrichment_data = enrich_domain(domain)
+        enrichment_data = enrich_func(domain)
         
         return jsonify({
             "message": "Domain analyzed successfully (not stored)",
@@ -731,12 +788,18 @@ def enrich_and_store():
                 "status": "exists"
             }), 200
         
-        # Enrich domain
-        if not enrich_domain:
-            return jsonify({"error": "Enrichment pipeline not available"}), 500
+        # Get enrich_domain function (tries dynamic import if global import failed)
+        enrich_func = get_enrich_domain_function()
+        
+        if not enrich_func:
+            postgres.close()
+            return jsonify({
+                "error": "Enrichment pipeline not available",
+                "message": "Could not load enrichment pipeline. Please check server logs."
+            }), 500
         
         print(f"Enriching domain: {domain}")
-        enrichment_data = enrich_domain(domain)
+        enrichment_data = enrich_func(domain)
         
         # Store in PostgreSQL
         domain_id = postgres.insert_domain(domain, source, notes)
