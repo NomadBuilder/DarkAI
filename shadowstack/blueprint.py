@@ -131,22 +131,47 @@ def get_enrich_domain_function():
             print(f"✅ ShadowStack: Added {blueprint_dir} to sys.path")
         
         try:
-            # Use file-based import with unique module name to avoid conflicts with other blueprints
+            # Use file-based import to avoid conflicts with other blueprints
             # This ensures we load ShadowStack's enrichment_pipeline, not BlackWire's or PersonaForge's
             print("🔍 ShadowStack: Attempting file-based import (to avoid blueprint conflicts)...")
             
-            # Use a unique module name to avoid conflicts
-            unique_module_name = f"shadowstack_enrichment_pipeline_{id(enrichment_pipeline_path)}"
+            # CRITICAL: Clear the cached module FIRST before creating new loader
+            # Use the same module name so Python doesn't complain
+            module_name = 'src.enrichment.enrichment_pipeline'
+            if module_name in sys.modules:
+                cached_mod = sys.modules[module_name]
+                if hasattr(cached_mod, '__file__') and cached_mod.__file__:
+                    cached_file = str(cached_mod.__file__)
+                    # Only clear if it's from a different blueprint
+                    if ('blackwire' in cached_file or 'personaforge' in cached_file) and 'shadowstack' not in cached_file:
+                        print(f"⚠️  ShadowStack: Clearing conflicting cached module {module_name} from {cached_file}")
+                        del sys.modules[module_name]
+                        # Also clear any submodules that might be cached
+                        submodules_to_clear = [k for k in list(sys.modules.keys()) 
+                                             if k.startswith('src.enrichment.') and k != module_name]
+                        for submod in submodules_to_clear:
+                            submod_obj = sys.modules[submod]
+                            if hasattr(submod_obj, '__file__') and submod_obj.__file__:
+                                if ('blackwire' in str(submod_obj.__file__) or 'personaforge' in str(submod_obj.__file__)) and 'shadowstack' not in str(submod_obj.__file__):
+                                    print(f"⚠️  ShadowStack: Clearing conflicting submodule {submod}")
+                                    del sys.modules[submod]
             
+            # Before executing, ensure ShadowStack's directory is first in sys.path
+            shadowstack_src_path = str(blueprint_dir / 'src')
+            if shadowstack_src_path not in sys.path:
+                sys.path.insert(0, shadowstack_src_path)
+                print(f"✅ ShadowStack: Added {shadowstack_src_path} to sys.path")
+            
+            # Now create the spec with the correct module name
             spec = importlib.util.spec_from_file_location(
-                unique_module_name,
+                module_name,  # Use the actual module name, not a unique one
                 enrichment_pipeline_path
             )
             if spec and spec.loader:
                 enrichment_pipeline_module = importlib.util.module_from_spec(spec)
                 # Set __package__ and __name__ to help with relative imports
                 enrichment_pipeline_module.__package__ = 'src.enrichment'
-                enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
+                enrichment_pipeline_module.__name__ = module_name
                 enrichment_pipeline_module.__file__ = str(enrichment_pipeline_path)
                 
                 # CRITICAL: Set __path__ so relative imports work from ShadowStack's directory
@@ -154,30 +179,11 @@ def get_enrich_domain_function():
                 if not hasattr(enrichment_pipeline_module, '__path__'):
                     enrichment_pipeline_module.__path__ = [str(enrichment_dir)]
                 
-                # Before executing, ensure ShadowStack's directory is first in sys.path
-                # and clear conflicting cached modules
-                shadowstack_src_path = str(blueprint_dir / 'src')
-                if shadowstack_src_path not in sys.path:
-                    sys.path.insert(0, shadowstack_src_path)
-                
-                # Clear any cached src.enrichment modules that might be from other blueprints
-                modules_to_clear = []
-                for mod_name in list(sys.modules.keys()):
-                    if mod_name.startswith('src.enrichment.'):
-                        mod = sys.modules[mod_name]
-                        if hasattr(mod, '__file__') and mod.__file__:
-                            mod_file = str(mod.__file__)
-                            # If it's from a different blueprint, clear it
-                            if 'blackwire' in mod_file or 'personaforge' in mod_file:
-                                if 'shadowstack' not in mod_file:
-                                    modules_to_clear.append(mod_name)
-                
-                for mod_name in modules_to_clear:
-                    print(f"⚠️  ShadowStack: Clearing conflicting module {mod_name}")
-                    del sys.modules[mod_name]
-                
                 # Now execute the module - relative imports will use ShadowStack's directory
                 spec.loader.exec_module(enrichment_pipeline_module)
+                
+                # Store in sys.modules so future imports use this one
+                sys.modules[module_name] = enrichment_pipeline_module
                 
                 if hasattr(enrichment_pipeline_module, 'enrich_domain'):
                     enrich_func = enrichment_pipeline_module.enrich_domain
