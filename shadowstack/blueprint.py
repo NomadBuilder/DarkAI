@@ -156,34 +156,88 @@ def get_enrich_domain_function():
                                     print(f"⚠️  ShadowStack: Clearing conflicting submodule {submod}")
                                     del sys.modules[submod]
             
-            # Before executing, ensure ShadowStack's directory is first in sys.path
-            shadowstack_src_path = str(blueprint_dir / 'src')
-            if shadowstack_src_path not in sys.path:
-                sys.path.insert(0, shadowstack_src_path)
-                print(f"✅ ShadowStack: Added {shadowstack_src_path} to sys.path")
-            
-            # Now create the spec with the correct module name
-            spec = importlib.util.spec_from_file_location(
-                module_name,  # Use the actual module name, not a unique one
-                enrichment_pipeline_path
-            )
-            if spec and spec.loader:
-                enrichment_pipeline_module = importlib.util.module_from_spec(spec)
-                # Set __package__ and __name__ to help with relative imports
-                enrichment_pipeline_module.__package__ = 'src.enrichment'
-                enrichment_pipeline_module.__name__ = module_name
-                enrichment_pipeline_module.__file__ = str(enrichment_pipeline_path)
+                # Before executing, ensure ShadowStack's directory is first in sys.path
+                shadowstack_src_path = str(blueprint_dir / 'src')
+                if shadowstack_src_path not in sys.path:
+                    sys.path.insert(0, shadowstack_src_path)
+                    print(f"✅ ShadowStack: Added {shadowstack_src_path} to sys.path")
                 
-                # CRITICAL: Set __path__ so relative imports work from ShadowStack's directory
+                # CRITICAL: Set up the package structure for relative imports
+                # First, ensure src.enrichment package exists
                 enrichment_dir = enrichment_pipeline_path.parent
-                if not hasattr(enrichment_pipeline_module, '__path__'):
-                    enrichment_pipeline_module.__path__ = [str(enrichment_dir)]
                 
-                # Now execute the module - relative imports will use ShadowStack's directory
-                spec.loader.exec_module(enrichment_pipeline_module)
+                # Create/update src.enrichment package in sys.modules
+                if 'src.enrichment' not in sys.modules:
+                    # Create the package module
+                    enrichment_pkg = type(sys)('src.enrichment')
+                    enrichment_pkg.__path__ = [str(enrichment_dir)]
+                    enrichment_pkg.__package__ = 'src.enrichment'
+                    enrichment_pkg.__name__ = 'src.enrichment'
+                    sys.modules['src.enrichment'] = enrichment_pkg
+                    print("✅ ShadowStack: Created src.enrichment package")
+                else:
+                    # Update existing package to point to ShadowStack's directory
+                    enrichment_pkg = sys.modules['src.enrichment']
+                    if hasattr(enrichment_pkg, '__path__'):
+                        if str(enrichment_dir) not in enrichment_pkg.__path__:
+                            enrichment_pkg.__path__.insert(0, str(enrichment_dir))
+                    else:
+                        enrichment_pkg.__path__ = [str(enrichment_dir)]
+                    print("✅ ShadowStack: Updated src.enrichment package path")
                 
-                # Store in sys.modules so future imports use this one
-                sys.modules[module_name] = enrichment_pipeline_module
+                # Load dependency modules first (needed for relative imports)
+                dependency_files = [
+                    'whois_enrichment.py',
+                    'ip_enrichment.py',
+                    'cms_enrichment.py',
+                    'payment_detection.py',
+                    'tech_stack_enrichment.py',
+                ]
+                
+                for dep_file in dependency_files:
+                    dep_path = enrichment_dir / dep_file
+                    if dep_path.exists():
+                        dep_module_name = f'src.enrichment.{dep_file[:-3]}'  # Remove .py
+                        # Clear if it's from wrong blueprint
+                        if dep_module_name in sys.modules:
+                            mod = sys.modules[dep_module_name]
+                            if hasattr(mod, '__file__') and mod.__file__:
+                                if ('blackwire' in str(mod.__file__) or 'personaforge' in str(mod.__file__)) and 'shadowstack' not in str(mod.__file__):
+                                    print(f"⚠️  ShadowStack: Clearing conflicting {dep_module_name}")
+                                    del sys.modules[dep_module_name]
+                        
+                        # Load the dependency module
+                        if dep_module_name not in sys.modules:
+                            try:
+                                dep_spec = importlib.util.spec_from_file_location(dep_module_name, dep_path)
+                                if dep_spec and dep_spec.loader:
+                                    dep_mod = importlib.util.module_from_spec(dep_spec)
+                                    dep_mod.__package__ = 'src.enrichment'
+                                    dep_mod.__name__ = dep_module_name
+                                    dep_mod.__file__ = str(dep_path)
+                                    dep_spec.loader.exec_module(dep_mod)
+                                    sys.modules[dep_module_name] = dep_mod
+                                    print(f"✅ ShadowStack: Loaded {dep_module_name}")
+                            except Exception as e:
+                                print(f"⚠️  ShadowStack: Could not load {dep_module_name}: {e}")
+                
+                # Now create the spec with the correct module name
+                spec = importlib.util.spec_from_file_location(
+                    module_name,  # Use the actual module name, not a unique one
+                    enrichment_pipeline_path
+                )
+                if spec and spec.loader:
+                    enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+                    # Set __package__ and __name__ to help with relative imports
+                    enrichment_pipeline_module.__package__ = 'src.enrichment'
+                    enrichment_pipeline_module.__name__ = module_name
+                    enrichment_pipeline_module.__file__ = str(enrichment_pipeline_path)
+                    
+                    # Now execute the module - relative imports should work now
+                    spec.loader.exec_module(enrichment_pipeline_module)
+                    
+                    # Store in sys.modules so future imports use this one
+                    sys.modules[module_name] = enrichment_pipeline_module
                 
                 if hasattr(enrichment_pipeline_module, 'enrich_domain'):
                     enrich_func = enrichment_pipeline_module.enrich_domain
