@@ -110,7 +110,12 @@ def get_enrich_domain_function():
         import sys
         
         enrichment_pipeline_path = blueprint_dir / 'src' / 'enrichment' / 'enrichment_pipeline.py'
+        print(f"🔍 ShadowStack: Trying dynamic import from {enrichment_pipeline_path}")
+        print(f"   Blueprint dir: {blueprint_dir}")
+        print(f"   Path exists: {enrichment_pipeline_path.exists()}")
+        
         if not enrichment_pipeline_path.exists():
+            print(f"❌ ShadowStack: Enrichment pipeline file not found at {enrichment_pipeline_path}")
             return None
         
         # For dynamic import with relative imports, we need to set up the package structure
@@ -118,30 +123,50 @@ def get_enrich_domain_function():
         original_path = sys.path[:]
         if str(blueprint_dir) not in sys.path:
             sys.path.insert(0, str(blueprint_dir))
+            print(f"✅ ShadowStack: Added {blueprint_dir} to sys.path")
         
         try:
             # Try importing as a proper module (this handles relative imports correctly)
             try:
+                print("🔍 ShadowStack: Attempting module import...")
                 import src.enrichment.enrichment_pipeline as enrichment_module
                 enrich_func = enrichment_module.enrich_domain
-            except ImportError:
+                print("✅ ShadowStack: Module import succeeded!")
+            except ImportError as e:
+                print(f"⚠️  ShadowStack: Module import failed: {e}")
                 # Fallback: try loading the file directly (may fail with relative imports)
-                spec = importlib.util.spec_from_file_location(
-                    "src.enrichment.enrichment_pipeline", 
-                    enrichment_pipeline_path
-                )
-                if spec and spec.loader:
-                    enrichment_pipeline_module = importlib.util.module_from_spec(spec)
-                    # Set __package__ to help with relative imports
-                    enrichment_pipeline_module.__package__ = 'src.enrichment'
-                    enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
-                    spec.loader.exec_module(enrichment_pipeline_module)
-                    enrich_func = enrichment_pipeline_module.enrich_domain
+                try:
+                    print("🔍 ShadowStack: Attempting file-based import...")
+                    spec = importlib.util.spec_from_file_location(
+                        "src.enrichment.enrichment_pipeline", 
+                        enrichment_pipeline_path
+                    )
+                    if spec and spec.loader:
+                        enrichment_pipeline_module = importlib.util.module_from_spec(spec)
+                        # Set __package__ to help with relative imports
+                        enrichment_pipeline_module.__package__ = 'src.enrichment'
+                        enrichment_pipeline_module.__name__ = 'src.enrichment.enrichment_pipeline'
+                        spec.loader.exec_module(enrichment_pipeline_module)
+                        enrich_func = enrichment_pipeline_module.enrich_domain
+                        print("✅ ShadowStack: File-based import succeeded!")
+                    else:
+                        print("❌ ShadowStack: Failed to create spec for file import")
+                except Exception as e2:
+                    print(f"❌ ShadowStack: File-based import failed: {e2}")
+                    import traceback
+                    traceback.print_exc()
         except Exception as e:
-            print(f"⚠️  ShadowStack: Dynamic import also failed: {e}")
+            print(f"❌ ShadowStack: Dynamic import failed with exception: {e}")
+            import traceback
+            traceback.print_exc()
             enrich_func = None
         finally:
             sys.path[:] = original_path
+    
+    if enrich_func:
+        print(f"✅ ShadowStack: enrich_domain function available: {enrich_func}")
+    else:
+        print(f"❌ ShadowStack: enrich_domain function NOT available")
     
     return enrich_func
 
