@@ -24,3 +24,4 @@ python-whois==0.8.0
 requests==2.31.0
 selenium==4.15.2
 setuptools>=80.0.0  # Required for python-wappalyzer
+flask-swagger-ui==4.11.1  # Swagger/OpenAPI documentation

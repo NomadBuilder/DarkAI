@@ -1,0 +1,218 @@
+openapi: 3.0.0
+info:
+  title: ShadowStack API
+  description: API for ShadowStack - NCII Infrastructure Mapping
+  version: 1.0.0
+  contact:
+    name: DarkAI Support
+    url: https://darkai.ca
+
+servers:
+  - url: https://darkai.ca/shadowstack/api
+    description: Production server
+  - url: http://localhost:5000/shadowstack/api
+    description: Local development server
+
+paths:
+  /check:
+    post:
+      summary: Check/enrich a domain
+      description: |
+        Analyze a domain's infrastructure without storing it in the database.
+        Results are cached for 24 hours by default to avoid redundant API calls.
+      operationId: checkDomain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - domain
+              properties:
+                domain:
+                  type: string
+                  example: "example.com"
+                  description: Domain name to analyze
+      responses:
+        '200':
+          description: Domain analyzed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  domain:
+                    type: string
+                  data:
+                    type: object
+                    description: Enrichment data including WHOIS, DNS, IP, tech stack, etc.
+                  status:
+                    type: string
+        '400':
+          description: Bad request - domain is required
+        '500':
+          description: Server error - enrichment pipeline not available
+
+  /enrich:
+    post:
+      summary: Enrich and store a domain
+      description: |
+        Enrich a domain and store the results in the database.
+        This endpoint saves the domain to the ShadowStack dataset.
+      operationId: enrichAndStore
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - domain
+              properties:
+                domain:
+                  type: string
+                  example: "example.com"
+                source:
+                  type: string
+                  example: "Manual entry"
+                notes:
+                  type: string
+                  example: "Optional notes about this domain"
+      responses:
+        '200':
+          description: Domain enriched and stored successfully
+        '400':
+          description: Bad request
+        '500':
+          description: Server error
+
+  /domains:
+    get:
+      summary: Get all enriched domains
+      description: Retrieve all domains from the database with their enrichment data
+      operationId: getDomains
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+          description: Maximum number of domains to return
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+          description: Number of domains to skip
+      responses:
+        '200':
+          description: List of domains
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  domains:
+                    type: array
+                    items:
+                      type: object
+                  count:
+                    type: integer
+
+  /graph:
+    get:
+      summary: Get graph data
+      description: |
+        Retrieve graph data showing relationships between domains and services
+        (CDN, CMS, hosting, registrars, etc.)
+      operationId: getGraph
+      responses:
+        '200':
+          description: Graph data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  nodes:
+                    type: array
+                    items:
+                      type: object
+                  edges:
+                    type: array
+                    items:
+                      type: object
+                  stats:
+                    type: object
+
+  /stats:
+    get:
+      summary: Get statistics
+      description: Get statistics about the dataset
+      operationId: getStats
+      responses:
+        '200':
+          description: Statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_nodes:
+                    type: integer
+                  total_edges:
+                    type: integer
+                  node_types:
+                    type: object
+
+  /cache/stats:
+    get:
+      summary: Get cache statistics
+      description: |
+        Get statistics about the enrichment cache including number of cached entries,
+        valid entries, expired entries, and TTL settings.
+      operationId: getCacheStats
+      responses:
+        '200':
+          description: Cache statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  enabled:
+                    type: boolean
+                  total_entries:
+                    type: integer
+                  valid_entries:
+                    type: integer
+                  expired_entries:
+                    type: integer
+                  ttl_hours:
+                    type: integer
+
+  /cache/clear:
+    post:
+      summary: Clear the cache
+      description: |
+        Clear all or specific cached enrichment results.
+        Use this to force fresh enrichment for domains.
+      operationId: clearCache
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                entity_type:
+                  type: string
+                  example: "domain"
+                  description: Optional - clear only specific entity type
+      responses:
+        '200':
+          description: Cache cleared successfully
+

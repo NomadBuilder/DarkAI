@@ -286,6 +286,85 @@ def check():
     return render_template('check.html')
 
 
+@shadowstack_bp.route('/api/docs')
+@shadowstack_bp.route('/api-docs')
+def api_docs():
+    """Render Swagger/OpenAPI documentation."""
+    try:
+        from flask_swagger_ui import get_swaggerui_blueprint
+        
+        # Create Swagger UI blueprint
+        swaggerui_blueprint = get_swaggerui_blueprint(
+            '/shadowstack/api-docs',  # Swagger UI URL
+            '/shadowstack/static/api-docs.yaml',  # OpenAPI spec URL
+            config={
+                'app_name': "ShadowStack API"
+            }
+        )
+        
+        # Register it temporarily (or add to main app)
+        # For now, return a simple HTML page with Swagger UI
+        return f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>ShadowStack API Documentation</title>
+            <link rel="stylesheet" type="text/css" href="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui.css" />
+            <style>
+                html {{
+                    box-sizing: border-box;
+                    overflow: -moz-scrollbars-vertical;
+                    overflow-y: scroll;
+                }}
+                *, *:before, *:after {{
+                    box-sizing: inherit;
+                }}
+                body {{
+                    margin:0;
+                    background: #fafafa;
+                }}
+            </style>
+        </head>
+        <body>
+            <div id="swagger-ui"></div>
+            <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-bundle.js"></script>
+            <script src="https://unpkg.com/swagger-ui-dist@4.15.5/swagger-ui-standalone-preset.js"></script>
+            <script>
+                window.onload = function() {{
+                    const ui = SwaggerUIBundle({{
+                        url: "/shadowstack/static/api-docs.yaml",
+                        dom_id: '#swagger-ui',
+                        presets: [
+                            SwaggerUIBundle.presets.apis,
+                            SwaggerUIBundle.presets.standalone
+                        ],
+                        layout: "StandaloneLayout",
+                        deepLinking: true,
+                        showExtensions: true,
+                        showCommonExtensions: true
+                    }});
+                }};
+            </script>
+        </body>
+        </html>
+        """
+    except ImportError:
+        # Fallback to simple JSON view
+        return jsonify({
+            "message": "Swagger UI not available. Install flask-swagger-ui to view interactive documentation.",
+            "api_spec_url": "/shadowstack/static/api-docs.yaml",
+            "endpoints": [
+                "POST /api/check - Check/enrich a domain (cached)",
+                "POST /api/enrich - Enrich and store a domain",
+                "GET /api/domains - Get all domains",
+                "GET /api/graph - Get graph data",
+                "GET /api/stats - Get statistics",
+                "GET /api/cache/stats - Get cache statistics",
+                "POST /api/cache/clear - Clear cache"
+            ]
+        }), 200
+
+
 # List of legitimate domains that should NEVER be in ShadowStack
 LEGITIMATE_DOMAINS_BLOCKLIST = {
     'usatoday.com', 'vanityfair.com', 'politico.com', 'marketwatch.com',
@@ -381,6 +460,66 @@ def cleanup_invalid_domains():
         return jsonify({"error": str(e)}), 500
 
 
+@shadowstack_bp.route('/api/cache/stats', methods=['GET'])
+def get_cache_stats():
+    """
+    Get cache statistics.
+    
+    GET /api/cache/stats
+    
+    Returns:
+        {
+            "enabled": true,
+            "total_entries": 10,
+            "valid_entries": 8,
+            "expired_entries": 2,
+            "ttl_hours": 24
+        }
+    """
+    try:
+        from src.utils.cache import get_cache_stats
+        stats = get_cache_stats()
+        return jsonify(stats), 200
+    except ImportError:
+        return jsonify({
+            "enabled": False,
+            "error": "Cache utilities not available"
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+@shadowstack_bp.route('/api/cache/clear', methods=['POST'])
+def clear_cache_endpoint():
+    """
+    Clear the enrichment cache.
+    
+    POST /api/cache/clear
+    Body (optional): {
+        "entity_type": "domain"  # Optional: clear only specific entity type
+    }
+    """
+    try:
+        from src.utils.cache import clear_cache
+        data = request.get_json() or {}
+        entity_type = data.get('entity_type')
+        clear_cache(entity_type)
+        return jsonify({
+            "message": "Cache cleared successfully",
+            "entity_type": entity_type or "all"
+        }), 200
+    except ImportError:
+        return jsonify({
+            "error": "Cache utilities not available"
+        }), 500
+    except Exception as e:
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
 @shadowstack_bp.route('/api/check', methods=['POST'])
 def check_domain_only():
     """
@@ -391,6 +530,14 @@ def check_domain_only():
     Body: {
         "domain": "example.com"
     }
+    
+    Returns:
+        {
+            "message": "Domain analyzed successfully (not stored)",
+            "domain": "example.com",
+            "data": { ... enrichment data ... },
+            "status": "checked"
+        }
     """
     data = request.get_json()
     

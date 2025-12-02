@@ -7,6 +7,24 @@ from .cms_enrichment import detect_cms
 from .payment_detection import detect_payment_processors
 from .tech_stack_enrichment import detect_full_tech_stack
 
+# Try to import cache utilities (may not be available in all contexts)
+try:
+    # Try relative import first (when used as a module)
+    try:
+        from ...utils.cache import get_cached, set_cached
+        from ...utils.config import Config
+    except (ImportError, ValueError):
+        # Fallback to absolute import
+        from src.utils.cache import get_cached, set_cached
+        from src.utils.config import Config
+    CACHE_AVAILABLE = True
+except ImportError:
+    # Cache not available (e.g., during initial import)
+    CACHE_AVAILABLE = False
+    get_cached = None
+    set_cached = None
+    Config = None
+
 # Try to import Wappalyzer for full tech stack
 try:
     from Wappalyzer import Wappalyzer, WebPage
@@ -29,6 +47,17 @@ def enrich_domain(domain: str) -> Dict:
     Returns:
         Dictionary containing all enrichment data
     """
+    # Check cache first
+    if CACHE_AVAILABLE and Config and Config.CACHE_ENABLED and get_cached:
+        try:
+            cached_result = get_cached("domain", domain)
+            if cached_result:
+                print(f"✓ Using cached enrichment for {domain}")
+                cached_result["_cached"] = True
+                return cached_result
+        except Exception as e:
+            print(f"⚠️  Cache check failed: {e}, proceeding with enrichment")
+    
     print(f"Enriching domain: {domain}")
     
     result = {
@@ -188,5 +217,16 @@ def enrich_domain(domain: str) -> Dict:
     
     print(f"  ✓ Enrichment complete for {domain}")
     
+    # Cache the result if caching is enabled
+    if CACHE_AVAILABLE and Config and Config.CACHE_ENABLED and set_cached:
+        try:
+            # Only cache if enrichment was successful (no major errors)
+            if result and not result.get("errors"):
+                set_cached("domain", domain, result)
+                print(f"  ✓ Cached enrichment for {domain}")
+        except Exception as e:
+            print(f"⚠️  Cache save failed: {e}")
+    
+    result["_cached"] = False
     return result
 
