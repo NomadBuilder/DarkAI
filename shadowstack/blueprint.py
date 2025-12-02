@@ -99,8 +99,13 @@ def get_enrich_domain_function():
     Get the enrich_domain function, using dynamic import if global import failed.
     Returns the function or None if not available.
     """
+    print(f"🔍 ShadowStack get_enrich_domain_function: Starting...")
+    print(f"   Global enrich_domain value: {enrich_domain}")
+    print(f"   Blueprint dir: {blueprint_dir}")
+    
     # Try to use the global enrich_domain first (if it was imported successfully)
     enrich_func = enrich_domain
+    print(f"   Initial enrich_func: {enrich_func}")
     
     # If global import failed, try dynamic import using importlib (more robust)
     # Note: This handles cases where the module wasn't imported at load time
@@ -336,13 +341,18 @@ def check_domain_only():
     
     try:
         # Get enrich_domain function (tries dynamic import if global import failed)
+        print(f"🔍 ShadowStack /api/check: Calling get_enrich_domain_function()...")
         enrich_func = get_enrich_domain_function()
+        print(f"🔍 ShadowStack /api/check: get_enrich_domain_function() returned: {enrich_func}")
         
         if not enrich_func:
+            print(f"❌ ShadowStack /api/check: enrich_func is None - returning error")
             return jsonify({
                 "error": "Enrichment pipeline not available",
                 "message": "Could not load enrichment pipeline. Please check server logs."
             }), 500
+        
+        print(f"✅ ShadowStack /api/check: enrich_func is available, proceeding with enrichment")
         
         print(f"Checking domain (no storage): {domain}")
         enrichment_data = enrich_func(domain)
