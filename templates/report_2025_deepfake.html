@@ -1157,7 +1157,7 @@
     </div>
     <div class="content-with-chart">
       <div class="text-content">
-        <p>About one-third of all respondents said yes or maybe when asked if they personally know someone victimized.</p>
+        <p id="knowSomeoneText">About <span id="knowSomeonePercentText">-</span>% of all respondents said yes or maybe when asked if they personally know someone victimized.</p>
         <p>The "maybe" group is important — it often reflects:</p>
         <ul>
           <li>Rumours</li>
@@ -1530,6 +1530,12 @@
       if (knowSomeoneEl) {
         knowSomeoneEl.textContent = knowSomeonePercent + '%';
         animateValue(knowSomeoneEl, 0, knowSomeonePercent, 1200);
+      }
+      
+      // Update the text to match the calculated percentage
+      const knowSomeonePercentTextEl = document.getElementById('knowSomeonePercentText');
+      if (knowSomeonePercentTextEl) {
+        knowSomeonePercentTextEl.textContent = knowSomeonePercent;
       }
       
       const worriedYes = (data.worried['Yes'] || 0) + (data.worried['Maybe'] || 0);
