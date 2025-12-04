@@ -1,6 +1,14 @@
 """Main enrichment pipeline that orchestrates all enrichment steps."""
 
+import warnings
+import urllib3
 from typing import Dict, List
+
+# Suppress SSL certificate verification warnings
+# (Many malicious/sketchy sites have invalid certificates - this is expected)
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+warnings.filterwarnings('ignore', message='Unverified HTTPS request')
+
 from .whois_enrichment import enrich_whois, enrich_dns
 from .ip_enrichment import enrich_ip_location
 from .cms_enrichment import detect_cms

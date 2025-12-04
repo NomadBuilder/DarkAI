@@ -1,11 +1,12 @@
 """
 ShadowStack real domain data.
 
-This file contains the 110 real domains that ShadowStack tracks for NCII infrastructure analysis.
-These domains are imported from the original CSV dataset.
+This file contains the full merged master list of real domains that ShadowStack tracks
+for NCII and AI sexual exploitation infrastructure analysis.
+These domains are imported from the original CSV dataset and expanded crawl sources.
 """
 
-# 110 real domains from ShadowStack dataset
+# Master merged ShadowStack domain list (V1 + Expansion + V2 + V3)
 SHADOWSTACK_DOMAINS = [
     "undress.app",
     "www.deep-nude.ai",
@@ -117,5 +118,108 @@ SHADOWSTACK_DOMAINS = [
     "facy.ai",
     "pornworks.com",
     "sexystars.online",
-]
 
+    # --- Expansion batch 1 ---
+    "dreamgf.com",
+    "nudify.info",
+    "unlucid.ai",
+    "peec.ai",
+    "undresser.ai",
+    "deep-nudes.com",
+    "unclothy.com",
+    "nudify.me",
+    "undress.xxx",
+    "celebfakes.ru",
+    "imagefap.com",
+    "famousboard.com",
+    "ainudez.com",
+    "swapper.ai",
+    "nudemaker.ai",
+    "spicygen.ai",
+    "airnude.best",
+    "crushai.app",
+    "deepswap.me",
+    "merlio.app",
+    "undressai.tools",
+    "n8ked.app",
+    "undress.ws",
+    "ai-undress.ai",
+    "deepnude-ai.app",
+    "apwise.com",
+    "swaperface.com",
+    "cutebaby.me",
+    "nodress.ai",
+    "ai-deep-nude.com",
+    "nudiva.fun",
+    "xundress.com",
+    "ainude.site",
+    "astridai.com",
+    "deepmode.ai",
+    "newfaceporn.com",
+    "bestfaceswapp.ai",
+    "deepfakes.xxx",
+    "aillure.ai",
+    "deepfakenudes.bot",
+    "deepnudenow.bot",
+    "removeclothes.bot",
+    "velena.ai",
+    "faceapp.com",
+    "avatarify.ai",
+    "reface.ai",
+
+    # --- Expansion batch 2 (V2) ---
+    "deepnudeai.net",
+    "undressphoto.com",
+    "nude-ai.io",
+    "clothoff.pro",
+    "deep-nudify.com",
+    "nudifyapp.com",
+    "undressme.ai",
+    "xnudify.com",
+    "deepfakery.ai",
+    "dreamnudes.ai",
+    "nudevision.ai",
+    "stripai.app",
+    "undressbot.net",
+    "deepfakegenerator.ai",
+    "celebnudes.ai",
+    "fakenudes.net",
+    "undresspro.ai",
+    "nudeit.ai",
+    "deepstripper.com",
+    "ai-nudes.com",
+
+    # Face swap / impersonation focused
+    "faceswap.ai",
+    "swapface.app",
+    "aifaceswapper.com",
+    "deepface.ai",
+    "faceswapme.ai",
+    "realfaceswap.com",
+
+    # Celebrity-focused abuse vectors
+    "celebfakes.net",
+    "fakecelebs.com",
+    "celebnude.ai",
+    "celebdeepfake.net",
+    "deepfakeceleb.com",
+
+    # Telegram / bot landing infrastructure
+    "deepnude-bot.com",
+    "undress-bot.ai",
+    "nudifybot.net",
+    "stripperbot.ai",
+
+    # Generator / NSFW AI image hubs
+    "nsfwai.art",
+    "pornai.app",
+    "aiporn.site",
+    "nsfwgenerator.ai",
+    "ai-porn.io",
+
+    # --- Expansion batch 3 (V3 to reach 200) ---
+    "nudegen.ai",
+    "stripme.ai",
+    "fakegf.ai",
+    "deepnudebot.ai",
+]

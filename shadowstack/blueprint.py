@@ -537,7 +537,7 @@ def check_domain_only():
             "domain": "example.com",
             "data": { ... enrichment data ... },
             "status": "checked"
-        }
+    }
     """
     data = request.get_json()
     
@@ -1399,12 +1399,47 @@ def import_domains():
 def enrich_all_domains():
     """
     Enrich all domains that don't have enrichment data yet.
-    This will add CDN, host, registrar, etc. data so the graph can show clusters.
+    This will:
+    1. Import any domains from domains.py that aren't in the database
+    2. Enrich all domains that don't have enrichment data yet
+    
+    This works for both local and production environments.
     """
     postgres = PostgresClient()
     
     try:
-        # Get all domains
+        # Import domains from domains.py that aren't in database yet
+        try:
+            from src.data.domains import SHADOWSTACK_DOMAINS
+            all_domains_list = SHADOWSTACK_DOMAINS
+            
+            # Get existing domains from database
+            db_domains = postgres.get_all_enriched_domains()
+            db_domains_set = {d['domain'].lower() for d in db_domains if d.get('domain')}
+            
+            # Find domains to import
+            domains_to_import = [d for d in all_domains_list if d.lower() not in db_domains_set]
+            
+            imported_count = 0
+            if domains_to_import:
+                print(f"📥 Importing {len(domains_to_import)} new domains from domains.py...")
+                for domain in domains_to_import:
+                    try:
+                        postgres.insert_domain(
+                            domain,
+                            source="ShadowStack Master List",
+                            notes="From domains.py"
+                        )
+                        imported_count += 1
+                    except Exception as e:
+                        print(f"⚠️  Error importing {domain}: {e}")
+                        continue
+                print(f"✅ Imported {imported_count} new domains")
+        except ImportError as e:
+            print(f"⚠️  Could not import domains from domains.py: {e}")
+            # Continue anyway - will just enrich existing domains
+        
+        # Get all domains (including newly imported ones)
         all_domains = postgres.get_all_enriched_domains()
         
         # Filter to domains without enrichment data
@@ -1416,6 +1451,7 @@ def enrich_all_domains():
         if not unenriched:
             return jsonify({
                 "message": "All domains already enriched",
+                "imported": imported_count,
                 "enriched": 0,
                 "total": len(all_domains)
             }), 200
@@ -1461,7 +1497,8 @@ def enrich_all_domains():
         postgres.close()
         
         return jsonify({
-            "message": f"Enriched {enriched_count} domains",
+            "message": f"Imported {imported_count} domains, enriched {enriched_count} domains",
+            "imported": imported_count,
             "enriched": enriched_count,
             "total": len(all_domains),
             "errors": len(errors),
