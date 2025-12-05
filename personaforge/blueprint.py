@@ -2006,37 +2006,49 @@ def get_vendor_intelligence_report_data():
     """
     # Try to serve static file first (fastest)
     # Check multiple possible paths (local dev vs production)
+    blueprint_dir = Path(__file__).parent.absolute()
     possible_paths = [
-        Path(__file__).parent / 'static' / 'data' / 'vendor_intelligence_report.json',
-        Path(__file__).parent.parent.parent / 'personaforge' / 'static' / 'data' / 'vendor_intelligence_report.json',
+        blueprint_dir / 'static' / 'data' / 'vendor_intelligence_report.json',
+        blueprint_dir.parent.parent / 'personaforge' / 'static' / 'data' / 'vendor_intelligence_report.json',
     ]
     
+    app_logger.info(f"Looking for static report file. Blueprint dir: {blueprint_dir}")
     for static_file in possible_paths:
+        app_logger.info(f"Checking path: {static_file} (exists: {static_file.exists()})")
         if static_file.exists():
             try:
                 with open(static_file, 'r') as f:
                     data = json.load(f)
-                app_logger.info(f"Serving static report data from: {static_file}")
+                app_logger.info(f"✅ Serving static report data from: {static_file}")
                 return jsonify(data), 200
             except Exception as e:
                 app_logger.warning(f"Failed to load static report data from {static_file}: {e}")
                 continue
     
+    app_logger.warning("Static report file not found, falling back to dynamic generation")
+    
     # Fallback to dynamic generation if static file doesn't exist
     # But only if database is available
-    if not postgres_client or not postgres_client.conn:
-        app_logger.error("Cannot generate report data: PostgreSQL not available and static file not found")
+    if not postgres_client:
+        app_logger.error("Cannot generate report data: PostgreSQL client not initialized")
+        return jsonify({"error": "Report data not available"}), 503
+    
+    if not postgres_client.conn:
+        app_logger.error("Cannot generate report data: PostgreSQL connection not available")
         return jsonify({"error": "Report data not available"}), 503
     
     try:
-        # Check if connection is still open
+        # Check if connection is still open by trying a simple query
         try:
             test_cursor = postgres_client.conn.cursor()
+            test_cursor.execute("SELECT 1")
             test_cursor.close()
-        except:
+        except Exception as conn_error:
+            app_logger.warning(f"Database connection check failed: {conn_error}, attempting reconnect")
             # Connection is closed, try to reconnect
             try:
                 postgres_client.conn = postgres_client._connect()
+                app_logger.info("✅ Database reconnected successfully")
             except Exception as reconnect_error:
                 app_logger.error(f"Failed to reconnect to database: {reconnect_error}")
                 return jsonify({"error": "Database connection unavailable"}), 503
@@ -2045,6 +2057,8 @@ def get_vendor_intelligence_report_data():
         return jsonify(data), 200
     except Exception as e:
         app_logger.error(f"Error getting vendor intelligence report data: {e}", exc_info=True)
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 
