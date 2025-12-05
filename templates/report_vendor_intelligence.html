@@ -1905,6 +1905,12 @@
       // DOM already loaded, call immediately
       loadReportData();
     }
+    
+    // Export functionality
+    function exportReport(format) {
+      const url = `/api/reports/vendor-intelligence/export?format=${format}`;
+      window.location.href = url;
+    }
   </script>
   
   <script>

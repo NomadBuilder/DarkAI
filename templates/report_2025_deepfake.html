@@ -1914,6 +1914,12 @@
     document.querySelectorAll('.report-section').forEach(section => {
       observer.observe(section);
     });
+    
+    // Export functionality
+    function exportReport(format) {
+      const url = `/api/reports/deepfake/export?format=${format}`;
+      window.location.href = url;
+    }
   });
 </script>
 

@@ -565,6 +565,164 @@ def sitemap_xml():
     return send_from_directory('static', 'sitemap.xml', mimetype='application/xml')
 
 
+# Export functionality for reports
+@app.route('/api/reports/vendor-intelligence/export')
+def export_vendor_intelligence():
+    """Export vendor intelligence report as CSV or JSON."""
+    from flask import request, Response
+    import json
+    import csv
+    import io
+    
+    format_type = request.args.get('format', 'csv').lower()
+    
+    if format_type not in ['csv', 'json']:
+        return jsonify({"error": "Invalid format. Use 'csv' or 'json'"}), 400
+    
+    try:
+        # Load report data from static file or generate dynamically
+        from pathlib import Path
+        static_file = Path(__file__).parent / 'personaforge' / 'static' / 'data' / 'vendor_intelligence_report.json'
+        
+        if static_file.exists():
+            with open(static_file, 'r') as f:
+                data = json.load(f)
+        else:
+            # Fallback to dynamic generation
+            from personaforge.blueprint import _generate_vendor_intelligence_data
+            data = _generate_vendor_intelligence_data()
+        
+        if format_type == 'csv':
+            # Create CSV export
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            # Write summary stats
+            writer.writerow(['Metric', 'Value'])
+            writer.writerow(['Total Vendors', data.get('total_vendors', 0)])
+            writer.writerow(['Active Vendors', data.get('active_vendors', 0)])
+            writer.writerow(['Vendors with Domains', data.get('vendors_with_domains', 0)])
+            writer.writerow(['Total Domains', data.get('total_domains', 0)])
+            writer.writerow([])
+            
+            # Write categories
+            writer.writerow(['Category', 'Count'])
+            if 'categories' in data:
+                for category, count in data['categories'].items():
+                    writer.writerow([category, count])
+            writer.writerow([])
+            
+            # Write platforms
+            writer.writerow(['Platform', 'Count'])
+            if 'platforms' in data:
+                for platform, count in data['platforms'].items():
+                    writer.writerow([platform, count])
+            writer.writerow([])
+            
+            # Write top services
+            writer.writerow(['Service', 'Count'])
+            if 'services' in data:
+                for service, count in list(data['services'].items())[:30]:
+                    writer.writerow([service, count])
+            
+            output.seek(0)
+            return Response(
+                output.getvalue(),
+                mimetype='text/csv',
+                headers={
+                    'Content-Disposition': 'attachment; filename=vendor_intelligence_report.csv'
+                }
+            )
+        
+        elif format_type == 'json':
+            return Response(
+                json.dumps(data, indent=2, default=str),
+                mimetype='application/json',
+                headers={
+                    'Content-Disposition': 'attachment; filename=vendor_intelligence_report.json'
+                }
+            )
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/reports/deepfake/export')
+def export_deepfake_report():
+    """Export deepfake report as CSV or JSON."""
+    from flask import request, Response
+    import json
+    import csv
+    import io
+    
+    format_type = request.args.get('format', 'csv').lower()
+    
+    if format_type not in ['csv', 'json']:
+        return jsonify({"error": "Invalid format. Use 'csv' or 'json'"}), 400
+    
+    try:
+        # Get survey data
+        response = get_survey_data()
+        if response[1] != 200:
+            return jsonify({"error": "Failed to load survey data"}), 500
+        
+        data = response[0].get_json()
+        
+        if format_type == 'csv':
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            # Write summary
+            writer.writerow(['Metric', 'Value'])
+            writer.writerow(['Total Responses', data.get('total_responses', 0)])
+            writer.writerow([])
+            
+            # Write awareness data
+            writer.writerow(['Awareness Level', 'Count'])
+            if 'awareness' in data:
+                for level, count in data['awareness'].items():
+                    writer.writerow([level, count])
+            writer.writerow([])
+            
+            # Write personal experience
+            writer.writerow(['Experience Type', 'Count'])
+            if 'personal_experience' in data:
+                for exp, count in data['personal_experience'].items():
+                    writer.writerow([exp, count])
+            writer.writerow([])
+            
+            # Write age distribution
+            writer.writerow(['Age Range', 'Count'])
+            if 'age_distribution' in data:
+                for age, count in data['age_distribution'].items():
+                    writer.writerow([age, count])
+            
+            output.seek(0)
+            return Response(
+                output.getvalue(),
+                mimetype='text/csv',
+                headers={
+                    'Content-Disposition': 'attachment; filename=deepfake_report_2025.csv'
+                }
+            )
+        
+        elif format_type == 'json':
+            return Response(
+                json.dumps(data, indent=2, default=str),
+                mimetype='application/json',
+                headers={
+                    'Content-Disposition': 'attachment; filename=deepfake_report_2025.json'
+                }
+            )
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 # Health check endpoint for Render
 @app.route('/healthz')
 @app.route('/health')
