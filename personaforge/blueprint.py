@@ -1213,7 +1213,12 @@ def get_vendor_intelligence_report_data():
     
     try:
         from collections import Counter, defaultdict
+        
+        # Get vendors (this is lightweight)
         vendors = postgres_client.get_all_vendors_intel()
+        
+        # Get all enriched domains with full data - use get_all_enriched_domains which handles everything
+        # This loads all data but it's what we need for the comprehensive report
         domains = postgres_client.get_all_enriched_domains()
         
         # Platform distribution
