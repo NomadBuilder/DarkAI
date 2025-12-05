@@ -95,7 +95,16 @@ class PostgresClient:
                 except:
                     pass
                 # Don't fail the whole connection if table creation fails
-                print(f"⚠️  Warning: Could not create tables: {e}")
+                # Check if it's a transaction error - if so, rollback and retry once
+                if "current transaction is aborted" in str(e).lower() or "aborted" in str(e).lower():
+                    try:
+                        self.conn.rollback()
+                        # Retry table creation after rollback
+                        self._create_tables()
+                    except Exception as e2:
+                        print(f"⚠️  Warning: Could not create tables after rollback: {e2}")
+                else:
+                    print(f"⚠️  Warning: Could not create tables: {e}")
         except psycopg2.OperationalError as e:
             print(f"⚠️  Could not connect to PostgreSQL: {e}")
             print("   Database will be optional. Start with: docker-compose up -d")
@@ -200,6 +209,13 @@ class PostgresClient:
         """Create necessary tables if they don't exist."""
         if not self.conn:
             return
+        
+        # Ensure we're not in a bad transaction state
+        try:
+            if self.conn.status == psycopg2.extensions.STATUS_IN_TRANSACTION:
+                self.conn.rollback()
+        except:
+            pass
             
         cursor = self.conn.cursor()
         
