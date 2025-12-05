@@ -425,6 +425,42 @@
       margin-left: auto;
       margin-right: auto;
     }
+    
+    .export-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .export-btn {
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 107, 107, 0.15);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 8px;
+      color: #fee2e2;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: inherit;
+    }
+    
+    .export-btn:hover {
+      background: rgba(255, 107, 107, 0.25);
+      border-color: rgba(255, 107, 107, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    }
+    
+    .export-btn:active {
+      transform: translateY(0);
+    }
 
     /* Professional Stat Cards */
     .stats-grid {
