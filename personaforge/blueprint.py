@@ -1997,6 +1997,57 @@ def _generate_vendor_intelligence_data():
             pass
 
 
+@personaforge_bp.route('/api/reports/vendor-intelligence-data', methods=['GET'])
+def get_vendor_intelligence_report_data():
+    """Get comprehensive data for the vendor intelligence report.
+    
+    Serves static JSON file for fastest performance (report data is static).
+    Falls back to dynamic generation if static file doesn't exist.
+    """
+    # Try to serve static file first (fastest)
+    # Check multiple possible paths (local dev vs production)
+    possible_paths = [
+        Path(__file__).parent / 'static' / 'data' / 'vendor_intelligence_report.json',
+        Path(__file__).parent.parent.parent / 'personaforge' / 'static' / 'data' / 'vendor_intelligence_report.json',
+    ]
+    
+    for static_file in possible_paths:
+        if static_file.exists():
+            try:
+                with open(static_file, 'r') as f:
+                    data = json.load(f)
+                app_logger.info(f"Serving static report data from: {static_file}")
+                return jsonify(data), 200
+            except Exception as e:
+                app_logger.warning(f"Failed to load static report data from {static_file}: {e}")
+                continue
+    
+    # Fallback to dynamic generation if static file doesn't exist
+    # But only if database is available
+    if not postgres_client or not postgres_client.conn:
+        app_logger.error("Cannot generate report data: PostgreSQL not available and static file not found")
+        return jsonify({"error": "Report data not available"}), 503
+    
+    try:
+        # Check if connection is still open
+        try:
+            test_cursor = postgres_client.conn.cursor()
+            test_cursor.close()
+        except:
+            # Connection is closed, try to reconnect
+            try:
+                postgres_client.conn = postgres_client._connect()
+            except Exception as reconnect_error:
+                app_logger.error(f"Failed to reconnect to database: {reconnect_error}")
+                return jsonify({"error": "Database connection unavailable"}), 503
+        
+        data = _generate_vendor_intelligence_data()
+        return jsonify(data), 200
+    except Exception as e:
+        app_logger.error(f"Error getting vendor intelligence report data: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
 @personaforge_bp.route('/api/domains/<domain>', methods=['GET'])
 def get_domain_details(domain):
     """Get full enrichment data for a specific domain."""
