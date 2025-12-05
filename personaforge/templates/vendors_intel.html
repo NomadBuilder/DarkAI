@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <title>Vendor Intelligence – PersonaForge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PersonaForge Vendor Intelligence – Browse and analyze synthetic identity vendors with rich intelligence data." />
+  
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="stylesheet" href="{{ url_for('personaforge.static', filename='css/style.css') }}">
+  <style>
+    /* Page-specific overrides only - main styles in style.css */
+    .vendor-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.25rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .vendor-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, rgba(255, 68, 68, 0.5), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .vendor-card:hover {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+      border-color: rgba(255, 68, 68, 0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(255, 68, 68, 0.15), 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    
+    .vendor-card:hover::before {
+      opacity: 1;
+    }
+    
+    .vendor-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      gap: 1rem;
+    }
+    
+    .vendor-card h3 {
+      color: #ff6b6b;
+      margin: 0;
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1.3;
+      flex: 1;
+      transition: color 0.2s;
+    }
+    
+    .vendor-card:hover h3 {
+      color: #ff4444;
+    }
+    
+    .vendor-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+    
+    .vendor-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.25rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.9rem;
+      color: #9aa0a6;
+    }
+    
+    .vendor-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: color 0.2s;
+    }
+    
+    .vendor-meta span:hover {
+      color: #fff;
+    }
+    
+    .vendor-summary {
+      color: #d1d5db;
+      margin-top: 0.75rem;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      font-size: 0.95rem;
+    }
+    
+    .services-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+    
+    .service-tag {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.25) 0%, rgba(255, 68, 68, 0.15) 100%);
+      color: #ff8888;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      border: 1px solid rgba(255, 68, 68, 0.2);
+      transition: all 0.2s;
+    }
+    
+    .service-tag:hover {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.35) 0%, rgba(255, 68, 68, 0.25) 100%);
+      transform: translateY(-1px);
+    }
+    
+    .category-badge {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+    
+    .category-kyc_tools { 
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.25) 0%, rgba(255, 193, 7, 0.15) 100%);
+      color: #ffc107;
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+    .category-fake_docs { 
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.25) 0%, rgba(255, 68, 68, 0.15) 100%);
+      color: #ff6b6b;
+      border-color: rgba(255, 68, 68, 0.3);
+    }
+    .category-synthetic_id_kits { 
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.25) 0%, rgba(156, 39, 176, 0.15) 100%);
+      color: #ba68c8;
+      border-color: rgba(156, 39, 176, 0.3);
+    }
+    .category-fraud_tools { 
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.25) 0%, rgba(244, 67, 54, 0.15) 100%);
+      color: #f44336;
+      border-color: rgba(244, 67, 54, 0.3);
+    }
+    .category-kyc_bypass, .category-kyc_bypass_selfie_pass_services {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.25) 0%, rgba(255, 152, 0, 0.15) 100%);
+      color: #ff9800;
+      border-color: rgba(255, 152, 0, 0.3);
+    }
+    .category-synthetic_identity_vendors, .category-synthetic_identity_service {
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.25) 0%, rgba(156, 39, 176, 0.15) 100%);
+      color: #ba68c8;
+      border-color: rgba(156, 39, 176, 0.3);
+    }
+    .category-fraud_as_a_service {
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.25) 0%, rgba(244, 67, 54, 0.15) 100%);
+      color: #f44336;
+      border-color: rgba(244, 67, 54, 0.3);
+    }
+    
+    .platform-badge {
+      display: inline-block;
+      padding: 0.4rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.25) 0%, rgba(33, 150, 243, 0.15) 100%);
+      color: #64b5f6;
+      border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+    
+    /* Enhanced Stats Cards */
+    .stat-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #ff6b6b, transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .stat-card:hover {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+      border-color: rgba(255, 68, 68, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+    
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #ff6b6b;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      color: #9aa0a6;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+    
+    /* Filter input enhancements */
+    .filter-input {
+      min-width: 160px;
+      padding-right: 2.5rem;
+    }
+    
+    /* Fade-in animation for vendor cards */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .vendor-card {
+      animation: fadeIn 0.4s ease-out;
+    }
+    
+    .vendor-card:nth-child(1) { animation-delay: 0.05s; }
+    .vendor-card:nth-child(2) { animation-delay: 0.1s; }
+    .vendor-card:nth-child(3) { animation-delay: 0.15s; }
+    .vendor-card:nth-child(4) { animation-delay: 0.2s; }
+    .vendor-card:nth-child(5) { animation-delay: 0.25s; }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .filter-group {
+        width: 100%;
+        min-width: 100% !important;
+      }
+      
+      .filter-input {
+        width: 100% !important;
+        min-width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div class="page">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+        <span class="nav__brand-mark"></span>
+      </a>
+        <a href="/personaforge/" style="text-decoration: none; color: inherit;">PERSONAFORGE</a>
+      </div>
+      <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+      <div class="nav__links">
+        <a href="/personaforge/" class="nav__link">Home</a>
+        <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
+        <a href="/personaforge/vendors" class="nav__link">Vendors</a>
+        <a href="/personaforge/vendors-intel" class="nav__link nav__link--accent">Vendor Intel</a>
+        <a href="/personaforge/methodology" class="nav__link">Methodology</a>
+        <a href="/personaforge/glossary" class="nav__link">Glossary</a>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="content-container">
+      <header class="page-header" style="margin-bottom: 2.5rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; margin-bottom: 0.75rem; background: linear-gradient(135deg, #ff6b6b 0%, #ff4444 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Vendor Intelligence Directory</h1>
+        <p class="subtitle" style="font-size: 1.1rem; color: #9aa0a6; line-height: 1.6;">Browse and analyze synthetic identity vendors with rich intelligence data from research sources</p>
+      </header>
+
+      <!-- Stats -->
+      <div class="stats-grid" id="vendor-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+        <div class="stat-card">
+          <div class="stat-value" id="total-vendors" style="transition: all 0.3s;">-</div>
+          <div class="stat-label">Total Vendors</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-categories" style="transition: all 0.3s;">-</div>
+          <div class="stat-label">Categories</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-services" style="transition: all 0.3s;">-</div>
+          <div class="stat-label">Services</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="total-platforms" style="transition: all 0.3s;">-</div>
+          <div class="stat-label">Platforms</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-bar" style="margin-bottom: 2rem; display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+        <div class="filter-group" style="flex: 1; min-width: 200px;">
+          <input type="text" id="search-input" placeholder="🔍 Search vendors..." class="filter-input" style="width: 100%;">
+        </div>
+        <div class="filter-group" style="min-width: 160px;">
+          <select id="category-filter" class="filter-input" style="width: 100%; min-width: 160px; padding-right: 2rem;">
+            <option value="">All Categories</option>
+          </select>
+        </div>
+        <div class="filter-group" style="min-width: 160px;">
+          <select id="platform-filter" class="filter-input" style="width: 100%; min-width: 160px; padding-right: 2rem;">
+            <option value="">All Platforms</option>
+            <option value="Telegram">Telegram</option>
+            <option value="Website">Website</option>
+            <option value="Website + Telegram">Website + Telegram</option>
+          </select>
+        </div>
+        <div class="filter-group" style="min-width: 160px;">
+          <select id="region-filter" class="filter-input" style="width: 100%; min-width: 160px; padding-right: 2rem;">
+            <option value="">All Regions</option>
+            <option value="US">US</option>
+            <option value="Canada">Canada</option>
+          </select>
+        </div>
+        <button id="clear-filters" class="btn btn-secondary">Clear Filters</button>
+      </div>
+
+      <!-- Vendor List -->
+      <div id="vendors-list" style="min-height: 400px;">
+        <div style="text-align: center; padding: 4rem 2rem; color: #6b7280;">
+          <div class="spinner"></div>
+          <p style="margin-top: 1.5rem; font-size: 1rem; color: #9aa0a6;">Loading vendors...</p>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div id="pagination" style="display: none; margin-top: 2rem; text-align: center;">
+        <button id="prev-page" class="btn btn-secondary" disabled>Previous</button>
+        <span id="page-info" style="margin: 0 1rem; color: #999;"></span>
+        <button id="next-page" class="btn btn-secondary" disabled>Next</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPage = 1;
+    const pageSize = 20;
+    let allVendors = [];
+    let filteredVendors = [];
+
+    // Load stats with animation
+    async function loadStats() {
+      try {
+        const response = await fetch('/personaforge/api/vendors-intel/stats');
+        const data = await response.json();
+        
+        // Animate stat values
+        function animateValue(element, start, end, duration) {
+          let startTimestamp = null;
+          const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            element.textContent = Math.floor(progress * (end - start) + start);
+            if (progress < 1) {
+              window.requestAnimationFrame(step);
+            } else {
+              element.textContent = end;
+            }
+          };
+          window.requestAnimationFrame(step);
+        }
+        
+        const totalVendors = data.total_vendors || 0;
+        const totalCategories = Object.keys(data.categories || {}).length;
+        const totalServices = Object.keys(data.services || {}).length;
+        
+        // Count unique platforms
+        const platforms = new Set();
+        if (data.platforms) {
+          Object.keys(data.platforms).forEach(p => {
+            if (p && p !== 'Unknown') platforms.add(p);
+          });
+        }
+        const totalPlatforms = platforms.size || 0;
+        
+        animateValue(document.getElementById('total-vendors'), 0, totalVendors, 800);
+        animateValue(document.getElementById('total-categories'), 0, totalCategories, 800);
+        animateValue(document.getElementById('total-services'), 0, totalServices, 800);
+        animateValue(document.getElementById('total-platforms'), 0, totalPlatforms, 800);
+      } catch (e) {
+        console.error('Error loading stats:', e);
+      }
+    }
+
+    // Load categories for filter
+    async function loadCategories() {
+      try {
+        const response = await fetch('/personaforge/api/vendors-intel/categories');
+        const data = await response.json();
+        
+        const select = document.getElementById('category-filter');
+        Object.keys(data.categories || {}).forEach(category => {
+          const option = document.createElement('option');
+          option.value = category;
+          option.textContent = `${category} (${data.categories[category].total})`;
+          select.appendChild(option);
+        });
+      } catch (e) {
+        console.error('Error loading categories:', e);
+      }
+    }
+
+    // Load vendors
+    async function loadVendors(page = 1) {
+      const search = document.getElementById('search-input').value;
+      const category = document.getElementById('category-filter').value;
+      const platform = document.getElementById('platform-filter').value;
+      const region = document.getElementById('region-filter').value;
+
+      let url = `/personaforge/api/vendors-intel?limit=${pageSize}&offset=${(page - 1) * pageSize}`;
+      if (search) url += `&search=${encodeURIComponent(search)}`;
+      if (category) url += `&category=${encodeURIComponent(category)}`;
+      if (platform) url += `&platform_type=${encodeURIComponent(platform)}`;
+      if (region) url += `&region=${encodeURIComponent(region)}`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        allVendors = data.vendors || [];
+        displayVendors(allVendors);
+        updatePagination(data.total || 0, page);
+      } catch (e) {
+        console.error('Error loading vendors:', e);
+        document.getElementById('vendors-list').innerHTML = '<p style="color: #ff4444; text-align: center; padding: 2rem;">Error loading vendors. Please try again.</p>';
+      }
+    }
+
+    // Display vendors
+    function displayVendors(vendors) {
+      const container = document.getElementById('vendors-list');
+      
+        if (vendors.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+            <h3 style="color: #9aa0a6; margin-bottom: 0.5rem;">No vendors found</h3>
+            <p style="color: #6b7280;">Try adjusting your search or filters</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = vendors.map(vendor => {
+        const category = vendor.category || 'Unknown';
+        const categoryClass = category.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '').replace(/[^a-z0-9_]/g, '');
+        const services = (vendor.services || []).slice(0, 5);
+        const summary = vendor.summary || vendor.telegram_description || '';
+        
+        return `
+          <div class="vendor-card" onclick="window.location.href='/personaforge/vendor-intel/${vendor.id}'">
+            <div class="vendor-card-header">
+              <h3>${escapeHtml(vendor.vendor_name || 'Unknown')}</h3>
+            </div>
+            <div class="vendor-badges">
+              ${vendor.category ? `<span class="category-badge category-${categoryClass}">${escapeHtml(category)}</span>` : ''}
+              ${vendor.platform_type ? `<span class="platform-badge">${escapeHtml(vendor.platform_type)}</span>` : ''}
+            </div>
+            ${summary ? `<div class="vendor-summary">${escapeHtml(formatSummary(summary).substring(0, 200))}${formatSummary(summary).length > 200 ? '...' : ''}</div>` : ''}
+            ${services.length > 0 ? `
+              <div class="services-list">
+                ${services.map(s => `<span class="service-tag">${escapeHtml(s)}</span>`).join('')}
+                ${(vendor.services || []).length > 5 ? `<span class="service-tag" style="background: rgba(255,255,255,0.1); color: #9aa0a6;">+${(vendor.services || []).length - 5} more</span>` : ''}
+              </div>
+            ` : ''}
+            <div class="vendor-meta">
+              ${vendor.region ? `<span>📍 ${escapeHtml(vendor.region)}</span>` : ''}
+              ${vendor.telegram_channel ? `<span>📱 Telegram</span>` : ''}
+              ${vendor.primary_domain ? `<span>🌐 ${escapeHtml(vendor.primary_domain)}</span>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Update pagination
+    function updatePagination(total, page) {
+      const totalPages = Math.ceil(total / pageSize);
+      document.getElementById('page-info').textContent = `Page ${page} of ${totalPages} (${total} total)`;
+      document.getElementById('prev-page').disabled = page <= 1;
+      document.getElementById('next-page').disabled = page >= totalPages;
+      document.getElementById('pagination').style.display = totalPages > 1 ? 'block' : 'none';
+      currentPage = page;
+    }
+
+    // Event listeners
+    document.getElementById('search-input').addEventListener('input', debounce(() => loadVendors(1), 300));
+    document.getElementById('category-filter').addEventListener('change', () => loadVendors(1));
+    document.getElementById('platform-filter').addEventListener('change', () => loadVendors(1));
+    document.getElementById('region-filter').addEventListener('change', () => loadVendors(1));
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      document.getElementById('search-input').value = '';
+      document.getElementById('category-filter').value = '';
+      document.getElementById('platform-filter').value = '';
+      document.getElementById('region-filter').value = '';
+      loadVendors(1);
+    });
+    document.getElementById('prev-page').addEventListener('click', () => loadVendors(currentPage - 1));
+    document.getElementById('next-page').addEventListener('click', () => loadVendors(currentPage + 1));
+
+    // Utility functions
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /**
+     * Format summary text to be more professional and readable.
+     * Fixes common issues like typos, capitalization, and formatting.
+     */
+    function formatSummary(summary) {
+      if (!summary) return '';
+      
+      let text = summary.trim();
+      
+      // Remove extra whitespace
+      text = text.replace(/\s+/g, ' ');
+      
+      // Fix common typos
+      text = text.replace(/\bserver\s+(\d+)/gi, 'serve $1'); // "server 107,226" -> "serve 107,226"
+      text = text.replace(/\bits\s+scannable\b/gi, "it's scannable");
+      text = text.replace(/\bits\s+claiming\b/gi, "it's claiming");
+      
+      // Capitalize first letter
+      if (text && text[0] && text[0] === text[0].toLowerCase()) {
+        text = text[0].toUpperCase() + text.slice(1);
+      }
+      
+      // Ensure proper sentence ending
+      if (text && !/[.!?]$/.test(text)) {
+        text += '.';
+      }
+      
+      // Fix spacing around punctuation
+      text = text.replace(/\s+([,.!?])/g, '$1');
+      text = text.replace(/([,.!?])([^\s])/g, '$1 $2');
+      
+      // Fix common abbreviations and expand for clarity
+      text = text.replace(/\bid\s+ssn\b/gi, 'ID and SSN');
+      text = text.replace(/\bssn\s+id\b/gi, 'SSN and ID');
+      text = text.replace(/\bdriver\s+license\b/gi, "driver's license");
+      text = text.replace(/\bfake\s+id\b/gi, 'fake ID');
+      
+      // Expand abbreviations for clarity
+      text = text.replace(/\bkyc\s+bypass\b/gi, 'KYC (Know Your Customer) bypass');
+      text = text.replace(/\bkyc\s+verification\b/gi, 'KYC (Know Your Customer) verification');
+      text = text.replace(/\bkyc\s+service\b/gi, 'KYC (Know Your Customer) service');
+      text = text.replace(/\bssn\b/gi, 'SSN (Social Security Number)');
+      text = text.replace(/\bcpn\b/gi, 'CPN (Credit Privacy Number)');
+      text = text.replace(/\bdl\b/gi, "driver's license");
+      
+      // Fix "customer" -> "customers" when referring to multiple
+      text = text.replace(/(\d+[,\d]*)\s+customer\b/gi, '$1 customers');
+      
+      // Capitalize common terms at start
+      text = text.replace(/^advertising\b/i, 'Advertising');
+      
+      // Clean up multiple spaces
+      text = text.replace(/\s+/g, ' ').trim();
+      
+      return text;
+    }
+
+    function debounce(func, wait) {
+      let timeout;
+      return function executedFunction(...args) {
+        const later = () => {
+          clearTimeout(timeout);
+          func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+      };
+    }
+
+    // Initialize
+    loadStats();
+    loadCategories();
+    loadVendors(1);
+  </script>
+</body>
+</html>
+

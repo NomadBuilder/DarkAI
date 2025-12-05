@@ -88,6 +88,9 @@ async function loadGraphData() {
     // Update stats from homepage API
     updateStatsFromHomepage(statsData);
     
+    // Load vendor intelligence stats
+    loadVendorIntelStats();
+    
     // Try to load graph data from Neo4j
     const response = await fetch('/personaforge/api/graph');
     const data = await response.json();
@@ -124,6 +127,29 @@ function updateStatsFromHomepage(statsData) {
   if (clusterEl) clusterEl.textContent = clusterCount;
   
   console.log('Updated dashboard stats:', { domainCount, vendorCount, clusterCount });
+}
+
+// Load vendor intelligence stats
+async function loadVendorIntelStats() {
+  try {
+    const response = await fetch('/personaforge/api/vendors-intel/stats');
+    const data = await response.json();
+    
+    const intelVendorEl = document.getElementById('intel-vendor-count');
+    const categoryEl = document.getElementById('category-count');
+    const serviceEl = document.getElementById('service-count');
+    
+    if (intelVendorEl) intelVendorEl.textContent = data.total_vendors || 0;
+    if (categoryEl) categoryEl.textContent = Object.keys(data.categories || {}).length;
+    if (serviceEl) serviceEl.textContent = Object.keys(data.services || {}).length;
+    
+    console.log('Updated vendor intelligence stats:', data);
+  } catch (error) {
+    console.error('Error loading vendor intelligence stats:', error);
+    // Hide the section if API fails
+    const intelStatsSection = document.getElementById('vendor-intel-stats');
+    if (intelStatsSection) intelStatsSection.style.display = 'none';
+  }
 }
 
 // Update statistics from graph data (legacy, for Neo4j)
@@ -346,14 +372,21 @@ function showNodeDetails(node) {
         `;
       }
       
-      // Show actual domain names in the cluster
+      // Show actual domain names in the cluster (clickable)
       if (node.properties.domains && Array.isArray(node.properties.domains) && node.properties.domains.length > 0) {
         html += '<div class="modal-property">';
         html += '<div class="modal-property-label">Domain Names</div>';
         html += '<div class="modal-property-value">';
         html += '<ul class="modal-list">';
         node.properties.domains.forEach(domain => {
-          html += `<li class="modal-list-item">${domain}</li>`;
+          html += `<li class="modal-list-item">
+            <a href="/personaforge/domains/${encodeURIComponent(domain)}" 
+               style="color: #ff4444; text-decoration: none; font-family: monospace;"
+               onmouseover="this.style.textDecoration='underline'"
+               onmouseout="this.style.textDecoration='none'">
+              ${domain}
+            </a>
+          </li>`;
         });
         html += '</ul>';
         html += '</div></div>';
@@ -397,13 +430,16 @@ function showNodeDetails(node) {
         `;
       }
       
-      if (node.properties.risk_score !== undefined && node.properties.risk_score !== null) {
-        const risk = node.properties.risk_score;
-        const riskColor = risk >= 70 ? '#ff4444' : risk >= 40 ? '#ff8844' : '#999';
+      // Add link to detailed analysis page
+      if (node.properties.domain) {
         html += `
-          <div class="modal-property">
-            <div class="modal-property-label">Risk Score</div>
-            <div class="modal-property-value" style="color: ${riskColor}; font-weight: 600;">${risk}/100</div>
+          <div class="modal-property" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1);">
+            <a href="/personaforge/domains/${encodeURIComponent(node.properties.domain)}" 
+               style="display: inline-block; padding: 0.75rem 1.5rem; background: rgba(255, 68, 68, 0.2); color: #ff4444; text-decoration: none; border-radius: 4px; border: 1px solid rgba(255, 68, 68, 0.3); font-weight: 600; transition: all 0.2s;"
+               onmouseover="this.style.background='rgba(255,68,68,0.3)'; this.style.borderColor='rgba(255,68,68,0.5)'"
+               onmouseout="this.style.background='rgba(255,68,68,0.2)'; this.style.borderColor='rgba(255,68,68,0.3)'">
+              View Full Analysis →
+            </a>
           </div>
         `;
       }
@@ -454,14 +490,21 @@ function showNodeDetails(node) {
         `;
       }
       
-      // Show associated domains
+      // Show associated domains (clickable)
       if (node.properties.domains && Array.isArray(node.properties.domains) && node.properties.domains.length > 0) {
         html += '<div class="modal-property">';
         html += '<div class="modal-property-label">Associated Domains</div>';
         html += '<div class="modal-property-value">';
         html += '<ul class="modal-list">';
         node.properties.domains.forEach(domain => {
-          html += `<li class="modal-list-item">${domain}</li>`;
+          html += `<li class="modal-list-item">
+            <a href="/personaforge/domains/${encodeURIComponent(domain)}" 
+               style="color: #ff4444; text-decoration: none; font-family: monospace;"
+               onmouseover="this.style.textDecoration='underline'"
+               onmouseout="this.style.textDecoration='none'">
+              ${domain}
+            </a>
+          </li>`;
         });
         html += '</ul>';
         html += '</div></div>';

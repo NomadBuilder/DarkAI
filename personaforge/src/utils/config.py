@@ -43,7 +43,7 @@ class Config:
     CACHE_TTL_HOURS = int(os.getenv("CACHE_TTL_HOURS", "24"))
     
     # Request Timeouts
-    API_TIMEOUT_SECONDS = int(os.getenv("API_TIMEOUT_SECONDS", "10"))
+    API_TIMEOUT_SECONDS = int(os.getenv("API_TIMEOUT_SECONDS", "25"))  # Increased from 10 to 25 for slow domains
     DB_CONNECTION_TIMEOUT = int(os.getenv("DB_CONNECTION_TIMEOUT", "5"))
     
     # Logging

@@ -108,7 +108,9 @@ def analyze_public_website(domain: str) -> Dict:
                 result["service_descriptions"].extend([m.strip()[:200] for m in matches[:3]])
         
     except Exception as e:
-        print(f"Public content analysis failed for {domain}: {e}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Public content analysis failed for {domain}: {e}")
     
     return result
 

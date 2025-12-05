@@ -450,14 +450,6 @@
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
-  <!-- Data Notice Banner -->
-  <div class="modal-overlay show" id="dataNoticeModal">
-    <div class="modal">
-      <p class="modal__text">📊 <strong>Data Collection in Progress:</strong> The data currently displayed is <span class="modal__highlight">dummy data</span> to demonstrate PersonaForge's capabilities. Our research team is actively collecting real vendor data, which will be automatically integrated as it becomes available.</p>
-      <button class="modal__close" id="modalClose" aria-label="Close">×</button>
-    </div>
-  </div>
-
   <div class="page">
     <!-- Navigation -->
     <nav class="nav">
@@ -481,7 +473,9 @@
         <a href="/personaforge/" class="nav__link nav__link--accent">Home</a>
         <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
         <a href="/personaforge/vendors" class="nav__link">Vendors</a>
+        <a href="/personaforge/vendors-intel" class="nav__link">Vendor Intel</a>
         <a href="/personaforge/methodology" class="nav__link">Methodology</a>
+        <a href="/personaforge/glossary" class="nav__link">Glossary</a>
       </div>
     </nav>
 
@@ -637,12 +631,10 @@
         if (data.top_vendors && data.top_vendors.length > 0) {
           let html = '<ul style="list-style: none; padding: 0; margin: 0;">';
           data.top_vendors.slice(0, 5).forEach(v => {
-            const riskColor = (v.avg_risk_score || 0) >= 70 ? '#ff4444' : (v.avg_risk_score || 0) >= 40 ? '#ff8844' : '#999';
             html += `<li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
               <strong style="color: #ff4444;">${v.vendor_name || 'Unknown'}</strong> 
               <span style="color: #999; margin-left: 1rem;">${v.domain_count} domains</span>
               <span style="color: #999; margin-left: 1rem;">${v.vendor_type || 'unknown'}</span>
-              <span style="color: ${riskColor}; margin-left: 1rem; font-weight: 600;">Risk: ${v.avg_risk_score || 0}/100</span>
             </li>`;
           });
           html += '</ul>';
@@ -664,12 +656,9 @@
           data.recent_discoveries.slice(0, 5).forEach(d => {
             const domain = d.domain || 'Unknown';
             const vtype = d.vendor_type || 'unknown';
-            const risk = d.risk_score || 0;
-            const riskColor = risk >= 70 ? '#ff4444' : risk >= 40 ? '#ff8844' : '#999';
             html += `<li style="padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
               <strong style="color: #fff;">${domain}</strong> 
               <span style="color: #999; margin-left: 1rem;">${vtype}</span>
-              <span style="color: ${riskColor}; margin-left: 1rem; font-weight: 600;">Risk: ${risk}/100</span>
             </li>`;
           });
           html += '</ul>';
@@ -745,34 +734,6 @@
       });
     }
     
-    // Data Notice Banner
-    const modal = document.getElementById('dataNoticeModal');
-    const closeButton = document.getElementById('modalClose');
-    const modalKey = 'personaforge_data_notice_dismissed';
-    
-    // Check if modal has been dismissed
-    const isDismissed = localStorage.getItem(modalKey) === 'true';
-    
-    if (isDismissed && modal) {
-      // Hide if already dismissed
-      modal.classList.remove('show');
-    } else if (modal) {
-      // Show banner
-      modal.classList.add('show');
-    }
-    
-    // Close banner function
-    function closeModal() {
-      if (modal) {
-        modal.classList.remove('show');
-        localStorage.setItem(modalKey, 'true');
-      }
-    }
-    
-    // Close button click
-    if (closeButton) {
-      closeButton.addEventListener('click', closeModal);
-    }
   });
 })();
 </script>

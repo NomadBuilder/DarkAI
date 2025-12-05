@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <title>Vendor Profile – PersonaForge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="stylesheet" href="{{ url_for('personaforge.static', filename='css/style.css') }}">
+  <style>
+    /* Page-specific overrides only - main styles in style.css */
+    /* Profile header uses styles from main CSS */
+    
+    .profile-section {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .profile-section:hover {
+      border-color: rgba(255, 68, 68, 0.3);
+      box-shadow: 0 4px 16px rgba(255, 68, 68, 0.1);
+    }
+    
+    .profile-section h3 {
+      color: #ff6b6b;
+      margin-bottom: 1.25rem;
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .profile-section h3::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(180deg, #ff6b6b, transparent);
+      border-radius: 2px;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+    
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      transition: all 0.2s;
+    }
+    
+    .info-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 68, 68, 0.2);
+    }
+    
+    .info-label {
+      color: #9aa0a6;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    
+    .info-value {
+      color: #fff;
+      font-size: 1.05rem;
+      font-weight: 500;
+    }
+    
+    .info-value a {
+      color: #64b5f6;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    
+    .info-value a:hover {
+      color: #90caf9;
+      text-decoration: underline;
+    }
+    
+    .services-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+    
+    .service-tag {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.25) 0%, rgba(255, 68, 68, 0.15) 100%);
+      color: #ff8888;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1px solid rgba(255, 68, 68, 0.2);
+      transition: all 0.2s;
+    }
+    
+    .service-tag:hover {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.35) 0%, rgba(255, 68, 68, 0.25) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(255, 68, 68, 0.2);
+    }
+    
+    .domain-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    
+    .domain-item {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.03) 100%);
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s;
+    }
+    
+    .domain-item:hover {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.06) 100%);
+      border-color: rgba(255, 68, 68, 0.3);
+      transform: translateX(4px);
+    }
+    
+    .domain-item a {
+      color: #64b5f6;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    
+    .domain-item a:hover {
+      color: #90caf9;
+      text-decoration: underline;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      border: 1px solid transparent;
+    }
+    
+    .category-kyc_tools { 
+      background: linear-gradient(135deg, rgba(255, 193, 7, 0.25) 0%, rgba(255, 193, 7, 0.15) 100%);
+      color: #ffc107;
+      border-color: rgba(255, 193, 7, 0.3);
+    }
+    .category-fake_docs { 
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.25) 0%, rgba(255, 68, 68, 0.15) 100%);
+      color: #ff6b6b;
+      border-color: rgba(255, 68, 68, 0.3);
+    }
+    .category-synthetic_id_kits { 
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.25) 0%, rgba(156, 39, 176, 0.15) 100%);
+      color: #ba68c8;
+      border-color: rgba(156, 39, 176, 0.3);
+    }
+    .category-fraud_tools { 
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.25) 0%, rgba(244, 67, 54, 0.15) 100%);
+      color: #f44336;
+      border-color: rgba(244, 67, 54, 0.3);
+    }
+    .category-kyc_bypass, .category-kyc_bypass_selfie_pass_services {
+      background: linear-gradient(135deg, rgba(255, 152, 0, 0.25) 0%, rgba(255, 152, 0, 0.15) 100%);
+      color: #ff9800;
+      border-color: rgba(255, 152, 0, 0.3);
+    }
+    .category-synthetic_identity_vendors, .category-synthetic_identity_service {
+      background: linear-gradient(135deg, rgba(156, 39, 176, 0.25) 0%, rgba(156, 39, 176, 0.15) 100%);
+      color: #ba68c8;
+      border-color: rgba(156, 39, 176, 0.3);
+    }
+    .category-fraud_as_a_service {
+      background: linear-gradient(135deg, rgba(244, 67, 54, 0.25) 0%, rgba(244, 67, 54, 0.15) 100%);
+      color: #f44336;
+      border-color: rgba(244, 67, 54, 0.3);
+    }
+    
+    .platform-badge {
+      background: linear-gradient(135deg, rgba(33, 150, 243, 0.25) 0%, rgba(33, 150, 243, 0.15) 100%);
+      color: #64b5f6;
+      border: 1px solid rgba(33, 150, 243, 0.3);
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #64b5f6;
+      text-decoration: none;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-weight: 500;
+      border: 1px solid rgba(100, 181, 246, 0.2);
+    }
+    
+    .back-link:hover {
+      background: rgba(100, 181, 246, 0.1);
+      color: #90caf9;
+      transform: translateX(-4px);
+      border-color: rgba(100, 181, 246, 0.4);
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 48px;
+      height: 48px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-top-color: #ff6b6b;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div class="page">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+        <span class="nav__brand-mark"></span>
+      </a>
+        <a href="/personaforge/" style="text-decoration: none; color: inherit;">PERSONAFORGE</a>
+      </div>
+      <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+      <div class="nav__links">
+        <a href="/personaforge/" class="nav__link">Home</a>
+        <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
+        <a href="/personaforge/vendors" class="nav__link">Vendors</a>
+        <a href="/personaforge/vendors-intel" class="nav__link">Vendor Intel</a>
+        <a href="/personaforge/methodology" class="nav__link">Methodology</a>
+        <a href="/personaforge/glossary" class="nav__link">Glossary</a>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="content-container">
+      <a href="/personaforge/vendors-intel" class="back-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        Back to Vendor Directory
+      </a>
+
+      <div id="loading" style="text-align: center; padding: 4rem 2rem; color: #6b7280;">
+        <div class="spinner" style="display: inline-block; width: 48px; height: 48px; border: 4px solid rgba(255,255,255,0.1); border-top-color: #ff6b6b; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        <p style="margin-top: 1.5rem; font-size: 1rem; color: #9aa0a6;">Loading vendor profile...</p>
+      </div>
+
+      <div id="vendor-profile" style="display: none;">
+        <!-- Profile Header -->
+        <div class="profile-header">
+          <h1 id="vendor-name" style="color: #ff4444; margin-bottom: 1rem;"></h1>
+          <div id="vendor-badges"></div>
+        </div>
+
+        <!-- Basic Information -->
+        <div class="profile-section">
+          <h3>Basic Information</h3>
+          <div class="info-grid" id="basic-info"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="profile-section" id="summary-section" style="display: none;">
+          <h3>Summary</h3>
+          <p id="summary-text" style="color: #ccc; line-height: 1.6;"></p>
+          <p style="color: #9aa0a6; font-size: 0.85rem; margin-top: 0.75rem; font-style: italic;">
+            <strong>Note:</strong> Technical terms like "scannable", "KYC", "SSN", and others are explained in our 
+            <a href="{{ url_for('personaforge.glossary') }}" style="color: #64b5f6; text-decoration: none;">Glossary</a>.
+          </p>
+        </div>
+
+        <!-- Services -->
+        <div class="profile-section" id="services-section" style="display: none;">
+          <h3>Services Offered</h3>
+          <div class="services-list" id="services-list"></div>
+        </div>
+
+        <!-- Domains -->
+        <div class="profile-section" id="domains-section" style="display: none;">
+          <h3>Associated Domains</h3>
+          <ul class="domain-list" id="domains-list"></ul>
+        </div>
+
+        <!-- Platform Presence -->
+        <div class="profile-section" id="platform-section" style="display: none;">
+          <h3>Platform Presence</h3>
+          <div class="info-grid" id="platform-info"></div>
+        </div>
+
+        <!-- Operators -->
+        <div class="profile-section" id="operators-section" style="display: none;">
+          <h3>Operator Identifiers</h3>
+          <div id="operators-list"></div>
+        </div>
+      </div>
+
+      <div id="error" style="display: none; text-align: center; padding: 4rem 2rem;">
+        <div style="color: #ff6b6b; font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+        <h3 style="color: #ff6b6b; margin-bottom: 0.5rem;">Vendor Not Found</h3>
+        <p style="color: #9aa0a6; margin-bottom: 1.5rem;">The vendor profile could not be loaded.</p>
+        <a href="/personaforge/vendors-intel" class="back-link">← Back to Directory</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const vendorId = {{ vendor_id }};
+
+    async function loadVendorProfile() {
+      try {
+        const response = await fetch(`/personaforge/api/vendor-intel/${vendorId}`);
+        
+        if (!response.ok) {
+          throw new Error('Vendor not found');
+        }
+        
+        const vendor = await response.json();
+        displayVendor(vendor);
+      } catch (e) {
+        console.error('Error loading vendor:', e);
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+      }
+    }
+
+    function displayVendor(vendor) {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('vendor-profile').style.display = 'block';
+
+      // Name and badges
+      document.getElementById('vendor-name').textContent = vendor.vendor_name || 'Unknown Vendor';
+      
+      const badges = document.getElementById('vendor-badges');
+      badges.innerHTML = '';
+      
+      if (vendor.category) {
+        const categoryClass = vendor.category.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        badges.innerHTML += `<span class="badge category-${categoryClass}">${escapeHtml(vendor.category)}</span>`;
+      }
+      
+      if (vendor.platform_type) {
+        badges.innerHTML += `<span class="badge platform-badge">${escapeHtml(vendor.platform_type)}</span>`;
+      }
+
+      // Basic info
+      const basicInfo = document.getElementById('basic-info');
+      basicInfo.innerHTML = '';
+      
+      if (vendor.region) {
+        basicInfo.innerHTML += `
+          <div class="info-item">
+            <span class="info-label">Region</span>
+            <span class="info-value">${escapeHtml(vendor.region)}</span>
+          </div>
+        `;
+      }
+      
+      if (vendor.primary_domain) {
+        basicInfo.innerHTML += `
+          <div class="info-item">
+            <span class="info-label">Primary Domain</span>
+            <span class="info-value"><a href="http://${escapeHtml(vendor.primary_domain)}" target="_blank">${escapeHtml(vendor.primary_domain)}</a></span>
+          </div>
+        `;
+      }
+      
+      if (vendor.source_found_at) {
+        basicInfo.innerHTML += `
+          <div class="info-item">
+            <span class="info-label">Source</span>
+            <span class="info-value">${escapeHtml(vendor.source_found_at)}</span>
+          </div>
+        `;
+      }
+      
+      if (vendor.first_seen) {
+        basicInfo.innerHTML += `
+          <div class="info-item">
+            <span class="info-label">First Seen</span>
+            <span class="info-value">${new Date(vendor.first_seen).toLocaleDateString()}</span>
+          </div>
+        `;
+      }
+
+      // Summary - format for professional display
+      if (vendor.summary || vendor.telegram_description) {
+        document.getElementById('summary-section').style.display = 'block';
+        const rawSummary = vendor.summary || vendor.telegram_description || '';
+        const formattedSummary = formatSummary(rawSummary);
+        document.getElementById('summary-text').textContent = formattedSummary;
+      }
+
+      // Services
+      if (vendor.services && vendor.services.length > 0) {
+        document.getElementById('services-section').style.display = 'block';
+        document.getElementById('services-list').innerHTML = vendor.services.map(s => 
+          `<span class="service-tag">${escapeHtml(s)}</span>`
+        ).join('');
+      }
+
+      // Domains
+      if (vendor.domains && vendor.domains.length > 0) {
+        document.getElementById('domains-section').style.display = 'block';
+        document.getElementById('domains-list').innerHTML = vendor.domains.map(d => `
+          <li class="domain-item">
+            <div>
+              <a href="http://${escapeHtml(d.domain)}" target="_blank">${escapeHtml(d.domain)}</a>
+              ${d.relationship_type ? `<span style="color: #999; font-size: 0.85rem; margin-left: 0.5rem;">(${escapeHtml(d.relationship_type)})</span>` : ''}
+            </div>
+            ${d.host_name ? `<span style="color: #999; font-size: 0.85rem;">${escapeHtml(d.host_name)}</span>` : ''}
+          </li>
+        `).join('');
+      }
+
+      // Platform presence
+      if (vendor.telegram_channel || vendor.other_social_media) {
+        document.getElementById('platform-section').style.display = 'block';
+        const platformInfo = document.getElementById('platform-info');
+        platformInfo.innerHTML = '';
+        
+        if (vendor.telegram_channel) {
+          platformInfo.innerHTML += `
+            <div class="info-item">
+              <span class="info-label">Telegram Channel</span>
+              <span class="info-value"><a href="${escapeHtml(vendor.telegram_channel)}" target="_blank">${escapeHtml(vendor.telegram_channel)}</a></span>
+            </div>
+          `;
+        }
+        
+        if (vendor.other_social_media && vendor.other_social_media.links) {
+          vendor.other_social_media.links.forEach(link => {
+            platformInfo.innerHTML += `
+              <div class="info-item">
+                <span class="info-label">Social Media</span>
+                <span class="info-value"><a href="${escapeHtml(link)}" target="_blank">${escapeHtml(link)}</a></span>
+              </div>
+            `;
+          });
+        }
+      }
+
+      // Operators
+      if (vendor.operator_identifiers && vendor.operator_identifiers.length > 0) {
+        document.getElementById('operators-section').style.display = 'block';
+        document.getElementById('operators-list').innerHTML = vendor.operator_identifiers.map(op => 
+          `<span class="service-tag">@${escapeHtml(op)}</span>`
+        ).join('');
+      }
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    /**
+     * Format summary text to be more professional and readable.
+     * Fixes common issues like typos, capitalization, and formatting.
+     */
+    function formatSummary(summary) {
+      if (!summary) return '';
+      
+      let text = summary.trim();
+      
+      // Remove extra whitespace
+      text = text.replace(/\s+/g, ' ');
+      
+      // Fix common typos
+      text = text.replace(/\bserver\s+(\d+)/gi, 'serve $1'); // "server 107,226" -> "serve 107,226"
+      text = text.replace(/\bits\s+scannable\b/gi, "it's scannable");
+      text = text.replace(/\bits\s+claiming\b/gi, "it's claiming");
+      
+      // Capitalize first letter
+      if (text && text[0] && text[0] === text[0].toLowerCase()) {
+        text = text[0].toUpperCase() + text.slice(1);
+      }
+      
+      // Ensure proper sentence ending
+      if (text && !/[.!?]$/.test(text)) {
+        text += '.';
+      }
+      
+      // Fix spacing around punctuation
+      text = text.replace(/\s+([,.!?])/g, '$1');
+      text = text.replace(/([,.!?])([^\s])/g, '$1 $2');
+      
+      // Fix common abbreviations and expand for clarity
+      text = text.replace(/\bid\s+ssn\b/gi, 'ID and SSN');
+      text = text.replace(/\bssn\s+id\b/gi, 'SSN and ID');
+      text = text.replace(/\bdriver\s+license\b/gi, "driver's license");
+      text = text.replace(/\bfake\s+id\b/gi, 'fake ID');
+      
+      // Expand abbreviations for clarity
+      text = text.replace(/\bkyc\s+bypass\b/gi, 'KYC (Know Your Customer) bypass');
+      text = text.replace(/\bkyc\s+verification\b/gi, 'KYC (Know Your Customer) verification');
+      text = text.replace(/\bkyc\s+service\b/gi, 'KYC (Know Your Customer) service');
+      text = text.replace(/\bssn\b/gi, 'SSN (Social Security Number)');
+      text = text.replace(/\bcpn\b/gi, 'CPN (Credit Privacy Number)');
+      text = text.replace(/\bdl\b/gi, "driver's license");
+      
+      // Fix "customer" -> "customers" when referring to multiple
+      text = text.replace(/(\d+[,\d]*)\s+customer\b/gi, '$1 customers');
+      
+      // Capitalize common terms at start
+      text = text.replace(/^advertising\b/i, 'Advertising');
+      
+      // Clean up multiple spaces
+      text = text.replace(/\s+/g, ' ').trim();
+      
+      return text;
+    }
+
+    // Load on page load
+    loadVendorProfile();
+  </script>
+</body>
+</html>
+

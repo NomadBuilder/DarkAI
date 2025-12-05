@@ -2,6 +2,8 @@
 
 let vendors = [];
 let clusters = [];
+let contentClusters = [];
+let currentClusterType = 'infrastructure'; // 'infrastructure' or 'content'
 
 // Load vendors data
 async function loadVendors() {
@@ -105,11 +107,7 @@ function updateStatsFromHomepage(data) {
   document.getElementById('total-clusters').textContent = clusterCount;
 }
 
-// Render vendors list (deprecated - now using clusters)
-function renderVendors() {
-  // This function is kept for compatibility but vendors are now shown in clusters
-  return;
-}
+// Removed deprecated renderVendors() function - now using clusters only
 
 // Render clusters
 function renderClusters() {
@@ -130,18 +128,41 @@ function renderClusters() {
   container.innerHTML = clusters.map(cluster => {
     // Format infrastructure signature nicely
     const infrastructure = cluster.infrastructure || [];
+    const clusterType = cluster.type || 'Infrastructure';
     const infraDisplay = infrastructure.map(infra => {
       const [type, value] = infra.split(':');
-      return `<span style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.25rem 0.75rem; background: rgba(255, 68, 68, 0.1); border-radius: 4px; font-size: 0.85rem;">
-        <strong style="color: #ff4444; text-transform: uppercase;">${type}:</strong> ${value}
+      const typeColors = {
+        'cdn': '#4ecdc4',
+        'host': '#95e1d3',
+        'registrar': '#f38181',
+        'payment': '#aa96da'
+      };
+      const color = typeColors[type.toLowerCase()] || '#ff4444';
+      return `<span style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.25rem 0.75rem; background: ${color}20; border: 1px solid ${color}40; border-radius: 4px; font-size: 0.85rem;">
+        <strong style="color: ${color}; text-transform: uppercase;">${type}:</strong> ${value}
       </span>`;
     }).join('');
     
+    // Cluster type badge
+    const typeBadgeColors = {
+      'CDN': '#4ecdc4',
+      'Host': '#95e1d3',
+      'Registrar': '#f38181',
+      'Payment': '#aa96da',
+      'Exact Match': '#ff6b6b'
+    };
+    const badgeColor = typeBadgeColors[clusterType] || '#ff4444';
+    
     return `
-      <div class="cluster-card" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+      <div class="cluster-card" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; transition: all 0.3s;">
         <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
           <div>
-            <h3 style="margin: 0 0 0.5rem 0; color: #fff; font-size: 1.1rem;">Cluster (${cluster.domain_count || 0} domains)</h3>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">Cluster (${cluster.domain_count || 0} domains)</h3>
+              <span style="background: ${badgeColor}20; color: ${badgeColor}; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; border: 1px solid ${badgeColor}40;">
+                ${clusterType}
+              </span>
+            </div>
             <p style="color: #999; font-size: 0.85rem; margin: 0;">Shared infrastructure grouping</p>
           </div>
           <div style="background: rgba(255, 68, 68, 0.2); color: #ff4444; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
@@ -160,9 +181,9 @@ function renderClusters() {
           <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Domains in Cluster</p>
           <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
             ${(cluster.domains || []).map(domain => `
-              <span style="display: inline-block; padding: 0.4rem 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; font-size: 0.9rem; color: #fff; font-family: monospace;">
+              <a href="/personaforge/domains/${encodeURIComponent(domain)}" style="display: inline-block; padding: 0.4rem 0.8rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px; font-size: 0.9rem; color: #fff; font-family: monospace; transition: all 0.2s; cursor: pointer; text-decoration: none;" onmouseover="this.style.background='rgba(255,68,68,0.1)'; this.style.borderColor='rgba(255,68,68,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.05)'; this.style.borderColor='rgba(255,255,255,0.1)'" title="View detailed analysis">
                 ${domain}
-              </span>
+              </a>
             `).join('')}
           </div>
         </div>
@@ -194,24 +215,178 @@ function updateStats() {
   document.getElementById('total-domains').textContent = allDomains.size;
 }
 
+// Load content-based clusters
+async function loadContentClusters() {
+  try {
+    const similarityThreshold = parseFloat(document.getElementById('similarity-threshold')?.value || 0.6);
+    const minClusterSize = parseInt(document.getElementById('min-cluster-size')?.value || 2);
+    
+    const response = await fetch(`/personaforge/api/content-clusters?similarity_threshold=${similarityThreshold}&min_cluster_size=${minClusterSize}&include_duplicates=true`);
+    const data = await response.json();
+    
+    if (data.clusters) {
+      contentClusters = data.clusters;
+      renderContentClusters();
+    } else if (data.error) {
+      console.error('Content clusters API error:', data.error);
+      document.getElementById('clusters-container').innerHTML = 
+        `<div style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 8px; padding: 2rem; text-align: center;">
+          <p style="color: #ff4444; margin-bottom: 1rem;">Error loading content clusters: ${data.error}</p>
+        </div>`;
+    } else {
+      contentClusters = [];
+      renderContentClusters();
+    }
+  } catch (error) {
+    console.error('Error loading content clusters:', error);
+    document.getElementById('clusters-container').innerHTML = 
+      '<div class="loading" style="color: #ff4444;">Error loading content clusters. Please try again.</div>';
+  }
+}
+
+// Render content-based clusters
+function renderContentClusters() {
+  const container = document.getElementById('clusters-container');
+  
+  if (contentClusters.length === 0) {
+    container.innerHTML = `
+      <div style="background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.3); border-radius: 8px; padding: 2rem; text-align: center;">
+        <p style="color: #999; margin-bottom: 1rem;">No content similarity clusters found.</p>
+        <p style="color: #666; font-size: 0.9rem;">
+          Try lowering the similarity threshold or minimum cluster size.
+        </p>
+      </div>
+    `;
+    return;
+  }
+  
+  container.innerHTML = contentClusters.map(cluster => {
+    const clusterType = cluster.type || 'Content Similarity';
+    const badgeColor = clusterType === 'Exact Duplicate' ? '#ff6b6b' : '#4ecdc4';
+    
+    // Format vendors list
+    const vendorsList = (cluster.vendors || []).map(v => {
+      const vendorName = v.vendor_name || v.title || 'Unknown';
+      const vendorId = v.id;
+      return `<a href="/personaforge/vendor-intel/${vendorId}" style="color: #ff4444; text-decoration: none; font-weight: 500;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">${vendorName}</a>`;
+    }).join(', ');
+    
+    // Format common keywords
+    const keywordsDisplay = (cluster.common_keywords || []).map(k => 
+      `<span style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.25rem 0.75rem; background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 68, 68, 0.2); border-radius: 4px; font-size: 0.85rem; color: #ff6b6b;">${k}</span>`
+    ).join('');
+    
+    return `
+      <div class="cluster-card" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem; transition: all 0.3s;">
+        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+              <h3 style="margin: 0; color: #fff; font-size: 1.1rem;">${clusterType} Cluster (${cluster.vendor_count || 0} vendors)</h3>
+              <span style="background: ${badgeColor}20; color: ${badgeColor}; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; border: 1px solid ${badgeColor}40;">
+                ${clusterType}
+              </span>
+            </div>
+            <p style="color: #999; font-size: 0.85rem; margin: 0;">
+              Average similarity: <strong style="color: #fff;">${(cluster.average_similarity * 100).toFixed(1)}%</strong>
+            </p>
+          </div>
+          <div style="background: rgba(255, 68, 68, 0.2); color: #ff4444; padding: 0.25rem 0.75rem; border-radius: 4px; font-size: 0.85rem; font-weight: 600;">
+            ${cluster.vendor_count || 0} vendors
+          </div>
+        </div>
+        
+        ${cluster.sample_text ? `
+        <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 4px; border-left: 3px solid ${badgeColor};">
+          <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Sample Description</p>
+          <p style="color: #ccc; font-size: 0.9rem; line-height: 1.6; margin: 0;">${cluster.sample_text}</p>
+        </div>
+        ` : ''}
+        
+        ${keywordsDisplay ? `
+        <div style="margin-bottom: 1rem;">
+          <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Common Keywords</p>
+          <div style="margin-bottom: 1rem;">
+            ${keywordsDisplay}
+          </div>
+        </div>
+        ` : ''}
+        
+        <div>
+          <p style="color: #999; font-size: 0.85rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Vendors in Cluster</p>
+          <div style="color: #fff; line-height: 1.8;">
+            ${vendorsList || '<span style="color: #666;">No vendors</span>'}
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Load clusters (main data)
+  // Load infrastructure clusters by default
   loadClusters();
+  currentClusterType = 'infrastructure';
   
-  // Refresh button
-  document.getElementById('refresh-vendors')?.addEventListener('click', () => {
+  // Toggle buttons
+  document.getElementById('show-infrastructure-clusters')?.addEventListener('click', () => {
+    currentClusterType = 'infrastructure';
+    document.getElementById('show-infrastructure-clusters').classList.add('btn-primary');
+    document.getElementById('show-infrastructure-clusters').classList.remove('btn-secondary');
+    document.getElementById('show-content-clusters').classList.add('btn-secondary');
+    document.getElementById('show-content-clusters').classList.remove('btn-primary');
+    // Show/hide filters
+    document.getElementById('infrastructure-filters').style.display = 'flex';
+    document.getElementById('content-filters').style.display = 'none';
     loadClusters();
   });
   
-  // Min domains filter - update clusters when changed
+  document.getElementById('show-content-clusters')?.addEventListener('click', () => {
+    currentClusterType = 'content';
+    document.getElementById('show-content-clusters').classList.add('btn-primary');
+    document.getElementById('show-content-clusters').classList.remove('btn-secondary');
+    document.getElementById('show-infrastructure-clusters').classList.add('btn-secondary');
+    document.getElementById('show-infrastructure-clusters').classList.remove('btn-primary');
+    // Show/hide filters
+    document.getElementById('infrastructure-filters').style.display = 'none';
+    document.getElementById('content-filters').style.display = 'flex';
+    loadContentClusters();
+  });
+  
+  // Content cluster filters
+  document.getElementById('similarity-threshold')?.addEventListener('change', () => {
+    if (currentClusterType === 'content') {
+      loadContentClusters();
+    }
+  });
+  
+  document.getElementById('min-cluster-size')?.addEventListener('change', () => {
+    if (currentClusterType === 'content') {
+      loadContentClusters();
+    }
+  });
+  
+  // Refresh button
+  document.getElementById('refresh-vendors')?.addEventListener('click', () => {
+    if (currentClusterType === 'infrastructure') {
+      loadClusters();
+    } else {
+      loadContentClusters();
+    }
+  });
+  
+  // Min domains filter - update clusters when changed (only for infrastructure)
   document.getElementById('min-domains')?.addEventListener('change', () => {
-    loadClusters();
+    if (currentClusterType === 'infrastructure') {
+      loadClusters();
+    }
   });
   
   // Also trigger on input for real-time filtering
   document.getElementById('min-domains')?.addEventListener('input', () => {
-    loadClusters();
+    if (currentClusterType === 'infrastructure') {
+      loadClusters();
+    }
   });
 });
 

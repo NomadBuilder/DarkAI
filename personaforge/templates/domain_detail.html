@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <title>Domain Analysis – {{ domain }} – PersonaForge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="{{ url_for('personaforge.static', filename='css/style.css') }}">
+  <style>
+    .domain-detail-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .domain-header {
+      background: rgba(255, 68, 68, 0.1);
+      border-left: 4px solid #ff4444;
+      padding: 2rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    
+    .domain-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2rem;
+      color: #fff;
+      font-family: monospace;
+    }
+    
+    .domain-meta {
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+      color: #999;
+      font-size: 0.9rem;
+    }
+    
+    .section {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    
+    .section h2 {
+      margin: 0 0 1rem 0;
+      color: #ff4444;
+      font-size: 1.3rem;
+      border-bottom: 2px solid rgba(255, 68, 68, 0.3);
+      padding-bottom: 0.5rem;
+    }
+    
+    .section h3 {
+      margin: 1.5rem 0 0.75rem 0;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+    
+    .data-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    
+    .data-item {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 1rem;
+      border-radius: 4px;
+      border-left: 3px solid #ff4444;
+    }
+    
+    .data-item-label {
+      color: #999;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .data-item-value {
+      color: #fff;
+      font-size: 1rem;
+      word-break: break-word;
+    }
+    
+    .json-viewer {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      padding: 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: #ccc;
+      max-height: 400px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    
+    .tag {
+      background: rgba(255, 68, 68, 0.2);
+      color: #ff4444;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      border: 1px solid rgba(255, 68, 68, 0.3);
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #999;
+    }
+    
+    .error {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid #ff4444;
+      color: #ff4444;
+      padding: 1.5rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .no-data {
+      color: #666;
+      font-style: italic;
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    .html-preview {
+      background: rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      padding: 1rem;
+      max-height: 300px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      color: #ccc;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+    
+    .text-content {
+      background: rgba(0, 0, 0, 0.3);
+      border-left: 3px solid #4ecdc4;
+      padding: 1rem;
+      border-radius: 4px;
+      color: #ccc;
+      line-height: 1.6;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .sentiment-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .sentiment-positive {
+      background: rgba(76, 175, 80, 0.2);
+      color: #4caf50;
+      border: 1px solid rgba(76, 175, 80, 0.3);
+    }
+    
+    .sentiment-negative {
+      background: rgba(244, 67, 54, 0.2);
+      color: #f44336;
+      border: 1px solid rgba(244, 67, 54, 0.3);
+    }
+    
+    .sentiment-neutral {
+      background: rgba(158, 158, 158, 0.2);
+      color: #9e9e9e;
+      border: 1px solid rgba(158, 158, 158, 0.3);
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-bottom: 1rem;
+      color: #ff4444;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
+  <div class="page">
+    <!-- Navigation -->
+    <nav class="nav">
+      <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+          <span class="nav__brand-mark"></span>
+        </a>
+        <a href="/personaforge/" style="text-decoration: none; color: inherit;">PERSONAFORGE</a>
+      </div>
+      <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+      <div class="nav__links">
+        <a href="/personaforge/" class="nav__link">Home</a>
+        <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
+        <a href="/personaforge/vendors" class="nav__link">Vendors</a>
+        <a href="/personaforge/vendors-intel" class="nav__link">Vendor Intel</a>
+        <a href="/personaforge/methodology" class="nav__link">Methodology</a>
+        <a href="/personaforge/glossary" class="nav__link">Glossary</a>
+      </div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="domain-detail-container">
+      <a href="/personaforge/vendors" class="back-link">← Back to Vendors</a>
+      
+      <div id="loading" class="loading">Loading domain analysis...</div>
+      <div id="error" class="error" style="display: none;"></div>
+      
+      <div id="domain-content" style="display: none;">
+        <!-- Domain Header -->
+        <div class="domain-header">
+          <h1 id="domain-name">{{ domain }}</h1>
+          <div class="domain-meta">
+            <span>Source: <strong id="domain-source">-</strong></span>
+            <span>Vendor Type: <strong id="domain-vendor-type">-</strong></span>
+            <span>Enriched: <strong id="domain-enriched-at">-</strong></span>
+          </div>
+        </div>
+
+        <!-- Basic Infrastructure -->
+        <div class="section">
+          <h2>Basic Infrastructure</h2>
+          <div class="data-grid" id="basic-infrastructure">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Web Scraping & HTML Analysis -->
+        <div class="section" id="web-scraping-section">
+          <h2>Web Scraping & HTML Analysis</h2>
+          <div id="web-scraping-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Extracted Content -->
+        <div class="section" id="extracted-content-section">
+          <h2>Extracted Content</h2>
+          <div id="extracted-content-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- NLP Analysis -->
+        <div class="section" id="nlp-analysis-section">
+          <h2>NLP Analysis</h2>
+          <div id="nlp-analysis-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- SSL/TLS Certificate -->
+        <div class="section" id="ssl-section">
+          <h2>SSL/TLS Certificate Analysis</h2>
+          <div id="ssl-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Security Headers -->
+        <div class="section" id="security-headers-section">
+          <h2>Security Headers</h2>
+          <div id="security-headers-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Threat Intelligence -->
+        <div class="section" id="threat-intel-section">
+          <h2>Threat Intelligence</h2>
+          <div id="threat-intel-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="section" id="tech-stack-section">
+          <h2>Tech Stack</h2>
+          <div id="tech-stack-content">
+            <!-- Populated by JavaScript -->
+          </div>
+        </div>
+
+        <!-- Full Enrichment Data (JSON) -->
+        <div class="section" id="full-data-section">
+          <h2>Full Enrichment Data</h2>
+          <details>
+            <summary style="cursor: pointer; color: #ff4444; margin-bottom: 1rem;">View Raw JSON Data</summary>
+            <div class="json-viewer" id="full-json-data"></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const domain = '{{ domain }}';
+    
+    async function loadDomainData() {
+      try {
+        const response = await fetch(`/personaforge/api/domains/${encodeURIComponent(domain)}`);
+        const data = await response.json();
+        
+        if (response.status !== 200) {
+          throw new Error(data.error || 'Failed to load domain data');
+        }
+        
+        // Hide loading, show content
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('domain-content').style.display = 'block';
+        
+        // Populate header
+        document.getElementById('domain-name').textContent = data.domain || domain;
+        document.getElementById('domain-source').textContent = data.source || 'Unknown';
+        document.getElementById('domain-vendor-type').textContent = data.vendor_type || 'Unknown';
+        document.getElementById('domain-enriched-at').textContent = data.enriched_at ? new Date(data.enriched_at).toLocaleString() : 'Not enriched';
+        
+        // Populate sections
+        populateBasicInfrastructure(data);
+        populateWebScraping(data.web_scraping);
+        populateExtractedContent(data.extracted_content);
+        populateNLPAnalysis(data.nlp_analysis);
+        populateSSL(data.ssl_certificate, data.certificate_transparency);
+        populateSecurityHeaders(data.security_headers);
+        populateThreatIntel(data.threat_intel);
+        populateTechStack(data);
+        populateFullJSON(data);
+        
+      } catch (error) {
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('error').style.display = 'block';
+        document.getElementById('error').textContent = `Error: ${error.message}`;
+      }
+    }
+    
+    function populateBasicInfrastructure(data) {
+      const container = document.getElementById('basic-infrastructure');
+      const items = [
+        { label: 'IP Address', value: data.ip_address },
+        { label: 'Host Name', value: data.host_name },
+        { label: 'ASN', value: data.asn },
+        { label: 'ISP', value: data.isp },
+        { label: 'CDN', value: data.cdn },
+        { label: 'CMS', value: data.cms },
+        { label: 'Payment Processor', value: data.payment_processor },
+        { label: 'Registrar', value: data.registrar },
+        { label: 'Creation Date', value: data.creation_date },
+        { label: 'Expiration Date', value: data.expiration_date }
+      ];
+      
+      container.innerHTML = items.map(item => {
+        if (!item.value) return '';
+        return `
+          <div class="data-item">
+            <div class="data-item-label">${item.label}</div>
+            <div class="data-item-value">${item.value}</div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function populateWebScraping(webScraping) {
+      const section = document.getElementById('web-scraping-section');
+      const content = document.getElementById('web-scraping-content');
+      
+      if (!webScraping || Object.keys(webScraping).length === 0) {
+        content.innerHTML = '<div class="no-data">No web scraping data available</div>';
+        return;
+      }
+      
+      let html = '';
+      
+      if (webScraping.title) {
+        html += `<div class="data-item"><div class="data-item-label">Page Title</div><div class="data-item-value">${webScraping.title}</div></div>`;
+      }
+      
+      if (webScraping.meta_description) {
+        html += `<div class="data-item"><div class="data-item-label">Meta Description</div><div class="data-item-value">${webScraping.meta_description}</div></div>`;
+      }
+      
+      if (webScraping.status_code) {
+        html += `<div class="data-item"><div class="data-item-label">HTTP Status</div><div class="data-item-value">${webScraping.status_code}</div></div>`;
+      }
+      
+      if (webScraping.load_time) {
+        html += `<div class="data-item"><div class="data-item-label">Load Time</div><div class="data-item-value">${webScraping.load_time}ms</div></div>`;
+      }
+      
+      if (webScraping.text) {
+        html += `<h3>Extracted Text</h3><div class="text-content">${escapeHtml(webScraping.text.substring(0, 1000))}${webScraping.text.length > 1000 ? '...' : ''}</div>`;
+      }
+      
+      if (webScraping.html) {
+        html += `<h3>HTML Content (Preview)</h3><div class="html-preview">${escapeHtml(webScraping.html.substring(0, 2000))}${webScraping.html.length > 2000 ? '...' : ''}</div>`;
+      }
+      
+      if (webScraping.structured_data) {
+        html += `<h3>Structured Data</h3><div class="json-viewer">${JSON.stringify(webScraping.structured_data, null, 2)}</div>`;
+      }
+      
+      if (webScraping.links) {
+        html += `<h3>Links</h3><div class="tag-list">`;
+        if (webScraping.links.internal) {
+          html += `<div><strong>Internal:</strong> ${webScraping.links.internal.length} links</div>`;
+        }
+        if (webScraping.links.external) {
+          html += `<div><strong>External:</strong> ${webScraping.links.external.length} links</div>`;
+        }
+        html += `</div>`;
+      }
+      
+      content.innerHTML = html || '<div class="no-data">No web scraping data available</div>';
+    }
+    
+    function populateExtractedContent(extractedContent) {
+      const section = document.getElementById('extracted-content-section');
+      const content = document.getElementById('extracted-content-content');
+      
+      if (!extractedContent || Object.keys(extractedContent).length === 0) {
+        content.innerHTML = '<div class="no-data">No extracted content available</div>';
+        return;
+      }
+      
+      let html = '';
+      
+      if (extractedContent.main_content) {
+        html += `<h3>Main Content</h3><div class="text-content">${escapeHtml(extractedContent.main_content.substring(0, 500))}${extractedContent.main_content.length > 500 ? '...' : ''}</div>`;
+      }
+      
+      if (extractedContent.headings && extractedContent.headings.length > 0) {
+        html += `<h3>Headings</h3><div class="tag-list">${extractedContent.headings.map(h => `<span class="tag">${escapeHtml(h)}</span>`).join('')}</div>`;
+      }
+      
+      if (extractedContent.pricing && extractedContent.pricing.length > 0) {
+        html += `<h3>Pricing Information</h3><div class="json-viewer">${JSON.stringify(extractedContent.pricing, null, 2)}</div>`;
+      }
+      
+      if (extractedContent.contact_info) {
+        html += `<h3>Contact Information</h3><div class="json-viewer">${JSON.stringify(extractedContent.contact_info, null, 2)}</div>`;
+      }
+      
+      if (extractedContent.service_descriptions && extractedContent.service_descriptions.length > 0) {
+        html += `<h3>Service Descriptions</h3><div class="tag-list">${extractedContent.service_descriptions.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('')}</div>`;
+      }
+      
+      content.innerHTML = html || '<div class="no-data">No extracted content available</div>';
+    }
+    
+    function populateNLPAnalysis(nlpAnalysis) {
+      const section = document.getElementById('nlp-analysis-section');
+      const content = document.getElementById('nlp-analysis-content');
+      
+      if (!nlpAnalysis || Object.keys(nlpAnalysis).length === 0) {
+        content.innerHTML = '<div class="no-data">No NLP analysis available</div>';
+        return;
+      }
+      
+      let html = '';
+      
+      if (nlpAnalysis.sentiment) {
+        const polarity = nlpAnalysis.sentiment.polarity || 0;
+        const sentimentClass = polarity > 0.1 ? 'sentiment-positive' : polarity < -0.1 ? 'sentiment-negative' : 'sentiment-neutral';
+        const sentimentText = polarity > 0.1 ? 'Positive' : polarity < -0.1 ? 'Negative' : 'Neutral';
+        html += `<div class="data-item">
+          <div class="data-item-label">Sentiment</div>
+          <div class="data-item-value">
+            <span class="sentiment-badge ${sentimentClass}">${sentimentText}</span>
+            <span style="margin-left: 1rem; color: #999;">Polarity: ${polarity.toFixed(2)}, Subjectivity: ${(nlpAnalysis.sentiment.subjectivity || 0).toFixed(2)}</span>
+          </div>
+        </div>`;
+      }
+      
+      if (nlpAnalysis.keywords && nlpAnalysis.keywords.length > 0) {
+        html += `<h3>Keywords</h3><div class="tag-list">${nlpAnalysis.keywords.map(k => `<span class="tag">${escapeHtml(k)}</span>`).join('')}</div>`;
+      }
+      
+      if (nlpAnalysis.entities) {
+        html += `<h3>Named Entities</h3>`;
+        if (nlpAnalysis.entities.organizations && nlpAnalysis.entities.organizations.length > 0) {
+          html += `<div><strong>Organizations:</strong> <div class="tag-list">${nlpAnalysis.entities.organizations.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('')}</div></div>`;
+        }
+        if (nlpAnalysis.entities.services && nlpAnalysis.entities.services.length > 0) {
+          html += `<div style="margin-top: 1rem;"><strong>Services:</strong> <div class="tag-list">${nlpAnalysis.entities.services.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('')}</div></div>`;
+        }
+        if (nlpAnalysis.entities.locations && nlpAnalysis.entities.locations.length > 0) {
+          html += `<div style="margin-top: 1rem;"><strong>Locations:</strong> <div class="tag-list">${nlpAnalysis.entities.locations.map(e => `<span class="tag">${escapeHtml(e)}</span>`).join('')}</div></div>`;
+        }
+      }
+      
+      if (nlpAnalysis.topics && nlpAnalysis.topics.length > 0) {
+        html += `<h3>Topics</h3><div class="tag-list">${nlpAnalysis.topics.map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>`;
+      }
+      
+      if (nlpAnalysis.language) {
+        html += `<div class="data-item"><div class="data-item-label">Detected Language</div><div class="data-item-value">${nlpAnalysis.language}</div></div>`;
+      }
+      
+      content.innerHTML = html || '<div class="no-data">No NLP analysis available</div>';
+    }
+    
+    function populateSSL(sslCert, certTransparency) {
+      const content = document.getElementById('ssl-content');
+      
+      if ((!sslCert || Object.keys(sslCert).length === 0) && (!certTransparency || Object.keys(certTransparency).length === 0)) {
+        content.innerHTML = '<div class="no-data">No SSL/TLS certificate data available</div>';
+        return;
+      }
+      
+      let html = '';
+      
+      if (sslCert) {
+        if (sslCert.subject) html += `<div class="data-item"><div class="data-item-label">Subject</div><div class="data-item-value">${sslCert.subject}</div></div>`;
+        if (sslCert.issuer) html += `<div class="data-item"><div class="data-item-label">Issuer</div><div class="data-item-value">${sslCert.issuer}</div></div>`;
+        if (sslCert.valid_from) html += `<div class="data-item"><div class="data-item-label">Valid From</div><div class="data-item-value">${sslCert.valid_from}</div></div>`;
+        if (sslCert.valid_to) html += `<div class="data-item"><div class="data-item-label">Valid To</div><div class="data-item-value">${sslCert.valid_to}</div></div>`;
+        if (sslCert.is_valid !== undefined) {
+          const validClass = sslCert.is_valid ? 'sentiment-positive' : 'sentiment-negative';
+          html += `<div class="data-item"><div class="data-item-label">Valid</div><div class="data-item-value"><span class="sentiment-badge ${validClass}">${sslCert.is_valid ? 'Yes' : 'No'}</span></div></div>`;
+        }
+        if (sslCert.tls_version) html += `<div class="data-item"><div class="data-item-label">TLS Version</div><div class="data-item-value">${sslCert.tls_version}</div></div>`;
+      }
+      
+      if (certTransparency && certTransparency.subdomains && certTransparency.subdomains.length > 0) {
+        html += `<h3>Certificate Transparency Subdomains</h3><div class="tag-list">${certTransparency.subdomains.map(s => `<span class="tag">${escapeHtml(s)}</span>`).join('')}</div>`;
+      }
+      
+      content.innerHTML = html || '<div class="no-data">No SSL/TLS certificate data available</div>';
+    }
+    
+    function populateSecurityHeaders(securityHeaders) {
+      const content = document.getElementById('security-headers-content');
+      
+      if (!securityHeaders || Object.keys(securityHeaders).length === 0) {
+        content.innerHTML = '<div class="no-data">No security headers data available</div>';
+        return;
+      }
+      
+      let html = '';
+      
+      if (securityHeaders.security_score !== undefined) {
+        html += `<div class="data-item"><div class="data-item-label">Security Score</div><div class="data-item-value">${securityHeaders.security_score}/100</div></div>`;
+      }
+      
+      if (securityHeaders.headers) {
+        html += `<h3>Headers</h3><div class="json-viewer">${JSON.stringify(securityHeaders.headers, null, 2)}</div>`;
+      }
+      
+      content.innerHTML = html || '<div class="no-data">No security headers data available</div>';
+    }
+    
+    function populateThreatIntel(threatIntel) {
+      const content = document.getElementById('threat-intel-content');
+      
+      if (!threatIntel || Object.keys(threatIntel).length === 0) {
+        content.innerHTML = '<div class="no-data">No threat intelligence data available</div>';
+        return;
+      }
+      
+      content.innerHTML = `<div class="json-viewer">${JSON.stringify(threatIntel, null, 2)}</div>`;
+    }
+    
+    function populateTechStack(data) {
+      const content = document.getElementById('tech-stack-content');
+      
+      const techStackItems = [];
+      if (data.frameworks && data.frameworks.length > 0) techStackItems.push({ label: 'Frameworks', value: data.frameworks });
+      if (data.analytics && data.analytics.length > 0) techStackItems.push({ label: 'Analytics', value: data.analytics });
+      if (data.javascript_frameworks && data.javascript_frameworks.length > 0) techStackItems.push({ label: 'JavaScript Frameworks', value: data.javascript_frameworks });
+      if (data.web_servers && data.web_servers.length > 0) techStackItems.push({ label: 'Web Servers', value: data.web_servers });
+      if (data.programming_languages && data.programming_languages.length > 0) techStackItems.push({ label: 'Programming Languages', value: data.programming_languages });
+      
+      if (techStackItems.length === 0) {
+        content.innerHTML = '<div class="no-data">No tech stack data available</div>';
+        return;
+      }
+      
+      let html = '';
+      techStackItems.forEach(item => {
+        html += `<h3>${item.label}</h3><div class="tag-list">${item.value.map(v => `<span class="tag">${escapeHtml(v)}</span>`).join('')}</div>`;
+      });
+      
+      content.innerHTML = html;
+    }
+    
+    function populateFullJSON(data) {
+      document.getElementById('full-json-data').textContent = JSON.stringify(data, null, 2);
+    }
+    
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', loadDomainData);
+    
+    // Hamburger menu
+    document.addEventListener('DOMContentLoaded', function() {
+      const hamburger = document.querySelector('.hamburger');
+      const navLinks = document.querySelector('.nav__links');
+      
+      if (hamburger && navLinks) {
+        hamburger.addEventListener('click', function() {
+          hamburger.classList.toggle('is-active');
+          navLinks.classList.toggle('is-active');
+          document.body.classList.toggle('no-scroll');
+        });
+      }
+    });
+  </script>
+</body>
+</html>
+

@@ -11,6 +11,9 @@ services:
         generateValue: true
       - key: FLASK_ENV
         value: production
+      - key: SKIP_NEO4J
+        value: "1"
+        comment: "Skip Neo4j connection (optional - set to 0 if Neo4j is available)"
       
       # Shared Database - All services use the same database
       # Using the existing blackwire database

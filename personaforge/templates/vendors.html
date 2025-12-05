@@ -54,7 +54,9 @@
         <a href="/personaforge/" class="nav__link">Home</a>
         <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
         <a href="/personaforge/vendors" class="nav__link nav__link--accent">Vendors</a>
+        <a href="/personaforge/vendors-intel" class="nav__link">Vendor Intel</a>
         <a href="/personaforge/methodology" class="nav__link">Methodology</a>
+        <a href="/personaforge/glossary" class="nav__link">Glossary</a>
       </div>
     </nav>
 
@@ -80,10 +82,17 @@
 
       <!-- Filters -->
       <div class="filters-bar" style="margin-bottom: 2rem;">
-        <div class="filter-group">
+        <div class="filter-group" id="infrastructure-filters">
           <label style="color: #999; font-size: 0.9rem;">Min Domains per Cluster:</label>
           <input type="number" id="min-domains" value="2" min="1" class="filter-input" style="width: 80px;">
           <span style="color: #666; font-size: 0.85rem; margin-left: 0.5rem;">(Filter clusters by size)</span>
+        </div>
+        <div class="filter-group" id="content-filters" style="display: none;">
+          <label style="color: #999; font-size: 0.9rem;">Similarity Threshold:</label>
+          <input type="number" id="similarity-threshold" value="0.6" min="0.1" max="1.0" step="0.1" class="filter-input" style="width: 80px;">
+          <label style="color: #999; font-size: 0.9rem; margin-left: 1rem;">Min Cluster Size:</label>
+          <input type="number" id="min-cluster-size" value="2" min="2" class="filter-input" style="width: 80px;">
+          <span style="color: #666; font-size: 0.85rem; margin-left: 0.5rem;">(0.6 = 60% similarity)</span>
         </div>
         <button id="refresh-vendors" class="btn btn-primary">Refresh Data</button>
         <a href="/personaforge/api/export/vendors?format=csv" class="btn btn-secondary" style="text-decoration: none;">Export Clusters (CSV)</a>
@@ -111,11 +120,19 @@
 
       <!-- Clusters Section -->
       <section class="clusters-section" style="margin-top: 3rem;">
-        <h2 style="margin-bottom: 1rem;">Infrastructure Clusters</h2>
-        <p style="color: #999; margin-bottom: 1.5rem; font-size: 0.9rem;">
-          Domains grouped by shared infrastructure (hosting, CDN, payment processors, registrars). 
-          Clusters help identify related operations and vendor networks.
-        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+          <div>
+            <h2 style="margin-bottom: 0.5rem;">Infrastructure Clusters</h2>
+            <p style="color: #999; font-size: 0.9rem; margin: 0;">
+              Domains grouped by shared infrastructure (hosting, CDN, payment processors, registrars). 
+              Clusters help identify related operations and vendor networks.
+            </p>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button id="show-infrastructure-clusters" class="btn btn-primary" style="font-size: 0.9rem;">Infrastructure</button>
+            <button id="show-content-clusters" class="btn btn-secondary" style="font-size: 0.9rem;">Content Similarity</button>
+          </div>
+        </div>
         <div class="clusters-container" id="clusters-container">
           <div class="loading">Loading clusters...</div>
         </div>

@@ -11,6 +11,8 @@ from flask import Blueprint, render_template, jsonify, request, Response
 import json
 from flask_cors import CORS
 from dotenv import load_dotenv
+import psycopg2
+import psycopg2.extras
 
 # Add src to path (relative to blueprint location)
 blueprint_dir = Path(__file__).parent.absolute()
@@ -70,6 +72,13 @@ try:
 except ImportError:
     VENDOR_CLUSTERING_AVAILABLE = False
     detect_vendor_clusters = None
+
+try:
+    from src.clustering.content_clustering import detect_content_clusters_from_db
+    CONTENT_CLUSTERING_AVAILABLE = True
+except ImportError:
+    CONTENT_CLUSTERING_AVAILABLE = False
+    detect_content_clusters_from_db = None
 
 # Create blueprint
 # Use absolute path for template_folder to ensure Flask can find templates
@@ -276,6 +285,26 @@ def vendors():
     """Render the vendors/clusters page."""
     return render_template('vendors.html')
 
+@personaforge_bp.route('/vendors-intel')
+def vendors_intel():
+    """Vendor intelligence directory page."""
+    return render_template('vendors_intel.html')
+
+@personaforge_bp.route('/vendor-intel/<int:vendor_id>')
+def vendor_intel_profile(vendor_id):
+    """Vendor intelligence profile page."""
+    return render_template('vendor_intel_profile.html', vendor_id=vendor_id)
+
+@personaforge_bp.route('/categories')
+def categories():
+    """Category analysis page."""
+    return render_template('categories.html')
+
+@personaforge_bp.route('/services')
+def services():
+    """Service catalog page."""
+    return render_template('services.html')
+
 
 @personaforge_bp.route('/analytics')
 def analytics():
@@ -289,42 +318,131 @@ def methodology():
     return render_template('methodology.html')
 
 
+@personaforge_bp.route('/glossary')
+def glossary():
+    """Render the glossary page."""
+    return render_template('glossary.html')
+
+
 @personaforge_bp.route('/api/homepage-stats', methods=['GET'])
 def get_homepage_stats():
     """Get statistics for the homepage."""
-    if not postgres_client or not postgres_client.conn:
+    database_available = postgres_client and postgres_client.conn is not None
+    
+    if not database_available:
         return jsonify({
             "total_domains": 0,
             "total_vendors": 0,
             "high_risk_domains": 0,
             "infrastructure_clusters": 0,
-            "top_vendors": []
+            "top_vendors": [],
+            "recent_discoveries": [],
+            "database_available": False
         }), 200
     
     try:
         # Get basic stats
         domains = postgres_client.get_all_enriched_domains()
-        vendors = postgres_client.get_vendors(min_domains=1)
         
-        # Count high-risk domains (you can define this based on your criteria)
-        high_risk = len([d for d in domains if d.get('vendor_type') == 'high_risk'])
+        # Use vendor intelligence data instead of old vendors table
+        vendor_intel = postgres_client.get_all_vendors_intel()
         
-        # Get top vendors
-        top_vendors = sorted(vendors, key=lambda v: v.get('domain_count', 0), reverse=True)[:10]
+        # Get domain counts for each vendor intelligence vendor
+        import psycopg2.extras
+        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("""
+            SELECT 
+                vi.id,
+                vi.vendor_name,
+                vi.category,
+                COUNT(vid.domain_id) as domain_count
+            FROM personaforge_vendors_intel vi
+            LEFT JOIN personaforge_vendor_intel_domains vid ON vi.id = vid.vendor_intel_id
+            GROUP BY vi.id, vi.vendor_name, vi.category
+            HAVING COUNT(vid.domain_id) > 0
+            ORDER BY domain_count DESC
+        """)
+        vendors_with_domains_data = cursor.fetchall()
+        cursor.close()
+        vendors_with_domains = [dict(row) for row in vendors_with_domains_data]
+        
+        # Count unique vendor types from domains (more accurate than vendors table)
+        vendor_types = set()
+        for domain in domains:
+            vendor_type = domain.get('vendor_type')
+            if vendor_type:
+                vendor_types.add(vendor_type)
+        
+        # Use vendor intelligence count
+        vendor_count = len(vendor_intel) if vendor_intel else len(vendor_types)
+        
+        # Count high-risk domains based on risk score or high-risk vendor types
+        high_risk = 0
+        high_risk_vendor_types = ['fraud-as-a-service', 'synthetic_id_kits', 'synthetic identity kits']
+        
+        for domain in domains:
+            # Check risk score from enrichment_data
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    import json
+                    enrichment = json.loads(enrichment)
+                except:
+                    enrichment = {}
+            
+            risk_score = domain.get('vendor_risk_score') or enrichment.get('vendor_risk_score') or 0
+            vendor_type = domain.get('vendor_type') or enrichment.get('vendor_type') or ''
+            
+            # High risk if:
+            # 1. Risk score >= 70
+            # 2. Vendor type indicates high risk
+            # 3. Domain has strong vendor indicators
+            if risk_score >= 70:
+                high_risk += 1
+            elif vendor_type in high_risk_vendor_types:
+                high_risk += 1
+            elif vendor_type in ['fake_docs', 'kyc_tools'] and risk_score >= 50:
+                # Medium-high risk for these types
+                high_risk += 1
+        
+        # Get top vendors from vendor intelligence (those with domains)
+        top_vendors = sorted(vendors_with_domains, key=lambda v: v.get('domain_count', 0), reverse=True)[:10]
+        
+        # Get recent discoveries (last 10 domains)
+        recent_discoveries = sorted(domains, key=lambda x: x.get('updated_at', ''), reverse=True)[:10]
+        recent_discoveries_data = []
+        for domain in recent_discoveries:
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    import json
+                    enrichment = json.loads(enrichment)
+                except:
+                    enrichment = {}
+            
+            recent_discoveries_data.append({
+                "domain": domain.get('domain', 'Unknown'),
+                "vendor_type": domain.get('vendor_type') or enrichment.get('vendor_type') or 'unknown',
+                "risk_score": domain.get('vendor_risk_score') or enrichment.get('vendor_risk_score') or 0
+            })
         
         # Get infrastructure clusters count
         stats = {
             "total_domains": len(domains),
-            "total_vendors": len(vendors),
+            "total_vendors": vendor_count,
             "high_risk_domains": high_risk,
             "top_vendors": [
                 {
-                    "name": v.get('name', 'Unknown'),
-                    "domain_count": v.get('domain_count', 0)
+                    "vendor_name": v.get('vendor_name', v.get('title', 'Unknown')),
+                    "domain_count": v.get('domain_count', 0),
+                    "vendor_type": v.get('category', 'unknown'),
+                    "avg_risk_score": 0  # Vendor intelligence doesn't have risk scores yet
                 }
                 for v in top_vendors
             ],
-            "infrastructure_clusters": 0  # Will be updated if clustering works
+            "recent_discoveries": recent_discoveries_data,
+            "infrastructure_clusters": 0,  # Will be updated if clustering works
+            "database_available": True
         }
         
         # Try to get cluster count
@@ -397,7 +515,7 @@ def get_vendors():
 
 @personaforge_bp.route('/api/clusters', methods=['GET'])
 def get_clusters():
-    """Get detected vendor clusters."""
+    """Get detected vendor clusters (infrastructure-based)."""
     if not postgres_client or not postgres_client.conn:
         return jsonify({
             "clusters": [],
@@ -415,6 +533,48 @@ def get_clusters():
         }), 200
     except Exception as e:
         app_logger.error(f"Error getting clusters: {e}", exc_info=True)
+        return jsonify({
+            "clusters": [],
+            "error": str(e)
+        }), 500
+
+
+@personaforge_bp.route('/api/content-clusters', methods=['GET'])
+def get_content_clusters():
+    """Get content-based clusters (similar descriptions)."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "clusters": [],
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        if not CONTENT_CLUSTERING_AVAILABLE or not detect_content_clusters_from_db:
+            return jsonify({"clusters": [], "error": "Content clustering module not available"}), 500
+        
+        # Get parameters
+        similarity_threshold = float(request.args.get('similarity_threshold', 0.6))
+        min_cluster_size = int(request.args.get('min_cluster_size', 2))
+        include_duplicates = request.args.get('include_duplicates', 'true').lower() == 'true'
+        
+        clusters = detect_content_clusters_from_db(
+            postgres_client,
+            similarity_threshold=similarity_threshold,
+            min_cluster_size=min_cluster_size,
+            include_duplicates=include_duplicates
+        )
+        
+        return jsonify({
+            "clusters": clusters,
+            "count": len(clusters),
+            "parameters": {
+                "similarity_threshold": similarity_threshold,
+                "min_cluster_size": min_cluster_size,
+                "include_duplicates": include_duplicates
+            }
+        }), 200
+    except Exception as e:
+        app_logger.error(f"Error getting content clusters: {e}", exc_info=True)
         return jsonify({
             "clusters": [],
             "error": str(e)
@@ -486,6 +646,9 @@ def get_graph_from_postgres():
         # Service frequency counters
         service_counts = Counter()
         
+        # Track domains for each infrastructure service
+        infrastructure_domains = {}  # {service_id: [domain1, domain2, ...]}
+        
         # Add domain nodes
         for domain in domains:
             domain_name = domain.get('domain', '')
@@ -514,6 +677,7 @@ def get_graph_from_postgres():
                 service_id = f"host_{host_name}"
                 if service_id not in node_id_map:
                     node_id_map[('host', host_name)] = service_id
+                    infrastructure_domains[service_id] = []
                     nodes.append({
                         "id": service_id,
                         "label": "Host",
@@ -521,6 +685,8 @@ def get_graph_from_postgres():
                         "properties": {"name": host_name}
                     })
                     service_counts['host'] += 1
+                if service_id in infrastructure_domains:
+                    infrastructure_domains[service_id].append(domain_name)
                 edges.append({"source": node_id, "target": service_id, "type": "hosted_by"})
             
             # CDN
@@ -529,6 +695,7 @@ def get_graph_from_postgres():
                 service_id = f"cdn_{cdn_name}"
                 if service_id not in node_id_map:
                     node_id_map[('cdn', cdn_name)] = service_id
+                    infrastructure_domains[service_id] = []
                     nodes.append({
                         "id": service_id,
                         "label": "CDN",
@@ -536,7 +703,30 @@ def get_graph_from_postgres():
                         "properties": {"name": cdn_name}
                     })
                     service_counts['cdn'] += 1
+                if service_id in infrastructure_domains:
+                    infrastructure_domains[service_id].append(domain_name)
                 edges.append({"source": node_id, "target": service_id, "type": "uses_cdn"})
+            
+            # Payment Processor
+            if domain.get('payment_processor'):
+                payment_name = domain.get('payment_processor')
+                # Handle comma-separated payment processors
+                payment_names = [p.strip() for p in payment_name.split(',') if p.strip()]
+                for payment_name in payment_names:
+                    service_id = f"payment_{payment_name}"
+                    if service_id not in node_id_map:
+                        node_id_map[('payment', payment_name)] = service_id
+                        infrastructure_domains[service_id] = []
+                        nodes.append({
+                            "id": service_id,
+                            "label": "PaymentProcessor",
+                            "node_type": "payment",
+                            "properties": {"name": payment_name}
+                        })
+                        service_counts['payment'] += 1
+                    if service_id in infrastructure_domains:
+                        infrastructure_domains[service_id].append(domain_name)
+                    edges.append({"source": node_id, "target": service_id, "type": "uses_payment"})
             
             # CMS
             if domain.get('cms'):
@@ -544,6 +734,7 @@ def get_graph_from_postgres():
                 service_id = f"cms_{cms_name}"
                 if service_id not in node_id_map:
                     node_id_map[('cms', cms_name)] = service_id
+                    infrastructure_domains[service_id] = []
                     nodes.append({
                         "id": service_id,
                         "label": "CMS",
@@ -551,6 +742,8 @@ def get_graph_from_postgres():
                         "properties": {"name": cms_name}
                     })
                     service_counts['cms'] += 1
+                if service_id in infrastructure_domains:
+                    infrastructure_domains[service_id].append(domain_name)
                 edges.append({"source": node_id, "target": service_id, "type": "uses_cms"})
             
             # Registrar
@@ -559,6 +752,7 @@ def get_graph_from_postgres():
                 service_id = f"registrar_{registrar_name}"
                 if service_id not in node_id_map:
                     node_id_map[('registrar', registrar_name)] = service_id
+                    infrastructure_domains[service_id] = []
                     nodes.append({
                         "id": service_id,
                         "label": "Registrar",
@@ -566,7 +760,18 @@ def get_graph_from_postgres():
                         "properties": {"name": registrar_name}
                     })
                     service_counts['registrar'] += 1
+                if service_id in infrastructure_domains:
+                    infrastructure_domains[service_id].append(domain_name)
                 edges.append({"source": node_id, "target": service_id, "type": "registered_with"})
+        
+        # Update infrastructure nodes with domain lists
+        for node in nodes:
+            if node.get('node_type') in ['host', 'cdn', 'payment', 'registrar']:
+                service_id = node.get('id')
+                if service_id in infrastructure_domains:
+                    domains_list = infrastructure_domains[service_id]
+                    node['properties']['domains'] = domains_list
+                    node['properties']['domain_count'] = len(domains_list)
         
         return jsonify({
             "nodes": nodes,
@@ -680,81 +885,1246 @@ def run_initial_discovery():
         return
     
     try:
-        # FIRST: Check for dummy data and seed ONCE if needed
+        # Check for dummy data (but don't auto-seed - user must explicitly request it)
+        # Dummy data was removed and should not be re-seeded automatically
         try:
             cursor = postgres_client.conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
             dummy_count = cursor.fetchone()[0]
             cursor.close()
             
-            if dummy_count == 0:
-                app_logger.info("📊 No dummy data found - seeding dummy data for PersonaForge visualization (one-time only)...")
-                
-                if SEED_DUMMY_DATA_AVAILABLE and seed_dummy_data:
-                    try:
-                        count = seed_dummy_data(num_domains=50)
-                        app_logger.info(f"✅ Seeded {count} dummy domains for PersonaForge visualization")
-                    except Exception as e:
-                        app_logger.error(f"Error seeding dummy data: {e}", exc_info=True)
-                else:
-                    app_logger.warning("seed_dummy_data function not available - skipping dummy data seed")
+            if dummy_count > 0:
+                app_logger.info(f"⚠️  Found {dummy_count} dummy data domains. Use remove_dummy_data.py to clean them.")
             else:
-                app_logger.info(f"✅ Dummy data already exists ({dummy_count} domains) - skipping seed")
+                app_logger.info("✅ No dummy data found - database is clean")
         except Exception as e:
-            app_logger.error(f"Error checking/seeding dummy data: {e}", exc_info=True)
+            app_logger.error(f"Error checking dummy data: {e}", exc_info=True)
         
         # THEN: Check if we have any real domains (not dummy data)
         domains = postgres_client.get_all_enriched_domains()
         # Filter out dummy data for discovery check
         real_domains = [d for d in domains if d.get('source') != 'DUMMY_DATA_FOR_TESTING']
         
-        if len(real_domains) == 0:
-            app_logger.info("🔍 Database is empty - running initial discovery...")
-            try:
-                if not VENDOR_DISCOVERY_AVAILABLE or not discover_all_sources:
-                    app_logger.warning("vendor_discovery module not available - skipping initial discovery")
-                    return
-                
-                if not ENRICHMENT_PIPELINE_AVAILABLE or not enrich_domain:
-                    app_logger.warning("enrichment_pipeline module not available - skipping initial discovery")
-                    return
-                
-                # Run discovery
-                discovery_results = discover_all_sources(limit_per_source=10)
-                
-                # Combine all discovered domains
-                all_domains = set()
-                for domains_list in discovery_results.values():
-                    all_domains.update(domains_list)
-                
-                # Enrich and store domains
-                for domain in list(all_domains)[:20]:  # Limit to 20 for initial discovery
-                    try:
-                        domain_id = postgres_client.insert_domain(
-                            domain=domain,
-                            source="INITIAL_DISCOVERY",
-                            notes="Auto-discovered on startup"
-                        )
-                        enrichment_data = enrich_domain(domain)
-                        postgres_client.insert_enrichment(domain_id, enrichment_data)
-                    except Exception as e:
-                        app_logger.error(f"Error storing discovered domain {domain}: {e}")
-                
-                app_logger.info(f"✅ Initial discovery complete - added {len(all_domains)} domains")
-            except Exception as e:
-                app_logger.error(f"Initial discovery failed: {e}", exc_info=True)
+        # Auto-discovery disabled - using CSV-provided vendor list only
+        # To manually run discovery, use POST /personaforge/api/discover
+        app_logger.info(f"✅ Found {len(real_domains)} domains - auto-discovery disabled (using CSV list only)")
     except Exception as e:
         app_logger.error(f"Error in run_initial_discovery: {e}", exc_info=True)
 
 
-# Run initial discovery in background thread
-import threading
-import time
+# ==================== Vendor Intelligence API Endpoints ====================
 
-def delayed_discovery():
-    """Run initial discovery after app starts."""
-    time.sleep(5)  # Wait for app to fully start
-    run_initial_discovery()
+@personaforge_bp.route('/api/vendors-intel', methods=['GET'])
+def get_vendors_intel():
+    """Get all vendor intelligence with optional filters."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "vendors": [],
+            "total": 0,
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        # Get query parameters
+        category = request.args.get('category')
+        platform_type = request.args.get('platform_type')
+        region = request.args.get('region')
+        search = request.args.get('search')
+        active = request.args.get('active')
+        limit = request.args.get('limit', type=int)
+        offset = request.args.get('offset', type=int)
+        
+        # Build filters
+        filters = {}
+        if category:
+            filters['category'] = category
+        if platform_type:
+            filters['platform_type'] = platform_type
+        if region:
+            filters['region'] = region
+        if search:
+            filters['search'] = search
+        if active is not None:
+            filters['active'] = active.lower() == 'true'
+        if limit:
+            filters['limit'] = limit
+        if offset:
+            filters['offset'] = offset
+        
+        vendors = postgres_client.get_all_vendors_intel(filters)
+        
+        # Get total count (without limit)
+        count_filters = {k: v for k, v in filters.items() if k not in ['limit', 'offset']}
+        total = len(postgres_client.get_all_vendors_intel(count_filters))
+        
+        return jsonify({
+            "vendors": vendors,
+            "total": total,
+            "count": len(vendors)
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting vendor intelligence: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "vendors": [],
+            "total": 0
+        }), 500
 
-discovery_thread = threading.Thread(target=delayed_discovery, daemon=True)
-discovery_thread.start()
+
+@personaforge_bp.route('/api/vendor-intel/<int:vendor_id>', methods=['GET'])
+def get_vendor_intel(vendor_id):
+    """Get single vendor intelligence profile."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "error": "PostgreSQL not available"
+        }), 500
+    
+    try:
+        vendor = postgres_client.get_vendor_intel(vendor_id)
+        if not vendor:
+            return jsonify({"error": "Vendor not found"}), 404
+        
+        # Get associated domains
+        domains = postgres_client.get_vendor_domains(vendor_id)
+        vendor['domains'] = domains
+        
+        return jsonify(vendor), 200
+    except Exception as e:
+        app_logger.error(f"Error getting vendor intelligence: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+@personaforge_bp.route('/api/vendors-intel/search', methods=['GET'])
+def search_vendors_intel():
+    """Search vendors by name, summary, services."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "vendors": [],
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        query = request.args.get('q', '').strip()
+        if not query:
+            return jsonify({"vendors": [], "count": 0}), 200
+        
+        # Get additional filters
+        filters = {'search': query}
+        if request.args.get('category'):
+            filters['category'] = request.args.get('category')
+        if request.args.get('platform_type'):
+            filters['platform_type'] = request.args.get('platform_type')
+        
+        vendors = postgres_client.search_vendors_intel(query, filters)
+        
+        return jsonify({
+            "vendors": vendors,
+            "count": len(vendors),
+            "query": query
+        }), 200
+    except Exception as e:
+        app_logger.error(f"Error searching vendor intelligence: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "vendors": []
+        }), 500
+
+
+@personaforge_bp.route('/api/vendors-intel/categories', methods=['GET'])
+def get_categories():
+    """Get all categories with counts."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "categories": {},
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        stats = postgres_client.get_category_stats()
+        return jsonify({
+            "categories": stats,
+            "count": len(stats)
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting categories: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "categories": {}
+        }), 500
+
+
+@personaforge_bp.route('/api/vendors-intel/services', methods=['GET'])
+def get_services():
+    """Get all services with counts."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "services": {},
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        stats = postgres_client.get_service_stats()
+        return jsonify({
+            "services": stats,
+            "count": len(stats)
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting services: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "services": {}
+        }), 500
+
+
+@personaforge_bp.route('/api/vendors-intel/stats', methods=['GET'])
+def get_vendor_intel_stats():
+    """Get vendor intelligence statistics."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "error": "PostgreSQL not available"
+        }), 500
+    
+    try:
+        all_vendors = postgres_client.get_all_vendors_intel()
+        
+        # Calculate stats
+        total_vendors = len(all_vendors)
+        active_vendors = len([v for v in all_vendors if v.get('active', True)])
+        
+        # Platform distribution
+        platforms = {}
+        for vendor in all_vendors:
+            platform = vendor.get('platform_type') or 'Unknown'
+            platforms[platform] = platforms.get(platform, 0) + 1
+        
+        # Category stats
+        category_stats = postgres_client.get_category_stats()
+        
+        # Service stats
+        service_stats = postgres_client.get_service_stats()
+        
+        # Region stats
+        regions = {}
+        for vendor in all_vendors:
+            region = vendor.get('region') or 'Unknown'
+            regions[region] = regions.get(region, 0) + 1
+        
+        return jsonify({
+            "total_vendors": total_vendors,
+            "active_vendors": active_vendors,
+            "platforms": platforms,
+            "categories": category_stats,
+            "services": service_stats,
+            "regions": regions
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting vendor intelligence stats: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+@personaforge_bp.route('/api/categories/<category>', methods=['GET'])
+def get_category_vendors(category):
+    """Get all vendors in a category."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "vendors": [],
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        vendors = postgres_client.get_vendors_by_category(category)
+        return jsonify({
+            "category": category,
+            "vendors": vendors,
+            "count": len(vendors)
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting category vendors: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "vendors": []
+        }), 500
+
+
+@personaforge_bp.route('/api/services/<service>', methods=['GET'])
+def get_service_vendors(service):
+    """Get all vendors offering a service."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "vendors": [],
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        vendors = postgres_client.get_vendors_by_service(service)
+        return jsonify({
+            "service": service,
+            "vendors": vendors,
+            "count": len(vendors)
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting service vendors: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "vendors": []
+        }), 500
+
+
+@personaforge_bp.route('/api/platforms/<platform_type>', methods=['GET'])
+def get_platform_vendors(platform_type):
+    """Get all vendors on a platform."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "vendors": [],
+            "message": "PostgreSQL not available"
+        }), 200
+    
+    try:
+        vendors = postgres_client.get_vendors_by_platform(platform_type)
+        return jsonify({
+            "platform_type": platform_type,
+            "vendors": vendors,
+            "count": len(vendors)
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error getting platform vendors: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "vendors": []
+        }), 500
+
+
+@personaforge_bp.route('/api/reports/vendor-intelligence-data', methods=['GET'])
+def get_vendor_intelligence_report_data():
+    """Get comprehensive data for the vendor intelligence report."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({"error": "PostgreSQL not available"}), 500
+    
+    try:
+        from collections import Counter, defaultdict
+        vendors = postgres_client.get_all_vendors_intel()
+        domains = postgres_client.get_all_enriched_domains()
+        
+        # Platform distribution
+        platforms = Counter()
+        categories = Counter()
+        regions = Counter()
+        services_list = []
+        active_count = 0
+        vendors_with_domains = 0
+        
+        # Get vendor-domain links
+        cursor = postgres_client.conn.cursor()
+        cursor.execute("SELECT DISTINCT vendor_intel_id FROM personaforge_vendor_intel_domains")
+        vendors_with_domains = len(cursor.fetchall())
+        cursor.close()
+        
+        # Normalize category names function
+        def normalize_category_name(category):
+            """Normalize and format category names - remove duplicates, fix casing, remove underscores."""
+            if not category:
+                return 'Unknown'
+            
+            cat_lower = category.lower().strip()
+            
+            category_map = {
+                'synthetic_id_kits': 'Synthetic Identity Kits',
+                'synthetic identity kits': 'Synthetic Identity Kits',
+                'synthetic identity kit': 'Synthetic Identity Kits',
+                'synthetic_id_kit': 'Synthetic Identity Kits',
+                'synthetic identity': 'Synthetic Identity Kits',
+                'synthetic identity vendors': 'Synthetic Identity Kits',
+                'synthetic identity service': 'Synthetic Identity Kits',
+                'synthetic identity services': 'Synthetic Identity Kits',
+                'fake_docs': 'Fake Documents',
+                'fake docs': 'Fake Documents',
+                'fake documents': 'Fake Documents',
+                'document forger': 'Fake Documents',
+                'document_forger': 'Fake Documents',
+                'kyc bypass / selfie-pass services': 'KYC Bypass Services',
+                'kyc_bypass': 'KYC Bypass Services',
+                'kyc bypass': 'KYC Bypass Services',
+                'kyc_tools': 'KYC Bypass Services',
+                'kyc tools': 'KYC Bypass Services',
+                'selfie-pass': 'KYC Bypass Services',
+                'selfie pass': 'KYC Bypass Services',
+                'fraud-as-a-service': 'Fraud as a Service',
+                'fraud_as_a_service': 'Fraud as a Service',
+                'fraud as a service': 'Fraud as a Service',
+                'fraud_tools': 'Fraud Tools',
+                'fraud tools': 'Fraud Tools',
+            }
+            
+            if cat_lower in category_map:
+                return category_map[cat_lower]
+            
+            formatted = category.replace('_', ' ').strip()
+            words = formatted.split()
+            formatted_words = [word.capitalize() for word in words]
+            return ' '.join(formatted_words)
+        
+        # Normalize region names
+        def normalize_region_name(region):
+            """Normalize region names to combine duplicates."""
+            if not region:
+                return None
+            
+            region = region.strip()
+            region_lower = region.lower()
+            
+            # US variations
+            if region_lower in ['us', 'usa', 'united states', 'united states of america']:
+                return 'US'
+            
+            # Canada variations
+            if region_lower in ['canada', 'ca']:
+                return 'Canada'
+            
+            # US + Canada variations
+            if 'us' in region_lower and 'canada' in region_lower:
+                return 'US, Canada'
+            
+            # If no match, capitalize properly
+            return ' '.join(word.capitalize() for word in region.split(','))
+        
+        for vendor in vendors:
+            if vendor.get('platform_type'):
+                platforms[vendor['platform_type']] += 1
+            if vendor.get('category'):
+                normalized_cat = normalize_category_name(vendor['category'])
+                categories[normalized_cat] += 1
+            if vendor.get('region'):
+                normalized_region = normalize_region_name(vendor['region'])
+                if normalized_region:
+                    regions[normalized_region] += 1
+            if vendor.get('services'):
+                services_list.extend(vendor['services'] or [])
+            if vendor.get('active'):
+                active_count += 1
+        
+        # Service distribution (normalize and combine duplicates)
+        def normalize_service_name(service):
+            """Normalize service names to combine duplicates and format properly."""
+            if not service:
+                return None
+            
+            service = service.strip()
+            # Remove underscores and hyphens, normalize apostrophes
+            service_clean = service.replace('_', ' ').replace('-', ' ').replace("'", "'").replace("'", "'")
+            service_lower = service_clean.lower()
+            
+            # Normalize multiple spaces
+            service_lower = ' '.join(service_lower.split())
+            
+            # ID variations (check plurals and variations first)
+            if service_lower in ['ids', 'id cards', 'identifications', 'fake id', 'fake ids', 'id card', 'identification']:
+                return 'ID'
+            if service_lower == 'id':
+                return 'ID'
+            
+            # SSN variations
+            if service_lower in ['ssn', 'social security number', 'social security']:
+                return 'SSN'
+            
+            # Driver License variations (handle apostrophes, plurals, and case)
+            # Normalize apostrophes first - remove all apostrophe variations
+            service_lower_no_apos = service_lower.replace("'", "").replace("'", "").replace("'", "")
+            # Check if it contains "driver" and "license/licence" (handles "driving license", "driver license", etc.)
+            if ('driver' in service_lower_no_apos or 'driving' in service_lower_no_apos) and ('license' in service_lower_no_apos or 'licence' in service_lower_no_apos):
+                return 'Driver License'
+            # Also check specific variations
+            driver_license_variations = [
+                'dl', 'driver license', 'drivers license', 'driving license',
+                'driver licenses', 'drivers licenses', 'driver', 'drivers',
+                "driver's license", "drivers' license", "driver's licence", "drivers' licence"
+            ]
+            if service_lower in driver_license_variations:
+                return 'Driver License'
+            
+            # Passport variations
+            if service_lower in ['passport', 'passport card', 'passports']:
+                return 'Passport'
+            
+            # EIN variations
+            if service_lower in ['ein', 'employer identification number']:
+                return 'EIN'
+            
+            # Tax ID variations
+            if service_lower in ['tax id', 'tax identification', 'tax id number', 'tin']:
+                return 'Tax ID'
+            
+            # LLC variations
+            if service_lower in ['llc', 'limited liability company']:
+                return 'LLC'
+            
+            # LTD variations
+            if service_lower in ['ltd', 'limited', 'ltd company']:
+                return 'Ltd'
+            
+            # Credit variations
+            if service_lower in ['credit', 'credit card', 'credit report', 'credit score']:
+                return 'Credit'
+            
+            # Bank variations (handle "accounts" separately)
+            if service_lower in ['bank', 'bank account', 'bank statement', 'bank accounts', 'accounts']:
+                return 'Bank Account'
+            
+            # Utility variations
+            if service_lower in ['utility', 'utility bill', 'utility statement']:
+                return 'Utility Bill'
+            
+            # Phone variations
+            if service_lower in ['phone', 'phone number', 'mobile', 'mobile number']:
+                return 'Phone Number'
+            
+            # Email variations
+            if service_lower in ['email', 'email address']:
+                return 'Email'
+            
+            # KYC Bypass variations (handle underscores, spacing, and case)
+            if service_lower in ['kyc bypass', 'kyc_bypass', 'kyc-bypass', 'know your customer bypass', 'kyc']:
+                return 'KYC Bypass'
+            
+            # Birth Certificate variations
+            if service_lower in ['birth certificate', 'birth cert', 'birth certs']:
+                return 'Birth Certificate'
+            
+            # Visa variations
+            if service_lower in ['visa', 'visas']:
+                return 'Visa'
+            
+            # Degree variations
+            if service_lower in ['degree', 'degrees', 'diploma', 'diplomas']:
+                return 'Degree'
+            
+            # Student Card variations
+            if service_lower in ['student card', 'student cards', 'student id', 'student ids']:
+                return 'Student Card'
+            
+            # If no match, capitalize first letter of each word and handle special cases
+            words = service.split()
+            normalized_words = []
+            for word in words:
+                word_lower = word.lower()
+                # Handle special cases
+                if word_lower in ['id', 'ids']:
+                    normalized_words.append('ID')
+                elif word_lower == 'ssn':
+                    normalized_words.append('SSN')
+                elif word_lower == 'kyc':
+                    normalized_words.append('KYC')
+                elif word_lower in ['dl', 'driver', 'drivers']:
+                    # If we see "driver" alone, it's likely "Driver License"
+                    if len(words) == 1:
+                        return 'Driver License'
+                    normalized_words.append(word.capitalize())
+                else:
+                    normalized_words.append(word.capitalize())
+            
+            result = ' '.join(normalized_words)
+            
+            # Final cleanup: handle common patterns
+            if result.lower() == 'id':
+                return 'ID'
+            if result.lower() == 'ssn':
+                return 'SSN'
+            
+            return result
+        
+        service_counts = Counter()
+        for service in services_list:
+            normalized = normalize_service_name(service)
+            if normalized:
+                # Final normalization pass: handle any remaining variations
+                # Remove apostrophes and check for driver license patterns
+                normalized_clean = normalized.replace("'", "").replace("'", "").replace("'", "").lower()
+                if ('driver' in normalized_clean or 'driving' in normalized_clean) and ('license' in normalized_clean or 'licence' in normalized_clean):
+                    normalized = 'Driver License'
+                # Also catch "etc" variations and clean them up
+                if normalized.endswith(' Etc') or normalized.endswith(' etc'):
+                    normalized = normalized.replace(' Etc', '').replace(' etc', '').strip()
+                    # Re-check if it's a driver license after removing "etc"
+                    normalized_clean = normalized.replace("'", "").replace("'", "").replace("'", "").lower()
+                    if ('driver' in normalized_clean or 'driving' in normalized_clean) and ('license' in normalized_clean or 'licence' in normalized_clean):
+                        normalized = 'Driver License'
+                service_counts[normalized] += 1
+        
+        # Infrastructure analysis from PersonaForge domains only (keep separate from ShadowStack)
+        hosting_providers = Counter()
+        cdns = Counter()
+        registrars = Counter()
+        payment_processors = Counter()
+        
+        for domain in domains:
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    import json
+                    enrichment = json.loads(enrichment)
+                except:
+                    enrichment = {}
+            
+            host = domain.get('host_name') or enrichment.get('host_name')
+            if host and host.strip() and host.lower() not in ['', 'none', 'unknown', 'n/a']:
+                hosting_providers[host.strip()] += 1
+            
+            cdn = domain.get('cdn') or enrichment.get('cdn')
+            if cdn and cdn.strip() and cdn.lower() not in ['', 'none', 'unknown', 'n/a']:
+                cdns[cdn.strip()] += 1
+            
+            registrar = domain.get('registrar') or enrichment.get('registrar')
+            if registrar and registrar.strip() and registrar.lower() not in ['', 'none', 'unknown', 'n/a']:
+                registrars[registrar.strip()] += 1
+            
+            payment = domain.get('payment_processor') or enrichment.get('payment_processor')
+            if payment and payment.strip() and payment.lower() not in ['', 'none', 'unknown', 'n/a']:
+                # Split multiple payment processors if comma-separated
+                for p in payment.split(','):
+                    p_clean = p.strip()
+                    if p_clean:
+                        payment_processors[p_clean] += 1
+        
+        # Normalize category names function
+        def normalize_category_name(category):
+            """Normalize and format category names - remove duplicates, fix casing, remove underscores."""
+            if not category:
+                return 'Unknown'
+            
+            # Convert to lowercase for comparison
+            cat_lower = category.lower().strip()
+            
+            # Handle duplicates and variations
+            category_map = {
+                # Synthetic Identity variations
+                'synthetic_id_kits': 'Synthetic Identity Kits',
+                'synthetic identity kits': 'Synthetic Identity Kits',
+                'synthetic identity kit': 'Synthetic Identity Kits',
+                'synthetic_id_kit': 'Synthetic Identity Kits',
+                'synthetic identity': 'Synthetic Identity Kits',
+                'synthetic identity vendors': 'Synthetic Identity Kits',
+                'synthetic identity service': 'Synthetic Identity Kits',
+                'synthetic identity services': 'Synthetic Identity Kits',
+                
+                # Fake Documents variations
+                'fake_docs': 'Fake Documents',
+                'fake docs': 'Fake Documents',
+                'fake documents': 'Fake Documents',
+                'document forger': 'Fake Documents',
+                'document_forger': 'Fake Documents',
+                
+                # KYC Bypass variations
+                'kyc bypass / selfie-pass services': 'KYC Bypass Services',
+                'kyc_bypass': 'KYC Bypass Services',
+                'kyc bypass': 'KYC Bypass Services',
+                'kyc_tools': 'KYC Bypass Services',
+                'kyc tools': 'KYC Bypass Services',
+                'selfie-pass': 'KYC Bypass Services',
+                'selfie pass': 'KYC Bypass Services',
+                
+                # Fraud variations
+                'fraud-as-a-service': 'Fraud as a Service',
+                'fraud_as_a_service': 'Fraud as a Service',
+                'fraud as a service': 'Fraud as a Service',
+                'fraud_tools': 'Fraud Tools',
+                'fraud tools': 'Fraud Tools',
+            }
+            
+            # Check if we have a mapping
+            if cat_lower in category_map:
+                return category_map[cat_lower]
+            
+            # If no mapping, format the category name properly
+            # Replace underscores with spaces, capitalize words
+            formatted = category.replace('_', ' ').strip()
+            # Capitalize first letter of each word
+            words = formatted.split()
+            formatted_words = [word.capitalize() for word in words]
+            return ' '.join(formatted_words)
+        
+        # Category breakdown with active counts (normalized)
+        category_breakdown = {}
+        for vendor in vendors:
+            cat = vendor.get('category') or 'Unknown'
+            normalized_cat = normalize_category_name(cat)
+            if normalized_cat not in category_breakdown:
+                category_breakdown[normalized_cat] = {'total': 0, 'active': 0}
+            category_breakdown[normalized_cat]['total'] += 1
+            if vendor.get('active'):
+                category_breakdown[normalized_cat]['active'] += 1
+        
+        # Platform breakdown with active counts
+        platform_breakdown = {}
+        for vendor in vendors:
+            platform = vendor.get('platform_type') or 'Unknown'
+            if platform not in platform_breakdown:
+                platform_breakdown[platform] = {'total': 0, 'active': 0}
+            platform_breakdown[platform]['total'] += 1
+            if vendor.get('active'):
+                platform_breakdown[platform]['active'] += 1
+        
+        # Text analysis of summaries and descriptions
+        import re
+        all_summaries = [v.get('summary', '') for v in vendors if v.get('summary')]
+        all_descriptions = [v.get('telegram_description', '') for v in vendors if v.get('telegram_description')]
+        all_text = ' '.join(all_summaries + all_descriptions).lower()
+        
+        # Analyze keywords
+        keyword_categories = {
+            "quality_claims": ['scannable', 'high quality', 'real', 'authentic', 'verified', 'genuine', 'premium'],
+            "verification_bypass": ['pass', 'bypass', 'kyc', 'verification', 'scannable'],
+            "payment_methods": ['bitcoin', 'crypto', 'cryptocurrency', 'btc', 'ethereum', 'payment', 'paypal', 'stripe'],
+            "operational_claims": ['fast', 'quick', 'delivery', 'shipping', 'discrete', 'privacy', 'secure', 'trusted', 'reliable'],
+            "service_features": ['customer', 'clients', 'years', 'experience', 'affordable', 'cheap', 'price']
+        }
+        
+        keyword_analysis = {}
+        for category, keywords in keyword_categories.items():
+            keyword_analysis[category] = {}
+            for keyword in keywords:
+                count = all_text.count(keyword)
+                if count > 0:
+                    keyword_analysis[category][keyword] = count
+        
+        # Extract customer count claims
+        customer_counts = []
+        customer_patterns = [
+            r'(\d+)\s*customer',
+            r'(\d+)\s*client',
+            r'serving\s*(\d+)',
+            r'(\d+)\s*users?',
+            r'over\s*(\d+)',
+            r'more than\s*(\d+)'
+        ]
+        for text in all_summaries + all_descriptions:
+            for pattern in customer_patterns:
+                matches = re.findall(pattern, text.lower())
+                for match in matches:
+                    num = int(match)
+                    if 10 <= num <= 1000000:  # Reasonable range
+                        customer_counts.append(num)
+        
+        # Service combination analysis
+        service_combinations = []
+        for vendor in vendors:
+            services = vendor.get('services', [])
+            if len(services) > 1:
+                normalized_services = [normalize_service_name(s) for s in services if normalize_service_name(s)]
+                normalized_services = [s for s in normalized_services if s]  # Remove None values
+                for i in range(len(normalized_services)):
+                    for j in range(i+1, len(normalized_services)):
+                        combo = tuple(sorted([normalized_services[i], normalized_services[j]]))
+                        service_combinations.append(combo)
+        
+        combo_counts = Counter(service_combinations)
+        
+        # Extract meaningful phrases (2-word combinations)
+        phrases = []
+        stop_words = {'the', 'a', 'an', 'and', 'or', 'is', 'are', 'was', 'were', 'to', 'of', 'in', 'on', 'at', 'for', 'with', 'by'}
+        for text in all_summaries + all_descriptions:
+            words = text.lower().split()
+            for i in range(len(words) - 1):
+                word1, word2 = words[i], words[i+1]
+                # Filter out stop words and very short words
+                if (len(word1) > 2 and len(word2) > 2 and 
+                    word1 not in stop_words and word2 not in stop_words):
+                    phrase = f"{word1} {word2}"
+                    if len(phrase) > 5:
+                        phrases.append(phrase)
+        
+        phrase_counts = Counter(phrases)
+        
+        # Enhanced enrichment data analysis
+        enhanced_data_stats = {
+            "web_scraping": {
+                "domains_with_data": 0,
+                "total_pages_scraped": 0,
+                "avg_load_time": 0,
+                "structured_data_found": 0
+            },
+            "nlp_analysis": {
+                "domains_with_data": 0,
+                "total_keywords": 0,
+                "total_entities": 0,
+                "sentiment_analysis": {"positive": 0, "negative": 0, "neutral": 0}
+            },
+            "ssl_certificates": {
+                "domains_with_data": 0,
+                "valid_certs": 0,
+                "self_signed": 0,
+                "expired": 0,
+                "tls_versions": Counter()
+            },
+            "security_headers": {
+                "domains_with_data": 0,
+                "csp_enabled": 0,
+                "hsts_enabled": 0,
+                "avg_security_score": 0,
+                "common_missing_headers": Counter()
+            },
+            "extracted_content": {
+                "domains_with_pricing": 0,
+                "domains_with_contact": 0,
+                "domains_with_services": 0,
+                "total_faqs": 0
+            }
+        }
+        
+        # Aggregate enhanced enrichment data from domains
+        load_times = []
+        sentiment_scores = []
+        security_scores = []
+        
+        for domain in domains:
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    import json
+                    enrichment = json.loads(enrichment)
+                except:
+                    enrichment = {}
+            
+            # Web scraping stats
+            web_scraping = domain.get('web_scraping') or enrichment.get('web_scraping')
+            if web_scraping and isinstance(web_scraping, dict):
+                enhanced_data_stats["web_scraping"]["domains_with_data"] += 1
+                if web_scraping.get("html"):
+                    enhanced_data_stats["web_scraping"]["total_pages_scraped"] += 1
+                if web_scraping.get("load_time"):
+                    load_times.append(web_scraping["load_time"])
+                if web_scraping.get("structured_data"):
+                    structured = web_scraping["structured_data"]
+                    if structured and len(structured) > 0:
+                        enhanced_data_stats["web_scraping"]["structured_data_found"] += 1
+            
+            # NLP analysis stats
+            nlp = domain.get('nlp_analysis') or enrichment.get('nlp_analysis')
+            if nlp and isinstance(nlp, dict):
+                enhanced_data_stats["nlp_analysis"]["domains_with_data"] += 1
+                if nlp.get("keywords"):
+                    enhanced_data_stats["nlp_analysis"]["total_keywords"] += len(nlp["keywords"])
+                if nlp.get("entities"):
+                    entities = nlp["entities"]
+                    if isinstance(entities, dict):
+                        total_entities = sum(len(v) if isinstance(v, list) else 1 for v in entities.values())
+                        enhanced_data_stats["nlp_analysis"]["total_entities"] += total_entities
+                if nlp.get("sentiment"):
+                    sentiment = nlp["sentiment"]
+                    if isinstance(sentiment, dict):
+                        polarity = sentiment.get("polarity", 0)
+                        sentiment_scores.append(polarity)
+                        if polarity > 0.1:
+                            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["positive"] += 1
+                        elif polarity < -0.1:
+                            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["negative"] += 1
+                        else:
+                            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["neutral"] += 1
+            
+            # SSL certificate stats
+            ssl = domain.get('ssl_certificate') or enrichment.get('ssl_certificate')
+            if ssl and isinstance(ssl, dict):
+                enhanced_data_stats["ssl_certificates"]["domains_with_data"] += 1
+                if ssl.get("valid"):
+                    enhanced_data_stats["ssl_certificates"]["valid_certs"] += 1
+                if ssl.get("self_signed"):
+                    enhanced_data_stats["ssl_certificates"]["self_signed"] += 1
+                if ssl.get("expired"):
+                    enhanced_data_stats["ssl_certificates"]["expired"] += 1
+                if ssl.get("tls_version"):
+                    enhanced_data_stats["ssl_certificates"]["tls_versions"][ssl["tls_version"]] += 1
+            
+            # Security headers stats
+            sec_headers = domain.get('security_headers') or enrichment.get('security_headers')
+            if sec_headers and isinstance(sec_headers, dict):
+                enhanced_data_stats["security_headers"]["domains_with_data"] += 1
+                if sec_headers.get("csp"):
+                    enhanced_data_stats["security_headers"]["csp_enabled"] += 1
+                if sec_headers.get("hsts"):
+                    enhanced_data_stats["security_headers"]["hsts_enabled"] += 1
+                if sec_headers.get("security_score"):
+                    security_scores.append(sec_headers["security_score"])
+                if sec_headers.get("missing_headers"):
+                    missing = sec_headers["missing_headers"]
+                    if isinstance(missing, list):
+                        for header in missing:
+                            enhanced_data_stats["security_headers"]["common_missing_headers"][header] += 1
+            
+            # Extracted content stats
+            extracted = domain.get('extracted_content') or enrichment.get('extracted_content')
+            if extracted and isinstance(extracted, dict):
+                if extracted.get("pricing") and len(extracted["pricing"]) > 0:
+                    enhanced_data_stats["extracted_content"]["domains_with_pricing"] += 1
+                if extracted.get("contact_info"):
+                    contact = extracted["contact_info"]
+                    if contact and (contact.get("email") or contact.get("phone") or contact.get("address")):
+                        enhanced_data_stats["extracted_content"]["domains_with_contact"] += 1
+                if extracted.get("service_descriptions") and len(extracted["service_descriptions"]) > 0:
+                    enhanced_data_stats["extracted_content"]["domains_with_services"] += 1
+                if extracted.get("faqs") and len(extracted["faqs"]) > 0:
+                    enhanced_data_stats["extracted_content"]["total_faqs"] += len(extracted["faqs"])
+        
+        # Calculate averages
+        if load_times:
+            enhanced_data_stats["web_scraping"]["avg_load_time"] = round(sum(load_times) / len(load_times), 2)
+        if security_scores:
+            enhanced_data_stats["security_headers"]["avg_security_score"] = round(sum(security_scores) / len(security_scores), 1)
+        
+        # Convert counters to dicts
+        enhanced_data_stats["ssl_certificates"]["tls_versions"] = dict(enhanced_data_stats["ssl_certificates"]["tls_versions"])
+        enhanced_data_stats["security_headers"]["common_missing_headers"] = dict(enhanced_data_stats["security_headers"]["common_missing_headers"].most_common(10))
+        
+        # DERIVE INSIGHTS FROM ENHANCED DATA
+        # Analyze operational sophistication based on enhanced enrichment
+        sophistication_analysis = {
+            "high_sophistication": 0,  # Valid SSL, strong security headers, professional content
+            "medium_sophistication": 0,  # Basic security, some missing headers
+            "low_sophistication": 0,  # Self-signed certs, poor security, unprofessional
+            "security_posture": {
+                "professional": 0,  # High security scores, valid certs, proper headers
+                "amateur": 0,  # Poor security, self-signed, missing headers
+                "mixed": 0
+            },
+            "operational_patterns": {
+                "legitimate_infrastructure": 0,  # Using legitimate hosting/CDN with proper security
+                "minimal_security": 0,  # Basic or no security measures
+                "suspicious_patterns": 0  # Self-signed certs, expired, poor security
+            }
+        }
+        
+        # Analyze pricing transparency and market positioning
+        pricing_analysis = {
+            "domains_with_pricing": 0,
+            "pricing_ranges": [],
+            "transparency_score": 0  # Higher = more transparent pricing
+        }
+        
+        # Analyze content sophistication from NLP
+        content_sophistication = {
+            "professional_content": 0,  # Positive sentiment, clear entities, structured
+            "amateur_content": 0,  # Negative sentiment, unclear, unstructured
+            "marketing_focused": 0,  # High positive sentiment, many keywords
+            "technical_focused": 0  # Neutral sentiment, technical entities
+        }
+        
+        # Security posture correlation with infrastructure
+        security_infrastructure_correlation = {
+            "secure_with_legitimate_hosting": 0,
+            "insecure_with_legitimate_hosting": 0,
+            "secure_with_suspicious_hosting": 0,
+            "insecure_with_suspicious_hosting": 0
+        }
+        
+        for domain in domains:
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    import json
+                    enrichment = json.loads(enrichment)
+                except:
+                    enrichment = {}
+            
+            # Determine sophistication level
+            ssl = domain.get('ssl_certificate') or enrichment.get('ssl_certificate')
+            sec_headers = domain.get('security_headers') or enrichment.get('security_headers')
+            nlp = domain.get('nlp_analysis') or enrichment.get('nlp_analysis')
+            extracted = domain.get('extracted_content') or enrichment.get('extracted_content')
+            
+            has_valid_ssl = ssl and ssl.get("valid") and not ssl.get("self_signed")
+            has_strong_security = sec_headers and sec_headers.get("security_score", 0) >= 50
+            has_professional_content = nlp and nlp.get("sentiment", {}).get("polarity", 0) > 0
+            has_pricing = extracted and extracted.get("pricing") and len(extracted["pricing"]) > 0
+            
+            # Categorize sophistication
+            if has_valid_ssl and has_strong_security and has_professional_content:
+                sophistication_analysis["high_sophistication"] += 1
+                sophistication_analysis["security_posture"]["professional"] += 1
+            elif (ssl and ssl.get("self_signed")) or (sec_headers and sec_headers.get("security_score", 0) < 30):
+                sophistication_analysis["low_sophistication"] += 1
+                sophistication_analysis["security_posture"]["amateur"] += 1
+            else:
+                sophistication_analysis["medium_sophistication"] += 1
+                sophistication_analysis["security_posture"]["mixed"] += 1
+            
+            # Operational patterns
+            host = domain.get('host_name') or enrichment.get('host_name')
+            cdn = domain.get('cdn') or enrichment.get('cdn')
+            has_legitimate_infra = (host and host.lower() not in ['', 'none', 'unknown']) or (cdn and cdn.lower() not in ['', 'none', 'unknown'])
+            
+            if has_legitimate_infra and has_strong_security:
+                sophistication_analysis["operational_patterns"]["legitimate_infrastructure"] += 1
+                security_infrastructure_correlation["secure_with_legitimate_hosting"] += 1
+            elif has_legitimate_infra and not has_strong_security:
+                sophistication_analysis["operational_patterns"]["minimal_security"] += 1
+                security_infrastructure_correlation["insecure_with_legitimate_hosting"] += 1
+            elif not has_legitimate_infra and has_strong_security:
+                security_infrastructure_correlation["secure_with_suspicious_hosting"] += 1
+            else:
+                sophistication_analysis["operational_patterns"]["suspicious_patterns"] += 1
+                security_infrastructure_correlation["insecure_with_suspicious_hosting"] += 1
+            
+            # Content sophistication
+            if nlp:
+                sentiment = nlp.get("sentiment", {})
+                polarity = sentiment.get("polarity", 0)
+                entities = nlp.get("entities", {})
+                has_entities = entities and sum(len(v) if isinstance(v, list) else 1 for v in entities.values()) > 0
+                
+                if polarity > 0.2 and has_entities:
+                    content_sophistication["professional_content"] += 1
+                    if polarity > 0.5:
+                        content_sophistication["marketing_focused"] += 1
+                elif polarity < -0.1 or not has_entities:
+                    content_sophistication["amateur_content"] += 1
+                elif -0.1 <= polarity <= 0.2 and has_entities:
+                    content_sophistication["technical_focused"] += 1
+            
+            # Pricing analysis
+            if has_pricing:
+                pricing_analysis["domains_with_pricing"] += 1
+                pricing_analysis["transparency_score"] += 1
+        
+        # Calculate percentages
+        total_enriched = enhanced_data_stats["web_scraping"]["domains_with_data"]
+        if total_enriched > 0:
+            sophistication_analysis["high_sophistication_pct"] = round(sophistication_analysis["high_sophistication"] / total_enriched * 100, 1)
+            sophistication_analysis["medium_sophistication_pct"] = round(sophistication_analysis["medium_sophistication"] / total_enriched * 100, 1)
+            sophistication_analysis["low_sophistication_pct"] = round(sophistication_analysis["low_sophistication"] / total_enriched * 100, 1)
+            pricing_analysis["transparency_score"] = round(pricing_analysis["transparency_score"] / total_enriched * 100, 1)
+        
+        # Key insights derived from enhanced data
+        key_insights = {
+            "operational_sophistication": {
+                "finding": "",
+                "implication": ""
+            },
+            "security_posture": {
+                "finding": "",
+                "implication": ""
+            },
+            "content_strategy": {
+                "finding": "",
+                "implication": ""
+            },
+            "infrastructure_security_correlation": {
+                "finding": "",
+                "implication": ""
+            }
+        }
+        
+        # Generate insights
+        if sophistication_analysis["high_sophistication"] > sophistication_analysis["low_sophistication"]:
+            key_insights["operational_sophistication"]["finding"] = f"{sophistication_analysis['high_sophistication_pct']}% of enriched domains show high operational sophistication"
+            key_insights["operational_sophistication"]["implication"] = "Vendors are investing in professional infrastructure, suggesting established operations and potential for persistence"
+        elif sophistication_analysis["low_sophistication"] > sophistication_analysis["high_sophistication"]:
+            key_insights["operational_sophistication"]["finding"] = f"{sophistication_analysis['low_sophistication_pct']}% show low sophistication indicators"
+            key_insights["operational_sophistication"]["implication"] = "Many vendors operate with minimal security, potentially indicating rapid deployment or lower concern about detection"
+        
+        if sophistication_analysis["security_posture"]["professional"] > sophistication_analysis["security_posture"]["amateur"]:
+            key_insights["security_posture"]["finding"] = "Majority of domains implement professional security measures"
+            key_insights["security_posture"]["implication"] = "Vendors are aware of security best practices, suggesting technical competence and operational maturity"
+        else:
+            key_insights["security_posture"]["finding"] = "Many domains lack proper security configurations, with missing or weak security headers and SSL/TLS settings"
+            key_insights["security_posture"]["implication"] = "Security vulnerabilities may present opportunities for disruption, but also indicate vendors may prioritize speed over security"
+        
+        if content_sophistication["marketing_focused"] > content_sophistication["technical_focused"]:
+            key_insights["content_strategy"]["finding"] = "Vendors emphasize marketing and customer acquisition"
+            key_insights["content_strategy"]["implication"] = "Focus on growth suggests active customer acquisition and potential market expansion"
+        elif content_sophistication["technical_focused"] > content_sophistication["marketing_focused"]:
+            key_insights["content_strategy"]["finding"] = "Vendors focus on technical capabilities"
+            key_insights["content_strategy"]["implication"] = "Technical emphasis may indicate specialized services or B2B operations"
+        
+        if security_infrastructure_correlation["secure_with_legitimate_hosting"] > security_infrastructure_correlation["insecure_with_suspicious_hosting"]:
+            key_insights["infrastructure_security_correlation"]["finding"] = "Vendors using legitimate infrastructure also implement proper security"
+            key_insights["infrastructure_security_correlation"]["implication"] = "Blending in with legitimate traffic while maintaining security suggests sophisticated operational security practices"
+        
+        return jsonify({
+            "total_vendors": len(vendors),
+            "active_vendors": active_count,
+            "vendors_with_domains": vendors_with_domains,
+            "total_domains": len(domains),
+            "categories": category_breakdown,
+            "platforms": platform_breakdown,
+            "regions": dict(regions.most_common(15)),
+            "services": dict(service_counts.most_common(30)),
+            "infrastructure": {
+                "hosting_providers": dict(hosting_providers.most_common(15)) if hosting_providers else {},
+                "cdns": dict(cdns.most_common(10)) if cdns else {},
+                "registrars": dict(registrars.most_common(15)) if registrars else {},
+                "payment_processors": dict(payment_processors.most_common(10)) if payment_processors else {}
+            },
+            "text_analysis": {
+                "total_summaries": len(all_summaries),
+                "total_descriptions": len(all_descriptions),
+                "keywords": keyword_analysis,
+                "customer_count_claims": {
+                    "total_mentions": len(customer_counts),
+                    "average": round(sum(customer_counts) / len(customer_counts), 0) if customer_counts else 0,
+                    "max": max(customer_counts) if customer_counts else 0,
+                    "min": min(customer_counts) if customer_counts else 0,
+                    "common_values": dict(Counter(customer_counts).most_common(10))
+                },
+                "service_combinations": {f"{combo[0]} + {combo[1]}": count for combo, count in combo_counts.most_common(15)},
+                "common_phrases": dict(phrase_counts.most_common(20))
+            },
+            "enhanced_enrichment": enhanced_data_stats,
+            "sophistication_analysis": sophistication_analysis,
+            "pricing_analysis": pricing_analysis,
+            "content_sophistication": content_sophistication,
+            "security_infrastructure_correlation": security_infrastructure_correlation,
+            "key_insights": key_insights,
+            "stats": {
+                "telegram_percentage": round((platforms.get('Telegram', 0) + platforms.get('Website + Telegram', 0)) / len(vendors) * 100, 1) if vendors else 0,
+                "website_percentage": round((platforms.get('Website', 0) + platforms.get('Website + Telegram', 0)) / len(vendors) * 100, 1) if vendors else 0,
+                "top_category": categories.most_common(1)[0][0] if categories else "N/A",
+                "top_service": service_counts.most_common(1)[0][0] if service_counts else "N/A",
+                "top_region": regions.most_common(1)[0][0] if regions else "N/A"
+            }
+        }), 200
+    except Exception as e:
+        app_logger.error(f"Error getting vendor intelligence report data: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@personaforge_bp.route('/api/domains/<domain>', methods=['GET'])
+def get_domain_details(domain):
+    """Get full enrichment data for a specific domain."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({"error": "Database not available"}), 503
+    
+    try:
+        # Use optimized helper method (fast direct query)
+        domain_data = postgres_client.get_domain_by_name(domain)
+        
+        if not domain_data:
+            return jsonify({"error": "Domain not found"}), 404
+        
+        # Return full enrichment data including all new fields
+        return jsonify({
+            "domain": domain_data.get('domain'),
+            "source": domain_data.get('source'),
+            "notes": domain_data.get('notes'),
+            "vendor_type": domain_data.get('vendor_type'),
+            "vendor_risk_score": domain_data.get('vendor_risk_score', 0),
+            "enriched_at": str(domain_data.get('enriched_at')) if domain_data.get('enriched_at') else None,
+            # Basic infrastructure
+            "ip_address": domain_data.get('ip_address'),
+            "ip_addresses": domain_data.get('ip_addresses'),
+            "host_name": domain_data.get('host_name'),
+            "asn": domain_data.get('asn'),
+            "isp": domain_data.get('isp'),
+            "cdn": domain_data.get('cdn'),
+            "cms": domain_data.get('cms'),
+            "payment_processor": domain_data.get('payment_processor'),
+            "registrar": domain_data.get('registrar'),
+            "creation_date": str(domain_data.get('creation_date')) if domain_data.get('creation_date') else None,
+            "expiration_date": str(domain_data.get('expiration_date')) if domain_data.get('expiration_date') else None,
+            "name_servers": domain_data.get('name_servers'),
+            # Enhanced enrichment data (Phase 1 & 2)
+            "web_scraping": domain_data.get('web_scraping'),
+            "extracted_content": domain_data.get('extracted_content'),
+            "nlp_analysis": domain_data.get('nlp_analysis'),
+            # SSL/TLS & Security (Phase 4)
+            "ssl_certificate": domain_data.get('ssl_certificate'),
+            "certificate_transparency": domain_data.get('certificate_transparency'),
+            "security_headers": domain_data.get('security_headers'),
+            # Threat intelligence
+            "threat_intel": domain_data.get('threat_intel'),
+            # Tech stack
+            "tech_stack": domain_data.get('tech_stack'),
+            "frameworks": domain_data.get('frameworks'),
+            "analytics": domain_data.get('analytics'),
+            "javascript_frameworks": domain_data.get('javascript_frameworks'),
+            "web_servers": domain_data.get('web_servers'),
+            "programming_languages": domain_data.get('programming_languages'),
+            # Full enrichment data backup
+            "enrichment_data": domain_data.get('enrichment_data')
+        }), 200
+    except Exception as e:
+        app_logger.error(f"Error fetching domain details: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@personaforge_bp.route('/domains/<domain>')
+def domain_detail_page(domain):
+    """Render the domain detail page."""
+    return render_template('domain_detail.html', domain=domain)
+
+
+@personaforge_bp.route('/api/vendors-intel/enrich-domains', methods=['POST'])
+def enrich_vendor_intel_domains():
+    """Enrich all unenriched domains from vendor intelligence."""
+    if not postgres_client or not postgres_client.conn:
+        return jsonify({
+            "error": "PostgreSQL not available"
+        }), 500
+    
+    if not ENRICHMENT_PIPELINE_AVAILABLE or not enrich_domain:
+        return jsonify({
+            "error": "Enrichment pipeline not available"
+        }), 500
+    
+    try:
+        # Get unenriched domains
+        unenriched = postgres_client.get_unenriched_vendor_intel_domains()
+        
+        if not unenriched:
+            return jsonify({
+                "message": "All domains are already enriched",
+                "enriched": 0,
+                "total": 0
+            }), 200
+        
+        enriched_count = 0
+        errors = []
+        
+        for domain_data in unenriched:
+            domain_id = domain_data['id']
+            domain = domain_data['domain']
+            
+            try:
+                enrichment_data = enrich_domain(domain)
+                if enrichment_data:
+                    postgres_client.insert_enrichment(domain_id, enrichment_data)
+                    enriched_count += 1
+                else:
+                    errors.append(f"{domain}: No data returned")
+            except Exception as e:
+                errors.append(f"{domain}: {str(e)}")
+                continue
+        
+        return jsonify({
+            "message": f"Enriched {enriched_count} domains",
+            "enriched": enriched_count,
+            "total": len(unenriched),
+            "errors": errors[:10]  # Limit errors in response
+        }), 200
+        
+    except Exception as e:
+        app_logger.error(f"Error enriching vendor intelligence domains: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e)
+        }), 500
+
+
+# Auto-discovery disabled - using CSV-provided vendor list only
+# If you need to run discovery manually, use the /api/discover endpoint
+# import threading
+# import time
+# 
+# def delayed_discovery():
+#     """Run initial discovery after app starts."""
+#     time.sleep(5)  # Wait for app to fully start
+#     run_initial_discovery()
+# 
+# discovery_thread = threading.Thread(target=delayed_discovery, daemon=True)
+# discovery_thread.start()

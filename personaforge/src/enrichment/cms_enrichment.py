@@ -43,7 +43,9 @@ def detect_cms(domain: str) -> Optional[str]:
                     if keyword in tech_lower:
                         return tech
         except Exception as e:
-            print(f"Wappalyzer detection failed: {e}")
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.debug(f"Wappalyzer detection failed: {e}")
     
     # Fallback: HTTP header analysis
     try:
@@ -69,7 +71,9 @@ def detect_cms(domain: str) -> Optional[str]:
             return "Joomla"
             
     except Exception as e:
-        print(f"CMS detection failed for {domain}: {e}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"CMS detection failed for {domain}: {e}")
     
     return None
 

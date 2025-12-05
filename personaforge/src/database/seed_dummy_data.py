@@ -54,12 +54,13 @@ DUMMY_REGISTRARS = [
 ]
 
 DUMMY_PAYMENT_PROCESSORS = [
-    "Bitcoin", "Monero", "Ethereum", "CryptoPay", "Anonymous Payment",
-    "Privacy Payment", "Offshore Payment Gateway"
+    "Bitcoin", "Monero", "Ethereum", "CryptoPay", "Stripe", 
+    "PayPal", "Square", "Coinbase Commerce"
 ]
 
 DUMMY_CDNS = [
-    "Cloudflare", "Fastly", "Akamai", "Private CDN", "Anonymous CDN"
+    "Cloudflare", "Fastly", "Akamai", "AWS CloudFront", "Azure CDN", 
+    "Google Cloud CDN", "KeyCDN", "BunnyCDN", "StackPath", "MaxCDN"
 ]
 
 
@@ -75,13 +76,13 @@ INFRASTRUCTURE_GROUPS = [
     {
         "host": "Offshore Hosting Pro",
         "registrar": "Anonymous Domains",
-        "cdn": "Private CDN",
+        "cdn": "AWS CloudFront",
         "payment": "Monero"
     },
     {
         "host": "Anonymous Hosting",
         "registrar": "Offshore Registrar",
-        "cdn": "Anonymous CDN",
+        "cdn": "KeyCDN",
         "payment": "Ethereum"
     },
     {
@@ -94,7 +95,7 @@ INFRASTRUCTURE_GROUPS = [
         "host": "Secure Hosting Inc",
         "registrar": "Secure Registrar LLC",
         "cdn": "Akamai",
-        "payment": "Anonymous Payment"
+        "payment": "Stripe"
     },
     {
         "host": "Private Hosting Co",
@@ -105,13 +106,13 @@ INFRASTRUCTURE_GROUPS = [
     {
         "host": "Bulletproof Hosting LLC",
         "registrar": "Anonymous Domains",
-        "cdn": "Private CDN",
+        "cdn": "BunnyCDN",
         "payment": "Monero"
     },
     {
         "host": "Offshore Hosting Pro",
         "registrar": "Secure Registrar LLC",
-        "cdn": "Anonymous CDN",
+        "cdn": "StackPath",
         "payment": "Ethereum"
     }
 ]

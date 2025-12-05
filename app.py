@@ -130,6 +130,13 @@ def index():
         return send_from_directory('templates', 'darkai_home.html')
 
 
+@app.route('/dashboard')
+def dashboard():
+    """Main dashboard - redirects to PersonaForge dashboard."""
+    from flask import redirect, url_for
+    return redirect('/personaforge/dashboard')
+
+
 @app.route('/about')
 def about():
     """Dark AI about page."""
@@ -289,6 +296,17 @@ def deepfake_report_2025():
     except:
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'report_2025_deepfake.html')
+
+
+@app.route('/reports/vendor-intelligence-report')
+def vendor_intelligence_report():
+    """2025 Synthetic Identity Vendor Intelligence Report page."""
+    from flask import render_template
+    try:
+        return render_template('report_vendor_intelligence.html')
+    except:
+        # Fallback to send_from_directory if template not found
+        return send_from_directory('templates', 'report_vendor_intelligence.html')
 
 
 @app.route('/api/reports/survey-data')

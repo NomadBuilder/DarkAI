@@ -1,0 +1,48 @@
+# Commands to run in Render shell to test the enrichment import fix
+
+# Command 1: Test with Flask app loaded (simulates real endpoint)
+python3 -c "
+import sys
+sys.path.insert(0, '/opt/render/project/src')
+from app import app
+from shadowstack.blueprint import get_enrich_domain_function
+func = get_enrich_domain_function()
+if func:
+    print('✅ SUCCESS: Fix works! Function available:', func)
+else:
+    print('❌ FAILED: Function not available')
+"
+
+# Command 2: Test endpoint simulation
+python3 -c "
+import sys
+sys.path.insert(0, '/opt/render/project/src')
+from app import app
+from shadowstack.blueprint import get_enrich_domain_function
+print('Testing /api/check endpoint simulation...')
+enrich_func = get_enrich_domain_function()
+print('✅ Endpoint would work!' if enrich_func else '❌ Endpoint would fail')
+if enrich_func:
+    print(f'Function: {enrich_func}')
+    print('Callable:', callable(enrich_func))
+"
+
+# Command 3: Check what modules are cached
+python3 -c "
+import sys
+print('Cached src.enrichment modules:')
+for mod_name in sorted([k for k in sys.modules.keys() if 'enrichment' in k.lower() and 'src' in k]):
+    mod = sys.modules[mod_name]
+    if hasattr(mod, '__file__') and mod.__file__:
+        blueprint = 'Unknown'
+        if 'blackwire' in mod.__file__:
+            blueprint = 'BlackWire ⚠️'
+        elif 'shadowstack' in mod.__file__:
+            blueprint = 'ShadowStack ✅'
+        elif 'personaforge' in mod.__file__:
+            blueprint = 'PersonaForge'
+        print(f'  {mod_name}: {blueprint}')
+        print(f'    File: {mod.__file__}')
+"
+
+

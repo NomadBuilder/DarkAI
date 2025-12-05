@@ -39,6 +39,11 @@ class Neo4jClient:
     """Client for interacting with Neo4j graph database for PersonaForge."""
     
     def __init__(self):
+        # Skip Neo4j if SKIP_NEO4J env var is set (for scripts that don't need it)
+        if os.getenv('SKIP_NEO4J', '').lower() in ('1', 'true', 'yes'):
+            self.driver = None
+            return
+            
         if not NEO4J_AVAILABLE:
             logger.warning("⚠️  Neo4j driver not available. Install with: pip install neo4j")
             self.driver = None

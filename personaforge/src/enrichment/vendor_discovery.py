@@ -238,17 +238,31 @@ def discover_from_reddit(limit: int = 20) -> List[str]:
                         domain = domain.lower().strip()
                         # Filter out common/legitimate domains
                         skip_domains = [
-                            'reddit.com', 'imgur.com', 'youtube.com', 'twitter.com', 'x.com',
+                            'reddit.com', 'imgur.com', 'youtube.com', 'youtu.be', 'twitter.com', 'x.com', 'pbs.twimg.com', 'preview.redd.it',
                             'facebook.com', 'instagram.com', 'tiktok.com', 'discord.com',
                             'google.com', 'amazon.com', 'microsoft.com', 'apple.com',
                             'github.com', 'stackoverflow.com', 'wikipedia.org',
                             # News sites (just mentioned, not vendors)
                             'cnn.com', 'bloomberg.com', 'reuters.com', 'bbc.com', 'nytimes.com',
                             'washingtonpost.com', 'fortune.com', 'nasdaq.com', 'wsj.com',
-                            'theguardian.com', 'usnews.com', 'news', 'gov', 'edu', 'org'
+                            'theguardian.com', 'usnews.com', 'politico.com', 'nypost.com',
+                            'marketwatch.com', 'vanityfair.com', 'deseret.com',
+                            # Government/educational
+                            'gov', 'edu', 'org', 'consumer.ftc.gov', 'frbservices.org', 'abc.ca.gov',
+                            # Other legitimate sites
+                            'gundamplanet.com', 'yeezy.com', 'proof.com', 'fliphtml5.com',
+                            'sitefy.co', 'kslawllp.com', 'raptorx.ai'
                         ]
+                        # Only add domains that have vendor-related keywords OR pass strict validation
+                        vendor_keywords = ['fake', 'synthetic', 'deepfake', 'clone', 'id', 'doc', 'passport', 
+                                          'license', 'kyc', 'bypass', 'persona', 'identity', 'forge', 'kit']
+                        domain_lower = domain.lower()
+                        has_vendor_keyword = any(kw in domain_lower for kw in vendor_keywords)
+                        
                         if domain and len(domain) > 4 and not any(skip in domain for skip in skip_domains):
-                            discovered_domains.add(domain)
+                            # Only add if it has vendor keywords (likely actual vendor site)
+                            if has_vendor_keyword:
+                                discovered_domains.add(domain)
         except Exception as e:
             logger.debug(f"Reddit discovery failed: {e}")
     

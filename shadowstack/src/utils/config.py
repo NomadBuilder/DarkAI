@@ -58,3 +58,4 @@ class Config:
         """Check if running in production."""
         return cls.FLASK_ENV.lower() == "production"
 
+

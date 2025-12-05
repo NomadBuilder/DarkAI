@@ -13,6 +13,8 @@ _cache_ttl = {}  # TTL for each cache entry
 
 def get_cache_key(entity_type: str, value: str) -> str:
     """Generate a cache key for an entity."""
+    if not value or not isinstance(value, str):
+        raise ValueError(f"Invalid cache key value: {value} (type: {type(value)})")
     key_string = f"{entity_type}:{value.lower().strip()}"
     return hashlib.md5(key_string.encode()).hexdigest()
 

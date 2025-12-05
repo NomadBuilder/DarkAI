@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <title>Glossary – PersonaForge</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="alternate icon" href="{{ url_for('personaforge.static', filename='favicon.svg') }}" />
+  <link rel="stylesheet" href="{{ url_for('personaforge.static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    body {
+      background: #0a0b14;
+      color: #f2f3f5;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .glossary-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      margin-top: 80px; /* Space below fixed navigation */
+      min-height: calc(100vh - 80px);
+    }
+    
+    .page-header {
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 2px solid rgba(255, 68, 68, 0.3);
+    }
+    
+    .page-header h1 {
+      color: #ff6b6b;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    .page-header p {
+      color: #9aa0a6;
+      font-size: 1.1rem;
+    }
+    
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #64b5f6;
+      text-decoration: none;
+      margin-bottom: 2rem;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-weight: 500;
+      border: 1px solid rgba(100, 181, 246, 0.2);
+    }
+    
+    .back-link:hover {
+      background: rgba(100, 181, 246, 0.1);
+      color: #90caf9;
+      transform: translateX(-4px);
+      border-color: rgba(100, 181, 246, 0.4);
+    }
+    
+    .glossary-intro {
+      background: linear-gradient(135deg, rgba(255, 68, 68, 0.1) 0%, rgba(255, 68, 68, 0.05) 100%);
+      border-left: 4px solid #ff6b6b;
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin-bottom: 3rem;
+    }
+    
+    .glossary-intro p {
+      color: #ccc;
+      margin: 0;
+    }
+    
+    .glossary-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+    
+    .glossary-category {
+      margin-bottom: 3rem;
+    }
+    
+    .category-header {
+      color: #ff6b6b;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 68, 68, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .category-header i {
+      font-size: 1.25rem;
+    }
+    
+    .term-card {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.02) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .term-card:hover {
+      border-color: rgba(255, 68, 68, 0.3);
+      box-shadow: 0 4px 16px rgba(255, 68, 68, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    .term-name {
+      color: #ff6b6b;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .term-name::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(180deg, #ff6b6b, transparent);
+      border-radius: 2px;
+    }
+    
+    .term-definition {
+      color: #ccc;
+      line-height: 1.7;
+      margin-bottom: 0.75rem;
+    }
+    
+    .term-example {
+      background: rgba(255, 68, 68, 0.1);
+      border-left: 3px solid #ff6b6b;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-top: 0.75rem;
+    }
+    
+    .term-example strong {
+      color: #ff8888;
+      font-size: 0.9rem;
+    }
+    
+    .term-example code {
+      color: #64b5f6;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+    }
+    
+    .search-box {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .search-box input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 1rem;
+      outline: none;
+    }
+    
+    .search-box input::placeholder {
+      color: #666;
+    }
+    
+    .search-box i {
+      color: #9aa0a6;
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+    }
+    
+    @media (max-width: 768px) {
+      .glossary-container {
+        padding: 1rem;
+      }
+      
+      .page-header h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" style="min-height: 100vh;">
+    <!-- Navigation -->
+    <nav class="nav" style="position: relative; z-index: 1000;">
+      <div class="nav__brand" style="display: flex; align-items: center; gap: 0.6rem;">
+        <a href="/" style="text-decoration: none; display: flex; align-items: center;">
+          <span class="nav__brand-mark"></span>
+        </a>
+        <a href="/personaforge/" style="text-decoration: none; color: inherit;">PERSONAFORGE</a>
+      </div>
+      <button class="hamburger" aria-label="Toggle navigation menu" type="button">
+        <span class="hamburger-box">
+          <span class="hamburger-inner"></span>
+        </span>
+      </button>
+      <div class="nav__links">
+        <a href="/personaforge/" class="nav__link">Home</a>
+        <a href="/personaforge/dashboard" class="nav__link">Dashboard</a>
+        <a href="/personaforge/vendors" class="nav__link">Vendors</a>
+        <a href="/personaforge/vendors-intel" class="nav__link">Vendor Intel</a>
+        <a href="/personaforge/methodology" class="nav__link">Methodology</a>
+        <a href="/personaforge/glossary" class="nav__link nav__link--accent">Glossary</a>
+      </div>
+    </nav>
+  </div>
+  
+  <div class="glossary-container">
+    
+    <div class="page-header">
+      <h1><i class="fas fa-book"></i> Glossary</h1>
+      <p>Technical terms and jargon used in PersonaForge vendor intelligence</p>
+    </div>
+    
+    <div class="glossary-intro">
+      <p>
+        This glossary explains technical terms, abbreviations, and jargon commonly used by synthetic identity vendors 
+        and in our intelligence reports. Understanding these terms helps interpret vendor descriptions and threat assessments.
+      </p>
+    </div>
+    
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="search-input" placeholder="Search terms...">
+    </div>
+    
+    <div class="glossary-grid" id="glossary-content">
+      <!-- Document Types -->
+      <div class="glossary-category" data-category="documents">
+        <div class="category-header">
+          <i class="fas fa-id-card"></i>
+          <span>Document Types</span>
+        </div>
+        
+        <div class="term-card" data-term="scannable">
+          <div class="term-name">Scannable</div>
+          <div class="term-definition">
+            A fake ID with a barcode or magnetic stripe that can be read by standard ID verification scanners. 
+            These scanners are commonly used at bars, clubs, banks, government offices, and retail stores for age verification 
+            and identity checks. Many fake IDs don't scan properly, so vendors advertise "scannable" as a premium feature 
+            that makes the fake ID more convincing and harder to detect.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Selling scannable fake IDs that work at banks and casinos"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="driver-license">
+          <div class="term-name">Driver's License (DL)</div>
+          <div class="term-definition">
+            A government-issued identification document that authorizes an individual to operate motor vehicles. 
+            Fake driver's licenses are commonly sold by vendors and are used for identity verification, age verification, 
+            and opening accounts. They may be advertised as "scannable" or "state-specific."
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="ssn">
+          <div class="term-name">SSN (Social Security Number)</div>
+          <div class="term-definition">
+            A nine-digit number issued by the U.S. Social Security Administration to track individuals for Social Security 
+            purposes. SSNs are critical identity documents and are heavily targeted by fraudsters. Vendors may sell fake SSNs, 
+            stolen SSNs, or SSNs associated with synthetic identities.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Selling SSN cards with matching driver's licenses"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="id-card">
+          <div class="term-name">ID Card</div>
+          <div class="term-definition">
+            A government-issued identification card (often a state ID) used for identity verification. Fake ID cards are 
+            commonly sold alongside driver's licenses and may be advertised as "scannable" or "high-quality" with features 
+            like holograms and UV marks.
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="psd-template">
+          <div class="term-name">PSD Template</div>
+          <div class="term-definition">
+            A Photoshop Document (PSD) template file containing editable layers for creating fake identification documents. 
+            These templates allow fraudsters to customize names, addresses, photos, and other details. PSD templates are often 
+            sold for specific states or countries.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Selling editable PSD templates for all 50 US states"
+          </div>
+        </div>
+      </div>
+      
+      <!-- Identity Services -->
+      <div class="glossary-category" data-category="services">
+        <div class="category-header">
+          <i class="fas fa-user-shield"></i>
+          <span>Identity Services</span>
+        </div>
+        
+        <div class="term-card" data-term="kyc-bypass">
+          <div class="term-name">KYC Bypass</div>
+          <div class="term-definition">
+            <strong>Know Your Customer (KYC)</strong> bypass services help fraudsters evade identity verification requirements 
+            used by banks, cryptocurrency exchanges, payment processors, and other financial institutions. These services may 
+            include fake documents, synthetic identities, or methods to circumvent verification systems.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "KYC bypass for bank account opening" or "KYC verification bypass service"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="synthetic-identity">
+          <div class="term-name">Synthetic Identity</div>
+          <div class="term-definition">
+            A fake identity created by combining real and fake information. For example, using a real SSN with a fake name 
+            and address, or creating a completely fabricated identity. Synthetic identities are used to open accounts, 
+            build credit, and commit fraud while avoiding detection.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Synthetic identity packages with credit history"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="selfie-verification">
+          <div class="term-name">Selfie Verification / Selfie Pass</div>
+          <div class="term-definition">
+            A service that helps bypass identity verification systems that require users to take a selfie photo. These 
+            services may provide pre-verified accounts, methods to fake selfie verification, or tools to manipulate 
+            verification processes.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Selfie verification bypass for TikTok shops"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="cpn">
+          <div class="term-name">CPN (Credit Privacy Number)</div>
+          <div class="term-definition">
+            A nine-digit number marketed as an alternative to SSNs for credit purposes. While CPNs are sometimes legitimate 
+            (used by victims of identity theft), they are often misused for fraud. Vendors may sell CPN packages with 
+            credit repair services or use them to create synthetic identities.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "CPN packages with tradelines for credit building"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="fullz">
+          <div class="term-name">Fullz</div>
+          <div class="term-definition">
+            A complete set of personal information about an individual, typically including name, address, date of birth, 
+            SSN, driver's license number, and sometimes financial information. "Fullz" are sold on underground markets and 
+            used for identity theft and fraud.
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Selling fullz with bank account access"
+          </div>
+        </div>
+      </div>
+      
+      <!-- Payment & Methods -->
+      <div class="glossary-category" data-category="payment">
+        <div class="category-header">
+          <i class="fas fa-money-bill-wave"></i>
+          <span>Payment & Methods</span>
+        </div>
+        
+        <div class="term-card" data-term="btc-crypto">
+          <div class="term-name">BTC / Cryptocurrency Payment</div>
+          <div class="term-definition">
+            Bitcoin or other cryptocurrency payments. Many vendors prefer cryptocurrency because it offers relative anonymity 
+            and is harder to trace than traditional payment methods. Common cryptocurrencies include Bitcoin (BTC), Ethereum (ETH), 
+            and Monero (XMR).
+          </div>
+          <div class="term-example">
+            <strong>Example:</strong> "Payment accepted in BTC, ETH, or Monero"
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="verified-account">
+          <div class="term-name">Verified Account</div>
+          <div class="term-definition">
+            A pre-verified account on a platform (bank, payment processor, social media, etc.) that has already passed 
+            identity verification. These accounts are sold to fraudsters who want to skip the verification process. 
+            Often includes login credentials and may be tied to fake or stolen identities.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Platform Terms -->
+      <div class="glossary-category" data-category="platform">
+        <div class="category-header">
+          <i class="fas fa-network-wired"></i>
+          <span>Platform & Infrastructure</span>
+        </div>
+        
+        <div class="term-card" data-term="telegram-channel">
+          <div class="term-name">Telegram Channel</div>
+          <div class="term-definition">
+            A messaging channel on the Telegram platform used by vendors to advertise services, communicate with customers, 
+            and share updates. Telegram is popular among fraud vendors because it offers encryption, anonymity, and is harder 
+            for law enforcement to monitor than traditional websites.
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="infrastructure-cluster">
+          <div class="term-name">Infrastructure Cluster</div>
+          <div class="term-definition">
+            A group of domains or services that share common infrastructure, such as hosting providers, CDNs, payment processors, 
+            or registrars. Identifying infrastructure clusters helps link related operations and vendors, even when they use 
+            different domain names or identities.
+          </div>
+        </div>
+      </div>
+      
+      <!-- Threat Terms -->
+      <div class="glossary-category" data-category="threat">
+        <div class="category-header">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>Threat Assessment Terms</span>
+        </div>
+        
+        <div class="term-card" data-term="high-risk">
+          <div class="term-name">High-Risk Domain</div>
+          <div class="term-definition">
+            A domain associated with fraudulent activity, identity theft, or other illegal operations. High-risk domains may 
+            be flagged based on multiple factors including services offered, infrastructure patterns, payment methods, and 
+            threat intelligence indicators.
+          </div>
+        </div>
+        
+        <div class="term-card" data-term="vendor-type">
+          <div class="term-name">Vendor Type</div>
+          <div class="term-definition">
+            A classification of vendors based on their primary services. Common types include fake document vendors, 
+            KYC bypass services, synthetic identity providers, and fraud-as-a-service operations. Understanding vendor types 
+            helps assess threat levels and operational patterns.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="no-results" id="no-results" style="display: none;">
+      <i class="fas fa-search" style="font-size: 3rem; color: #666; margin-bottom: 1rem;"></i>
+      <p>No terms found matching your search.</p>
+    </div>
+  </div>
+  
+  <script>
+    // Search functionality
+    const searchInput = document.getElementById('search-input');
+    const glossaryContent = document.getElementById('glossary-content');
+    const noResults = document.getElementById('no-results');
+    
+    searchInput.addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase().trim();
+      
+      if (!query) {
+        // Show all terms
+        document.querySelectorAll('.term-card, .glossary-category').forEach(el => {
+          el.style.display = '';
+        });
+        noResults.style.display = 'none';
+        return;
+      }
+      
+      let hasResults = false;
+      
+      // Search through all terms
+      document.querySelectorAll('.term-card').forEach(card => {
+        const termName = card.querySelector('.term-name').textContent.toLowerCase();
+        const termDef = card.querySelector('.term-definition').textContent.toLowerCase();
+        const termExample = card.querySelector('.term-example')?.textContent.toLowerCase() || '';
+        
+        const matches = termName.includes(query) || termDef.includes(query) || termExample.includes(query);
+        
+        if (matches) {
+          card.style.display = '';
+          hasResults = true;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+      
+      // Show/hide category headers based on visible terms
+      document.querySelectorAll('.glossary-category').forEach(category => {
+        const visibleTerms = category.querySelectorAll('.term-card[style=""]').length;
+        if (visibleTerms > 0) {
+          category.style.display = '';
+        } else {
+          category.style.display = 'none';
+        }
+      });
+      
+      // Show no results message
+      if (hasResults) {
+        noResults.style.display = 'none';
+      } else {
+        noResults.style.display = 'block';
+      }
+    });
+  </script>
+  
+  <script>
+    // Hamburger menu toggle for PersonaForge navigation
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        const nav = document.querySelector('nav.nav');
+        if (!nav || !nav.querySelector('a[href*="/personaforge/"]')) {
+          return;
+        }
+        
+        const hamburger = nav.querySelector('.hamburger');
+        const navLinks = nav.querySelector('.nav__links');
+        
+        if (hamburger && navLinks) {
+          hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            hamburger.classList.toggle('is-active');
+            navLinks.classList.toggle('is-active');
+            document.body.classList.toggle('no-scroll');
+          });
+          
+          navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+              hamburger.classList.remove('is-active');
+              navLinks.classList.remove('is-active');
+              document.body.classList.remove('no-scroll');
+            });
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
+

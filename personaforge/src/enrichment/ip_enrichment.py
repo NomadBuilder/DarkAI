@@ -54,7 +54,9 @@ def enrich_ip_location(ip_address: str) -> Dict:
                 result["city"] = data.get("city")
                 return result
     except Exception as e:
-        print(f"IPLocate.io lookup failed: {e}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.debug(f"IPLocate.io lookup failed: {e}")
     
     # Fallback to ip-api.com (free, 45 requests/minute)
     try:
@@ -71,7 +73,9 @@ def enrich_ip_location(ip_address: str) -> Dict:
                     result["country"] = data.get("country")
                     result["city"] = data.get("city")
     except Exception as e:
-        print(f"ip-api.com lookup failed: {e}")
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.debug(f"ip-api.com lookup failed: {e}")
     
     return result
 
