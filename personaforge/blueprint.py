@@ -888,6 +888,12 @@ def run_initial_discovery():
         # Check for dummy data (but don't auto-seed - user must explicitly request it)
         # Dummy data was removed and should not be re-seeded automatically
         try:
+            # Rollback any failed transaction first
+            try:
+                postgres_client.conn.rollback()
+            except:
+                pass
+            
             cursor = postgres_client.conn.cursor()
             cursor.execute("SELECT COUNT(*) FROM personaforge_domains WHERE source = 'DUMMY_DATA_FOR_TESTING'")
             dummy_count = cursor.fetchone()[0]
