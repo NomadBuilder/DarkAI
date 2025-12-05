@@ -557,14 +557,122 @@
     }
     
     @media (max-width: 768px) {
+      header.hero {
+        padding: 4rem 1rem 3rem;
+      }
+      
+      header.hero h1 {
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+        line-height: 1.2;
+        margin-bottom: 1rem;
+      }
+      
+      header.hero .subtitle {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      
+      header.hero .meta {
+        flex-direction: column;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+      }
+      
+      .export-buttons {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        margin-top: 1rem;
+        justify-content: center;
+      }
+      
+      .export-btn {
+        font-size: 0.8rem !important;
+        padding: 0.4rem 0.8rem !important;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1rem;
+      }
+      
+      .stat-card {
+        padding: 1.5rem;
+      }
+      
+      .stat-card .number {
+        font-size: 2.5rem;
+      }
+      
+      .stat-card .label {
+        font-size: 0.9rem;
+      }
+      
       .chart-grid {
         grid-template-columns: 1fr;
       }
+      
       .chart-wrapper {
-        height: 350px;
+        height: 300px;
       }
+      
       .chart-container {
         padding: 1.5rem;
+      }
+      
+      .chart-container h3 {
+        font-size: 1.2rem;
+      }
+      
+      .report-content {
+        padding: 2rem 1rem 4rem;
+      }
+      
+      .report-section {
+        margin-bottom: 3rem;
+      }
+      
+      .report-section h2 {
+        font-size: 1.5rem;
+        padding-left: 0.5rem;
+      }
+      
+      .report-section h3 {
+        font-size: 1.2rem;
+      }
+      
+      .content-with-chart {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+      
+      .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      header.hero {
+        padding: 3rem 1rem 2rem;
+      }
+      
+      header.hero h1 {
+        font-size: 1.6rem;
+      }
+      
+      .stat-card .number {
+        font-size: 2rem;
+      }
+      
+      .chart-wrapper {
+        height: 250px;
+      }
+      
+      .chart-container {
+        padding: 1rem;
       }
     }
 
