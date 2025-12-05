@@ -102,6 +102,20 @@ def enrich_handle(handle: str) -> Dict:
             threat_data = _check_handle_threat_intel(username)
             result["threat_intel"] = threat_data
             
+            # Check against community scam lists (free, no API key needed)
+            try:
+                from src.enrichment.community_lists import check_instagram_against_community_lists
+                community_check = check_instagram_against_community_lists(username)
+                if community_check and community_check.get("found"):
+                    if not result.get("threat_intel"):
+                        result["threat_intel"] = {}
+                    result["threat_intel"]["community_list"] = community_check
+                    result["is_scam"] = True
+                    if not result.get("threat_level"):
+                        result["threat_level"] = "high"
+            except Exception as e:
+                logger.debug(f"Community list Instagram check failed: {e}")
+            
             # Check for associated entities in our database
             # This will be populated by app.py with actual database queries
             # For now, leave empty - will be filled by _find_and_link_entities in app.py

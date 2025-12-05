@@ -226,6 +226,19 @@ def enrich_phone(phone_number: str) -> Dict:
         if len(phone_clean) == 10 or (len(phone_clean) == 11 and phone_clean.startswith("1")):
             result["errors"].append("💡 Tip: For US/Canada numbers, try adding +1 at the start (e.g., +15198000997)")
     
+    # Check against community scam lists (free, no API key needed)
+    try:
+        from src.enrichment.community_lists import check_phone_against_community_lists
+        community_check = check_phone_against_community_lists(phone_number)
+        if community_check and community_check.get("found"):
+            if not result.get("threat_intel"):
+                result["threat_intel"] = {}
+            result["threat_intel"]["community_list"] = community_check
+            result["is_scam"] = True
+            result["threat_level"] = "high"
+    except Exception as e:
+        logger.debug(f"Community list check failed: {e}")
+    
     return result
 
 

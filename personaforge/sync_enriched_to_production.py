@@ -372,8 +372,19 @@ if __name__ == "__main__":
     print("   1. Enriched domains locally (run: python3 personaforge/enrich_vendor_intel_domains.py)")
     print("   2. Set DATABASE_URL to your production database")
     print("")
-    input("Press Enter to continue or Ctrl+C to cancel...")
-    print()
+    
+    # Check if running non-interactively (e.g., from Render terminal)
+    import sys
+    if not sys.stdin.isatty():
+        print("⚠️  Running non-interactively. Proceeding automatically...")
+        print()
+    else:
+        try:
+            input("Press Enter to continue or Ctrl+C to cancel...")
+        except (EOFError, KeyboardInterrupt):
+            print("\n❌ Cancelled by user")
+            sys.exit(0)
+        print()
     
     success = sync_enriched_domains()
     

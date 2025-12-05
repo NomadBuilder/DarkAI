@@ -3,6 +3,8 @@
 import requests
 from typing import Dict, List, Optional
 import time
+import socket
+import dns.resolver
 from src.utils.logger import logger
 from src.utils.retry import retry_with_backoff
 from src.utils.rate_limiter import check_rate_limit, record_api_request
@@ -78,7 +80,9 @@ def _check_domain_threats(domain: str) -> Dict:
     results = {
         "is_malicious": False,
         "sources": [],
-        "details": {}
+        "details": {},
+        "context": [],
+        "threat_level": None
     }
     
     # Check cache first
@@ -169,7 +173,57 @@ def _check_domain_threats(domain: str) -> Dict:
     except Exception as e:
         logger.debug(f"ThreatFox check failed: {e}")
     
-    # 4. Check blocklists (free, no API key needed)
+    # 4. PhishTank (free, no API key needed)
+    try:
+        if check_rate_limit("phishtank"):
+            phishtank_result = _check_phishtank(domain)
+            if phishtank_result and phishtank_result.get("in_database"):
+                results["is_malicious"] = True
+                results["sources"].append("PhishTank")
+                results["details"]["phishtank"] = phishtank_result
+                if not results.get("threat_level"):
+                    results["threat_level"] = "high"  # Phishing is high threat
+                record_api_request("phishtank")
+    except Exception as e:
+        logger.debug(f"PhishTank check failed: {e}")
+    
+    # 5. OpenPhish feed (free, no API key needed)
+    try:
+        openphish_result = _check_openphish(domain)
+        if openphish_result and openphish_result.get("found"):
+            results["is_malicious"] = True
+            results["sources"].append("OpenPhish")
+            results["details"]["openphish"] = openphish_result
+            if not results.get("threat_level"):
+                results["threat_level"] = "high"  # Phishing is high threat
+    except Exception as e:
+        logger.debug(f"OpenPhish check failed: {e}")
+    
+    # 6. Spamhaus blocklist (free, no API key needed)
+    try:
+        spamhaus_result = _check_spamhaus(domain)
+        if spamhaus_result and spamhaus_result.get("blocked"):
+            results["is_malicious"] = True
+            results["sources"].extend(spamhaus_result.get("sources", []))
+            results["details"]["spamhaus"] = spamhaus_result
+            if not results.get("threat_level"):
+                results["threat_level"] = "medium"
+    except Exception as e:
+        logger.debug(f"Spamhaus check failed: {e}")
+    
+    # 7. SURBL DNS lookup (free, no API key needed)
+    try:
+        surbl_result = _check_surbl(domain)
+        if surbl_result and surbl_result.get("listed"):
+            results["is_malicious"] = True
+            results["sources"].append("SURBL")
+            results["details"]["surbl"] = surbl_result
+            if not results.get("threat_level"):
+                results["threat_level"] = "medium"
+    except Exception as e:
+        logger.debug(f"SURBL check failed: {e}")
+    
+    # 8. Check blocklists (free, no API key needed)
     blocklist_result = _check_blocklists(domain)
     if blocklist_result.get("blocked"):
         results["is_malicious"] = True
@@ -281,6 +335,157 @@ def _check_threatfox(domain: str) -> Optional[Dict]:
                     }
     except Exception as e:
         logger.debug(f"ThreatFox API error: {e}")
+    
+    return None
+
+
+@retry_with_backoff(max_retries=2)
+def _check_phishtank(domain: str) -> Optional[Dict]:
+    """Check domain on PhishTank (free, no API key needed)."""
+    try:
+        # PhishTank API: 1 request per 5 seconds
+        url = "https://checkurl.phishtank.com/checkurl/"
+        data = {
+            "url": f"https://{domain}",
+            "format": "json"
+        }
+        
+        response = requests.post(url, data=data, timeout=10)
+        if response.status_code == 200:
+            result = response.json()
+            if result.get("results", {}).get("in_database"):
+                return {
+                    "in_database": True,
+                    "verified": result.get("results", {}).get("verified"),
+                    "verified_at": result.get("results", {}).get("verified_at"),
+                    "phish_id": result.get("results", {}).get("phish_id"),
+                    "phish_detail_page": result.get("results", {}).get("phish_detail_page")
+                }
+    except Exception as e:
+        logger.debug(f"PhishTank API error: {e}")
+    
+    return None
+
+
+def _check_openphish(domain: str) -> Optional[Dict]:
+    """Check domain against OpenPhish feed (free, no API key needed)."""
+    try:
+        # Check cache first (feed is updated hourly, cache for 2 hours)
+        cached = get_cached("openphish_feed", "feed", ttl_hours=2)
+        if cached:
+            feed_domains = cached
+        else:
+            # Download feed
+            url = "https://openphish.com/feed.txt"
+            response = requests.get(url, timeout=15)
+            if response.status_code == 200:
+                # Parse feed - extract domains from URLs
+                feed_domains = set()
+                for line in response.text.strip().split('\n'):
+                    if line.startswith('http'):
+                        try:
+                            from urllib.parse import urlparse
+                            parsed = urlparse(line)
+                            if parsed.netloc:
+                                feed_domains.add(parsed.netloc.lower())
+                        except:
+                            pass
+                # Cache for 2 hours
+                set_cached("openphish_feed", "feed", list(feed_domains), ttl_hours=2)
+            else:
+                return None
+        
+        # Check if domain is in feed
+        domain_lower = domain.lower()
+        if domain_lower in feed_domains:
+            return {
+                "found": True,
+                "source": "OpenPhish feed",
+                "note": "Domain found in OpenPhish phishing feed (updated hourly)"
+            }
+    except Exception as e:
+        logger.debug(f"OpenPhish check error: {e}")
+    
+    return None
+
+
+def _check_spamhaus(domain: str) -> Optional[Dict]:
+    """Check domain against Spamhaus blocklists (free, no API key needed)."""
+    try:
+        # Spamhaus provides DNS-based lookups
+        # Check DROP list (Don't Route Or Peer)
+        # Format: reverse domain, then query zen.spamhaus.org
+        
+        # Reverse domain for DNS lookup
+        domain_parts = domain.split('.')
+        reversed_domain = '.'.join(reversed(domain_parts))
+        
+        sources = []
+        
+        # Check DROP list
+        try:
+            resolver = dns.resolver.Resolver()
+            resolver.timeout = 5
+            resolver.lifetime = 5
+            query = f"{reversed_domain}.zen.spamhaus.org"
+            answers = resolver.resolve(query, 'A')
+            if answers:
+                sources.append("Spamhaus DROP")
+        except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.resolver.Timeout):
+            pass
+        except Exception as e:
+            logger.debug(f"Spamhaus DNS lookup error: {e}")
+        
+        # Check DROP-EDROP (extended)
+        try:
+            resolver = dns.resolver.Resolver()
+            resolver.timeout = 5
+            resolver.lifetime = 5
+            query = f"{reversed_domain}.zen.spamhaus.org"
+            answers = resolver.resolve(query, 'A')
+            if answers:
+                sources.append("Spamhaus DROP-EDROP")
+        except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.resolver.Timeout):
+            pass
+        except Exception as e:
+            logger.debug(f"Spamhaus DROP-EDROP lookup error: {e}")
+        
+        if sources:
+            return {
+                "blocked": True,
+                "sources": sources,
+                "note": "Domain found in Spamhaus blocklist"
+            }
+    except Exception as e:
+        logger.debug(f"Spamhaus check error: {e}")
+    
+    return None
+
+
+def _check_surbl(domain: str) -> Optional[Dict]:
+    """Check domain against SURBL (Spam URI Blocklist) via DNS (free, no API key needed)."""
+    try:
+        # SURBL uses DNS lookups
+        # Format: domain.multi.surbl.org
+        resolver = dns.resolver.Resolver()
+        resolver.timeout = 5
+        resolver.lifetime = 5
+        
+        query = f"{domain}.multi.surbl.org"
+        answers = resolver.resolve(query, 'A')
+        
+        if answers:
+            # Domain is listed
+            return {
+                "listed": True,
+                "source": "SURBL",
+                "note": "Domain found in SURBL spam URI blocklist"
+            }
+    except (dns.resolver.NXDOMAIN, dns.resolver.NoAnswer, dns.resolver.Timeout):
+        # NXDOMAIN means domain is not listed (this is good)
+        return None
+    except Exception as e:
+        logger.debug(f"SURBL DNS lookup error: {e}")
     
     return None
 
