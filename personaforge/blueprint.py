@@ -2011,25 +2011,24 @@ def get_vendor_intelligence_report_data():
     Falls back to dynamic generation if static file doesn't exist.
     """
     # Try to serve static file first (fastest)
-    # Check multiple possible paths (local dev vs production)
+    # Use the blueprint's static_folder path (already configured)
     blueprint_dir = Path(__file__).parent.absolute()
-    possible_paths = [
-        blueprint_dir / 'static' / 'data' / 'vendor_intelligence_report.json',
-        blueprint_dir.parent.parent / 'personaforge' / 'static' / 'data' / 'vendor_intelligence_report.json',
-    ]
+    static_file = blueprint_dir / 'static' / 'data' / 'vendor_intelligence_report.json'
     
-    app_logger.info(f"Looking for static report file. Blueprint dir: {blueprint_dir}")
-    for static_file in possible_paths:
-        app_logger.info(f"Checking path: {static_file} (exists: {static_file.exists()})")
-        if static_file.exists():
-            try:
-                with open(static_file, 'r') as f:
-                    data = json.load(f)
-                app_logger.info(f"✅ Serving static report data from: {static_file}")
-                return jsonify(data), 200
-            except Exception as e:
-                app_logger.warning(f"Failed to load static report data from {static_file}: {e}")
-                continue
+    # Also check if we can use Flask's send_from_directory for static files
+    if static_file.exists():
+        try:
+            with open(static_file, 'r') as f:
+                data = json.load(f)
+            app_logger.info(f"✅ Serving static report data from: {static_file}")
+            # Set cache headers for performance
+            response = jsonify(data)
+            response.headers['Cache-Control'] = 'public, max-age=3600'  # Cache for 1 hour
+            return response, 200
+        except Exception as e:
+            app_logger.warning(f"Failed to load static report data from {static_file}: {e}")
+    else:
+        app_logger.warning(f"Static report file not found at: {static_file}")
     
     app_logger.warning("Static report file not found, falling back to dynamic generation")
     
