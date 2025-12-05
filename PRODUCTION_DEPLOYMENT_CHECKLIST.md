@@ -131,16 +131,30 @@ AND column_name IN ('web_scraping', 'extracted_content', 'nlp_analysis', 'ssl_ce
 
 ### Step 5: Data Migration (if needed)
 
-If you have local data to migrate:
+**IMPORTANT**: You have **86 enriched domains locally**. These should be synced to production to avoid re-enrichment.
 
-1. **Export from local:**
+**To sync enriched PersonaForge data to production:**
+
+1. **Get your production DATABASE_URL from Render:**
+   - Go to Render Dashboard → Your Database → Connect
+   - Copy the "External Connection String"
+   - It looks like: `postgresql://user:pass@host:port/db`
+
+2. **Run the sync script:**
    ```bash
-   python3 personaforge/export_to_production.py
+   DATABASE_URL=postgresql://user:pass@host:port/db python3 personaforge/sync_enriched_to_production.py
    ```
 
-2. **Import to production:**
-   - Use Render's database connection
-   - Or use the sync script with production DATABASE_URL
+3. **What gets synced:**
+   - All enriched domains (86 domains with infrastructure data)
+   - All enhanced enrichment data (web_scraping, NLP, SSL, security headers)
+   - Vendor intelligence data (if imported)
+   - Domain metadata and vendor types
+
+4. **After sync:**
+   - Verify on production dashboard
+   - Infrastructure clustering will be available immediately
+   - No need to re-enrich domains
 
 ## Common Issues & Solutions
 
