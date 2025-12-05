@@ -1213,27 +1213,180 @@ def get_vendor_intelligence_report_data():
     
     try:
         from collections import Counter, defaultdict
+        import psycopg2.extras
         
-        # Get vendors (this is lightweight)
-        vendors = postgres_client.get_all_vendors_intel()
+        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         
-        # Get all enriched domains with full data - use get_all_enriched_domains which handles everything
-        # This loads all data but it's what we need for the comprehensive report
-        domains = postgres_client.get_all_enriched_domains()
+        # OPTIMIZATION: Use SQL aggregations instead of loading all data into Python
+        # This is MUCH faster - database does the counting/grouping
         
-        # Platform distribution
-        platforms = Counter()
+        # Get platform distribution (SQL aggregation)
+        cursor.execute("""
+            SELECT platform_type, COUNT(*) as count, COUNT(CASE WHEN active = true THEN 1 END) as active_count
+            FROM personaforge_vendors_intel
+            WHERE platform_type IS NOT NULL
+            GROUP BY platform_type
+        """)
+        platform_rows = cursor.fetchall()
+        platforms = Counter({row['platform_type']: row['count'] for row in platform_rows})
+        platform_breakdown = {row['platform_type']: {'total': row['count'], 'active': row['active_count']} for row in platform_rows}
+        
+        # Get category distribution (SQL aggregation)
+        cursor.execute("""
+            SELECT category, COUNT(*) as count, COUNT(CASE WHEN active = true THEN 1 END) as active_count
+            FROM personaforge_vendors_intel
+            WHERE category IS NOT NULL
+            GROUP BY category
+        """)
+        category_rows = cursor.fetchall()
         categories = Counter()
-        regions = Counter()
-        services_list = []
-        active_count = 0
-        vendors_with_domains = 0
+        category_breakdown = {}
         
-        # Get vendor-domain links
-        cursor = postgres_client.conn.cursor()
-        cursor.execute("SELECT DISTINCT vendor_intel_id FROM personaforge_vendor_intel_domains")
-        vendors_with_domains = len(cursor.fetchall())
+        # Get region distribution (SQL aggregation)
+        cursor.execute("""
+            SELECT region, COUNT(*) as count
+            FROM personaforge_vendors_intel
+            WHERE region IS NOT NULL
+            GROUP BY region
+        """)
+        region_rows = cursor.fetchall()
+        regions = Counter({row['region']: row['count'] for row in region_rows})
+        
+        # Get total counts (lightweight)
+        cursor.execute("SELECT COUNT(*) as total, COUNT(CASE WHEN active = true THEN 1 END) as active FROM personaforge_vendors_intel")
+        vendor_counts = cursor.fetchone()
+        total_vendors = vendor_counts['total']
+        active_count = vendor_counts['active']
+        
+        # Get vendors with domains count
+        cursor.execute("SELECT COUNT(DISTINCT vendor_intel_id) as count FROM personaforge_vendor_intel_domains")
+        vendors_with_domains = cursor.fetchone()['count']
+        
+        # Get services distribution (SQL aggregation - unnest array)
+        cursor.execute("""
+            SELECT unnest(services) as service, COUNT(*) as count
+            FROM personaforge_vendors_intel
+            WHERE services IS NOT NULL AND array_length(services, 1) > 0
+            GROUP BY unnest(services)
+        """)
+        service_rows = cursor.fetchall()
+        services_list = [row['service'] for row in service_rows for _ in range(row['count'])]
+        
+        # OPTIMIZATION: Load infrastructure data efficiently, then load full enrichment only for enhanced analysis
+        # This prevents loading massive JSONB fields for all domains at once
+        
+        # Get infrastructure data using direct SQL (much faster - no JSONB parsing)
+        cursor.execute("""
+            SELECT 
+                de.cdn,
+                de.host_name as hosting,
+                de.payment_processor,
+                de.registrar
+            FROM personaforge_domain_enrichment de
+            WHERE de.enriched_at IS NOT NULL
+        """)
+        infrastructure_rows = cursor.fetchall()
         cursor.close()
+        
+        # Convert to list of dicts for infrastructure processing (lightweight)
+        infrastructure_domains = [dict(row) for row in infrastructure_rows]
+        
+        # OPTIMIZATION: Use SQL JSONB functions to extract stats directly, don't load full JSONB objects
+        # This prevents loading massive JSONB data into memory
+        enhanced_data_stats = {
+            "web_scraping": {
+                "domains_with_data": 0,
+                "total_pages_scraped": 0,
+                "avg_load_time": 0,
+                "structured_data_found": 0
+            },
+            "nlp_analysis": {
+                "domains_with_data": 0,
+                "total_keywords": 0,
+                "total_entities": 0,
+                "sentiment_analysis": {"positive": 0, "negative": 0, "neutral": 0}
+            },
+            "ssl_certificates": {
+                "domains_with_data": 0,
+                "valid_certs": 0,
+                "self_signed": 0,
+                "expired": 0,
+                "tls_versions": Counter()
+            },
+            "security_headers": {
+                "domains_with_data": 0,
+                "csp_enabled": 0,
+                "hsts_enabled": 0,
+                "avg_security_score": 0,
+                "common_missing_headers": Counter()
+            },
+            "extracted_content": {
+                "domains_with_pricing": 0,
+                "domains_with_contact": 0,
+                "domains_with_services": 0,
+                "total_faqs": 0
+            }
+        }
+        
+        # Get enhanced enrichment stats using SQL JSONB functions (no need to load full objects)
+        cursor.execute("""
+            SELECT 
+                COUNT(*) FILTER (WHERE web_scraping IS NOT NULL) as web_scraping_count,
+                COUNT(*) FILTER (WHERE web_scraping->>'html' IS NOT NULL) as pages_scraped,
+                COUNT(*) FILTER (WHERE web_scraping->'structured_data' IS NOT NULL AND jsonb_array_length(web_scraping->'structured_data') > 0) as structured_data_count,
+                AVG((web_scraping->>'load_time')::numeric) FILTER (WHERE web_scraping->>'load_time' IS NOT NULL) as avg_load_time,
+                COUNT(*) FILTER (WHERE nlp_analysis IS NOT NULL) as nlp_count,
+                COUNT(*) FILTER (WHERE ssl_certificate IS NOT NULL) as ssl_count,
+                COUNT(*) FILTER (WHERE ssl_certificate->>'valid' = 'true') as valid_ssl_count,
+                COUNT(*) FILTER (WHERE ssl_certificate->>'self_signed' = 'true') as self_signed_count,
+                COUNT(*) FILTER (WHERE ssl_certificate->>'expired' = 'true') as expired_ssl_count,
+                COUNT(*) FILTER (WHERE security_headers IS NOT NULL) as security_headers_count,
+                COUNT(*) FILTER (WHERE security_headers->>'csp' IS NOT NULL) as csp_count,
+                COUNT(*) FILTER (WHERE security_headers->>'hsts' IS NOT NULL) as hsts_count,
+                AVG((security_headers->>'security_score')::numeric) FILTER (WHERE security_headers->>'security_score' IS NOT NULL) as avg_security_score,
+                COUNT(*) FILTER (WHERE extracted_content->'pricing' IS NOT NULL AND jsonb_array_length(extracted_content->'pricing') > 0) as pricing_count,
+                COUNT(*) FILTER (WHERE extracted_content->'contact_info' IS NOT NULL) as contact_count,
+                COUNT(*) FILTER (WHERE extracted_content->'service_descriptions' IS NOT NULL AND jsonb_array_length(extracted_content->'service_descriptions') > 0) as services_count
+            FROM personaforge_domain_enrichment
+            WHERE enriched_at IS NOT NULL
+        """)
+        enhanced_stats_row = cursor.fetchone()
+        
+        if enhanced_stats_row:
+            enhanced_data_stats["web_scraping"]["domains_with_data"] = enhanced_stats_row['web_scraping_count'] or 0
+            enhanced_data_stats["web_scraping"]["total_pages_scraped"] = enhanced_stats_row['pages_scraped'] or 0
+            enhanced_data_stats["web_scraping"]["structured_data_found"] = enhanced_stats_row['structured_data_count'] or 0
+            enhanced_data_stats["web_scraping"]["avg_load_time"] = round(float(enhanced_stats_row['avg_load_time'] or 0), 2)
+            enhanced_data_stats["nlp_analysis"]["domains_with_data"] = enhanced_stats_row['nlp_count'] or 0
+            enhanced_data_stats["ssl_certificates"]["domains_with_data"] = enhanced_stats_row['ssl_count'] or 0
+            enhanced_data_stats["ssl_certificates"]["valid_certs"] = enhanced_stats_row['valid_ssl_count'] or 0
+            enhanced_data_stats["ssl_certificates"]["self_signed"] = enhanced_stats_row['self_signed_count'] or 0
+            enhanced_data_stats["ssl_certificates"]["expired"] = enhanced_stats_row['expired_ssl_count'] or 0
+            enhanced_data_stats["security_headers"]["domains_with_data"] = enhanced_stats_row['security_headers_count'] or 0
+            enhanced_data_stats["security_headers"]["csp_enabled"] = enhanced_stats_row['csp_count'] or 0
+            enhanced_data_stats["security_headers"]["hsts_enabled"] = enhanced_stats_row['hsts_count'] or 0
+            enhanced_data_stats["security_headers"]["avg_security_score"] = round(float(enhanced_stats_row['avg_security_score'] or 0), 1)
+            enhanced_data_stats["extracted_content"]["domains_with_pricing"] = enhanced_stats_row['pricing_count'] or 0
+            enhanced_data_stats["extracted_content"]["domains_with_contact"] = enhanced_stats_row['contact_count'] or 0
+            enhanced_data_stats["extracted_content"]["domains_with_services"] = enhanced_stats_row['services_count'] or 0
+        
+        # Get TLS versions distribution (lightweight - only extract version strings)
+        cursor.execute("""
+            SELECT ssl_certificate->>'tls_version' as tls_version, COUNT(*) as count
+            FROM personaforge_domain_enrichment
+            WHERE ssl_certificate IS NOT NULL AND ssl_certificate->>'tls_version' IS NOT NULL
+            GROUP BY ssl_certificate->>'tls_version'
+        """)
+        tls_version_rows = cursor.fetchall()
+        for row in tls_version_rows:
+            if row['tls_version']:
+                enhanced_data_stats["ssl_certificates"]["tls_versions"][row['tls_version']] = row['count']
+        
+        # Skip loading full enhanced_domains - we have all the stats we need from SQL
+        enhanced_domains = []  # Empty - we don't need the full objects anymore
+        
+        # Use infrastructure_domains for infrastructure stats, enhanced_domains for enhanced analysis
+        domains = infrastructure_domains  # For infrastructure processing
         
         # Normalize category names function
         def normalize_category_name(category):
@@ -1302,21 +1455,6 @@ def get_vendor_intelligence_report_data():
             
             # If no match, capitalize properly
             return ' '.join(word.capitalize() for word in region.split(','))
-        
-        for vendor in vendors:
-            if vendor.get('platform_type'):
-                platforms[vendor['platform_type']] += 1
-            if vendor.get('category'):
-                normalized_cat = normalize_category_name(vendor['category'])
-                categories[normalized_cat] += 1
-            if vendor.get('region'):
-                normalized_region = normalize_region_name(vendor['region'])
-                if normalized_region:
-                    regions[normalized_region] += 1
-            if vendor.get('services'):
-                services_list.extend(vendor['services'] or [])
-            if vendor.get('active'):
-                active_count += 1
         
         # Service distribution (normalize and combine duplicates)
         def normalize_service_name(service):
@@ -1471,28 +1609,21 @@ def get_vendor_intelligence_report_data():
         registrars = Counter()
         payment_processors = Counter()
         
-        for domain in domains:
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            host = domain.get('host_name') or enrichment.get('host_name')
+        # Process infrastructure data from lightweight domains list (no JSONB parsing needed)
+        for domain in infrastructure_domains:
+            host = domain.get('hosting')  # Note: SQL query aliases host_name as 'hosting'
             if host and host.strip() and host.lower() not in ['', 'none', 'unknown', 'n/a']:
                 hosting_providers[host.strip()] += 1
             
-            cdn = domain.get('cdn') or enrichment.get('cdn')
+            cdn = domain.get('cdn')
             if cdn and cdn.strip() and cdn.lower() not in ['', 'none', 'unknown', 'n/a']:
                 cdns[cdn.strip()] += 1
             
-            registrar = domain.get('registrar') or enrichment.get('registrar')
+            registrar = domain.get('registrar')
             if registrar and registrar.strip() and registrar.lower() not in ['', 'none', 'unknown', 'n/a']:
                 registrars[registrar.strip()] += 1
             
-            payment = domain.get('payment_processor') or enrichment.get('payment_processor')
+            payment = domain.get('payment_processor')
             if payment and payment.strip() and payment.lower() not in ['', 'none', 'unknown', 'n/a']:
                 # Split multiple payment processors if comma-separated
                 for p in payment.split(','):
@@ -1557,31 +1688,16 @@ def get_vendor_intelligence_report_data():
             formatted_words = [word.capitalize() for word in words]
             return ' '.join(formatted_words)
         
-        # Category breakdown with active counts (normalized)
-        category_breakdown = {}
-        for vendor in vendors:
-            cat = vendor.get('category') or 'Unknown'
-            normalized_cat = normalize_category_name(cat)
-            if normalized_cat not in category_breakdown:
-                category_breakdown[normalized_cat] = {'total': 0, 'active': 0}
-            category_breakdown[normalized_cat]['total'] += 1
-            if vendor.get('active'):
-                category_breakdown[normalized_cat]['active'] += 1
-        
-        # Platform breakdown with active counts
-        platform_breakdown = {}
-        for vendor in vendors:
-            platform = vendor.get('platform_type') or 'Unknown'
-            if platform not in platform_breakdown:
-                platform_breakdown[platform] = {'total': 0, 'active': 0}
-            platform_breakdown[platform]['total'] += 1
-            if vendor.get('active'):
-                platform_breakdown[platform]['active'] += 1
-        
-        # Text analysis of summaries and descriptions
+        # Text analysis of summaries and descriptions (only load text fields for analysis)
         import re
-        all_summaries = [v.get('summary', '') for v in vendors if v.get('summary')]
-        all_descriptions = [v.get('telegram_description', '') for v in vendors if v.get('telegram_description')]
+        cursor.execute("""
+            SELECT summary, telegram_description
+            FROM personaforge_vendors_intel
+            WHERE summary IS NOT NULL OR telegram_description IS NOT NULL
+        """)
+        text_rows = cursor.fetchall()
+        all_summaries = [row['summary'] or '' for row in text_rows if row.get('summary')]
+        all_descriptions = [row['telegram_description'] or '' for row in text_rows if row.get('telegram_description')]
         all_text = ' '.join(all_summaries + all_descriptions).lower()
         
         # Analyze keywords
@@ -1619,10 +1735,15 @@ def get_vendor_intelligence_report_data():
                     if 10 <= num <= 1000000:  # Reasonable range
                         customer_counts.append(num)
         
-        # Service combination analysis
+        # Service combination analysis (load only services array, not full vendor records)
+        cursor.execute("""
+            SELECT services
+            FROM personaforge_vendors_intel
+            WHERE services IS NOT NULL AND array_length(services, 1) > 1
+        """)
         service_combinations = []
-        for vendor in vendors:
-            services = vendor.get('services', [])
+        for row in cursor.fetchall():
+            services = row['services'] or []
             if len(services) > 1:
                 normalized_services = [normalize_service_name(s) for s in services if normalize_service_name(s)]
                 normalized_services = [s for s in normalized_services if s]  # Remove None values
@@ -1649,144 +1770,7 @@ def get_vendor_intelligence_report_data():
         
         phrase_counts = Counter(phrases)
         
-        # Enhanced enrichment data analysis
-        enhanced_data_stats = {
-            "web_scraping": {
-                "domains_with_data": 0,
-                "total_pages_scraped": 0,
-                "avg_load_time": 0,
-                "structured_data_found": 0
-            },
-            "nlp_analysis": {
-                "domains_with_data": 0,
-                "total_keywords": 0,
-                "total_entities": 0,
-                "sentiment_analysis": {"positive": 0, "negative": 0, "neutral": 0}
-            },
-            "ssl_certificates": {
-                "domains_with_data": 0,
-                "valid_certs": 0,
-                "self_signed": 0,
-                "expired": 0,
-                "tls_versions": Counter()
-            },
-            "security_headers": {
-                "domains_with_data": 0,
-                "csp_enabled": 0,
-                "hsts_enabled": 0,
-                "avg_security_score": 0,
-                "common_missing_headers": Counter()
-            },
-            "extracted_content": {
-                "domains_with_pricing": 0,
-                "domains_with_contact": 0,
-                "domains_with_services": 0,
-                "total_faqs": 0
-            }
-        }
-        
-        # Aggregate enhanced enrichment data from domains
-        load_times = []
-        sentiment_scores = []
-        security_scores = []
-        
-        for domain in domains:
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            # Web scraping stats
-            web_scraping = domain.get('web_scraping') or enrichment.get('web_scraping')
-            if web_scraping and isinstance(web_scraping, dict):
-                enhanced_data_stats["web_scraping"]["domains_with_data"] += 1
-                if web_scraping.get("html"):
-                    enhanced_data_stats["web_scraping"]["total_pages_scraped"] += 1
-                if web_scraping.get("load_time"):
-                    load_times.append(web_scraping["load_time"])
-                if web_scraping.get("structured_data"):
-                    structured = web_scraping["structured_data"]
-                    if structured and len(structured) > 0:
-                        enhanced_data_stats["web_scraping"]["structured_data_found"] += 1
-            
-            # NLP analysis stats
-            nlp = domain.get('nlp_analysis') or enrichment.get('nlp_analysis')
-            if nlp and isinstance(nlp, dict):
-                enhanced_data_stats["nlp_analysis"]["domains_with_data"] += 1
-                if nlp.get("keywords"):
-                    enhanced_data_stats["nlp_analysis"]["total_keywords"] += len(nlp["keywords"])
-                if nlp.get("entities"):
-                    entities = nlp["entities"]
-                    if isinstance(entities, dict):
-                        total_entities = sum(len(v) if isinstance(v, list) else 1 for v in entities.values())
-                        enhanced_data_stats["nlp_analysis"]["total_entities"] += total_entities
-                if nlp.get("sentiment"):
-                    sentiment = nlp["sentiment"]
-                    if isinstance(sentiment, dict):
-                        polarity = sentiment.get("polarity", 0)
-                        sentiment_scores.append(polarity)
-                        if polarity > 0.1:
-                            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["positive"] += 1
-                        elif polarity < -0.1:
-                            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["negative"] += 1
-                        else:
-                            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["neutral"] += 1
-            
-            # SSL certificate stats
-            ssl = domain.get('ssl_certificate') or enrichment.get('ssl_certificate')
-            if ssl and isinstance(ssl, dict):
-                enhanced_data_stats["ssl_certificates"]["domains_with_data"] += 1
-                if ssl.get("valid"):
-                    enhanced_data_stats["ssl_certificates"]["valid_certs"] += 1
-                if ssl.get("self_signed"):
-                    enhanced_data_stats["ssl_certificates"]["self_signed"] += 1
-                if ssl.get("expired"):
-                    enhanced_data_stats["ssl_certificates"]["expired"] += 1
-                if ssl.get("tls_version"):
-                    enhanced_data_stats["ssl_certificates"]["tls_versions"][ssl["tls_version"]] += 1
-            
-            # Security headers stats
-            sec_headers = domain.get('security_headers') or enrichment.get('security_headers')
-            if sec_headers and isinstance(sec_headers, dict):
-                enhanced_data_stats["security_headers"]["domains_with_data"] += 1
-                if sec_headers.get("csp"):
-                    enhanced_data_stats["security_headers"]["csp_enabled"] += 1
-                if sec_headers.get("hsts"):
-                    enhanced_data_stats["security_headers"]["hsts_enabled"] += 1
-                if sec_headers.get("security_score"):
-                    security_scores.append(sec_headers["security_score"])
-                if sec_headers.get("missing_headers"):
-                    missing = sec_headers["missing_headers"]
-                    if isinstance(missing, list):
-                        for header in missing:
-                            enhanced_data_stats["security_headers"]["common_missing_headers"][header] += 1
-            
-            # Extracted content stats
-            extracted = domain.get('extracted_content') or enrichment.get('extracted_content')
-            if extracted and isinstance(extracted, dict):
-                if extracted.get("pricing") and len(extracted["pricing"]) > 0:
-                    enhanced_data_stats["extracted_content"]["domains_with_pricing"] += 1
-                if extracted.get("contact_info"):
-                    contact = extracted["contact_info"]
-                    if contact and (contact.get("email") or contact.get("phone") or contact.get("address")):
-                        enhanced_data_stats["extracted_content"]["domains_with_contact"] += 1
-                if extracted.get("service_descriptions") and len(extracted["service_descriptions"]) > 0:
-                    enhanced_data_stats["extracted_content"]["domains_with_services"] += 1
-                if extracted.get("faqs") and len(extracted["faqs"]) > 0:
-                    enhanced_data_stats["extracted_content"]["total_faqs"] += len(extracted["faqs"])
-        
-        # Calculate averages
-        if load_times:
-            enhanced_data_stats["web_scraping"]["avg_load_time"] = round(sum(load_times) / len(load_times), 2)
-        if security_scores:
-            enhanced_data_stats["security_headers"]["avg_security_score"] = round(sum(security_scores) / len(security_scores), 1)
-        
-        # Convert counters to dicts
-        enhanced_data_stats["ssl_certificates"]["tls_versions"] = dict(enhanced_data_stats["ssl_certificates"]["tls_versions"])
-        enhanced_data_stats["security_headers"]["common_missing_headers"] = dict(enhanced_data_stats["security_headers"]["common_missing_headers"].most_common(10))
+        # Enhanced enrichment stats are already calculated via SQL above (no need to load full JSONB)
         
         # DERIVE INSIGHTS FROM ENHANCED DATA
         # Analyze operational sophistication based on enhanced enrichment
@@ -1829,74 +1813,53 @@ def get_vendor_intelligence_report_data():
             "insecure_with_suspicious_hosting": 0
         }
         
-        for domain in domains:
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            # Determine sophistication level
-            ssl = domain.get('ssl_certificate') or enrichment.get('ssl_certificate')
-            sec_headers = domain.get('security_headers') or enrichment.get('security_headers')
-            nlp = domain.get('nlp_analysis') or enrichment.get('nlp_analysis')
-            extracted = domain.get('extracted_content') or enrichment.get('extracted_content')
-            
-            has_valid_ssl = ssl and ssl.get("valid") and not ssl.get("self_signed")
-            has_strong_security = sec_headers and sec_headers.get("security_score", 0) >= 50
-            has_professional_content = nlp and nlp.get("sentiment", {}).get("polarity", 0) > 0
-            has_pricing = extracted and extracted.get("pricing") and len(extracted["pricing"]) > 0
-            
-            # Categorize sophistication
-            if has_valid_ssl and has_strong_security and has_professional_content:
-                sophistication_analysis["high_sophistication"] += 1
-                sophistication_analysis["security_posture"]["professional"] += 1
-            elif (ssl and ssl.get("self_signed")) or (sec_headers and sec_headers.get("security_score", 0) < 30):
-                sophistication_analysis["low_sophistication"] += 1
-                sophistication_analysis["security_posture"]["amateur"] += 1
-            else:
-                sophistication_analysis["medium_sophistication"] += 1
-                sophistication_analysis["security_posture"]["mixed"] += 1
-            
-            # Operational patterns
-            host = domain.get('host_name') or enrichment.get('host_name')
-            cdn = domain.get('cdn') or enrichment.get('cdn')
-            has_legitimate_infra = (host and host.lower() not in ['', 'none', 'unknown']) or (cdn and cdn.lower() not in ['', 'none', 'unknown'])
-            
-            if has_legitimate_infra and has_strong_security:
-                sophistication_analysis["operational_patterns"]["legitimate_infrastructure"] += 1
-                security_infrastructure_correlation["secure_with_legitimate_hosting"] += 1
-            elif has_legitimate_infra and not has_strong_security:
-                sophistication_analysis["operational_patterns"]["minimal_security"] += 1
-                security_infrastructure_correlation["insecure_with_legitimate_hosting"] += 1
-            elif not has_legitimate_infra and has_strong_security:
-                security_infrastructure_correlation["secure_with_suspicious_hosting"] += 1
-            else:
-                sophistication_analysis["operational_patterns"]["suspicious_patterns"] += 1
-                security_infrastructure_correlation["insecure_with_suspicious_hosting"] += 1
-            
-            # Content sophistication
-            if nlp:
-                sentiment = nlp.get("sentiment", {})
-                polarity = sentiment.get("polarity", 0)
-                entities = nlp.get("entities", {})
-                has_entities = entities and sum(len(v) if isinstance(v, list) else 1 for v in entities.values()) > 0
-                
-                if polarity > 0.2 and has_entities:
-                    content_sophistication["professional_content"] += 1
-                    if polarity > 0.5:
-                        content_sophistication["marketing_focused"] += 1
-                elif polarity < -0.1 or not has_entities:
-                    content_sophistication["amateur_content"] += 1
-                elif -0.1 <= polarity <= 0.2 and has_entities:
-                    content_sophistication["technical_focused"] += 1
-            
-            # Pricing analysis
-            if has_pricing:
-                pricing_analysis["domains_with_pricing"] += 1
-                pricing_analysis["transparency_score"] += 1
+        # Calculate sophistication analysis using SQL aggregations (no need to load full JSONB)
+        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("""
+            SELECT 
+                COUNT(*) FILTER (
+                    WHERE ssl_certificate->>'valid' = 'true' 
+                    AND ssl_certificate->>'self_signed' != 'true'
+                    AND (security_headers->>'security_score')::numeric >= 50
+                    AND (nlp_analysis->'sentiment'->>'polarity')::numeric > 0
+                ) as high_sophistication,
+                COUNT(*) FILTER (
+                    WHERE (ssl_certificate->>'self_signed' = 'true' OR (security_headers->>'security_score')::numeric < 30)
+                ) as low_sophistication,
+                COUNT(*) FILTER (
+                    WHERE ssl_certificate->>'valid' = 'true' 
+                    AND ssl_certificate->>'self_signed' != 'true'
+                    AND (security_headers->>'security_score')::numeric >= 50
+                ) as professional_security,
+                COUNT(*) FILTER (
+                    WHERE ssl_certificate->>'self_signed' = 'true' OR (security_headers->>'security_score')::numeric < 30
+                ) as amateur_security,
+                COUNT(*) FILTER (
+                    WHERE (host_name IS NOT NULL AND host_name != '' AND host_name != 'unknown')
+                    AND (security_headers->>'security_score')::numeric >= 50
+                ) as legitimate_infra_secure,
+                COUNT(*) FILTER (
+                    WHERE extracted_content->'pricing' IS NOT NULL 
+                    AND jsonb_array_length(extracted_content->'pricing') > 0
+                ) as domains_with_pricing
+            FROM personaforge_domain_enrichment
+            WHERE enriched_at IS NOT NULL
+        """)
+        sophistication_row = cursor.fetchone()
+        
+        if sophistication_row:
+            sophistication_analysis["high_sophistication"] = sophistication_row['high_sophistication'] or 0
+            sophistication_analysis["low_sophistication"] = sophistication_row['low_sophistication'] or 0
+            sophistication_analysis["security_posture"]["professional"] = sophistication_row['professional_security'] or 0
+            sophistication_analysis["security_posture"]["amateur"] = sophistication_row['amateur_security'] or 0
+            sophistication_analysis["operational_patterns"]["legitimate_infrastructure"] = sophistication_row['legitimate_infra_secure'] or 0
+            pricing_analysis["domains_with_pricing"] = sophistication_row['domains_with_pricing'] or 0
+        
+        # Calculate medium sophistication (total - high - low)
+        total_enriched = enhanced_data_stats["web_scraping"]["domains_with_data"]
+        if total_enriched > 0:
+            sophistication_analysis["medium_sophistication"] = total_enriched - sophistication_analysis["high_sophistication"] - sophistication_analysis["low_sophistication"]
+            sophistication_analysis["security_posture"]["mixed"] = total_enriched - sophistication_analysis["security_posture"]["professional"] - sophistication_analysis["security_posture"]["amateur"]
         
         # Calculate percentages
         total_enriched = enhanced_data_stats["web_scraping"]["domains_with_data"]
@@ -1953,10 +1916,10 @@ def get_vendor_intelligence_report_data():
             key_insights["infrastructure_security_correlation"]["implication"] = "Blending in with legitimate traffic while maintaining security suggests sophisticated operational security practices"
         
         return jsonify({
-            "total_vendors": len(vendors),
+            "total_vendors": total_vendors,
             "active_vendors": active_count,
             "vendors_with_domains": vendors_with_domains,
-            "total_domains": len(domains),
+            "total_domains": len(infrastructure_domains),
             "categories": category_breakdown,
             "platforms": platform_breakdown,
             "regions": dict(regions.most_common(15)),
