@@ -1242,6 +1242,8 @@ def get_vendor_intelligence_report_data():
         categories = Counter()
         category_breakdown = {}
         
+        # Normalize categories from SQL results (will be applied after normalize_category_name is defined)
+        
         # Get region distribution (SQL aggregation)
         cursor.execute("""
             SELECT region, COUNT(*) as count
@@ -1250,7 +1252,8 @@ def get_vendor_intelligence_report_data():
             GROUP BY region
         """)
         region_rows = cursor.fetchall()
-        regions = Counter({row['region']: row['count'] for row in region_rows})
+        # Regions will be normalized after normalize_region_name is defined
+        # regions = Counter({row['region']: row['count'] for row in region_rows})  # Will be replaced with normalized version
         
         # Get total counts (lightweight)
         cursor.execute("SELECT COUNT(*) as total, COUNT(CASE WHEN active = true THEN 1 END) as active FROM personaforge_vendors_intel")
@@ -1286,7 +1289,6 @@ def get_vendor_intelligence_report_data():
             WHERE de.enriched_at IS NOT NULL
         """)
         infrastructure_rows = cursor.fetchall()
-        cursor.close()
         
         # Convert to list of dicts for infrastructure processing (lightweight)
         infrastructure_domains = [dict(row) for row in infrastructure_rows]
@@ -1455,6 +1457,23 @@ def get_vendor_intelligence_report_data():
             
             # If no match, capitalize properly
             return ' '.join(word.capitalize() for word in region.split(','))
+        
+        # Normalize categories from SQL results (apply after function is defined)
+        for row in category_rows:
+            normalized_cat = normalize_category_name(row['category'])
+            categories[normalized_cat] += row['count']
+            if normalized_cat not in category_breakdown:
+                category_breakdown[normalized_cat] = {'total': 0, 'active': 0}
+            category_breakdown[normalized_cat]['total'] += row['count']
+            category_breakdown[normalized_cat]['active'] += row['active_count']
+        
+        # Normalize regions from SQL results
+        normalized_regions = Counter()
+        for row in region_rows:
+            normalized_region = normalize_region_name(row['region'])
+            if normalized_region:
+                normalized_regions[normalized_region] += row['count']
+        regions = normalized_regions  # Use normalized regions
         
         # Service distribution (normalize and combine duplicates)
         def normalize_service_name(service):
@@ -1814,7 +1833,7 @@ def get_vendor_intelligence_report_data():
         }
         
         # Calculate sophistication analysis using SQL aggregations (no need to load full JSONB)
-        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        # Reuse existing cursor (don't create a new one)
         cursor.execute("""
             SELECT 
                 COUNT(*) FILTER (
@@ -1951,8 +1970,8 @@ def get_vendor_intelligence_report_data():
             "security_infrastructure_correlation": security_infrastructure_correlation,
             "key_insights": key_insights,
             "stats": {
-                "telegram_percentage": round((platforms.get('Telegram', 0) + platforms.get('Website + Telegram', 0)) / len(vendors) * 100, 1) if vendors else 0,
-                "website_percentage": round((platforms.get('Website', 0) + platforms.get('Website + Telegram', 0)) / len(vendors) * 100, 1) if vendors else 0,
+                "telegram_percentage": round((platforms.get('Telegram', 0) + platforms.get('Website + Telegram', 0)) / total_vendors * 100, 1) if total_vendors > 0 else 0,
+                "website_percentage": round((platforms.get('Website', 0) + platforms.get('Website + Telegram', 0)) / total_vendors * 100, 1) if total_vendors > 0 else 0,
                 "top_category": categories.most_common(1)[0][0] if categories else "N/A",
                 "top_service": service_counts.most_common(1)[0][0] if service_counts else "N/A",
                 "top_region": regions.most_common(1)[0][0] if regions else "N/A"
@@ -1960,7 +1979,16 @@ def get_vendor_intelligence_report_data():
         }), 200
     except Exception as e:
         app_logger.error(f"Error getting vendor intelligence report data: {e}", exc_info=True)
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    finally:
+        # Close cursor if it exists
+        try:
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+        except:
+            pass
 
 
 @personaforge_bp.route('/api/domains/<domain>', methods=['GET'])
