@@ -39,7 +39,7 @@
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
-      background: #05060b url('https://i.imgur.com/YTCnPOE.png') no-repeat center center fixed;
+      background: #05060b;
       background-size: cover;
       color: #f2f3f5;
       position: relative;
@@ -53,6 +53,11 @@
       right: 0;
       bottom: 0;
       background: rgba(5, 6, 11, 0.75);
+      background-image: url('https://i.imgur.com/YTCnPOE.png');
+      background-size: cover;
+      background-position: center center;
+      background-attachment: fixed;
+      background-repeat: no-repeat;
       z-index: 0;
       pointer-events: none;
     }
@@ -699,7 +704,7 @@
 
   <div class="about-bottom">
     <div>
-      <img src="https://media.licdn.com/dms/image/v2/D5603AQFyJn6wTMoe2Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1702930175808?e=1765411200&v=beta&t=dY6DzgcBXnKTSLKEC1pdlQG0YhmmNNVsjiqCPiOn6Vo" alt="Profile" class="about-image">
+      <img src="https://media.licdn.com/dms/image/v2/D5603AQFyJn6wTMoe2Q/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1702930175808?e=1765411200&v=beta&t=dY6DzgcBXnKTSLKEC1pdlQG0YhmmNNVsjiqCPiOn6Vo" alt="Profile" class="about-image" loading="lazy">
     </div>
 
     <div class="contact-form-container" id="contact">

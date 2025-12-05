@@ -1,0 +1,17 @@
+# robots.txt for darkai.ca
+User-agent: *
+Allow: /
+Allow: /reports/
+Allow: /personaforge/
+Allow: /blackwire/
+Allow: /shadowstack/
+Allow: /about
+Allow: /contact
+
+# Disallow admin/internal endpoints
+Disallow: /api/
+Disallow: /static/data/
+
+# Sitemap location
+Sitemap: https://darkai.ca/sitemap.xml
+

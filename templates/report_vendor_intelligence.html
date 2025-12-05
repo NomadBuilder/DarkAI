@@ -27,6 +27,45 @@
   <meta name="twitter:description" content="Comprehensive analysis of the synthetic identity vendor ecosystem." />
   <meta name="twitter:image" content="https://i.imgur.com/YTCnPOE.png" />
   
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://darkai.ca/reports/vendor-intelligence-report" />
+  
+  <!-- Structured Data (JSON-LD) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Report",
+    "name": "2025 Synthetic Identity Vendor Intelligence Report",
+    "description": "Comprehensive analysis of the synthetic identity vendor ecosystem based on intelligence gathered from 129+ vendors across multiple platforms",
+    "url": "https://darkai.ca/reports/vendor-intelligence-report",
+    "datePublished": "2025-12-05",
+    "dateModified": "2025-12-05",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Dark AI",
+      "url": "https://darkai.ca",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://i.imgur.com/YTCnPOE.png"
+      }
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "Dark AI"
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https://darkai.ca/reports/vendor-intelligence-report"
+    },
+    "about": {
+      "@type": "Thing",
+      "name": "Synthetic Identity Vendors",
+      "description": "Analysis of vendors selling synthetic identities, fake documents, and related services"
+    },
+    "keywords": "synthetic identity, fake documents, identity fraud, vendor intelligence, cybersecurity, threat intelligence"
+  }
+  </script>
+  
   <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
   <link rel="alternate icon" href="/static/favicon.svg" />
   
@@ -631,8 +670,12 @@
     </div>
   </nav>
 
-  <header class="hero">
-    <h1>2025 Synthetic Identity Vendor Intelligence Report</h1>
+    <header class="hero">
+      <div class="export-buttons" style="position: absolute; top: 1rem; right: 1rem; display: flex; gap: 0.5rem; z-index: 10;">
+        <button onclick="exportReport('csv')" class="export-btn" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">📥 CSV</button>
+        <button onclick="exportReport('json')" class="export-btn" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.9rem; transition: all 0.2s;">📥 JSON</button>
+      </div>
+      <h1>2025 Synthetic Identity Vendor Intelligence Report</h1>
     <p class="subtitle">Comprehensive analysis of the synthetic identity vendor ecosystem based on intelligence gathered from 129+ vendors across multiple platforms</p>
     <div class="meta">
       <span>Published: December 2025</span>
