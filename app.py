@@ -305,31 +305,36 @@ def vendor_intelligence_report():
     import json
     
     # Fetch report data server-side so it's available on page load
+    # Use lightweight queries to avoid timeouts
     report_data = {}
     try:
         # Import the postgres client and call the data fetching logic directly
         from personaforge.src.database.postgres_client import PostgresClient
-        from collections import Counter, defaultdict
+        import psycopg2
         
         postgres_client = PostgresClient()
         if postgres_client and postgres_client.conn:
-            # Get vendors
-            vendors = postgres_client.get_all_vendors_intel()
-            domains = postgres_client.get_all_enriched_domains()
-            
-            # Calculate basic stats for initial render
-            total_vendors = len(vendors)
-            total_domains = len(domains)
-            
-            # Count vendors with domains
+            # Use lightweight SQL queries instead of loading all data
             cursor = postgres_client.conn.cursor()
-            cursor.execute("SELECT COUNT(DISTINCT vendor_intel_id) as count FROM personaforge_vendor_intel_domains")
-            vendors_with_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
-            cursor.close()
             
-            # Calculate Telegram percentage
-            telegram_count = len([v for v in vendors if v.get('platform_type') == 'Telegram'])
+            # Get total vendors count (lightweight)
+            cursor.execute("SELECT COUNT(*) FROM personaforge_vendors_intel")
+            total_vendors = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+            
+            # Get total domains count (lightweight)
+            cursor.execute("SELECT COUNT(*) FROM personaforge_domains")
+            total_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+            
+            # Count vendors with domains (lightweight)
+            cursor.execute("SELECT COUNT(DISTINCT vendor_intel_id) FROM personaforge_vendor_intel_domains")
+            vendors_with_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+            
+            # Calculate Telegram percentage (lightweight - just count)
+            cursor.execute("SELECT COUNT(*) FROM personaforge_vendors_intel WHERE platform_type = 'Telegram'")
+            telegram_count = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
             telegram_percentage = round((telegram_count / total_vendors * 100), 1) if total_vendors > 0 else 0
+            
+            cursor.close()
             
             # Create minimal report_data for initial render
             report_data = {
@@ -348,7 +353,9 @@ def vendor_intelligence_report():
     
     try:
         return render_template('report_vendor_intelligence.html', report_data=report_data)
-    except:
+    except Exception as e:
+        import logging
+        logging.getLogger(__name__).error(f"Error rendering report template: {e}", exc_info=True)
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'report_vendor_intelligence.html')
 
