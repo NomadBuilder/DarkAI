@@ -415,6 +415,36 @@
       margin-bottom: 0.5rem;
       line-height: 1;
       font-variant-numeric: tabular-nums;
+      min-height: 4rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .stat-card .number.loading {
+      background: linear-gradient(90deg, rgba(255, 107, 107, 0.1) 25%, rgba(255, 107, 107, 0.2) 50%, rgba(255, 107, 107, 0.1) 75%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 1.5s infinite;
+    }
+    
+    .stat-card .number.skeleton {
+      background: linear-gradient(90deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 107, 107, 0.2) 50%, rgba(255, 107, 107, 0.1) 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 1.5s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
     }
     
     .stat-card .label {
@@ -613,19 +643,19 @@
   <!-- Key Statistics -->
   <div class="stats-grid" id="key-stats">
     <div class="stat-card">
-      <div class="number" id="total-vendors" style="opacity: 0.5;">Loading...</div>
+      <div class="number loading skeleton" id="total-vendors">—</div>
       <div class="label">Total Vendors Tracked</div>
     </div>
         <div class="stat-card">
-          <div class="number" id="vendors-with-domains" style="opacity: 0.5;">Loading...</div>
+          <div class="number loading skeleton" id="vendors-with-domains">—</div>
           <div class="label">Vendors with Domains</div>
         </div>
     <div class="stat-card">
-      <div class="number" id="total-domains" style="opacity: 0.5;">Loading...</div>
+      <div class="number loading skeleton" id="total-domains">—</div>
       <div class="label">Domains Analyzed</div>
     </div>
     <div class="stat-card">
-      <div class="number" id="telegram-percentage" style="opacity: 0.5;">Loading...</div>
+      <div class="number loading skeleton" id="telegram-percentage">—</div>
       <div class="label">% on Telegram</div>
     </div>
   </div>
@@ -1176,16 +1206,7 @@
 
     // Load and render data
     async function loadReportData() {
-      // Show loading state
-      const statElements = ['total-vendors', 'vendors-with-domains', 'total-domains', 'telegram-percentage'];
-      statElements.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) {
-          el.textContent = 'Loading...';
-          el.style.opacity = '0.5';
-        }
-      });
-      
+      // Stats are already showing skeleton loader, no need to change them
       try {
         const response = await fetch('/personaforge/api/reports/vendor-intelligence-data');
         if (!response.ok) {
@@ -1198,6 +1219,14 @@
           const element = document.getElementById(id);
           if (element) {
             const displayValue = value + suffix;
+            // Remove loading classes
+            element.classList.remove('loading', 'skeleton');
+            // Reset styles
+            element.style.background = '';
+            element.style.webkitBackgroundClip = '';
+            element.style.webkitTextFillColor = '';
+            element.style.backgroundClip = '';
+            // Set the value
             element.textContent = displayValue;
             // Fade in animation
             element.style.transition = 'opacity 0.3s ease-in';
@@ -1795,9 +1824,14 @@
         statElements.forEach(id => {
           const el = document.getElementById(id);
           if (el) {
-            el.textContent = 'Error';
+            el.classList.remove('loading', 'skeleton');
+            el.textContent = '—';
+            el.style.background = '';
+            el.style.webkitBackgroundClip = '';
+            el.style.webkitTextFillColor = '';
+            el.style.backgroundClip = '';
+            el.style.color = 'rgba(255, 107, 107, 0.5)';
             el.style.opacity = '0.7';
-            el.style.color = '#ff6b6b';
           }
         });
       }
