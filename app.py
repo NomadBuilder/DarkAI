@@ -303,53 +303,80 @@ def vendor_intelligence_report():
     """2025 Synthetic Identity Vendor Intelligence Report page."""
     from flask import render_template
     import json
+    from pathlib import Path
     
-    # Fetch report data server-side so it's available on page load
-    # Use lightweight queries to avoid timeouts
+    # Try to load from static file first (fastest)
     report_data = {}
-    try:
-        # Import the postgres client and call the data fetching logic directly
-        from personaforge.src.database.postgres_client import PostgresClient
-        import psycopg2
-        
-        postgres_client = PostgresClient()
-        if postgres_client and postgres_client.conn:
-            # Use lightweight SQL queries instead of loading all data
-            cursor = postgres_client.conn.cursor()
-            
-            # Get total vendors count (lightweight)
-            cursor.execute("SELECT COUNT(*) FROM personaforge_vendors_intel")
-            total_vendors = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
-            
-            # Get total domains count (lightweight)
-            cursor.execute("SELECT COUNT(*) FROM personaforge_domains")
-            total_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
-            
-            # Count vendors with domains (lightweight)
-            cursor.execute("SELECT COUNT(DISTINCT vendor_intel_id) FROM personaforge_vendor_intel_domains")
-            vendors_with_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
-            
-            # Calculate Telegram percentage (lightweight - just count)
-            cursor.execute("SELECT COUNT(*) FROM personaforge_vendors_intel WHERE platform_type = 'Telegram'")
-            telegram_count = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
-            telegram_percentage = round((telegram_count / total_vendors * 100), 1) if total_vendors > 0 else 0
-            
-            cursor.close()
-            
-            # Create minimal report_data for initial render
-            report_data = {
-                "total_vendors": total_vendors,
-                "vendors_with_domains": vendors_with_domains,
-                "total_domains": total_domains,
-                "stats": {
-                    "telegram_percentage": telegram_percentage
+    static_file = Path(__file__).parent / 'personaforge' / 'static' / 'data' / 'vendor_intelligence_report.json'
+    
+    if static_file.exists():
+        try:
+            with open(static_file, 'r') as f:
+                static_data = json.load(f)
+                # Extract just the stats we need for server-side render
+                report_data = {
+                    "total_vendors": static_data.get('total_vendors', 0),
+                    "vendors_with_domains": static_data.get('vendors_with_domains', 0),
+                    "total_domains": static_data.get('total_domains', 0),
+                    "stats": {
+                        "telegram_percentage": static_data.get('stats', {}).get('telegram_percentage', 0)
+                    }
                 }
-            }
-    except Exception as e:
-        # If data fetch fails, render page anyway (will show loading state)
-        import logging
-        logging.getLogger(__name__).warning(f"Failed to fetch report data server-side: {e}")
-        report_data = {}
+        except Exception as e:
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to load static report data: {e}")
+    
+    # Fallback to database if static file not available (but don't block on errors)
+    if not report_data:
+        try:
+            # Import the postgres client and call the data fetching logic directly
+            from personaforge.src.database.postgres_client import PostgresClient
+            import psycopg2
+            
+            postgres_client = PostgresClient()
+            if postgres_client and postgres_client.conn:
+                # Rollback any failed transaction first
+                try:
+                    postgres_client.conn.rollback()
+                except:
+                    pass
+                
+                # Use lightweight SQL queries instead of loading all data
+                cursor = postgres_client.conn.cursor()
+                
+                # Get total vendors count (lightweight)
+                cursor.execute("SELECT COUNT(*) FROM personaforge_vendors_intel")
+                total_vendors = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+                
+                # Get total domains count (lightweight)
+                cursor.execute("SELECT COUNT(*) FROM personaforge_domains")
+                total_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+                
+                # Count vendors with domains (lightweight)
+                cursor.execute("SELECT COUNT(DISTINCT vendor_intel_id) FROM personaforge_vendor_intel_domains")
+                vendors_with_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+                
+                # Calculate Telegram percentage (lightweight - just count)
+                cursor.execute("SELECT COUNT(*) FROM personaforge_vendors_intel WHERE platform_type = 'Telegram'")
+                telegram_count = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+                telegram_percentage = round((telegram_count / total_vendors * 100), 1) if total_vendors > 0 else 0
+                
+                cursor.close()
+                
+                # Create minimal report_data for initial render
+                report_data = {
+                    "total_vendors": total_vendors,
+                    "vendors_with_domains": vendors_with_domains,
+                    "total_domains": total_domains,
+                    "stats": {
+                        "telegram_percentage": telegram_percentage
+                    }
+                }
+        except Exception as e:
+            # If data fetch fails, render page anyway (will show loading state)
+            import logging
+            logging.getLogger(__name__).warning(f"Failed to fetch report data server-side: {e}")
+            report_data = {}
     
     try:
         return render_template('report_vendor_intelligence.html', report_data=report_data)
