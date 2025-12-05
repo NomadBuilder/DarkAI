@@ -867,7 +867,6 @@
           <ul style="margin: 0.75rem 0 0 1.5rem; color: #90caf9;">
             <li>Hosting providers used by vendors</li>
             <li>CDN services (Cloudflare, etc.)</li>
-            <li>Payment processors</li>
             <li>Domain registrars</li>
             <li>Security posture correlation with infrastructure choices</li>
           </ul>
@@ -877,7 +876,7 @@
           </p>
         </div>
         <div id="infrastructure-insights" class="highlight-box" style="display: none;">
-          <strong>Infrastructure Clustering:</strong> Shared infrastructure (hosting, CDN, payment processors) 
+          <strong>Infrastructure Clustering:</strong> Shared infrastructure (hosting, CDN) 
           can indicate vendor networks, shared operators, or common service providers. Enhanced enrichment 
           reveals that <strong id="infrastructure-security-correlation">-</strong>, suggesting 
           <strong id="infrastructure-security-implication">-</strong>.
@@ -912,13 +911,6 @@
             <div class="chart-wrapper">
               <canvas id="cdnChart"></canvas>
             </div>
-          </div>
-        </div>
-        
-        <div class="chart-container">
-          <h3>Payment Processors</h3>
-          <div class="chart-wrapper">
-            <canvas id="paymentChart"></canvas>
           </div>
         </div>
       </div>
@@ -1012,31 +1004,6 @@
               <div style="font-size: 1.5rem; font-weight: 700; color: #f44336;" id="negative-sentiment">-</div>
               <div style="color: #ccc;">Negative</div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- SSL/TLS Analysis -->
-      <div class="chart-section" id="ssl-section" style="display: none;">
-        <h3 style="color: #ff6b6b; margin-bottom: 1.5rem;">SSL/TLS Certificate Analysis</h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-          <div style="background: rgba(76, 175, 80, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(76, 175, 80, 0.2);">
-            <div style="font-size: 2rem; font-weight: 700; color: #4caf50;" id="valid-certs">-</div>
-            <div style="color: #ccc; margin-top: 0.5rem;">Valid Certificates</div>
-          </div>
-          <div style="background: rgba(255, 152, 0, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255, 152, 0, 0.2);">
-            <div style="font-size: 2rem; font-weight: 700; color: #ff9800;" id="self-signed-certs">-</div>
-            <div style="color: #ccc; margin-top: 0.5rem;">Self-Signed</div>
-          </div>
-          <div style="background: rgba(244, 67, 54, 0.1); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(244, 67, 54, 0.2);">
-            <div style="font-size: 2rem; font-weight: 700; color: #f44336;" id="expired-certs">-</div>
-            <div style="color: #ccc; margin-top: 0.5rem;">Expired</div>
-          </div>
-        </div>
-        <div class="chart-container" id="tls-versions-chart-container" style="display: none;">
-          <h4 style="color: #ff6b6b;">TLS Versions in Use</h4>
-          <div class="chart-wrapper">
-            <canvas id="tlsVersionsChart"></canvas>
           </div>
         </div>
       </div>
@@ -1375,13 +1342,7 @@
           .slice(0, 8)
           .map(([name, count]) => ({ name, count }));
         
-        const paymentData = Object.entries(data.infrastructure.payment_processors || {})
-          .filter(([name, count]) => name && count > 0)
-          .sort((a, b) => b[1] - a[1])
-          .slice(0, 10)
-          .map(([name, count]) => ({ name, count }));
-        
-        const hasInfrastructureData = hostingData.length > 0 || cdnData.length > 0 || paymentData.length > 0;
+        const hasInfrastructureData = hostingData.length > 0 || cdnData.length > 0;
         
         if (hasInfrastructureData) {
           document.getElementById('infrastructure-note').style.display = 'none';
@@ -1458,46 +1419,12 @@
             '<p style="color: #9aa0a6; text-align: center; padding: 2rem;">No CDN data available</p>';
         }
         
-        // Payment Chart (only if data exists)
-        if (paymentData.length > 0) {
-          new Chart(document.getElementById('paymentChart'), {
-          type: 'bar',
-          data: {
-            labels: paymentData.map(d => d.name),
-            datasets: [{
-              label: 'Domains',
-              data: paymentData.map(d => d.count),
-              backgroundColor: 'rgba(76, 175, 80, 0.6)',
-              borderColor: '#4caf50',
-              borderWidth: 2
-            }]
-          },
-          options: {
-            ...professionalChartConfig,
-            indexAxis: 'y',
-            scales: {
-              x: {
-                ticks: { color: '#9aa0a6' },
-                grid: { color: 'rgba(255, 255, 255, 0.05)' }
-              },
-              y: {
-                ticks: { color: '#9aa0a6' },
-                grid: { color: 'rgba(255, 255, 255, 0.05)' }
-              }
-            }
-          }
-          });
-        } else {
-          document.getElementById('paymentChart').parentElement.innerHTML = 
-            '<p style="color: #9aa0a6; text-align: center; padding: 2rem;">No payment processor data available</p>';
-        }
         
         // Enhanced Enrichment Data
         if (data.enhanced_enrichment) {
           const enhanced = data.enhanced_enrichment;
           const hasEnhancedData = enhanced.web_scraping?.domains_with_data > 0 || 
                                   enhanced.nlp_analysis?.domains_with_data > 0 ||
-                                  enhanced.ssl_certificates?.domains_with_data > 0 ||
                                   enhanced.security_headers?.domains_with_data > 0;
           
           if (hasEnhancedData) {
@@ -1525,42 +1452,6 @@
               document.getElementById('negative-sentiment').textContent = enhanced.nlp_analysis.sentiment_analysis?.negative || 0;
             }
             
-            // SSL/TLS Stats
-            if (enhanced.ssl_certificates?.domains_with_data > 0) {
-              document.getElementById('ssl-section').style.display = 'block';
-              document.getElementById('valid-certs').textContent = enhanced.ssl_certificates.valid_certs;
-              document.getElementById('self-signed-certs').textContent = enhanced.ssl_certificates.self_signed;
-              document.getElementById('expired-certs').textContent = enhanced.ssl_certificates.expired;
-              
-              // TLS Versions Chart
-              const tlsVersions = enhanced.ssl_certificates.tls_versions || {};
-              if (Object.keys(tlsVersions).length > 0) {
-                document.getElementById('tls-versions-chart-container').style.display = 'block';
-                new Chart(document.getElementById('tlsVersionsChart'), {
-                  type: 'doughnut',
-                  data: {
-                    labels: Object.keys(tlsVersions),
-                    datasets: [{
-                      data: Object.values(tlsVersions),
-                      backgroundColor: [
-                        'rgba(76, 175, 80, 0.8)',
-                        'rgba(255, 152, 0, 0.8)',
-                        'rgba(244, 67, 54, 0.8)',
-                        'rgba(100, 181, 246, 0.8)'
-                      ],
-                      borderColor: [
-                        '#4caf50',
-                        '#ff9800',
-                        '#f44336',
-                        '#64b5f6'
-                      ],
-                      borderWidth: 2
-                    }]
-                  },
-                  options: professionalChartConfig
-                });
-              }
-            }
             
             // Security Headers Stats
             if (enhanced.security_headers?.domains_with_data > 0) {
