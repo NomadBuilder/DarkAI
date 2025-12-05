@@ -1,0 +1,311 @@
+{
+  "total_vendors": 128,
+  "active_vendors": 128,
+  "vendors_with_domains": 79,
+  "total_domains": 91,
+  "categories": {
+    "KYC Bypass Services": {
+      "total": 11,
+      "active": 11
+    },
+    "Synthetic Identity Kits": {
+      "total": 24,
+      "active": 24
+    },
+    "Fraud Tools": {
+      "total": 4,
+      "active": 4
+    },
+    "Fraud as a Service": {
+      "total": 2,
+      "active": 2
+    },
+    "Fake Documents": {
+      "total": 87,
+      "active": 87
+    }
+  },
+  "platforms": {
+    "Website + Telegram": {
+      "total": 4,
+      "active": 4
+    },
+    "Website": {
+      "total": 74,
+      "active": 74
+    },
+    "Telegram": {
+      "total": 50,
+      "active": 50
+    }
+  },
+  "regions": {
+    "US": 98,
+    "US, Canada": 28,
+    "Canada": 2
+  },
+  "services": {
+    "Driver License": 88,
+    "ID": 81,
+    "SSN": 36,
+    "Passport": 21,
+    "KYC Bypass": 10,
+    "Bank Account": 9,
+    "LLC": 7,
+    "Tax ID": 5,
+    "Ltd": 5,
+    "Birth Certificate": 5,
+    "Student Card": 5,
+    "EIN": 4,
+    "Government ID": 2,
+    "And More": 2,
+    "KYC Verification": 2,
+    "Social Security Card": 2,
+    "National ID": 2,
+    "Utility Bill": 2,
+    "Itin": 2,
+    "Degree": 2,
+    "State ID Cards": 2,
+    "Visa": 2,
+    "Emails": 2,
+    "Mockup": 1,
+    "ID Card Psd": 1,
+    "Employment ID": 1,
+    "Master Card": 1,
+    "Passport Tax ID": 1,
+    "Fake ID & Dl": 1,
+    "Email In Bulk Selfie Holding": 1
+  },
+  "infrastructure": {
+    "hosting_providers": {
+      "Cloudflare, Inc.": 57,
+      "Alibaba Cloud - US": 3,
+      "Gigahost": 2,
+      "Amazon.com, Inc.": 1,
+      "Railnet LLC": 1,
+      "FranTech Solutions": 1,
+      "Srimathie Kamala": 1,
+      "HostPapa": 1,
+      "Alibaba.com LLC": 1,
+      "GoDaddy.com, LLC": 1,
+      "Hostinger International Ltd.": 1,
+      "AWS CloudFront (GLOBAL)": 1,
+      "Namecheap, Inc.": 1,
+      "OVH GmbH": 1,
+      "Individual entrepreneur Dyachenko Valentina Ivanovna": 1
+    },
+    "cdns": {
+      "Cloudflare": 58
+    },
+    "registrars": {
+      "WEBCC": 11,
+      "NameSilo, LLC": 9,
+      "TUCOWS DOMAINS, INC.": 9,
+      "Hosting Concepts B.V. d/b/a Registrar.eu": 5,
+      "CSL Computer Service Langenbach GmbH d/b/a joker.com": 4,
+      "GoDaddy.com, LLC": 3,
+      "TLD Registrar Solutions Ltd": 2,
+      "PDR Ltd. d/b/a PublicDomainRegistry.com": 2,
+      "Shinjiru Technology Sdn Bhd": 2,
+      "Internet Domain Service BS Corp.": 2,
+      "DYNADOT LLC": 2,
+      "HOSTINGER operations, UAB": 2,
+      "Gname 145 Inc": 1,
+      "Atak Domain": 1,
+      "Register.com - Network Solutions, LLC": 1
+    },
+    "payment_processors": {
+      "paypal": 1
+    }
+  },
+  "text_analysis": {
+    "total_summaries": 118,
+    "total_descriptions": 29,
+    "keywords": {
+      "quality_claims": {
+        "scannable": 30,
+        "high quality": 3,
+        "real": 15,
+        "verified": 6,
+        "premium": 2
+      },
+      "verification_bypass": {
+        "pass": 45,
+        "bypass": 17,
+        "kyc": 15,
+        "verification": 18,
+        "scannable": 30
+      },
+      "payment_methods": {
+        "crypto": 9,
+        "cryptocurrency": 3,
+        "btc": 6,
+        "payment": 13,
+        "paypal": 2,
+        "stripe": 1
+      },
+      "operational_claims": {
+        "fast": 7,
+        "delivery": 4,
+        "shipping": 6,
+        "privacy": 1
+      },
+      "service_features": {
+        "customer": 5,
+        "experience": 1,
+        "price": 1
+      }
+    },
+    "customer_count_claims": {
+      "total_mentions": 4,
+      "average": 323.0,
+      "max": 1000,
+      "min": 30,
+      "common_values": {
+        "36": 1,
+        "30": 1,
+        "226": 1,
+        "1000": 1
+      }
+    },
+    "service_combinations": {
+      "Driver License + ID": 63,
+      "Driver License + SSN": 28,
+      "ID + SSN": 23,
+      "Driver License + Passport": 19,
+      "ID + Passport": 14,
+      "Passport + SSN": 11,
+      "Bank Account + Driver License": 8,
+      "Driver License + LLC": 7,
+      "Bank Account + SSN": 6,
+      "Driver License + Ltd": 5,
+      "Bank Account + LLC": 5,
+      "SSN + Tax ID": 5,
+      "Driver License + Tax ID": 5,
+      "Birth Certificate + Driver License": 5,
+      "Bank Account + ID": 4
+    },
+    "common_phrases": {
+      "driver\u2019s licenses": 11,
+      "fake ids": 10,
+      "advertises itself": 9,
+      "driver\u2019s licenses,": 7,
+      "this channel": 6,
+      "social security": 6,
+      "fake u.s.": 6,
+      "synthetic identity": 5,
+      "ids that": 5,
+      "kyc bypass": 5,
+      "presents itself": 5,
+      "u.s. driver\u2019s": 5,
+      "many countries": 4,
+      "not much": 4,
+      "selling fake": 4,
+      "driver license": 4,
+      "scannable fake": 4,
+      "fake documents": 4,
+      "this vendor": 4,
+      "rather than": 4
+    }
+  },
+  "enhanced_enrichment": {
+    "web_scraping": {
+      "domains_with_data": 88,
+      "total_pages_scraped": 76,
+      "avg_load_time": 0.9,
+      "structured_data_found": 0
+    },
+    "nlp_analysis": {
+      "domains_with_data": 88,
+      "total_keywords": 0,
+      "total_entities": 0,
+      "sentiment_analysis": {
+        "positive": 0,
+        "negative": 0,
+        "neutral": 0
+      }
+    },
+    "ssl_certificates": {
+      "domains_with_data": 88,
+      "valid_certs": 0,
+      "self_signed": 0,
+      "expired": 0,
+      "tls_versions": {
+        "TLSv1.3": 77
+      }
+    },
+    "security_headers": {
+      "domains_with_data": 88,
+      "csp_enabled": 13,
+      "hsts_enabled": 26,
+      "avg_security_score": 11.4,
+      "common_missing_headers": {}
+    },
+    "extracted_content": {
+      "domains_with_pricing": 46,
+      "domains_with_contact": 76,
+      "domains_with_services": 44,
+      "total_faqs": 0
+    }
+  },
+  "sophistication_analysis": {
+    "high_sophistication": 0,
+    "medium_sophistication": 19,
+    "low_sophistication": 69,
+    "security_posture": {
+      "professional": 0,
+      "amateur": 69,
+      "mixed": 19
+    },
+    "operational_patterns": {
+      "legitimate_infrastructure": 7,
+      "minimal_security": 0,
+      "suspicious_patterns": 0
+    },
+    "high_sophistication_pct": 0.0,
+    "medium_sophistication_pct": 21.6,
+    "low_sophistication_pct": 78.4
+  },
+  "pricing_analysis": {
+    "domains_with_pricing": 46,
+    "pricing_ranges": [],
+    "transparency_score": 0.0
+  },
+  "content_sophistication": {
+    "professional_content": 0,
+    "amateur_content": 0,
+    "marketing_focused": 0,
+    "technical_focused": 0
+  },
+  "security_infrastructure_correlation": {
+    "secure_with_legitimate_hosting": 0,
+    "insecure_with_legitimate_hosting": 0,
+    "secure_with_suspicious_hosting": 0,
+    "insecure_with_suspicious_hosting": 0
+  },
+  "key_insights": {
+    "operational_sophistication": {
+      "finding": "78.4% show low sophistication indicators",
+      "implication": "Many vendors operate with minimal security, potentially indicating rapid deployment or lower concern about detection"
+    },
+    "security_posture": {
+      "finding": "Many domains lack proper security configurations, with missing or weak security headers and SSL/TLS settings",
+      "implication": "Security vulnerabilities may present opportunities for disruption, but also indicate vendors may prioritize speed over security"
+    },
+    "content_strategy": {
+      "finding": "",
+      "implication": ""
+    },
+    "infrastructure_security_correlation": {
+      "finding": "",
+      "implication": ""
+    }
+  },
+  "stats": {
+    "telegram_percentage": 42.2,
+    "website_percentage": 60.9,
+    "top_category": "Fake Documents",
+    "top_service": "Driver License",
+    "top_region": "US"
+  }
+}

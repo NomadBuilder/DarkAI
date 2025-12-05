@@ -67,6 +67,10 @@ data/
 !SurveyData.csv
 # Allow shadowstack_enriched_data.json (needed for Render auto-import)
 !shadowstack_enriched_data.json
+# Allow vendor intelligence report static data
+!personaforge/static/data/
+personaforge/static/data/*
+!personaforge/static/data/vendor_intelligence_report.json
 
 # Temporary files
 tmp/

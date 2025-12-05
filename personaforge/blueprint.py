@@ -1205,13 +1205,19 @@ def get_platform_vendors(platform_type):
         }), 500
 
 
-@personaforge_bp.route('/api/reports/vendor-intelligence-data', methods=['GET'])
-def get_vendor_intelligence_report_data():
-    """Get comprehensive data for the vendor intelligence report."""
+def _generate_vendor_intelligence_data():
+    """Internal function to generate vendor intelligence report data.
+    Returns the data dictionary (not a Flask response).
+    """
     if not postgres_client or not postgres_client.conn:
-        return jsonify({"error": "PostgreSQL not available"}), 500
+        raise Exception("PostgreSQL not available")
     
     try:
+        # Rollback any failed transaction first
+        try:
+            postgres_client.conn.rollback()
+        except:
+            pass
         from collections import Counter, defaultdict
         import psycopg2.extras
         
@@ -1335,7 +1341,7 @@ def get_vendor_intelligence_report_data():
             SELECT 
                 COUNT(*) FILTER (WHERE web_scraping IS NOT NULL) as web_scraping_count,
                 COUNT(*) FILTER (WHERE web_scraping->>'html' IS NOT NULL) as pages_scraped,
-                COUNT(*) FILTER (WHERE web_scraping->'structured_data' IS NOT NULL AND jsonb_array_length(web_scraping->'structured_data') > 0) as structured_data_count,
+                COUNT(*) FILTER (WHERE web_scraping->'structured_data' IS NOT NULL AND jsonb_typeof(web_scraping->'structured_data') = 'array' AND jsonb_array_length(web_scraping->'structured_data') > 0) as structured_data_count,
                 AVG((web_scraping->>'load_time')::numeric) FILTER (WHERE web_scraping->>'load_time' IS NOT NULL) as avg_load_time,
                 COUNT(*) FILTER (WHERE nlp_analysis IS NOT NULL) as nlp_count,
                 COUNT(*) FILTER (WHERE ssl_certificate IS NOT NULL) as ssl_count,
@@ -1346,9 +1352,9 @@ def get_vendor_intelligence_report_data():
                 COUNT(*) FILTER (WHERE security_headers->>'csp' IS NOT NULL) as csp_count,
                 COUNT(*) FILTER (WHERE security_headers->>'hsts' IS NOT NULL) as hsts_count,
                 AVG((security_headers->>'security_score')::numeric) FILTER (WHERE security_headers->>'security_score' IS NOT NULL) as avg_security_score,
-                COUNT(*) FILTER (WHERE extracted_content->'pricing' IS NOT NULL AND jsonb_array_length(extracted_content->'pricing') > 0) as pricing_count,
+                COUNT(*) FILTER (WHERE extracted_content->'pricing' IS NOT NULL AND jsonb_typeof(extracted_content->'pricing') = 'array' AND jsonb_array_length(extracted_content->'pricing') > 0) as pricing_count,
                 COUNT(*) FILTER (WHERE extracted_content->'contact_info' IS NOT NULL) as contact_count,
-                COUNT(*) FILTER (WHERE extracted_content->'service_descriptions' IS NOT NULL AND jsonb_array_length(extracted_content->'service_descriptions') > 0) as services_count
+                COUNT(*) FILTER (WHERE extracted_content->'service_descriptions' IS NOT NULL AND jsonb_typeof(extracted_content->'service_descriptions') = 'array' AND jsonb_array_length(extracted_content->'service_descriptions') > 0) as services_count
             FROM personaforge_domain_enrichment
             WHERE enriched_at IS NOT NULL
         """)
@@ -1934,7 +1940,7 @@ def get_vendor_intelligence_report_data():
             key_insights["infrastructure_security_correlation"]["finding"] = "Vendors using legitimate infrastructure also implement proper security"
             key_insights["infrastructure_security_correlation"]["implication"] = "Blending in with legitimate traffic while maintaining security suggests sophisticated operational security practices"
         
-        return jsonify({
+        return {
             "total_vendors": total_vendors,
             "active_vendors": active_count,
             "vendors_with_domains": vendors_with_domains,
@@ -1976,12 +1982,12 @@ def get_vendor_intelligence_report_data():
                 "top_service": service_counts.most_common(1)[0][0] if service_counts else "N/A",
                 "top_region": regions.most_common(1)[0][0] if regions else "N/A"
             }
-        }), 200
+        }
     except Exception as e:
-        app_logger.error(f"Error getting vendor intelligence report data: {e}", exc_info=True)
+        app_logger.error(f"Error generating vendor intelligence report data: {e}", exc_info=True)
         import traceback
         traceback.print_exc()
-        return jsonify({"error": str(e)}), 500
+        raise
     finally:
         # Close cursor if it exists
         try:
