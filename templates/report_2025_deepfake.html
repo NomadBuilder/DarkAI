@@ -1081,6 +1081,10 @@
 </head>
 
 <body>
+  <div class="export-buttons" style="position: fixed; top: 80px; right: 2rem; display: flex; gap: 0.5rem; z-index: 1000;">
+    <button onclick="exportReport('csv')" class="export-btn" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; backdrop-filter: blur(10px);">📥 CSV</button>
+    <button onclick="exportReport('json')" class="export-btn" style="padding: 0.5rem 1rem; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; color: #fff; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; backdrop-filter: blur(10px);">📥 JSON</button>
+  </div>
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
