@@ -96,6 +96,11 @@
       position: relative;
       z-index: 10;
       margin-bottom: 0;
+      /* Ensure nav breaks out of hero container */
+      width: 100vw;
+      max-width: 100vw;
+      margin-left: calc(50% - 50vw);
+      margin-right: calc(50% - 50vw);
     }
     .hero__nav {
       height: var(--nav-height);
