@@ -715,7 +715,33 @@
       }
       
       header.hero h1 {
-        font-size: 2.2rem;
+        font-size: clamp(1.8rem, 6vw, 2.5rem);
+        line-height: 1.2;
+      }
+      
+      header.hero .subtitle {
+        font-size: 1rem;
+        line-height: 1.5;
+      }
+      
+      header.hero .meta {
+        font-size: 0.85rem;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      
+      .export-buttons {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        margin-top: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      
+      .export-btn {
+        font-size: 0.8rem !important;
+        padding: 0.4rem 0.8rem !important;
       }
       
       .report-content {
@@ -771,6 +797,30 @@
         width: 45px;
         height: 45px;
         font-size: 1.3rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      header.hero {
+        padding: 3rem 1rem 2rem;
+      }
+      
+      header.hero h1 {
+        font-size: 1.6rem;
+      }
+      
+      .export-btn {
+        font-size: 0.75rem !important;
+        padding: 0.35rem 0.7rem !important;
+      }
+      
+      .report-section h2 {
+        font-size: 1.5rem;
+        padding-left: 0.5rem;
+      }
+      
+      .chart-wrapper-inline {
+        height: 200px;
       }
     }
     
