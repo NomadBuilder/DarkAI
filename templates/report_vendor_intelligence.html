@@ -643,19 +643,19 @@
   <!-- Key Statistics -->
   <div class="stats-grid" id="key-stats">
     <div class="stat-card">
-      <div class="number loading skeleton" id="total-vendors">—</div>
+      <div class="number" id="total-vendors">{{ report_data.total_vendors|default(0) if report_data else 0 }}</div>
       <div class="label">Total Vendors Tracked</div>
     </div>
         <div class="stat-card">
-          <div class="number loading skeleton" id="vendors-with-domains">—</div>
+          <div class="number" id="vendors-with-domains">{{ report_data.vendors_with_domains|default(0) if report_data else 0 }}</div>
           <div class="label">Vendors with Domains</div>
         </div>
     <div class="stat-card">
-      <div class="number loading skeleton" id="total-domains">—</div>
+      <div class="number" id="total-domains">{{ report_data.total_domains|default(0) if report_data else 0 }}</div>
       <div class="label">Domains Analyzed</div>
     </div>
     <div class="stat-card">
-      <div class="number loading skeleton" id="telegram-percentage">—</div>
+      <div class="number" id="telegram-percentage">{{ (report_data.stats.telegram_percentage|default(0) if report_data and report_data.stats else 0) }}%</div>
       <div class="label">% on Telegram</div>
     </div>
   </div>
@@ -1204,9 +1204,27 @@
       }
     };
 
-    // Load and render data
+    // Load and render data (only if not already rendered server-side)
     async function loadReportData() {
-      // Stats are already showing skeleton loader, no need to change them
+      // Check if data was already rendered server-side
+      const totalVendorsEl = document.getElementById('total-vendors');
+      const hasServerData = totalVendorsEl && totalVendorsEl.textContent && totalVendorsEl.textContent !== '—' && totalVendorsEl.textContent !== 'Loading...';
+      
+      if (hasServerData) {
+        // Data already loaded server-side, just fetch full data for charts
+        console.log('Data already loaded server-side, fetching full dataset for charts...');
+      } else {
+        // No server-side data, show loading state
+        const statElements = ['total-vendors', 'vendors-with-domains', 'total-domains', 'telegram-percentage'];
+        statElements.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.textContent = '—';
+            el.classList.add('loading', 'skeleton');
+          }
+        });
+      }
+      
       try {
         const response = await fetch('/personaforge/api/reports/vendor-intelligence-data');
         if (!response.ok) {

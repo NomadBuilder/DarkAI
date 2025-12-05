@@ -302,8 +302,52 @@ def deepfake_report_2025():
 def vendor_intelligence_report():
     """2025 Synthetic Identity Vendor Intelligence Report page."""
     from flask import render_template
+    import json
+    
+    # Fetch report data server-side so it's available on page load
+    report_data = {}
     try:
-        return render_template('report_vendor_intelligence.html')
+        # Import the postgres client and call the data fetching logic directly
+        from personaforge.src.database.postgres_client import PostgresClient
+        from collections import Counter, defaultdict
+        
+        postgres_client = PostgresClient()
+        if postgres_client and postgres_client.conn:
+            # Get vendors
+            vendors = postgres_client.get_all_vendors_intel()
+            domains = postgres_client.get_all_enriched_domains()
+            
+            # Calculate basic stats for initial render
+            total_vendors = len(vendors)
+            total_domains = len(domains)
+            
+            # Count vendors with domains
+            cursor = postgres_client.conn.cursor()
+            cursor.execute("SELECT COUNT(DISTINCT vendor_intel_id) as count FROM personaforge_vendor_intel_domains")
+            vendors_with_domains = cursor.fetchone()[0] if cursor.rowcount > 0 else 0
+            cursor.close()
+            
+            # Calculate Telegram percentage
+            telegram_count = len([v for v in vendors if v.get('platform_type') == 'Telegram'])
+            telegram_percentage = round((telegram_count / total_vendors * 100), 1) if total_vendors > 0 else 0
+            
+            # Create minimal report_data for initial render
+            report_data = {
+                "total_vendors": total_vendors,
+                "vendors_with_domains": vendors_with_domains,
+                "total_domains": total_domains,
+                "stats": {
+                    "telegram_percentage": telegram_percentage
+                }
+            }
+    except Exception as e:
+        # If data fetch fails, render page anyway (will show loading state)
+        import logging
+        logging.getLogger(__name__).warning(f"Failed to fetch report data server-side: {e}")
+        report_data = {}
+    
+    try:
+        return render_template('report_vendor_intelligence.html', report_data=report_data)
     except:
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'report_vendor_intelligence.html')
