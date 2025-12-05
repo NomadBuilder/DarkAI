@@ -613,19 +613,19 @@
   <!-- Key Statistics -->
   <div class="stats-grid" id="key-stats">
     <div class="stat-card">
-      <div class="number" id="total-vendors">-</div>
+      <div class="number" id="total-vendors" style="opacity: 0.5;">Loading...</div>
       <div class="label">Total Vendors Tracked</div>
     </div>
         <div class="stat-card">
-          <div class="number" id="vendors-with-domains">-</div>
+          <div class="number" id="vendors-with-domains" style="opacity: 0.5;">Loading...</div>
           <div class="label">Vendors with Domains</div>
         </div>
     <div class="stat-card">
-      <div class="number" id="total-domains">-</div>
+      <div class="number" id="total-domains" style="opacity: 0.5;">Loading...</div>
       <div class="label">Domains Analyzed</div>
     </div>
     <div class="stat-card">
-      <div class="number" id="telegram-percentage">-</div>
+      <div class="number" id="telegram-percentage" style="opacity: 0.5;">Loading...</div>
       <div class="label">% on Telegram</div>
     </div>
   </div>
@@ -1176,15 +1176,39 @@
 
     // Load and render data
     async function loadReportData() {
+      // Show loading state
+      const statElements = ['total-vendors', 'vendors-with-domains', 'total-domains', 'telegram-percentage'];
+      statElements.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = 'Loading...';
+          el.style.opacity = '0.5';
+        }
+      });
+      
       try {
         const response = await fetch('/personaforge/api/reports/vendor-intelligence-data');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
         
-        // Update key stats
-        document.getElementById('total-vendors').textContent = data.total_vendors || 0;
-        document.getElementById('vendors-with-domains').textContent = data.vendors_with_domains || 0;
-        document.getElementById('total-domains').textContent = data.total_domains || 0;
-        document.getElementById('telegram-percentage').textContent = data.stats.telegram_percentage + '%';
+        // Update key stats (with fade-in animation)
+        const updateStat = (id, value, suffix = '') => {
+          const element = document.getElementById(id);
+          if (element) {
+            const displayValue = value + suffix;
+            element.textContent = displayValue;
+            // Fade in animation
+            element.style.transition = 'opacity 0.3s ease-in';
+            element.style.opacity = '1';
+          }
+        };
+        
+        updateStat('total-vendors', data.total_vendors || 0);
+        updateStat('vendors-with-domains', data.vendors_with_domains || 0);
+        updateStat('total-domains', data.total_domains || 0);
+        updateStat('telegram-percentage', data.stats?.telegram_percentage || 0, '%');
         
         // Update summary
         document.getElementById('summary-total-vendors').textContent = data.total_vendors || 0;
@@ -1766,11 +1790,26 @@
         
       } catch (error) {
         console.error('Error loading report data:', error);
+        // Show error state in stats
+        const statElements = ['total-vendors', 'vendors-with-domains', 'total-domains', 'telegram-percentage'];
+        statElements.forEach(id => {
+          const el = document.getElementById(id);
+          if (el) {
+            el.textContent = 'Error';
+            el.style.opacity = '0.7';
+            el.style.color = '#ff6b6b';
+          }
+        });
       }
     }
     
-    // Load data on page load
-    loadReportData();
+    // Load data immediately when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadReportData);
+    } else {
+      // DOM already loaded, call immediately
+      loadReportData();
+    }
   </script>
   
   <script>
