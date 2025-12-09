@@ -216,13 +216,13 @@
       "structured_data_found": 0
     },
     "nlp_analysis": {
-      "domains_with_data": 88,
-      "total_keywords": 0,
-      "total_entities": 0,
+      "domains_with_data": 76,
+      "total_keywords": 2034,
+      "total_entities": 2447,
       "sentiment_analysis": {
-        "positive": 0,
-        "negative": 0,
-        "neutral": 0
+        "positive": 29,
+        "negative": 41,
+        "neutral": 6
       }
     },
     "ssl_certificates": {

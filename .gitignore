@@ -76,3 +76,6 @@ personaforge/static/data/*
 tmp/
 temp/
 *.tmp
+
+# ShadowStack IP history data (local, not committed)
+shadowstack_ip_history.json

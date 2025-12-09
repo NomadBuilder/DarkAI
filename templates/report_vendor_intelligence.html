@@ -868,14 +868,14 @@
           content strategies that characterize this evolving threat landscape.
         </p>
         <div class="highlight-box" id="key-finding-enhanced">
-          <strong>Key Intelligence Finding:</strong> Approximately <strong id="summary-telegram-pct">-</strong>% 
+          <strong>Key Intelligence Finding:</strong> Approximately <strong id="summary-telegram-pct">0</strong>% 
           of vendors in our dataset operate on Telegram, indicating the platform's role as a distribution 
-          channel among discovered vendors. Enhanced enrichment analysis reveals <strong id="sophistication-finding">-</strong>, 
-          suggesting <strong id="sophistication-implication">-</strong>.
+          channel among discovered vendors.<span id="sophistication-section" style="display: none;"> Enhanced enrichment analysis reveals <strong id="sophistication-finding"></strong>, 
+          suggesting <strong id="sophistication-implication"></strong>.</span>
         </div>
         <div class="highlight-box" id="security-finding" style="display: none; margin-top: 1rem;">
-          <strong>Security Posture Analysis:</strong> <span id="security-finding-text">-</span> This indicates 
-          <span id="security-implication-text">-</span>.
+          <strong>Security Posture Analysis:</strong> <span id="security-finding-text"></span><span id="security-implication-section" style="display: none;"> This indicates 
+          <span id="security-implication-text"></span>.</span>
         </div>
         <p>
           This analysis leverages PersonaForge's enhanced intelligence collection platform, which performs deep 
@@ -906,19 +906,19 @@
           </p>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
             <div>
-              <div style="font-size: 1.5rem; font-weight: 700; color: #4caf50;" id="high-sophistication">-</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: #4caf50;" id="high-sophistication">0</div>
               <div style="color: #ccc; font-size: 0.9rem;">High Sophistication</div>
-              <div style="color: #9aa0a6; font-size: 0.8rem; margin-top: 0.25rem;" id="high-sophistication-pct">-</div>
+              <div style="color: #9aa0a6; font-size: 0.8rem; margin-top: 0.25rem;" id="high-sophistication-pct">0%</div>
             </div>
             <div>
-              <div style="font-size: 1.5rem; font-weight: 700; color: #ff9800;" id="medium-sophistication">-</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: #ff9800;" id="medium-sophistication">0</div>
               <div style="color: #ccc; font-size: 0.9rem;">Medium Sophistication</div>
-              <div style="color: #9aa0a6; font-size: 0.8rem; margin-top: 0.25rem;" id="medium-sophistication-pct">-</div>
+              <div style="color: #9aa0a6; font-size: 0.8rem; margin-top: 0.25rem;" id="medium-sophistication-pct">0%</div>
             </div>
             <div>
-              <div style="font-size: 1.5rem; font-weight: 700; color: #f44336;" id="low-sophistication">-</div>
+              <div style="font-size: 1.5rem; font-weight: 700; color: #f44336;" id="low-sophistication">0</div>
               <div style="color: #ccc; font-size: 0.9rem;">Low Sophistication</div>
-              <div style="color: #9aa0a6; font-size: 0.8rem; margin-top: 0.25rem;" id="low-sophistication-pct">-</div>
+              <div style="color: #9aa0a6; font-size: 0.8rem; margin-top: 0.25rem;" id="low-sophistication-pct">0%</div>
             </div>
           </div>
           <p style="margin-top: 1rem; color: #ccc; font-size: 0.9rem;" id="sophistication-explanation">
@@ -927,18 +927,11 @@
             rapid deployment or lower concern about detection.
           </p>
         </div>
-        <p>
-          <strong>Operational Patterns:</strong> Analysis reveals that <strong id="vendors-with-domains">-</strong> 
-          vendors maintain clearnet infrastructure (websites), while the remainder operate exclusively through 
-          Telegram channels. Enhanced enrichment reveals that vendors with clearnet infrastructure show 
-          <strong id="clearnet-sophistication">-</strong> levels of operational sophistication, suggesting 
-          <strong id="clearnet-implication">-</strong>.
-        </p>
         <div id="content-strategy-insight" style="display: none; margin-top: 1rem;">
           <p>
             <strong>Content Strategy Analysis:</strong> NLP analysis of vendor websites reveals 
-            <span id="content-strategy-finding">-</span>, indicating 
-            <span id="content-strategy-implication">-</span>.
+            <span id="content-strategy-finding"></span><span id="content-strategy-implication-section" style="display: none;">, indicating 
+            <span id="content-strategy-implication"></span>.</span>
           </p>
         </div>
       </div>
@@ -1100,15 +1093,15 @@
         <div id="infrastructure-insights" class="highlight-box" style="display: none;">
           <strong>Infrastructure Clustering:</strong> Shared infrastructure (hosting, CDN) 
           can indicate vendor networks, shared operators, or common service providers. Enhanced enrichment 
-          reveals that <strong id="infrastructure-security-correlation">-</strong>, suggesting 
-          <strong id="infrastructure-security-implication">-</strong>.
+          reveals that <strong id="infrastructure-security-correlation"></strong><span id="infrastructure-security-implication-section" style="display: none;">, suggesting 
+          <strong id="infrastructure-security-implication"></strong>.</span>
         </div>
         <div id="infrastructure-patterns" style="display: none; margin-top: 1rem;">
           <p>
             <strong>Operational Security Patterns:</strong> Correlation analysis between infrastructure choices 
             and security postures reveals that vendors using legitimate hosting providers 
-            <span id="legitimate-hosting-security">-</span> implement proper security measures. This suggests 
-            <span id="legitimate-hosting-implication">-</span>.
+            <span id="legitimate-hosting-security"></span><span id="legitimate-hosting-implication-section" style="display: none;"> implement proper security measures. This suggests 
+            <span id="legitimate-hosting-implication"></span>.</span>
           </p>
           <p style="margin-top: 1rem;">
             The use of legitimate hosting providers and CDNs (such as Cloudflare) with proper security 
@@ -1228,6 +1221,28 @@
             </div>
           </div>
         </div>
+        <div style="background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; padding: 1.5rem; margin-top: 1.5rem; border-radius: 8px;">
+          <h4 style="color: #ff6b6b; margin-top: 0; margin-bottom: 0.75rem;">Understanding Sentiment Analysis</h4>
+          <p style="color: #ccc; line-height: 1.6; margin: 0;">
+            Sentiment analysis measures the emotional tone of language used on vendor websites, not whether vendors 
+            are being negative about themselves. <strong style="color: #ff6b6b;">Negative sentiment</strong> in this context typically indicates:
+          </p>
+          <ul style="color: #ccc; line-height: 1.8; margin-top: 0.75rem; margin-bottom: 0; padding-left: 1.5rem;">
+            <li><strong>Problem-focused language:</strong> Vendors often frame their services by emphasizing problems 
+            with identity verification systems, financial institutions, or government processes</li>
+            <li><strong>Aggressive marketing:</strong> Language that uses urgency, warnings, or fear-based messaging 
+            to drive sales</li>
+            <li><strong>Complaint patterns:</strong> References to difficulties with traditional systems, barriers, 
+            or frustrations that their services claim to solve</li>
+            <li><strong>Competitive positioning:</strong> Negative comparisons with alternatives or criticism of 
+            existing verification methods</li>
+          </ul>
+          <p style="color: #9aa0a6; font-size: 0.9rem; margin-top: 0.75rem; margin-bottom: 0; font-style: italic;">
+            The high proportion of negative sentiment (41 domains) suggests vendors frequently use problem-focused 
+            and urgency-driven language to market their services, which is a common pattern in markets that operate 
+            in legal gray areas.
+          </p>
+        </div>
       </div>
 
       <!-- Security Headers Analysis -->
@@ -1246,6 +1261,31 @@
             <div style="font-size: 2rem; font-weight: 700; color: #64b5f6;" id="avg-security-score">-</div>
             <div style="color: #ccc; margin-top: 0.5rem;">Avg Security Score</div>
           </div>
+        </div>
+        <div style="background: rgba(255, 107, 107, 0.1); border-left: 3px solid #ff6b6b; padding: 1.5rem; margin-top: 1.5rem; border-radius: 8px;">
+          <h4 style="color: #ff6b6b; margin-top: 0; margin-bottom: 0.75rem;">Understanding Security Headers</h4>
+          <p style="color: #ccc; line-height: 1.6; margin: 0;">
+            Security headers are HTTP response headers that websites can use to protect against common web vulnerabilities 
+            and attacks. The presence and proper configuration of these headers indicates a vendor's security posture and 
+            operational sophistication.
+          </p>
+          <ul style="color: #ccc; line-height: 1.8; margin-top: 0.75rem; margin-bottom: 0; padding-left: 1.5rem;">
+            <li><strong>CSP (Content Security Policy):</strong> Prevents cross-site scripting (XSS) attacks by controlling 
+            which resources (scripts, styles, images) can be loaded. Domains with CSP enabled show awareness of XSS risks 
+            and have implemented basic protection measures.</li>
+            <li><strong>HSTS (HTTP Strict Transport Security):</strong> Forces browsers to use HTTPS connections, preventing 
+            man-in-the-middle attacks and protocol downgrade attacks. HSTS indicates vendors are prioritizing encrypted 
+            communications and protecting user data in transit.</li>
+            <li><strong>Security Score:</strong> A composite metric evaluating the presence and configuration of multiple 
+            security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, etc.). Higher scores indicate more 
+            comprehensive security implementations.</li>
+          </ul>
+          <p style="color: #9aa0a6; font-size: 0.9rem; margin-top: 0.75rem; margin-bottom: 0; font-style: italic;">
+            Low security header implementation (average score of 11.4/100) suggests many vendors operate with minimal 
+            security measures, potentially prioritizing speed of deployment or lower concern about detection over security 
+            best practices. This may indicate rapid deployment cycles or a focus on operational security through other means 
+            (such as using privacy services or operating through intermediaries like Cloudflare).
+          </p>
         </div>
         <div class="chart-container" id="missing-headers-chart-container" style="display: none;">
           <h4 style="color: #ff6b6b;">Most Common Missing Security Headers</h4>
@@ -1272,12 +1312,12 @@
           services indicates vendors are actively countering electronic verification systems.</li>
           <li><strong>Platform Proliferation:</strong> Among vendors in our dataset, Telegram appears to be a 
           significant distribution channel, enabling rapid vendor proliferation and customer acquisition with minimal infrastructure overhead.</li>
-          <li><strong>Operational Sophistication:</strong> Enhanced enrichment reveals 
-          <span id="threat-sophistication-finding">-</span>, indicating 
-          <span id="threat-sophistication-implication">-</span>.</li>
-          <li><strong>Security Posture Implications:</strong> Analysis of SSL certificates and security 
-          headers shows <span id="threat-security-finding">-</span>, suggesting 
-          <span id="threat-security-implication">-</span>.</li>
+          <li id="threat-sophistication-item" style="display: none;"><strong>Operational Sophistication:</strong> Enhanced enrichment reveals 
+          <span id="threat-sophistication-finding"></span><span id="threat-sophistication-implication-section" style="display: none;">, indicating 
+          <span id="threat-sophistication-implication"></span>.</span></li>
+          <li id="threat-security-item" style="display: none;"><strong>Security Posture Implications:</strong> Analysis of SSL certificates and security 
+          headers shows <span id="threat-security-finding"></span><span id="threat-security-implication-section" style="display: none;">, suggesting 
+          <span id="threat-security-implication"></span>.</span></li>
           <li><strong>Infrastructure Resilience:</strong> Shared infrastructure patterns combined with security 
           posture analysis suggest vendor networks that can adapt and reconfigure when individual nodes are 
           disrupted, with varying levels of operational security sophistication.</li>
@@ -1934,35 +1974,37 @@
           const soph = data.sophistication_analysis;
           
           // Executive Summary - Key Finding
+          const sophisticationSection = document.getElementById('sophistication-section');
           if (soph.high_sophistication_pct && soph.high_sophistication_pct > 0) {
+            sophisticationSection.style.display = 'inline';
             document.getElementById('sophistication-finding').textContent = 
               `${soph.high_sophistication_pct}% of enriched domains show high operational sophistication`;
             document.getElementById('sophistication-implication').textContent = 
               'vendors are investing in professional infrastructure, suggesting established operations';
           } else if (soph.medium_sophistication_pct && soph.medium_sophistication_pct > 0) {
+            sophisticationSection.style.display = 'inline';
             document.getElementById('sophistication-finding').textContent = 
               `${soph.medium_sophistication_pct}% of enriched domains show medium operational sophistication`;
             document.getElementById('sophistication-implication').textContent = 
               'vendors demonstrate mixed infrastructure quality, indicating varied operational maturity';
           } else if (soph.low_sophistication_pct && soph.low_sophistication_pct > 0) {
+            sophisticationSection.style.display = 'inline';
             document.getElementById('sophistication-finding').textContent = 
               `${soph.low_sophistication_pct}% of enriched domains show low operational sophistication`;
             document.getElementById('sophistication-implication').textContent = 
               'many vendors operate with minimal infrastructure, potentially indicating rapid deployment or lower concern about detection';
           } else {
-            // Fallback if no sophistication data available
-            document.getElementById('sophistication-finding').textContent = 
-              'Enhanced enrichment analysis is in progress';
-            document.getElementById('sophistication-implication').textContent = 
-              'infrastructure and security analysis will be available once domain enrichment is complete';
+            // Hide section if no sophistication data available
+            sophisticationSection.style.display = 'none';
           }
           
           // Security Finding in Executive Summary
           if (data.key_insights && data.key_insights.security_posture) {
             const sec = data.key_insights.security_posture;
-            if (sec.finding && sec.implication) {
+            if (sec.finding && sec.finding.trim() && sec.finding !== '-' && sec.implication && sec.implication.trim() && sec.implication !== '-') {
               document.getElementById('security-finding').style.display = 'block';
               document.getElementById('security-finding-text').textContent = sec.finding;
+              document.getElementById('security-implication-section').style.display = 'inline';
               document.getElementById('security-implication-text').textContent = sec.implication;
             } else {
               // Hide if no complete data
@@ -1987,19 +2029,57 @@
           // Content Strategy Insight
           if (data.key_insights && data.key_insights.content_strategy) {
             const content = data.key_insights.content_strategy;
-            if (content.finding) {
+            if (content.finding && content.finding.trim() && content.finding !== '-') {
               document.getElementById('content-strategy-insight').style.display = 'block';
               document.getElementById('content-strategy-finding').textContent = content.finding;
-              document.getElementById('content-strategy-implication').textContent = content.implication;
+              if (content.implication && content.implication.trim() && content.implication !== '-') {
+                document.getElementById('content-strategy-implication-section').style.display = 'inline';
+                document.getElementById('content-strategy-implication').textContent = content.implication;
+              } else {
+                document.getElementById('content-strategy-implication-section').style.display = 'none';
+              }
+            } else {
+              document.getElementById('content-strategy-insight').style.display = 'none';
+            }
+          } else {
+            document.getElementById('content-strategy-insight').style.display = 'none';
+          }
+          
+          // Clearnet Sophistication Section
+          const vendorsWithDomains = data.vendors_with_domains || 0;
+          if (vendorsWithDomains > 0 && soph.high_sophistication_pct > 0) {
+            const clearnetSection = document.getElementById('clearnet-sophistication-section');
+            if (clearnetSection) {
+              clearnetSection.style.display = 'inline';
+              const sophisticationLevel = soph.high_sophistication_pct >= 50 ? 'high' : 
+                                         soph.medium_sophistication_pct >= 50 ? 'medium' : 'low';
+              document.getElementById('clearnet-sophistication').textContent = sophisticationLevel;
+              if (soph.high_sophistication_pct >= 50) {
+                document.getElementById('clearnet-implication').textContent = 
+                  'established operations with professional infrastructure and potential for persistence';
+              } else if (soph.medium_sophistication_pct >= 50) {
+                document.getElementById('clearnet-implication').textContent = 
+                  'varied operational maturity with mixed infrastructure quality';
+              } else {
+                document.getElementById('clearnet-implication').textContent = 
+                  'rapid deployment or lower concern about detection';
+              }
+            }
+          } else {
+            const clearnetSection = document.getElementById('clearnet-sophistication-section');
+            if (clearnetSection) {
+              clearnetSection.style.display = 'none';
             }
           }
           
           // Infrastructure Security Correlation
           if (data.key_insights && data.key_insights.infrastructure_security_correlation) {
             const infra = data.key_insights.infrastructure_security_correlation;
-            if (infra.finding) {
+            if (infra.finding && infra.finding.trim() && infra.finding !== '-') {
               document.getElementById('infrastructure-security-correlation').textContent = infra.finding;
-              document.getElementById('infrastructure-security-implication').textContent = infra.implication;
+              if (infra.implication && infra.implication.trim() && infra.implication !== '-') {
+                document.getElementById('infrastructure-security-implication').textContent = infra.implication;
+              }
             }
           }
           
@@ -2016,14 +2096,38 @@
           // Threat Implications
           if (data.key_insights && data.key_insights.operational_sophistication) {
             const threat = data.key_insights.operational_sophistication;
-            document.getElementById('threat-sophistication-finding').textContent = threat.finding;
-            document.getElementById('threat-sophistication-implication').textContent = threat.implication;
+            if (threat.finding && threat.finding.trim() && threat.finding !== '-') {
+              document.getElementById('threat-sophistication-item').style.display = 'list-item';
+              document.getElementById('threat-sophistication-finding').textContent = threat.finding;
+              if (threat.implication && threat.implication.trim() && threat.implication !== '-') {
+                document.getElementById('threat-sophistication-implication-section').style.display = 'inline';
+                document.getElementById('threat-sophistication-implication').textContent = threat.implication;
+              } else {
+                document.getElementById('threat-sophistication-implication-section').style.display = 'none';
+              }
+            } else {
+              document.getElementById('threat-sophistication-item').style.display = 'none';
+            }
+          } else {
+            document.getElementById('threat-sophistication-item').style.display = 'none';
           }
           
           if (data.key_insights && data.key_insights.security_posture) {
             const threatSec = data.key_insights.security_posture;
-            document.getElementById('threat-security-finding').textContent = threatSec.finding;
-            document.getElementById('threat-security-implication').textContent = threatSec.implication;
+            if (threatSec.finding && threatSec.finding.trim() && threatSec.finding !== '-') {
+              document.getElementById('threat-security-item').style.display = 'list-item';
+              document.getElementById('threat-security-finding').textContent = threatSec.finding;
+              if (threatSec.implication && threatSec.implication.trim() && threatSec.implication !== '-') {
+                document.getElementById('threat-security-implication-section').style.display = 'inline';
+                document.getElementById('threat-security-implication').textContent = threatSec.implication;
+              } else {
+                document.getElementById('threat-security-implication-section').style.display = 'none';
+              }
+            } else {
+              document.getElementById('threat-security-item').style.display = 'none';
+            }
+          } else {
+            document.getElementById('threat-security-item').style.display = 'none';
           }
         }
         

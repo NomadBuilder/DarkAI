@@ -1349,7 +1349,45 @@ def _generate_vendor_intelligence_data():
                 COUNT(*) FILTER (WHERE web_scraping->>'html' IS NOT NULL) as pages_scraped,
                 COUNT(*) FILTER (WHERE web_scraping->'structured_data' IS NOT NULL AND jsonb_typeof(web_scraping->'structured_data') = 'array' AND jsonb_array_length(web_scraping->'structured_data') > 0) as structured_data_count,
                 AVG((web_scraping->>'load_time')::numeric) FILTER (WHERE web_scraping->>'load_time' IS NOT NULL) as avg_load_time,
-                COUNT(*) FILTER (WHERE nlp_analysis IS NOT NULL) as nlp_count,
+                COUNT(*) FILTER (WHERE nlp_analysis IS NOT NULL AND nlp_analysis::text != 'null' AND nlp_analysis::text != '{}') as nlp_count,
+                SUM(
+                    CASE 
+                        WHEN nlp_analysis->'keywords' IS NOT NULL 
+                        AND jsonb_typeof(nlp_analysis->'keywords') = 'array'
+                        THEN jsonb_array_length(nlp_analysis->'keywords')
+                        ELSE 0
+                    END
+                ) as total_keywords,
+                SUM(
+                    CASE 
+                        WHEN nlp_analysis->'entities' IS NOT NULL
+                        THEN (
+                            CASE WHEN jsonb_typeof(nlp_analysis->'entities'->'organizations') = 'array' 
+                                 THEN jsonb_array_length(nlp_analysis->'entities'->'organizations') ELSE 0 END +
+                            CASE WHEN jsonb_typeof(nlp_analysis->'entities'->'services') = 'array' 
+                                 THEN jsonb_array_length(nlp_analysis->'entities'->'services') ELSE 0 END +
+                            CASE WHEN jsonb_typeof(nlp_analysis->'entities'->'locations') = 'array' 
+                                 THEN jsonb_array_length(nlp_analysis->'entities'->'locations') ELSE 0 END +
+                            CASE WHEN jsonb_typeof(nlp_analysis->'entities'->'prices') = 'array' 
+                                 THEN jsonb_array_length(nlp_analysis->'entities'->'prices') ELSE 0 END +
+                            CASE WHEN jsonb_typeof(nlp_analysis->'entities'->'dates') = 'array' 
+                                 THEN jsonb_array_length(nlp_analysis->'entities'->'dates') ELSE 0 END
+                        )
+                        ELSE 0
+                    END
+                ) as total_entities,
+                COUNT(*) FILTER (
+                    WHERE nlp_analysis->'sentiment'->>'polarity' IS NOT NULL 
+                    AND (nlp_analysis->'sentiment'->>'polarity')::numeric > 0.1
+                ) as sentiment_positive,
+                COUNT(*) FILTER (
+                    WHERE nlp_analysis->'sentiment'->>'polarity' IS NOT NULL 
+                    AND (nlp_analysis->'sentiment'->>'polarity')::numeric BETWEEN -0.1 AND 0.1
+                ) as sentiment_neutral,
+                COUNT(*) FILTER (
+                    WHERE nlp_analysis->'sentiment'->>'polarity' IS NOT NULL 
+                    AND (nlp_analysis->'sentiment'->>'polarity')::numeric < -0.1
+                ) as sentiment_negative,
                 COUNT(*) FILTER (WHERE ssl_certificate IS NOT NULL) as ssl_count,
                 COUNT(*) FILTER (WHERE ssl_certificate->>'valid' = 'true') as valid_ssl_count,
                 COUNT(*) FILTER (WHERE ssl_certificate->>'self_signed' = 'true') as self_signed_count,
@@ -1372,6 +1410,11 @@ def _generate_vendor_intelligence_data():
             enhanced_data_stats["web_scraping"]["structured_data_found"] = enhanced_stats_row['structured_data_count'] or 0
             enhanced_data_stats["web_scraping"]["avg_load_time"] = round(float(enhanced_stats_row['avg_load_time'] or 0), 2)
             enhanced_data_stats["nlp_analysis"]["domains_with_data"] = enhanced_stats_row['nlp_count'] or 0
+            enhanced_data_stats["nlp_analysis"]["total_keywords"] = enhanced_stats_row['total_keywords'] or 0
+            enhanced_data_stats["nlp_analysis"]["total_entities"] = enhanced_stats_row['total_entities'] or 0
+            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["positive"] = enhanced_stats_row['sentiment_positive'] or 0
+            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["neutral"] = enhanced_stats_row['sentiment_neutral'] or 0
+            enhanced_data_stats["nlp_analysis"]["sentiment_analysis"]["negative"] = enhanced_stats_row['sentiment_negative'] or 0
             enhanced_data_stats["ssl_certificates"]["domains_with_data"] = enhanced_stats_row['ssl_count'] or 0
             enhanced_data_stats["ssl_certificates"]["valid_certs"] = enhanced_stats_row['valid_ssl_count'] or 0
             enhanced_data_stats["ssl_certificates"]["self_signed"] = enhanced_stats_row['self_signed_count'] or 0
@@ -1941,10 +1984,20 @@ def _generate_vendor_intelligence_data():
         elif content_sophistication["technical_focused"] > content_sophistication["marketing_focused"]:
             key_insights["content_strategy"]["finding"] = "Vendors focus on technical capabilities"
             key_insights["content_strategy"]["implication"] = "Technical emphasis may indicate specialized services or B2B operations"
+        else:
+            # Only set if we have meaningful data, otherwise leave empty (will be hidden in template)
+            if content_sophistication["marketing_focused"] == 0 and content_sophistication["technical_focused"] == 0:
+                key_insights["content_strategy"]["finding"] = ""
+                key_insights["content_strategy"]["implication"] = ""
         
         if security_infrastructure_correlation["secure_with_legitimate_hosting"] > security_infrastructure_correlation["insecure_with_suspicious_hosting"]:
             key_insights["infrastructure_security_correlation"]["finding"] = "Vendors using legitimate infrastructure also implement proper security"
             key_insights["infrastructure_security_correlation"]["implication"] = "Blending in with legitimate traffic while maintaining security suggests sophisticated operational security practices"
+        else:
+            # Only set if we have meaningful data, otherwise leave empty (will be hidden in template)
+            if security_infrastructure_correlation["secure_with_legitimate_hosting"] == 0 and security_infrastructure_correlation["insecure_with_suspicious_hosting"] == 0:
+                key_insights["infrastructure_security_correlation"]["finding"] = ""
+                key_insights["infrastructure_security_correlation"]["implication"] = ""
         
         return {
             "total_vendors": total_vendors,

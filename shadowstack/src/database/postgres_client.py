@@ -329,7 +329,7 @@ class PostgresClient:
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
               AND d.source IS NOT NULL
               AND d.source != ''
-              AND d.source LIKE 'SHADOWSTACK%'
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
             ORDER BY d.domain
         """
         
@@ -368,7 +368,7 @@ class PostgresClient:
                 WHERE source != 'DUMMY_DATA_FOR_TESTING'
                   AND source IS NOT NULL
                   AND source != ''
-                  AND source LIKE 'SHADOWSTACK%'
+                  AND (source ILIKE 'SHADOWSTACK%' OR source ILIKE 'ShadowStack%')
             """)
             result = cursor.fetchone()
             # RealDictCursor returns a dict, regular cursor returns tuple

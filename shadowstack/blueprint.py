@@ -589,22 +589,12 @@ def get_graph_from_postgres():
     from urllib.parse import urlparse
     
     try:
-        # Use direct SQL like /api/domains to avoid PostgresClient issues
-        database_url = os.getenv("DATABASE_URL")
-        if not database_url:
-            raise Exception("DATABASE_URL not set")
+        # Use PostgresClient which handles both DATABASE_URL (Render) and individual POSTGRES_* vars (local)
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            raise Exception("PostgresClient connection failed")
         
-        parsed = urlparse(database_url)
-        conn = psycopg2.connect(
-            host=parsed.hostname,
-            port=parsed.port or 5432,
-            user=parsed.username,
-            password=parsed.password,
-            database=parsed.path.lstrip('/'),
-            sslmode='require'
-        )
-        
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor = postgres.conn.cursor(cursor_factory=RealDictCursor)
         
         # Same query as /api/domains
         query = """
@@ -644,7 +634,7 @@ def get_graph_from_postgres():
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
               AND d.source IS NOT NULL
               AND d.source != ''
-              AND d.source LIKE 'SHADOWSTACK%'
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
             ORDER BY d.domain
         """
         
@@ -675,9 +665,8 @@ def get_graph_from_postgres():
             domains.append(domain_dict)
         
         cursor.close()
-        conn.close()
         
-        print(f"🔍 get_graph_from_postgres (direct SQL): Retrieved {len(domains)} domains from database")
+        print(f"🔍 get_graph_from_postgres: Retrieved {len(domains)} domains from database")
     except Exception as e:
         # Database connection failed, return empty graph
         print(f"PostgreSQL connection failed in get_graph_from_postgres: {e}")
@@ -990,10 +979,19 @@ def get_stats():
         edges = graph_data.get("edges", [])
         
         # Count nodes by type
+        # Exclude CDN and CMS from stats as they're confusing (users see "WITH CDN: 94" which is more meaningful)
         node_counts = {}
         for node in nodes:
             label = node.get("label", "Unknown")
-            node_counts[label] = node_counts.get(label, 0) + 1
+            # Skip CDN and CMS - they're confusing compared to domain counts
+            if label.lower() in ['cdn', 'cms']:
+                continue
+            # Capitalize labels for display consistency (except Domain)
+            if label.lower() == "domain":
+                label_key = "Domain"
+            else:
+                label_key = label.capitalize()
+            node_counts[label_key] = node_counts.get(label_key, 0) + 1
         
         stats = {
             "total_nodes": len(nodes),
@@ -1132,32 +1130,15 @@ def enrich_and_store():
 @shadowstack_bp.route('/api/domains', methods=['GET'])
 def get_domains():
     """Get all enriched domains from database."""
-    import psycopg2
-    from psycopg2.extras import RealDictCursor, Json
-    from urllib.parse import urlparse
+    from psycopg2.extras import RealDictCursor
     
     try:
-        # Bypass PostgresClient and use raw SQL directly to avoid any filtering issues
-        database_url = os.getenv("DATABASE_URL")
-        if not database_url:
-            return jsonify({
-                "domains": [],
-                "count": 0,
-                "error": "Database not configured",
-                "message": "DATABASE_URL not set"
-            }), 200
+        # Use PostgresClient which handles both DATABASE_URL (Render) and individual POSTGRES_* vars (local)
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            raise Exception("PostgresClient connection failed")
         
-        parsed = urlparse(database_url)
-        conn = psycopg2.connect(
-            host=parsed.hostname,
-            port=parsed.port or 5432,
-            user=parsed.username,
-            password=parsed.password,
-            database=parsed.path.lstrip('/'),
-            sslmode='require'
-        )
-        
-        cursor = conn.cursor(cursor_factory=RealDictCursor)
+        cursor = postgres.conn.cursor(cursor_factory=RealDictCursor)
         
         # Direct query - same one that works in shell
         query = """
@@ -1197,7 +1178,7 @@ def get_domains():
             WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
               AND d.source IS NOT NULL
               AND d.source != ''
-              AND d.source LIKE 'SHADOWSTACK%'
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
             ORDER BY d.domain
         """
         
@@ -1228,9 +1209,8 @@ def get_domains():
             domains.append(domain_dict)
         
         cursor.close()
-        conn.close()
         
-        print(f"🔍 get_domains (direct SQL): Retrieved {len(domains)} domains from database")
+        print(f"🔍 get_domains: Retrieved {len(domains)} domains from database")
         if domains:
             print(f"   Sample domains: {[d.get('domain') for d in domains[:5]]}")
             print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
@@ -1520,27 +1500,17 @@ def get_analytics():
     from psycopg2.extras import RealDictCursor
     from urllib.parse import urlparse
     
+    domains = []  # Initialize outside try block
     try:
-        try:
-            # Use direct SQL like /api/domains to avoid PostgresClient issues
-            database_url = os.getenv("DATABASE_URL")
-            if not database_url:
-                raise Exception("DATABASE_URL not set")
-            
-            parsed = urlparse(database_url)
-            conn = psycopg2.connect(
-                host=parsed.hostname,
-                port=parsed.port or 5432,
-                user=parsed.username,
-                password=parsed.password,
-                database=parsed.path.lstrip('/'),
-                sslmode='require'
-            )
-            
-            cursor = conn.cursor(cursor_factory=RealDictCursor)
-            
-            # Same query as /api/domains
-            query = """
+        # Use PostgresClient which handles both DATABASE_URL and individual POSTGRES_* vars
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            raise Exception("PostgresClient connection failed")
+        
+        cursor = postgres.conn.cursor(cursor_factory=RealDictCursor)
+        
+        # Same query as /api/domains
+        query = """
                 SELECT 
                     d.id,
                     d.domain,
@@ -1577,154 +1547,49 @@ def get_analytics():
                 WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
                   AND d.source IS NOT NULL
                   AND d.source != ''
-                  AND d.source LIKE 'SHADOWSTACK%'
+                  AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
                 ORDER BY d.domain
-            """
-            
-            cursor.execute(query)
-            results = cursor.fetchall()
-            
-            # Convert to list of dicts
-            domains = []
-            for row in results:
-                domain_dict = dict(row)
-                
-                # Parse JSONB fields
-                jsonb_fields = [
-                    'ip_addresses', 'ipv6_addresses', 'name_servers', 'mx_records',
-                    'frameworks', 'analytics', 'languages', 'tech_stack',
-                    'http_headers', 'ssl_info', 'whois_data', 'dns_records'
-                ]
-                
-                for field in jsonb_fields:
-                    value = domain_dict.get(field)
-                    if value is not None and isinstance(value, str):
-                        try:
-                            import json
-                            domain_dict[field] = json.loads(value)
-                        except (json.JSONDecodeError, TypeError):
-                            pass
-                
-                domains.append(domain_dict)
-            
-            cursor.close()
-            conn.close()
-            
-            print(f"🔍 get_analytics (direct SQL): Retrieved {len(domains)} domains from database")
-            if domains:
-                print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
-                print(f"   First domain: {domains[0].get('domain')} (source: {domains[0].get('source')})")
-                print(f"   Last domain: {domains[-1].get('domain')} (source: {domains[-1].get('source')})")
-        except Exception as db_error:
-            # Database connection failed, return empty analytics
-            print(f"PostgreSQL connection failed in get_analytics: {db_error}")
-            # Use jsonify instead of json.dumps to avoid import issues
-            return jsonify({
-                "error": "Database connection failed",
-                "message": str(db_error),
-                "outliers": [],
-                "statistics": {
-                    "total_domains": 0,
-                    "domains_with_cms": 0,
-                    "domains_with_cdn": 0,
-                    "domains_with_payment": 0,
-                    "unique_isps": 0,
-                    "unique_hosts": 0
-                }
-            })
+        """
         
-        if not domains:
-            return jsonify({
-                "outliers": [],
-                "statistics": {}
-            })
+        cursor.execute(query)
+        results = cursor.fetchall()
         
-        total = len(domains)
-        outliers = []
-        
-        # Check for outliers in various columns
-        columns_to_check = {
-            'cms': 'CMS',
-            'cdn': 'CDN',
-            'payment_processor': 'Payment Processor',
-            'isp': 'ISP',
-            'host_name': 'Hosting Provider',
-            'registrar': 'Registrar'
-        }
-        
-        for col, label in columns_to_check.items():
-            values = {}
-            for domain in domains:
-                value = domain.get(col)
-                if value:
-                    values[value] = values.get(value, 0) + 1
+        # Convert to list of dicts
+        domains = []
+        for row in results:
+            domain_dict = dict(row)
             
-            if values:
-                # Find most common value
-                most_common = max(values.items(), key=lambda x: x[1])
-                percentage = (most_common[1] / total) * 100
-                
-                # If 50%+ use the same value, it's an outlier
-                if percentage >= 50:
-                    outliers.append({
-                        'column': col,
-                        'label': label,
-                        'value': most_common[0],
-                        'count': most_common[1],
-                        'percentage': round(percentage, 1),
-                        'severity': 'high' if percentage >= 75 else 'medium'
-                    })
+            # Parse JSONB fields
+            jsonb_fields = [
+                'ip_addresses', 'ipv6_addresses', 'name_servers', 'mx_records',
+                'frameworks', 'analytics', 'languages', 'tech_stack',
+                'http_headers', 'ssl_info', 'whois_data', 'dns_records'
+            ]
+            
+            for field in jsonb_fields:
+                value = domain_dict.get(field)
+                if value is not None and isinstance(value, str):
+                    try:
+                        import json
+                        domain_dict[field] = json.loads(value)
+                    except (json.JSONDecodeError, TypeError):
+                        pass
+            
+            domains.append(domain_dict)
         
-        # Calculate statistics
-        # Handle None, empty string, and falsy values properly
-        # Debug: Check a few sample domains to see what the data looks like
+        cursor.close()
+        
+        print(f"🔍 get_analytics: Retrieved {len(domains)} domains from database")
         if domains:
-            sample = domains[0]
-            print(f"🔍 Sample domain data: cms={repr(sample.get('cms'))}, cdn={repr(sample.get('cdn'))}, isp={repr(sample.get('isp'))}, host_name={repr(sample.get('host_name'))}")
-        
-        def has_value(field_value):
-            """Check if a field has a valid (non-empty) value."""
-            if field_value is None:
-                return False
-            if isinstance(field_value, str):
-                cleaned = field_value.strip()
-                return cleaned and cleaned.lower() != 'none' and cleaned != ''
-            return bool(field_value)
-        
-        # Count domains with each enrichment field
-        domains_with_cms = sum(1 for d in domains if has_value(d.get('cms')))
-        domains_with_cdn = sum(1 for d in domains if has_value(d.get('cdn')))
-        domains_with_payment = sum(1 for d in domains if has_value(d.get('payment_processor')))
-        unique_isps = len(set(d.get('isp') for d in domains if has_value(d.get('isp'))))
-        unique_hosts = len(set(d.get('host_name') for d in domains if has_value(d.get('host_name'))))
-        
-        stats = {
-            'total_domains': total,
-            'domains_with_cms': domains_with_cms,
-            'domains_with_cdn': domains_with_cdn,
-            'domains_with_payment': domains_with_payment,
-            'unique_isps': unique_isps,
-            'unique_hosts': unique_hosts
-        }
-        
-        print(f"📊 Analytics stats calculated: {stats}")
-        print(f"   Sample check - first 5 domains with cms: {[d.get('cms') for d in domains[:5]]}")
-        print(f"   Sample check - first 5 domains with cdn: {[d.get('cdn') for d in domains[:5]]}")
-        print(f"   Sample check - first 5 domains with isp: {[d.get('isp') for d in domains[:5]]}")
-        print(f"   Sample check - first 5 domains with host_name: {[d.get('host_name') for d in domains[:5]]}")
-        
-        return jsonify({
-            "outliers": outliers,
-            "statistics": stats
-        })
-    except Exception as e:
-        import traceback
-        print(f"Error in get_analytics: {e}")
-        traceback.print_exc()
-        # Return JSON error response using jsonify
+            print(f"   Sample sources: {[d.get('source') for d in domains[:5]]}")
+            print(f"   First domain: {domains[0].get('domain')} (source: {domains[0].get('source')})")
+            print(f"   Last domain: {domains[-1].get('domain')} (source: {domains[-1].get('source')})")
+    except Exception as db_error:
+        # Database connection failed, return empty analytics
+        print(f"PostgreSQL connection failed in get_analytics: {db_error}")
         return jsonify({
             "error": "Database connection failed",
-            "message": str(e),
+            "message": str(db_error),
             "outliers": [],
             "statistics": {
                 "total_domains": 0,
@@ -1735,17 +1600,160 @@ def get_analytics():
                 "unique_hosts": 0
             }
         })
+    
+    if not domains:
+        return jsonify({
+            "outliers": [],
+            "statistics": {}
+        })
+    
+    total = len(domains)
+    outliers = []
+    
+    # Check for outliers in various columns
+    columns_to_check = {
+        'cms': 'CMS',
+        'cdn': 'CDN',
+        'payment_processor': 'Payment Processor',
+        'isp': 'ISP',
+        'host_name': 'Hosting Provider',
+        'registrar': 'Registrar'
+    }
+    
+    for col, label in columns_to_check.items():
+        values = {}
+        for domain in domains:
+            value = domain.get(col)
+            if value:
+                values[value] = values.get(value, 0) + 1
+        
+        if values:
+            # Find most common value
+            most_common = max(values.items(), key=lambda x: x[1])
+            percentage = (most_common[1] / total) * 100
+            
+            # If 50%+ use the same value, it's an outlier
+            if percentage >= 50:
+                outliers.append({
+                    'column': col,
+                    'label': label,
+                    'value': most_common[0],
+                    'count': most_common[1],
+                    'percentage': round(percentage, 1),
+                    'severity': 'high' if percentage >= 75 else 'medium'
+                })
+    
+    # Calculate statistics
+    # Handle None, empty string, and falsy values properly
+    # Debug: Check a few sample domains to see what the data looks like
+    if domains:
+        sample = domains[0]
+        print(f"🔍 Sample domain data: cms={repr(sample.get('cms'))}, cdn={repr(sample.get('cdn'))}, isp={repr(sample.get('isp'))}, host_name={repr(sample.get('host_name'))}")
+    
+    def has_value(field_value):
+        """Check if a field has a valid (non-empty) value."""
+        if field_value is None:
+            return False
+        if isinstance(field_value, str):
+            cleaned = field_value.strip()
+            return cleaned and cleaned.lower() != 'none' and cleaned != ''
+        return bool(field_value)
+    
+    # Count domains with each enrichment field
+    domains_with_cms = sum(1 for d in domains if has_value(d.get('cms')))
+    domains_with_cdn = sum(1 for d in domains if has_value(d.get('cdn')))
+    domains_with_payment = sum(1 for d in domains if has_value(d.get('payment_processor')))
+    unique_isps = len(set(d.get('isp') for d in domains if has_value(d.get('isp'))))
+    unique_hosts = len(set(d.get('host_name') for d in domains if has_value(d.get('host_name'))))
+    
+    stats = {
+        'total_domains': total,
+        'domains_with_cms': domains_with_cms,
+        'domains_with_cdn': domains_with_cdn,
+        'domains_with_payment': domains_with_payment,
+        'unique_isps': unique_isps,
+        'unique_hosts': unique_hosts
+    }
+    
+    print(f"📊 Analytics stats calculated: {stats}")
+    print(f"   Sample check - first 5 domains with cms: {[d.get('cms') for d in domains[:5]]}")
+    print(f"   Sample check - first 5 domains with cdn: {[d.get('cdn') for d in domains[:5]]}")
+    print(f"   Sample check - first 5 domains with isp: {[d.get('isp') for d in domains[:5]]}")
+    print(f"   Sample check - first 5 domains with host_name: {[d.get('host_name') for d in domains[:5]]}")
+    
+    return jsonify({
+        "outliers": outliers,
+        "statistics": stats
+    })
 
 
 @shadowstack_bp.route('/api/analysis', methods=['GET'])
 def get_ai_analysis():
-    """Get AI-powered analysis of the domain data to identify bad actors."""
-    postgres = PostgresClient()
+    """Get AI-powered analysis - serves pre-generated static HTML."""
+    force_regenerate = request.args.get('force', 'false').lower() == 'true'
     
+    # First try to serve static HTML file (unless forcing regeneration)
+    if not force_regenerate:
+        static_file_path = blueprint_dir / 'static' / 'data' / 'analysis.html'
+        
+        if static_file_path.exists():
+            try:
+                with open(static_file_path, 'r', encoding='utf-8') as f:
+                    html_content = f.read()
+                return jsonify({
+                    "analysis": html_content,
+                    "cached": True,
+                    "static": True
+                })
+            except Exception as e:
+                shadowstack_logger.warning(f"Failed to load static analysis: {e}")
+    
+    # Fallback: try cached analysis from database
     try:
+        postgres = PostgresClient()
+        if not postgres or not postgres.conn:
+            return jsonify({
+                "error": "Database connection failed",
+                "cached": False,
+                "needs_regeneration": True
+            }), 200
+        
         # ALWAYS check for cached analysis first
-        cached = postgres.get_analysis('infrastructure')
-        if cached:
+        try:
+            # Ensure we're using the correct PostgresClient with get_analysis method
+            if hasattr(postgres, 'get_analysis'):
+                cached = postgres.get_analysis('infrastructure')
+            else:
+                # Fallback: check if analysis_cache table exists and query directly
+                cursor = postgres.conn.cursor()
+                cursor.execute("""
+                    SELECT analysis_data, updated_at
+                    FROM analysis_cache
+                    WHERE analysis_type = %s
+                """, ('infrastructure',))
+                result = cursor.fetchone()
+                cursor.close()
+                
+                if result:
+                    import json
+                    analysis_data = result[0]
+                    if isinstance(analysis_data, str):
+                        try:
+                            analysis_data = json.loads(analysis_data)
+                        except:
+                            pass
+                    cached = {
+                        'analysis_data': analysis_data,
+                        'updated_at': result[1]
+                    }
+                else:
+                    cached = None
+        except Exception as e:
+            # If anything fails, just return no cache
+            import traceback
+            traceback.print_exc()
+            cached = None
+        if cached and not force_regenerate:
             cached_data = cached['analysis_data']
             return jsonify({
                 "analysis": cached_data.get('analysis'),
@@ -1755,25 +1763,75 @@ def get_ai_analysis():
                 "updated_at": str(cached['updated_at'])
             })
         
-        # Only generate new analysis if explicitly requested AND no cache exists
-        force_regenerate = request.args.get('force', 'false').lower() == 'true'
+        # If no static file and no cache, and not forcing, return error
         if not force_regenerate:
-            # No cache and not forcing - return message to user
             return jsonify({
-                "error": "No cached analysis available. Use ?force=true to generate new analysis.",
+                "error": "Analysis not available. Please run 'python3 shadowstack/generate_analysis.py' to generate it.",
                 "cached": False,
                 "needs_regeneration": True
             }), 200
+        # Continue to generation logic below if force=true
         
-        domains = postgres.get_all_enriched_domains()
+        # Get all enriched domains - use method if available, otherwise query directly
+        try:
+            if hasattr(postgres, 'get_all_enriched_domains'):
+                all_domains = postgres.get_all_enriched_domains()
+            else:
+                # Fallback: query directly
+                from psycopg2.extras import RealDictCursor
+                cursor = postgres.conn.cursor(cursor_factory=RealDictCursor)
+                cursor.execute("""
+                    SELECT 
+                        d.id, d.domain, d.source, d.notes,
+                        de.ip_address, de.ip_addresses, de.ipv6_addresses,
+                        de.host_name, de.asn, de.isp, de.cdn, de.cms,
+                        de.payment_processor, de.registrar,
+                        de.creation_date, de.expiration_date, de.updated_date,
+                        de.name_servers, de.mx_records, de.whois_status,
+                        de.web_server, de.frameworks, de.analytics,
+                        de.languages, de.tech_stack, de.http_headers,
+                        de.ssl_info, de.whois_data, de.dns_records,
+                        de.enriched_at
+                    FROM domains d
+                    LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+                    WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+                      AND d.source IS NOT NULL
+                      AND d.source != ''
+                      AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+                    ORDER BY d.domain
+                """)
+                results = cursor.fetchall()
+                all_domains = [dict(row) for row in results]
+                cursor.close()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            return jsonify({
+                "error": f"Failed to fetch domains: {str(e)}",
+                "cached": False
+            }), 200
+        
+        # Use domains that have enrichment records (even if data is now empty due to URL changes)
+        # This is directionally useful - the domain was enriched at some point
+        # Filter to domains that have an enrichment record (enriched_at timestamp exists)
+        domains = [
+            d for d in all_domains 
+            if d.get('enriched_at') is not None  # Has enrichment record (was enriched at some point)
+        ]
         
         if not domains:
             return jsonify({
-                "error": "No domains found"
+                "error": "No enriched domains found"
             }), 404
         
         # Prepare data summary for OpenAI
+        # Use all domains with enrichment records (even if data is now empty - URLs may have changed)
         total = len(domains)
+        total_in_db = len(all_domains)
+        
+        # Count how many have actual data vs just records
+        with_data = len([d for d in domains if d.get('ip_address') or d.get('host_name') or d.get('cdn') or d.get('isp')])
+        print(f"📊 Analysis: Using {total} domains ({with_data} with data, {total - with_data} with records only)")
         
         # Normalize provider names to merge duplicates (e.g., "Cloudflare" and "Cloudflare, Inc.")
         def normalize_provider_name(name):
@@ -1927,13 +1985,81 @@ Format the response in clear sections with markdown formatting."""
         # Clean up markdown formatting
         analysis_text = clean_analysis_formatting(analysis_text)
         
+        # Convert markdown to HTML and save as static file
+        import re
+        def markdown_to_html(text):
+            if not text:
+                return ''
+            # Headers
+            text = re.sub(r'^### (.*)$', r'<h3>\1</h3>', text, flags=re.MULTILINE)
+            text = re.sub(r'^## (.*)$', r'<h2>\1</h2>', text, flags=re.MULTILINE)
+            text = re.sub(r'^#### (.*)$', r'<h4>\1</h4>', text, flags=re.MULTILINE)
+            # Bold
+            text = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', text)
+            # Lists
+            lines = text.split('\n')
+            html_lines = []
+            in_list = False
+            for line in lines:
+                if line.strip().startswith('- '):
+                    if not in_list:
+                        html_lines.append('<ul>')
+                        in_list = True
+                    html_lines.append(f'<li>{line.strip()[2:]}</li>')
+                else:
+                    if in_list:
+                        html_lines.append('</ul>')
+                        in_list = False
+                    if line.strip() and not line.strip().startswith('#'):
+                        html_lines.append(f'<p>{line.strip()}</p>')
+                    elif line.strip():
+                        html_lines.append(line)
+            if in_list:
+                html_lines.append('</ul>')
+            return '\n'.join(html_lines)
+        
+        html_content = markdown_to_html(analysis_text)
+        html_content = f'<p><strong>IMPORTANT:</strong> Service providers (CDNs, hosts, ISPs) are being paid to enable these sites and should be held accountable, even if they\'re acting as intermediaries like Cloudflare.</p>\n{html_content}'
+        
+        # Save to static HTML file
+        static_file_path = blueprint_dir / 'static' / 'data' / 'analysis.html'
+        static_file_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            with open(static_file_path, 'w', encoding='utf-8') as f:
+                f.write(html_content)
+            print(f"✅ Saved static analysis to: {static_file_path}")
+        except Exception as e:
+            print(f"⚠️  Failed to save static file: {e}")
+        
         # Save to cache
         analysis_data = {
             "analysis": analysis_text,
             "summary": summary,
             "bad_actors": bad_actors_data
         }
-        postgres.save_analysis(analysis_data, 'infrastructure')
+        # Save analysis to cache - use method if available, otherwise insert directly
+        try:
+            if hasattr(postgres, 'save_analysis'):
+                postgres.save_analysis(analysis_data, 'infrastructure')
+            else:
+                # Fallback: insert directly
+                from psycopg2.extras import Json
+                cursor = postgres.conn.cursor()
+                cursor.execute("""
+                    INSERT INTO analysis_cache (analysis_type, analysis_data)
+                    VALUES (%s, %s)
+                    ON CONFLICT (analysis_type)
+                    DO UPDATE SET
+                        analysis_data = EXCLUDED.analysis_data,
+                        updated_at = CURRENT_TIMESTAMP
+                """, ('infrastructure', Json(analysis_data)))
+                postgres.conn.commit()
+                cursor.close()
+        except Exception as e:
+            import traceback
+            traceback.print_exc()
+            print(f"⚠️  Failed to save analysis cache: {e}")
+            # Continue anyway - analysis was generated successfully
         
         return jsonify({
             "analysis": analysis_text,
@@ -1946,6 +2072,46 @@ Format the response in clear sections with markdown formatting."""
         return jsonify({"error": str(e)}), 500
     finally:
         postgres.close()
+
+
+@shadowstack_bp.route('/api/dns-history', methods=['GET'])
+def get_dns_history():
+    """Get DNS history data from the local JSON file."""
+    import json
+    from pathlib import Path
+    
+    data_file = Path(__file__).parent.parent / 'shadowstack_ip_history.json'
+    
+    if not data_file.exists():
+        return jsonify({
+            "error": "DNS history data file not found",
+            "domains": {}
+        }), 200
+    
+    try:
+        with open(data_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+        
+        # Convert dict to list format for easier frontend handling
+        domains_list = []
+        for domain, domain_data in data.items():
+            if isinstance(domain_data, dict) and 'historical_ips' in domain_data:
+                domains_list.append({
+                    "domain": domain,
+                    "historical_ips": domain_data.get('historical_ips', [])
+                })
+        
+        return jsonify({
+            "domains": domains_list,
+            "total": len(domains_list),
+            "domains_with_history": len([d for d in domains_list if d.get('historical_ips')])
+        })
+    except Exception as e:
+        shadowstack_logger.error(f"Error loading DNS history: {e}", exc_info=True)
+        return jsonify({
+            "error": str(e),
+            "domains": []
+        }), 200
 
 
 def clean_analysis_formatting(text):
@@ -2752,7 +2918,7 @@ def run_shadowstack_data_seed():
                 WHERE source IS NOT NULL 
                 AND source != '' 
                 AND source != 'DUMMY_DATA_FOR_TESTING'
-                AND (source LIKE 'SHADOWSTACK%' 
+                AND ((source ILIKE 'SHADOWSTACK%' OR source ILIKE 'ShadowStack%')
                      OR source = 'IMPORT'
                      OR source = 'CSV Import'
                      OR source = 'API Import'

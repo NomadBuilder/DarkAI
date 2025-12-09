@@ -41,7 +41,7 @@
     {{ render_nav('data') }}
     <div class="container">
         <header>
-            <h1>🔍 ShadowStack</h1>
+            <h1>ShadowStack</h1>
             <p class="subtitle">Visualizing infrastructure relationships behind domains</p>
         </header>
         
@@ -60,6 +60,9 @@
             </button>
             <button class="view-btn" data-view="table" id="table-view-btn">
                 Table
+            </button>
+            <button class="view-btn" data-view="dns-history" id="dns-history-view-btn">
+                DNS History
             </button>
             <button class="view-btn" data-view="analysis" id="analysis-view-btn">
                 Analysis
@@ -179,7 +182,6 @@
                     </select>
                 </div>
                 <div class="column-controls">
-                    <button id="show-all-btn" class="btn btn-secondary">Show All Columns</button>
                     <button id="column-toggle-btn" class="btn btn-secondary">📋 Columns</button>
                     <div id="column-menu" class="column-menu" style="display: none;">
                         <div class="column-menu-header">Toggle Columns</div>
@@ -220,7 +222,7 @@
                         </tr>
                     </thead>
                     <tbody id="table-body">
-                        <tr><td colspan="21" class="loading">Loading data...</td></tr>
+                        <tr><td colspan="24" class="loading">Loading data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -235,9 +237,7 @@
             <div class="analysis-section">
                 <h2>🔍 Analysis and Review</h2>
                 <div class="analysis-content" id="analysis-content">
-                    <h3>Executive Summary</h3>
-                    <p>This analysis examines infrastructure patterns across 110 domains associated with AI-generated non-consensual intimate imagery (NCII). The data reveals significant concentration of infrastructure services, with several providers enabling disproportionately large numbers of these domains through CDN, hosting, and network services.</p>
-                    <p>IMPORTANT: Service providers (CDNs, hosts, ISPs) are being paid to enable these sites and should be held accountable, even if they're acting as intermediaries like Cloudflare.</p>
+                    <div class="loading">Loading analysis...</div>
                     
                     <h3>Key Findings</h3>
                     <p>Infrastructure Breakdown:</p>
@@ -321,6 +321,27 @@
                             </ul>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- DNS History View -->
+        <div class="view-container" id="dns-history-view" style="display: none;">
+            <div class="dns-history-section">
+                <h2>🌐 DNS History</h2>
+                <p class="section-description">Historical IP addresses and location data for each domain, showing infrastructure changes over time.</p>
+                
+                <div class="dns-history-controls">
+                    <div class="search-box">
+                        <input type="text" id="dns-search" placeholder="🔍 Search domains..." class="search-input">
+                    </div>
+                    <div class="dns-stats" id="dns-stats">
+                        <span>Loading...</span>
+                    </div>
+                </div>
+                
+                <div class="dns-history-content" id="dns-history-content">
+                    <div class="loading">Loading DNS history...</div>
                 </div>
             </div>
         </div>

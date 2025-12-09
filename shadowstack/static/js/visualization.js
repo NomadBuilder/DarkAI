@@ -68,10 +68,17 @@ function initVisualization() {
     document.getElementById("table-view-btn").addEventListener("click", () => {
         switchView("table");
         localStorage.setItem('lastView', 'table');
+        loadDomains(); // Load domains when table view is shown
+    });
+    document.getElementById("dns-history-view-btn").addEventListener("click", () => {
+        switchView("dns-history");
+        localStorage.setItem('lastView', 'dns-history');
+        loadDnsHistory(); // Load DNS history when view is shown
     });
     document.getElementById("analysis-view-btn").addEventListener("click", () => {
         switchView("analysis");
         localStorage.setItem('lastView', 'analysis');
+        loadAnalysis(); // Load analysis when view is shown
     });
     document.getElementById("about-view-btn").addEventListener("click", () => {
         switchView("about");
@@ -94,7 +101,11 @@ function initVisualization() {
     document.getElementById("filter-registrar").addEventListener("change", filterGraph);
     
     // Column visibility controls
-    document.getElementById("show-all-btn").addEventListener("click", showAllColumns);
+    // Hide "Show All Columns" button since new columns are empty
+    const showAllBtn = document.getElementById("show-all-btn");
+    if (showAllBtn) {
+        showAllBtn.style.display = "none";
+    }
     document.getElementById("column-toggle-btn").addEventListener("click", toggleColumnMenu);
     document.getElementById("save-columns-btn").addEventListener("click", saveColumnSettings);
     document.getElementById("reset-columns-btn").addEventListener("click", resetColumnSettings);
@@ -145,10 +156,12 @@ function initVisualization() {
 function switchView(view) {
     const graphView = document.getElementById("graph-view");
     const tableView = document.getElementById("table-view");
+    const dnsHistoryView = document.getElementById("dns-history-view");
     const analysisView = document.getElementById("analysis-view");
     const aboutView = document.getElementById("about-view");
     const graphBtn = document.getElementById("graph-view-btn");
     const tableBtn = document.getElementById("table-view-btn");
+    const dnsHistoryBtn = document.getElementById("dns-history-view-btn");
     const analysisBtn = document.getElementById("analysis-view-btn");
     const aboutBtn = document.getElementById("about-view-btn");
     const resetZoomBtn = document.getElementById("reset-zoom-btn");
@@ -156,12 +169,14 @@ function switchView(view) {
     // Hide all views
     graphView.style.display = "none";
     tableView.style.display = "none";
+    dnsHistoryView.style.display = "none";
     analysisView.style.display = "none";
     aboutView.style.display = "none";
     
     // Remove active class from all buttons
     graphBtn.classList.remove("active");
     tableBtn.classList.remove("active");
+    dnsHistoryBtn.classList.remove("active");
     analysisBtn.classList.remove("active");
     aboutBtn.classList.remove("active");
     
@@ -178,12 +193,21 @@ function switchView(view) {
         resetZoomBtn.style.display = "none";
         if (domainsData.length === 0) {
             loadDomains();
+        } else {
+            // Data already loaded, just render the table
+            renderTable();
+            updateTableCount();
         }
+    } else if (view === "dns-history") {
+        dnsHistoryView.style.display = "block";
+        dnsHistoryBtn.classList.add("active");
+        resetZoomBtn.style.display = "none";
+        loadDnsHistory(); // Load DNS history when view is shown
     } else if (view === "analysis") {
         analysisView.style.display = "block";
         analysisBtn.classList.add("active");
         resetZoomBtn.style.display = "none";
-        // Analysis content is now static HTML - no API call needed
+        loadAnalysis(); // Load analysis when view is shown
     } else if (view === "about") {
         aboutView.style.display = "block";
         aboutBtn.classList.add("active");
@@ -327,12 +351,14 @@ async function loadStats() {
             return;
         }
         
+        // Format stats - exclude CDN and CMS as they're confusing (domain counts are more meaningful)
         const statsHtml = `
             <strong>Nodes:</strong> ${stats.total_nodes || 0} | 
             <strong>Edges:</strong> ${stats.total_edges || 0} |
-            ${Object.entries(stats.node_types || {}).map(([type, count]) => 
-                `<strong>${type}:</strong> ${count}`
-            ).join(" | ")}
+            ${Object.entries(stats.node_types || {})
+                .filter(([type]) => !['Cdn', 'Cms', 'cdn', 'cms'].includes(type)) // Exclude CDN and CMS
+                .map(([type, count]) => `<strong>${type}:</strong> ${count}`)
+                .join(" | ")}
         `;
         
         const statsElement = document.getElementById("stats");
@@ -410,8 +436,536 @@ async function loadAnalytics() {
     }
 }
 
-// Load AI analysis
-// Analysis is now static HTML - no API calls needed
+// Load AI analysis (cached, not regenerated dynamically)
+async function loadAnalysis() {
+    const container = document.getElementById("analysis-content");
+    if (!container) {
+        console.error("Analysis container not found");
+        return;
+    }
+    
+    try {
+        container.innerHTML = '<div class="loading">Loading analysis...</div>';
+        
+        const response = await fetch("/shadowstack/api/analysis");
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Handle error response
+        if (data.error) {
+            if (data.needs_regeneration) {
+                container.innerHTML = `
+                    <div style="padding: 20px; text-align: center;">
+                        <h3 style="color: #f97373; margin-bottom: 15px;">No cached analysis available</h3>
+                        <p style="margin-bottom: 20px; color: #a0a0a0;">The analysis needs to be generated. This may take a few minutes.</p>
+                        <button onclick="generateAnalysis()" style="background: #d9353e; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px;">
+                            Generate Analysis
+                        </button>
+                        <p style="margin-top: 15px; font-size: 12px; color: #666;">
+                            Or visit: <a href="/shadowstack/api/analysis?force=true" target="_blank" style="color: #4a9eff;">/shadowstack/api/analysis?force=true</a>
+                        </p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `<div class="error" style="padding: 20px; color: #f97373;">Error: ${data.error}</div>`;
+            }
+            return;
+        }
+        
+        // Display the cached analysis
+        if (data.analysis) {
+            // The analysis is already HTML, just insert it
+            container.innerHTML = data.analysis;
+            console.log("✅ Analysis loaded successfully");
+        } else {
+            container.innerHTML = '<div class="error" style="padding: 20px; color: #f97373;">No analysis data available</div>';
+        }
+    } catch (error) {
+        console.error("Error loading analysis:", error);
+        container.innerHTML = `
+            <div style="padding: 20px; text-align: center; color: #f97373;">
+                <h3>Error loading analysis</h3>
+                <p>${error.message}</p>
+                <button onclick="loadAnalysis()" style="background: #d9353e; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; margin-top: 15px;">
+                    Retry
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Generate analysis (called by button)
+async function generateAnalysis() {
+    const container = document.getElementById("analysis-content");
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading">Generating analysis (this may take a few minutes)...</div>';
+    
+    try {
+        const response = await fetch("/shadowstack/api/analysis?force=true");
+        const data = await response.json();
+        
+        if (data.error) {
+            container.innerHTML = `<div class="error" style="padding: 20px; color: #f97373;">Error: ${data.error}</div>`;
+            return;
+        }
+        
+        if (data.analysis) {
+            container.innerHTML = data.analysis;
+        } else {
+            container.innerHTML = '<div class="error" style="padding: 20px; color: #f97373;">Analysis generation failed</div>';
+        }
+    } catch (error) {
+        console.error("Error generating analysis:", error);
+        container.innerHTML = `<div class="error" style="padding: 20px; color: #f97373;">Error: ${error.message}</div>`;
+    }
+}
+
+// Load DNS history
+async function loadDnsHistory() {
+    const container = document.getElementById("dns-history-content");
+    const statsContainer = document.getElementById("dns-stats");
+    const searchInput = document.getElementById("dns-search");
+    
+    if (!container) return;
+    
+    try {
+        container.innerHTML = '<div class="loading">Loading DNS history...</div>';
+        
+        const response = await fetch("/shadowstack/api/dns-history");
+        const data = await response.json();
+        
+        if (data.error) {
+            container.innerHTML = `<div class="error" style="padding: 20px; color: #f97373;">Error: ${data.error}</div>`;
+            return;
+        }
+        
+        const domains = data.domains || [];
+        
+        // Store domains globally for filtering
+        window.dnsHistoryDomains = domains;
+        
+        // Normalize country names to full names and consolidate duplicates
+        // Make it globally available for filtering
+        window.normalizeCountryName = function(country, location) {
+            if (!country && !location) return 'Unknown';
+            
+            const countryLower = (country || '').toLowerCase().trim();
+            const locationLower = (location || '').toLowerCase().trim();
+            const combined = `${countryLower} ${locationLower}`.trim();
+            
+            // Map abbreviations and variations to full country names
+            const countryMap = {
+                'us': 'United States',
+                'usa': 'United States',
+                'united states': 'United States',
+                'united states of america': 'United States',
+                'de': 'Germany',
+                'germany': 'Germany',
+                'deutschland': 'Germany',
+                'gb': 'United Kingdom',
+                'uk': 'United Kingdom',
+                'united kingdom': 'United Kingdom',
+                'great britain': 'United Kingdom',
+                'fr': 'France',
+                'france': 'France',
+                'nl': 'Netherlands',
+                'netherlands': 'Netherlands',
+                'the netherlands': 'Netherlands',
+                'holland': 'Netherlands',
+                'ru': 'Russia',
+                'russia': 'Russia',
+                'russian federation': 'Russia',
+                'ca': 'Canada',
+                'canada': 'Canada',
+                'ch': 'Switzerland',
+                'switzerland': 'Switzerland',
+                'swiss': 'Switzerland',
+                'vg': 'British Virgin Islands',
+                'british virgin islands': 'British Virgin Islands',
+                'bvi': 'British Virgin Islands',
+                'ie': 'Ireland',
+                'ireland': 'Ireland',
+                'se': 'Sweden',
+                'sweden': 'Sweden',
+                'no': 'Norway',
+                'norway': 'Norway',
+                'dk': 'Denmark',
+                'denmark': 'Denmark',
+                'fi': 'Finland',
+                'finland': 'Finland',
+                'pl': 'Poland',
+                'poland': 'Poland',
+                'es': 'Spain',
+                'spain': 'Spain',
+                'it': 'Italy',
+                'italy': 'Italy',
+                'au': 'Australia',
+                'australia': 'Australia',
+                'jp': 'Japan',
+                'japan': 'Japan',
+                'cn': 'China',
+                'china': 'China',
+                'in': 'India',
+                'india': 'India',
+                'sg': 'Singapore',
+                'singapore': 'Singapore',
+                'hk': 'Hong Kong',
+                'hong kong': 'Hong Kong',
+                'unknown': 'Unknown'
+            };
+            
+            // Check exact matches first
+            if (countryMap[countryLower]) {
+                return countryMap[countryLower];
+            }
+            if (countryMap[locationLower]) {
+                return countryMap[locationLower];
+            }
+            if (countryMap[combined]) {
+                return countryMap[combined];
+            }
+            
+            // Check if location contains country name
+            for (const [key, value] of Object.entries(countryMap)) {
+                if (combined.includes(key) || locationLower.includes(key)) {
+                    return value;
+                }
+            }
+            
+            // If location has a country name, extract it
+            if (locationLower) {
+                for (const [key, value] of Object.entries(countryMap)) {
+                    if (locationLower.includes(key)) {
+                        return value;
+                    }
+                }
+            }
+            
+            // Capitalize first letter of each word if not found
+            if (country) {
+                return country.split(' ').map(word => 
+                    word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+                ).join(' ');
+            }
+            
+            return 'Unknown';
+        };
+        
+        // Calculate country statistics (unique domains per country)
+        const countryStats = {};
+        domains.forEach(domainData => {
+            const domain = domainData.domain;
+            const ips = domainData.historical_ips || [];
+            
+            // Get unique countries for this domain
+            const domainCountries = new Set();
+            ips.forEach(ipRecord => {
+                const normalizedCountry = window.normalizeCountryName(
+                    ipRecord.country, 
+                    ipRecord.location
+                );
+                domainCountries.add(normalizedCountry);
+            });
+            
+            // Count this domain for each country it appears in
+            domainCountries.forEach(country => {
+                if (!countryStats[country]) {
+                    countryStats[country] = {
+                        country: country,
+                        domainCount: 0,
+                        totalIPs: 0
+                    };
+                }
+                countryStats[country].domainCount++;
+                countryStats[country].totalIPs += new Set(ips.map(ip => ip.ip)).size;
+            });
+        });
+        
+        // Sort countries by domain count (most common first)
+        const topCountries = Object.values(countryStats)
+            .sort((a, b) => b.domainCount - a.domainCount)
+            .slice(0, 10); // Top 10 countries
+        
+        // Update stats
+        if (statsContainer) {
+            statsContainer.innerHTML = `
+                <strong>Total:</strong> ${data.total || 0} domains | 
+                <strong>With History:</strong> ${data.domains_with_history || 0} domains
+            `;
+        }
+        
+        // Render domains
+        if (domains.length === 0) {
+            container.innerHTML = '<div class="error" style="padding: 20px; color: #f97373;">No DNS history data available</div>';
+            return;
+        }
+        
+        // Build HTML with summary cards first
+        let html = '';
+        
+        // Add country summary cards
+        if (topCountries.length > 0) {
+            html += '<div class="dns-country-summary">';
+            html += '<h3 style="margin-bottom: 15px; color: #f3f4f7;">Top Countries by Domain Count</h3>';
+            html += '<div class="dns-country-cards">';
+            
+            topCountries.forEach(countryStat => {
+                const percentage = ((countryStat.domainCount / data.total) * 100).toFixed(1);
+                html += `
+                    <div class="dns-country-card" data-filter-country="${countryStat.country.replace(/"/g, '&quot;')}" style="cursor: pointer;">
+                        <div class="dns-country-name">${countryStat.country}</div>
+                        <div class="dns-country-count">${countryStat.domainCount} domain${countryStat.domainCount !== 1 ? 's' : ''}</div>
+                        <div class="dns-country-percentage">${percentage}%</div>
+                    </div>
+                `;
+            });
+            
+            // Add "Show All" button
+            html += `
+                <div class="dns-country-card dns-country-card-all" data-filter-country="all" style="cursor: pointer; border: 2px solid rgba(217, 53, 62, 0.3);">
+                    <div class="dns-country-name">Show All</div>
+                    <div class="dns-country-count">${data.total} domain${data.total !== 1 ? 's' : ''}</div>
+                    <div class="dns-country-percentage">100%</div>
+                </div>
+            `;
+            
+            html += '</div></div>';
+        }
+        
+        // Sort by domain name
+        domains.sort((a, b) => a.domain.localeCompare(b.domain));
+        
+        html += '<div class="dns-history-list" id="dns-history-list">';
+        
+        domains.forEach(domainData => {
+            const domain = domainData.domain;
+            const ips = domainData.historical_ips || [];
+            
+            if (ips.length === 0) return;
+            
+            // Group IPs by location (country) - use same normalization function
+            const locationGroups = {};
+            ips.forEach(ipRecord => {
+                const normalizedCountry = window.normalizeCountryName(
+                    ipRecord.country,
+                    ipRecord.location
+                );
+                
+                if (!locationGroups[normalizedCountry]) {
+                    locationGroups[normalizedCountry] = {
+                        country: normalizedCountry,
+                        location: ipRecord.location || normalizedCountry,
+                        asn: ipRecord.asn || 'Unknown',
+                        ips: [],
+                        dates: []
+                    };
+                }
+                
+                // Only add unique IPs
+                if (!locationGroups[normalizedCountry].ips.includes(ipRecord.ip)) {
+                    locationGroups[normalizedCountry].ips.push(ipRecord.ip);
+                }
+                
+                // Track dates
+                if (ipRecord.last_seen) {
+                    locationGroups[normalizedCountry].dates.push(ipRecord.last_seen);
+                }
+            });
+            
+            // Calculate total unique IPs
+            const totalUniqueIPs = new Set(ips.map(ip => ip.ip)).size;
+            
+            html += `
+                <div class="dns-domain-card" data-domain="${domain.toLowerCase()}">
+                    <div class="dns-domain-header">
+                        <h3>${domain}</h3>
+                        <span class="dns-ip-count">${totalUniqueIPs} unique IP${totalUniqueIPs !== 1 ? 's' : ''} across ${Object.keys(locationGroups).length} location${Object.keys(locationGroups).length !== 1 ? 's' : ''}</span>
+                    </div>
+                    <div class="dns-ips-list">
+            `;
+            
+            // Sort locations by IP count (most IPs first)
+            const sortedLocations = Object.values(locationGroups).sort((a, b) => b.ips.length - a.ips.length);
+            
+            sortedLocations.forEach(locGroup => {
+                // Sort IPs for display
+                locGroup.ips.sort();
+                
+                // Get date range
+                const dates = locGroup.dates.filter(d => d).sort();
+                const dateRange = dates.length > 0 ? 
+                    (dates.length === 1 ? dates[0] : `${dates[dates.length - 1]} to ${dates[0]}`) : 
+                    'Unknown';
+                
+                // Format IP range (show first 3, then "and X more" if needed)
+                let ipDisplay = '';
+                if (locGroup.ips.length <= 5) {
+                    ipDisplay = locGroup.ips.map(ip => `<code>${ip}</code>`).join(', ');
+                } else {
+                    const firstThree = locGroup.ips.slice(0, 3).map(ip => `<code>${ip}</code>`).join(', ');
+                    const remaining = locGroup.ips.length - 3;
+                    ipDisplay = `${firstThree} and ${remaining} more`;
+                }
+                
+                html += `
+                    <div class="dns-location-group">
+                        <div class="dns-location-header">
+                            <strong>${locGroup.country}</strong>
+                            <span class="dns-location-count">${locGroup.ips.length} IP${locGroup.ips.length !== 1 ? 's' : ''}</span>
+                        </div>
+                        <div class="dns-location-details">
+                            <div class="dns-location-info">
+                                <span class="dns-info-label">Location:</span> ${locGroup.location}
+                            </div>
+                            <div class="dns-location-info">
+                                <span class="dns-info-label">ASN:</span> ${locGroup.asn}
+                            </div>
+                            <div class="dns-location-info">
+                                <span class="dns-info-label">IP Addresses:</span> ${ipDisplay}
+                            </div>
+                            <div class="dns-location-info">
+                                <span class="dns-info-label">Date Range:</span> ${dateRange}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+        
+        // Store the list container reference
+        const listContainer = container.querySelector('.dns-history-list');
+        if (listContainer) {
+            listContainer.id = 'dns-history-list';
+        }
+        
+        // Add event delegation for country card clicks
+        const summaryContainer = container.querySelector('.dns-country-summary');
+        if (summaryContainer) {
+            summaryContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('.dns-country-card');
+                if (card) {
+                    const filterCountry = card.dataset.filterCountry;
+                    if (filterCountry === 'all') {
+                        window.filterDnsByCountry(null);
+                    } else if (filterCountry) {
+                        window.filterDnsByCountry(filterCountry);
+                    }
+                }
+            });
+        }
+        
+        // Add search functionality (only add listener once)
+        if (searchInput && !searchInput.hasAttribute('data-listener-added')) {
+            searchInput.setAttribute('data-listener-added', 'true');
+            searchInput.addEventListener('input', () => {
+                window.applyDnsFilters();
+            });
+        }
+        
+        // Initialize filter state
+        window.dnsHistoryFilterCountry = null;
+        
+    } catch (error) {
+        console.error("Error loading DNS history:", error);
+        container.innerHTML = '<div class="error" style="padding: 20px; color: #f97373;">Error loading DNS history. Please try again.</div>';
+    }
+}
+
+// Filter DNS history by country - make it globally accessible
+window.filterDnsByCountry = function(country) {
+    console.log('Filtering by country:', country);
+    window.dnsHistoryFilterCountry = country;
+    
+    // Update card styles to show selected state
+    const cards = document.querySelectorAll('.dns-country-card');
+    cards.forEach(card => {
+        card.classList.remove('dns-country-card-active');
+        if (country && card.dataset.filterCountry === country) {
+            card.classList.add('dns-country-card-active');
+        } else if (!country && (card.dataset.filterCountry === 'all' || card.classList.contains('dns-country-card-all'))) {
+            card.classList.add('dns-country-card-active');
+        }
+    });
+    
+    window.applyDnsFilters();
+};
+
+// Apply both country and search filters - make it globally accessible
+window.applyDnsFilters = function() {
+    const container = document.getElementById('dns-history-list');
+    if (!container) {
+        console.warn('DNS history list container not found');
+        return;
+    }
+    
+    const searchInput = document.getElementById('dns-search');
+    const searchTerm = (searchInput ? searchInput.value.toLowerCase() : '');
+    const countryFilter = window.dnsHistoryFilterCountry || null;
+    
+    const cards = container.querySelectorAll('.dns-domain-card');
+    let visibleCount = 0;
+    
+    console.log('Applying filters:', { countryFilter, searchTerm, totalCards: cards.length });
+    
+    cards.forEach(card => {
+        const domain = card.dataset.domain;
+        const domainData = window.dnsHistoryDomains ? window.dnsHistoryDomains.find(d => d.domain.toLowerCase() === domain) : null;
+        
+        // Check search filter
+        let matchesSearch = !searchTerm || domain.includes(searchTerm);
+        
+        // Check country filter
+        let matchesCountry = true;
+        if (countryFilter && domainData && domainData.historical_ips) {
+            matchesCountry = false;
+            domainData.historical_ips.forEach(ipRecord => {
+                const normalizedCountry = window.normalizeCountryName(
+                    ipRecord.country,
+                    ipRecord.location
+                );
+                if (normalizedCountry === countryFilter) {
+                    matchesCountry = true;
+                }
+            });
+        }
+        
+        if (matchesSearch && matchesCountry) {
+            card.style.display = 'block';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    console.log('Filter applied:', { visibleCount, totalCards: cards.length });
+    
+    // Update stats
+    const statsContainer = document.getElementById('dns-stats');
+    if (statsContainer) {
+        const total = window.dnsHistoryDomains ? window.dnsHistoryDomains.length : 0;
+        let statsHtml = `
+            <strong>Total:</strong> ${total} domains | 
+            <strong>Showing:</strong> ${visibleCount} domain${visibleCount !== 1 ? 's' : ''}
+        `;
+        if (countryFilter) {
+            statsHtml += ` | <strong>Filtered by:</strong> ${countryFilter}`;
+        }
+        statsContainer.innerHTML = statsHtml;
+    }
+};
 
 // Render analytics summary
 function renderAnalytics(analytics) {
@@ -481,7 +1035,7 @@ async function loadDomains() {
     } catch (error) {
         console.error("Error loading domains:", error);
         document.getElementById("table-body").innerHTML = 
-            '<tr><td colspan="21" class="loading">Error loading data</td></tr>';
+            '<tr><td colspan="24" class="loading">Error loading data</td></tr>';
     }
 }
 
@@ -663,9 +1217,11 @@ function updateColumnVisibility() {
         }
     });
     
-    // Update show all button text
-    const allVisible = Object.keys(columnDefinitions).every(col => visibleColumns.includes(col));
-    document.getElementById("show-all-btn").textContent = allVisible ? "Show Default" : "Show All Columns";
+    // Hide "Show All Columns" button since empty columns are removed
+    const showAllBtn = document.getElementById("show-all-btn");
+    if (showAllBtn) {
+        showAllBtn.style.display = "none";
+    }
 }
 
 // Setup column menu checkboxes
@@ -750,7 +1306,7 @@ function renderTable() {
     const tbody = document.getElementById("table-body");
     
     if (filteredDomains.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="21" class="loading">No domains found</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="24" class="loading">No domains found</td></tr>';
         return;
     }
     
@@ -865,6 +1421,62 @@ function renderTable() {
             }
         }
         
+        // Extract SecurityTrails data
+        let subdomains = [];
+        let subdomainCount = 0;
+        let historicalIPs = [];
+        let historicalIPCount = 0;
+        
+        try {
+            if (domain.dns_records) {
+                const dns = typeof domain.dns_records === 'string' ? JSON.parse(domain.dns_records) : domain.dns_records;
+                if (dns && dns.securitytrails) {
+                    const st = dns.securitytrails;
+                    // Check if available (some domains might have empty securitytrails object)
+                    // If available is explicitly false, skip. Otherwise, try to extract data.
+                    if (st && st.available !== false) {
+                        // Subdomains
+                        if (st.subdomains && Array.isArray(st.subdomains)) {
+                            if (st.subdomains.length > 0) {
+                                subdomains = st.subdomains;
+                                subdomainCount = st.subdomain_count || subdomains.length;
+                            } else if (st.subdomain_count && parseInt(st.subdomain_count) > 0) {
+                                subdomainCount = parseInt(st.subdomain_count);
+                            }
+                        } else if (st.subdomain_count && parseInt(st.subdomain_count) > 0) {
+                            subdomainCount = parseInt(st.subdomain_count);
+                        }
+                        // Historical DNS
+                        if (st.historical_dns && Array.isArray(st.historical_dns)) {
+                            if (st.historical_dns.length > 0) {
+                                historicalIPs = st.historical_dns;
+                                historicalIPCount = historicalIPs.length;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Error extracting SecurityTrails data:', e, domain.domain);
+        }
+        
+        // Extract WhoisXML enhanced registrar
+        let enhancedRegistrar = '';
+        try {
+            if (domain.whois_data) {
+                const whois = typeof domain.whois_data === 'string' ? JSON.parse(domain.whois_data) : domain.whois_data;
+                if (whois && whois.whoisxml) {
+                    const wx = whois.whoisxml;
+                    // Check if available - if available is explicitly false, skip. Otherwise, try to extract.
+                    if (wx && wx.available !== false && wx.whois_data) {
+                        enhancedRegistrar = wx.whois_data.registrar || '';
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('Error extracting WhoisXML data:', e, domain.domain);
+        }
+        
         // Build row cells in header order
         const cellMap = {
             'row-number': `<td class="row-number">${index + 1}</td>`,
@@ -887,6 +1499,7 @@ function renderTable() {
             'ipv6_addresses': `<td class="col-ipv6" title="${escapeHtml(ipv6Addresses.join(', ') || '')}">${formatArray(ipv6Addresses, 2)}</td>`,
             'name_servers': `<td class="col-nameservers" title="${escapeHtml(nameServers.join(', ') || '')}">${formatArray(nameServers, 2)}</td>`,
             'mx_records': `<td class="col-mx" title="${escapeHtml(mxRecords.join(', ') || '')}">${formatArray(mxRecords, 2)}</td>`
+            // Removed empty columns: subdomains, historical_ips, enhanced_registrar (no data available)
         };
         
         // Get header order from table
@@ -964,13 +1577,19 @@ function sortTable(column, toggleDirection = true) {
     
     // Sort data
     filteredDomains.sort((a, b) => {
-        const aVal = String(a[column] || '').toLowerCase();
-        const bVal = String(b[column] || '').toLowerCase();
+        let aVal, bVal;
         
-        if (currentSort.direction === 'asc') {
-            return aVal.localeCompare(bVal);
-        } else {
-            return bVal.localeCompare(aVal);
+        // Removed special handling for empty columns: subdomains, historical_ips, enhanced_registrar
+        aVal = String(a[column] || '').toLowerCase();
+        bVal = String(b[column] || '').toLowerCase();
+        
+        {
+            // String comparison for other columns
+            if (currentSort.direction === 'asc') {
+                return aVal.localeCompare(bVal);
+            } else {
+                return bVal.localeCompare(aVal);
+            }
         }
     });
     
@@ -1497,6 +2116,137 @@ async function showNodeDetails(node) {
                         <span class="info-value">${escapeHtml(domainData.payment_processor)}</span>
                     </div>
                 </div>` : ''}
+                
+                ${(() => {
+                    // SecurityTrails data
+                    const st = domainData.dns_records?.securitytrails;
+                    if (!st || !st.available) return '';
+                    
+                    let stHtml = '<div class="modal-section"><h3>🔍 SecurityTrails Intelligence</h3>';
+                    
+                    // Subdomains
+                    if (st.subdomains && st.subdomains.length > 0) {
+                        stHtml += `<div class="info-row">
+                            <span class="info-label">Subdomains (${st.subdomain_count || st.subdomains.length}):</span>
+                            <span class="info-value">${escapeHtml(st.subdomains.slice(0, 10).join(', '))}${st.subdomains.length > 10 ? ` and ${st.subdomains.length - 10} more` : ''}</span>
+                        </div>`;
+                    }
+                    
+                    // Historical DNS
+                    if (st.historical_dns && st.historical_dns.length > 0) {
+                        stHtml += `<div class="info-row">
+                            <span class="info-label">Historical IPs:</span>
+                            <span class="info-value">${st.historical_dns.length} unique IP${st.historical_dns.length !== 1 ? 's' : ''} (${st.historical_dns.slice(0, 5).join(', ')}${st.historical_dns.length > 5 ? '...' : ''})</span>
+                        </div>`;
+                    }
+                    
+                    // Current DNS records
+                    if (st.dns_records) {
+                        const dns = st.dns_records;
+                        if (dns.a && dns.a.length > 0) {
+                            stHtml += `<div class="info-row">
+                                <span class="info-label">A Records:</span>
+                                <span class="info-value">${escapeHtml(dns.a.join(', '))}</span>
+                            </div>`;
+                        }
+                        if (dns.ns && dns.ns.length > 0) {
+                            stHtml += `<div class="info-row">
+                                <span class="info-label">Name Servers:</span>
+                                <span class="info-value">${escapeHtml(dns.ns.join(', '))}</span>
+                            </div>`;
+                        }
+                    }
+                    
+                    // Tags
+                    if (st.tags && st.tags.length > 0) {
+                        stHtml += `<div class="info-row">
+                            <span class="info-label">Security Tags:</span>
+                            <span class="info-value">${escapeHtml(st.tags.join(', '))}</span>
+                        </div>`;
+                    }
+                    
+                    stHtml += '</div>';
+                    return stHtml;
+                })()}
+                
+                ${(() => {
+                    // WhoisXML data
+                    const wx = domainData.whois_data?.whoisxml;
+                    if (!wx || !wx.available) return '';
+                    
+                    let wxHtml = '<div class="modal-section"><h3>📋 Enhanced WHOIS (WhoisXML)</h3>';
+                    const whois = wx.whois_data || {};
+                    
+                    // Enhanced registrar info
+                    if (whois.registrar) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Registrar:</span>
+                            <span class="info-value">${escapeHtml(whois.registrar)}</span>
+                        </div>`;
+                    }
+                    
+                    // Registrant details
+                    if (whois.registrant_name || whois.registrant_organization) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Registrant:</span>
+                            <span class="info-value">${escapeHtml(whois.registrant_name || '')} ${whois.registrant_organization ? `(${whois.registrant_organization})` : ''}</span>
+                        </div>`;
+                    }
+                    
+                    if (whois.registrant_country) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Registrant Country:</span>
+                            <span class="info-value">${escapeHtml(whois.registrant_country)}</span>
+                        </div>`;
+                    }
+                    
+                    // Dates
+                    if (whois.creation_date) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Created:</span>
+                            <span class="info-value">${formatDateForModal(whois.creation_date)}</span>
+                        </div>`;
+                    }
+                    if (whois.updated_date) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Last Updated:</span>
+                            <span class="info-value">${formatDateForModal(whois.updated_date)}</span>
+                        </div>`;
+                    }
+                    if (whois.expiration_date) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Expires:</span>
+                            <span class="info-value">${formatDateForModal(whois.expiration_date)}</span>
+                        </div>`;
+                    }
+                    
+                    // WHOIS History
+                    if (wx.history && wx.history.length > 0) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">WHOIS History:</span>
+                            <span class="info-value">${wx.history.length} record${wx.history.length !== 1 ? 's' : ''} available</span>
+                        </div>`;
+                    }
+                    
+                    // SSL Certificates
+                    if (wx.ssl_certificates && wx.ssl_certificates.length > 0) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">SSL Certificates:</span>
+                            <span class="info-value">${wx.ssl_certificates.length} certificate${wx.ssl_certificates.length !== 1 ? 's' : ''} found</span>
+                        </div>`;
+                    }
+                    
+                    // Related domains (reverse WHOIS)
+                    if (wx.registrant_domains && wx.registrant_domains.length > 0) {
+                        wxHtml += `<div class="info-row">
+                            <span class="info-label">Related Domains (same registrant):</span>
+                            <span class="info-value">${wx.registrant_domains.length} domain${wx.registrant_domains.length !== 1 ? 's' : ''} found</span>
+                        </div>`;
+                    }
+                    
+                    wxHtml += '</div>';
+                    return wxHtml;
+                })()}
             </div>
         `;
     } else {
