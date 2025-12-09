@@ -15,6 +15,23 @@ from .cms_enrichment import detect_cms
 from .payment_detection import detect_payment_processors
 from .tech_stack_enrichment import detect_full_tech_stack
 
+# Optional API integrations
+try:
+    from .securitytrails_enrichment import enrich_with_securitytrails, get_securitytrails_ip_data
+    SECURITYTRAILS_AVAILABLE = True
+except ImportError:
+    SECURITYTRAILS_AVAILABLE = False
+    def enrich_with_securitytrails(domain): return {}
+    def get_securitytrails_ip_data(ip): return {}
+
+try:
+    from .whoisxml_enrichment import enrich_with_whoisxml, get_whoisxml_history
+    WHOISXML_AVAILABLE = True
+except ImportError:
+    WHOISXML_AVAILABLE = False
+    def enrich_with_whoisxml(domain): return {}
+    def get_whoisxml_history(domain): return {}
+
 # Try to import cache utilities (may not be available in all contexts)
 try:
     # Try relative import first (when used as a module)
@@ -222,6 +239,33 @@ def enrich_domain(domain: str) -> Dict:
     except Exception as e:
         # Silently fail - some domains may not be accessible
         pass
+    
+    # Step 8: SecurityTrails enrichment (if API key available)
+    if SECURITYTRAILS_AVAILABLE:
+        print(f"  → SecurityTrails enrichment...")
+        try:
+            st_data = enrich_with_securitytrails(domain)
+            result.update(st_data)
+            
+            # If we have an IP, also get IP-specific data
+            if result.get("ip_address"):
+                st_ip_data = get_securitytrails_ip_data(result["ip_address"])
+                result.update(st_ip_data)
+        except Exception as e:
+            print(f"  ⚠️  SecurityTrails enrichment failed: {e}")
+    
+    # Step 9: WhoisXML enrichment (if API key available)
+    if WHOISXML_AVAILABLE:
+        print(f"  → WhoisXML enrichment...")
+        try:
+            wx_data = enrich_with_whoisxml(domain)
+            result.update(wx_data)
+            
+            # Get WHOIS history
+            wx_history = get_whoisxml_history(domain)
+            result.update(wx_history)
+        except Exception as e:
+            print(f"  ⚠️  WhoisXML enrichment failed: {e}")
     
     print(f"  ✓ Enrichment complete for {domain}")
     
