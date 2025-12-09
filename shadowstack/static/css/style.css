@@ -992,68 +992,6 @@ header h1 {
     align-items: center;
 }
 
-.column-controls {
-    position: relative;
-    display: flex;
-    gap: 10px;
-}
-
-.column-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: rgba(15, 23, 42, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    padding: 16px;
-    z-index: 1000;
-    min-width: 250px;
-    margin-top: 8px;
-    backdrop-filter: blur(20px);
-}
-
-.column-menu-header {
-    font-weight: 600;
-    color: #f3f4f7;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.column-menu-footer {
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    gap: 10px;
-}
-
-.column-checkbox-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.2s;
-}
-
-.column-checkbox-item:hover {
-    background: rgba(15, 23, 42, 0.8);
-}
-
-.column-checkbox-item input[type="checkbox"] {
-    cursor: pointer;
-    width: 18px;
-    height: 18px;
-}
-
-.column-checkbox-item label {
-    cursor: pointer;
-    flex: 1;
-    user-select: none;
-}
 
 .data-table th.hidden-col,
 .data-table td.hidden-col {

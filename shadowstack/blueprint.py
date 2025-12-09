@@ -1763,7 +1763,7 @@ def get_ai_analysis():
                 "updated_at": str(cached['updated_at'])
             })
         
-        # If no static file and no cache, and not forcing, return error
+        # If no static file and no cache, return error (static file should be in git)
         if not force_regenerate:
             return jsonify({
                 "error": "Analysis not available. Please run 'python3 shadowstack/generate_analysis.py' to generate it.",
@@ -2076,42 +2076,115 @@ Format the response in clear sections with markdown formatting."""
 
 @shadowstack_bp.route('/api/dns-history', methods=['GET'])
 def get_dns_history():
-    """Get DNS history data from the local JSON file."""
+    """Get DNS history data from the database or JSON file fallback."""
     import json
     from pathlib import Path
     
+    # First try database
+    try:
+        postgres = PostgresClient()
+        if postgres and postgres.conn:
+            from psycopg2.extras import RealDictCursor
+            cursor = postgres.conn.cursor(cursor_factory=RealDictCursor)
+            
+            # Get all ShadowStack domains with DNS history
+            cursor.execute("""
+                SELECT 
+                    d.domain,
+                    de.dns_records->'viewdns_ip_history'->'historical_ips' as viewdns_ips,
+                    de.dns_records->'securitytrails'->'historical_dns' as securitytrails_ips
+                FROM domains d
+                LEFT JOIN domain_enrichment de ON d.id = de.domain_id
+                WHERE (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+                  AND (
+                    de.dns_records->'viewdns_ip_history'->'historical_ips' IS NOT NULL
+                    OR de.dns_records->'securitytrails'->'historical_dns' IS NOT NULL
+                  )
+                ORDER BY d.domain
+            """)
+            
+            results = cursor.fetchall()
+            cursor.close()
+            
+            # Convert to frontend format
+            domains_list = []
+            for row in results:
+                domain = row['domain']
+                historical_ips = []
+                
+                # Get ViewDNS IPs (preferred format)
+                viewdns_ips = row.get('viewdns_ips')
+                if viewdns_ips:
+                    if isinstance(viewdns_ips, list):
+                        historical_ips = viewdns_ips
+                    elif isinstance(viewdns_ips, str):
+                        try:
+                            historical_ips = json.loads(viewdns_ips)
+                        except:
+                            historical_ips = []
+                
+                # Fallback to SecurityTrails if ViewDNS not available
+                if not historical_ips:
+                    st_ips = row.get('securitytrails_ips')
+                    if st_ips:
+                        if isinstance(st_ips, list):
+                            # Convert SecurityTrails format to ViewDNS format
+                            historical_ips = [
+                                {
+                                    'ip': ip,
+                                    'country': 'Unknown',
+                                    'asn': 'Unknown',
+                                    'location': 'Unknown',
+                                    'last_seen': None
+                                }
+                                for ip in st_ips if ip
+                            ]
+                
+                if historical_ips:
+                    domains_list.append({
+                        "domain": domain,
+                        "historical_ips": historical_ips
+                    })
+            
+            if domains_list:
+                return jsonify({
+                    "domains": domains_list,
+                    "total": len(domains_list),
+                    "domains_with_history": len(domains_list)
+                })
+    except Exception as e:
+        shadowstack_logger.warning(f"Error loading DNS history from database: {e}")
+    
+    # Fallback to JSON file
     data_file = Path(__file__).parent.parent / 'shadowstack_ip_history.json'
     
-    if not data_file.exists():
-        return jsonify({
-            "error": "DNS history data file not found",
-            "domains": {}
-        }), 200
+    if data_file.exists():
+        try:
+            with open(data_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Convert dict to list format for easier frontend handling
+            domains_list = []
+            for domain, domain_data in data.items():
+                if isinstance(domain_data, dict) and 'historical_ips' in domain_data:
+                    domains_list.append({
+                        "domain": domain,
+                        "historical_ips": domain_data.get('historical_ips', [])
+                    })
+            
+            return jsonify({
+                "domains": domains_list,
+                "total": len(domains_list),
+                "domains_with_history": len([d for d in domains_list if d.get('historical_ips')])
+            })
+        except Exception as e:
+            shadowstack_logger.error(f"Error loading DNS history from JSON: {e}", exc_info=True)
     
-    try:
-        with open(data_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        
-        # Convert dict to list format for easier frontend handling
-        domains_list = []
-        for domain, domain_data in data.items():
-            if isinstance(domain_data, dict) and 'historical_ips' in domain_data:
-                domains_list.append({
-                    "domain": domain,
-                    "historical_ips": domain_data.get('historical_ips', [])
-                })
-        
-        return jsonify({
-            "domains": domains_list,
-            "total": len(domains_list),
-            "domains_with_history": len([d for d in domains_list if d.get('historical_ips')])
-        })
-    except Exception as e:
-        shadowstack_logger.error(f"Error loading DNS history: {e}", exc_info=True)
-        return jsonify({
-            "error": str(e),
-            "domains": []
-        }), 200
+    # No data available
+    return jsonify({
+        "error": "DNS history data not available",
+        "domains": []
+    }), 200
 
 
 def clean_analysis_formatting(text):

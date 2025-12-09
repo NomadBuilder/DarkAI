@@ -106,18 +106,6 @@ function initVisualization() {
     if (showAllBtn) {
         showAllBtn.style.display = "none";
     }
-    document.getElementById("column-toggle-btn").addEventListener("click", toggleColumnMenu);
-    document.getElementById("save-columns-btn").addEventListener("click", saveColumnSettings);
-    document.getElementById("reset-columns-btn").addEventListener("click", resetColumnSettings);
-    
-    // Close column menu when clicking outside
-    document.addEventListener("click", (e) => {
-        const menu = document.getElementById("column-menu");
-        const btn = document.getElementById("column-toggle-btn");
-        if (menu && !menu.contains(e.target) && !btn.contains(e.target)) {
-            menu.style.display = "none";
-        }
-    });
     
     // Table sort handlers
     document.querySelectorAll(".sortable").forEach(th => {
@@ -460,14 +448,8 @@ async function loadAnalysis() {
             if (data.needs_regeneration) {
                 container.innerHTML = `
                     <div style="padding: 20px; text-align: center;">
-                        <h3 style="color: #f97373; margin-bottom: 15px;">No cached analysis available</h3>
-                        <p style="margin-bottom: 20px; color: #a0a0a0;">The analysis needs to be generated. This may take a few minutes.</p>
-                        <button onclick="generateAnalysis()" style="background: #d9353e; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-size: 16px;">
-                            Generate Analysis
-                        </button>
-                        <p style="margin-top: 15px; font-size: 12px; color: #666;">
-                            Or visit: <a href="/shadowstack/api/analysis?force=true" target="_blank" style="color: #4a9eff;">/shadowstack/api/analysis?force=true</a>
-                        </p>
+                        <h3 style="color: #f97373; margin-bottom: 15px;">Analysis not available</h3>
+                        <p style="margin-bottom: 20px; color: #a0a0a0;">The analysis file is missing. Please contact support.</p>
                     </div>
                 `;
             } else {
@@ -1176,7 +1158,6 @@ function initializeColumnVisibility() {
     // First, check which columns have data and hide empty ones
     hideEmptyColumns();
     updateColumnVisibility();
-    setupColumnMenu();
 }
 
 // Hide columns that have no data across all domains
@@ -1224,40 +1205,6 @@ function updateColumnVisibility() {
     }
 }
 
-// Setup column menu checkboxes
-function setupColumnMenu() {
-    const container = document.getElementById("column-checkboxes");
-    container.innerHTML = '';
-    
-    Object.entries(columnDefinitions).forEach(([key, label]) => {
-        const item = document.createElement('div');
-        item.className = 'column-checkbox-item';
-        
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = `col-${key}`;
-        checkbox.checked = visibleColumns.includes(key);
-        checkbox.addEventListener('change', () => {
-            if (checkbox.checked) {
-                if (!visibleColumns.includes(key)) {
-                    visibleColumns.push(key);
-                }
-            } else {
-                visibleColumns = visibleColumns.filter(c => c !== key);
-            }
-            updateColumnVisibility();
-        });
-        
-        const labelEl = document.createElement('label');
-        labelEl.htmlFor = `col-${key}`;
-        labelEl.textContent = label;
-        
-        item.appendChild(checkbox);
-        item.appendChild(labelEl);
-        container.appendChild(item);
-    });
-}
-
 // Show all columns
 function showAllColumns() {
     const allVisible = Object.keys(columnDefinitions).every(col => visibleColumns.includes(col));
@@ -1271,34 +1218,6 @@ function showAllColumns() {
     }
     
     updateColumnVisibility();
-    setupColumnMenu();
-}
-
-// Toggle column menu
-function toggleColumnMenu() {
-    const menu = document.getElementById("column-menu");
-    menu.style.display = menu.style.display === "none" ? "block" : "none";
-}
-
-// Save column settings
-function saveColumnSettings() {
-    saveColumnPreferences();
-    document.getElementById("column-menu").style.display = "none";
-    // Show confirmation
-    const btn = document.getElementById("save-columns-btn");
-    const originalText = btn.textContent;
-    btn.textContent = "✓ Saved!";
-    setTimeout(() => {
-        btn.textContent = originalText;
-    }, 2000);
-}
-
-// Reset column settings
-function resetColumnSettings() {
-    visibleColumns = [...defaultVisibleColumns];
-    updateColumnVisibility();
-    setupColumnMenu();
-    saveColumnPreferences();
 }
 
 // Render table

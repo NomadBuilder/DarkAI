@@ -71,6 +71,10 @@ data/
 !personaforge/static/data/
 personaforge/static/data/*
 !personaforge/static/data/vendor_intelligence_report.json
+# Allow ShadowStack analysis static data
+!shadowstack/static/data/
+shadowstack/static/data/*
+!shadowstack/static/data/analysis.html
 
 # Temporary files
 tmp/

@@ -9,7 +9,7 @@
   })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
   <!-- End Google Tag Manager -->
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Dark AI.ca – Exposing Hidden AI Harms</title>
   <meta name="description" content="Dark AI develops investigative tools that map synthetic identities, exploitative AI imagery, and cyber-enabled extortion networks — helping journalists, researchers, and platforms uncover what AI is making possible." />
   
@@ -58,10 +58,12 @@
       background-image: url('https://i.imgur.com/YTCnPOE.png');
       background-size: cover;
       background-position: center center;
-      background-attachment: fixed;
+      background-attachment: scroll; /* Changed from fixed to scroll for mobile */
       background-repeat: no-repeat;
       z-index: 0;
       pointer-events: none;
+      /* Force repaint on orientation change */
+      will-change: transform;
     }
     
     body::after {
@@ -149,6 +151,9 @@
         right: -100%;
         width: 320px;
         height: 100vh;
+        height: 100dvh; /* Use dynamic viewport height for mobile */
+        height: calc(var(--vh, 1vh) * 100); /* Fallback using CSS variable */
+        max-height: 100vh;
         background: rgba(5, 6, 11, 0.98);
         backdrop-filter: blur(20px);
         flex-direction: column;
@@ -158,6 +163,8 @@
         transition: right 0.3s ease;
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
         z-index: 1000;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       
       .nav-links.active {
@@ -684,6 +691,54 @@
     const navLinks = document.getElementById('navLinks');
     const reportsDropdown = document.getElementById('reportsDropdown');
     const exploreToolsBtn = document.getElementById('exploreToolsBtn');
+    
+    // Handle orientation change - reset layout
+    let orientationChangeTimeout;
+    function handleOrientationChange() {
+      // Close mobile menu on orientation change
+      if (hamburger && navLinks) {
+        hamburger.classList.remove('active');
+        navLinks.classList.remove('active');
+      }
+      
+      // Force repaint to fix layout issues
+      document.body.style.display = 'none';
+      // Use requestAnimationFrame to ensure repaint happens
+      requestAnimationFrame(function() {
+        document.body.style.display = '';
+        // Recalculate viewport height
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
+      });
+    }
+    
+    // Listen for orientation change
+    window.addEventListener('orientationchange', function() {
+      // Delay to allow browser to finish orientation change
+      clearTimeout(orientationChangeTimeout);
+      orientationChangeTimeout = setTimeout(handleOrientationChange, 100);
+    });
+    
+    // Also listen for resize (handles some mobile browsers that don't fire orientationchange)
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function() {
+        // Only handle if significant size change (likely orientation)
+        const currentWidth = window.innerWidth;
+        const currentHeight = window.innerHeight;
+        if (Math.abs(currentWidth - (window.lastWidth || currentWidth)) > 100 ||
+            Math.abs(currentHeight - (window.lastHeight || currentHeight)) > 100) {
+          handleOrientationChange();
+          window.lastWidth = currentWidth;
+          window.lastHeight = currentHeight;
+        }
+      }, 150);
+    });
+    
+    // Set initial viewport height variable
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
     
     // Smooth scroll to tools section
     if (exploreToolsBtn) {

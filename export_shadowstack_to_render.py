@@ -117,10 +117,11 @@ def export_and_import_data():
             SELECT id, domain, source, notes, created_at, updated_at 
             FROM domains 
             WHERE source != 'DUMMY_DATA_FOR_TESTING'
+              AND (source ILIKE 'SHADOWSTACK%' OR source ILIKE 'ShadowStack%' OR source = 'IMPORT' OR source = 'CSV Import')
             ORDER BY id
         """)
         domains = local_cursor.fetchall()
-        print(f"  Found {len(domains)} domains")
+        print(f"  Found {len(domains)} ShadowStack domains")
         
         # Import domains to Render
         print("\n📥 Importing domains to Render database...")
