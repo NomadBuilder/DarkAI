@@ -3381,7 +3381,7 @@ def dfacecheck_search():
         verified_results = []
         if 'source_embedding_vector' in locals():
             print(f"🔍 Verifying {len(search_results)} search results for face matches...")
-            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector, similarity_threshold=0.65)
+            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector, similarity_threshold=0.58)
             print(f"✅ Face verification complete: {len(verified_results)}/{len(search_results)} results contain matching faces")
             
             # If no verified results, return empty (don't show non-face matches)
@@ -3651,7 +3651,7 @@ def dfacecheck_search_serpapi(image_url, api_key):
         print(f"SerpAPI search error: {e}")
         return []
 
-def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.65):
+def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.58):
     """
     Verify if candidate images contain the same person using face recognition.
     
@@ -3690,33 +3690,35 @@ def dfacecheck_verify_faces_in_results(search_results, source_embedding, similar
                     tmp_path = tmp_file.name
                 
                 try:
-                    # CRITICAL: enforce_detection=True means we ONLY accept images with faces
-                    # This filters out jewelry, objects, etc. that don't have faces
+                    # Use enforce_detection=False to be more lenient, but verify we got embeddings
+                    # This allows slightly obscured faces while still filtering out pure jewelry/objects
                     candidate_embedding = DeepFace.represent(
                         img_path=tmp_path,
                         model_name='VGG-Face',
-                        enforce_detection=True  # STRICT: Must have a face or it will raise ValueError
+                        enforce_detection=False  # More lenient - allows slightly obscured faces
                     )
                     
                     if candidate_embedding and len(candidate_embedding) > 0:
                         candidate_vector = candidate_embedding[0]['embedding']
                         similarity = dfacecheck_cosine_similarity(source_embedding, candidate_vector)
                         
+                        # Only include if similarity is reasonable (filters out jewelry/objects)
                         if similarity >= similarity_threshold:
                             result['face_similarity'] = round(similarity, 3)
                             result['verified'] = True
-                            result['match_confidence'] = 'High' if similarity >= 0.8 else 'Medium' if similarity >= 0.7 else 'Low'
+                            result['match_confidence'] = 'High' if similarity >= 0.75 else 'Medium' if similarity >= 0.65 else 'Low'
                             verified.append(result)
                             print(f"   [{i+1}/{len(search_results)}] ✅ Face match: {similarity:.3f} - {image_url[:60]}...")
                         else:
                             print(f"   [{i+1}/{len(search_results)}] ❌ Low similarity: {similarity:.3f} - {image_url[:60]}...")
                     else:
+                        # No embedding extracted - likely no face or very poor quality
                         print(f"   [{i+1}/{len(search_results)}] ❌ No face detected - {image_url[:60]}...")
                         
                 except ValueError as e:
-                    # Face not detected in candidate image - filter it out (this is expected for jewelry/objects)
+                    # Face detection failed - skip this result
                     if 'Face could not be detected' in str(e) or 'No face detected' in str(e):
-                        print(f"   [{i+1}/{len(search_results)}] ❌ No face in image (filtered) - {image_url[:60]}...")
+                        print(f"   [{i+1}/{len(search_results)}] ❌ No face in image - {image_url[:60]}...")
                     else:
                         raise
                 except Exception as e:
