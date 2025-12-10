@@ -46,22 +46,32 @@ class Neo4jClient:
         
         try:
             # Neo4j Aura requires SSL - the driver handles this automatically for neo4j+s:// URIs
-            # Configure connection pool for better reliability
+            # For Aura, the URI should be neo4j+s://hostname (no port) - driver handles routing
             from neo4j import GraphDatabase
+            
+            # For Aura connections, use verify_connectivity instead of manual session test
+            # This is more reliable for cloud connections
             self.driver = GraphDatabase.driver(
                 uri, 
                 auth=(user, password),
                 max_connection_lifetime=1800,  # 30 minutes (shorter for free tier stability)
                 max_connection_pool_size=10,  # Smaller pool for free tier
                 connection_acquisition_timeout=30,  # Shorter timeout
-                connection_timeout=15,  # Shorter timeout
+                connection_timeout=30,  # Increased timeout for Aura (was 15)
                 keep_alive=True  # Enable keep-alive to detect dead connections faster
             )
-            # Test connection with timeout
-            with self.driver.session() as session:
-                result = session.run("RETURN 1 as test")
-                result.consume()  # Consume result to ensure query completes
-            logger.info(f"✅ Neo4j connection established to {uri}")
+            
+            # Use verify_connectivity() for Aura - more reliable than manual session test
+            try:
+                self.driver.verify_connectivity()
+                logger.info(f"✅ Neo4j connection established to {uri}")
+            except Exception as verify_error:
+                # If verify_connectivity fails, try manual session test as fallback
+                logger.warning(f"verify_connectivity() failed, trying manual test: {verify_error}")
+                with self.driver.session() as session:
+                    result = session.run("RETURN 1 as test")
+                    result.consume()
+                logger.info(f"✅ Neo4j connection established to {uri} (via manual test)")
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()
