@@ -7,10 +7,13 @@ This blueprint handles all ShadowStack routes under /shadowstack prefix.
 import os
 import sys
 from pathlib import Path
-from flask import Blueprint, render_template, jsonify, request, Response
+from flask import Blueprint, render_template, jsonify, request, Response, send_from_directory
+from werkzeug.utils import secure_filename
 import json
 from flask_cors import CORS
 from dotenv import load_dotenv
+import requests
+import tempfile
 
 # Add src to path (relative to blueprint location)
 blueprint_dir = Path(__file__).parent.absolute()
@@ -3261,3 +3264,457 @@ def enrich_all_domains_new():
         }), 500
 
 
+
+
+# ============================================================================
+# DFaceCheck - Deepfake Image Search (integrated into ShadowStack)
+# ============================================================================
+
+# Configuration for DFaceCheck
+DFACECHECK_ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+DFACECHECK_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+DFACECHECK_UPLOAD_FOLDER = blueprint_dir / 'static' / 'uploads' / 'dfacecheck'
+
+# Ensure upload directory exists
+DFACECHECK_UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
+
+def dfacecheck_allowed_file(filename):
+    """Check if file extension is allowed for DFaceCheck."""
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in DFACECHECK_ALLOWED_EXTENSIONS
+
+def get_shadowstack_domains_for_dfacecheck():
+    """Get ShadowStack domains for cross-referencing."""
+    try:
+        if postgres_client and postgres_client.conn:
+            cursor = postgres_client.conn.cursor()
+            cursor.execute("""
+                SELECT domain FROM domains
+                WHERE (source ILIKE 'SHADOWSTACK%' OR source ILIKE 'ShadowStack%')
+            """)
+            domains = [row[0] for row in cursor.fetchall()]
+            cursor.close()
+            return set(domains)
+        return set()
+    except Exception as e:
+        print(f"⚠️  Could not load ShadowStack domains for DFaceCheck: {e}")
+        return set()
+
+# Cache ShadowStack domains
+SHADOWSTACK_DOMAINS_CACHE = get_shadowstack_domains_for_dfacecheck()
+
+@shadowstack_bp.route('/dfacecheck')
+def dfacecheck_index():
+    """DFaceCheck main page."""
+    return render_template('dfacecheck.html')
+
+@shadowstack_bp.route('/dfacecheck/api/search', methods=['POST'])
+def dfacecheck_search():
+    """Search for similar faces online."""
+    try:
+        if 'image' not in request.files:
+            return jsonify({'error': 'No image file provided'}), 400
+        
+        file = request.files['image']
+        if file.filename == '':
+            return jsonify({'error': 'No file selected'}), 400
+        
+        if not dfacecheck_allowed_file(file.filename):
+            return jsonify({'error': 'Invalid file type. Allowed: PNG, JPG, JPEG, GIF, WEBP'}), 400
+        
+        # Save uploaded file
+        from datetime import datetime
+        filename = secure_filename(file.filename)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        unique_filename = f"{timestamp}_{filename}"
+        filepath = DFACECHECK_UPLOAD_FOLDER / unique_filename
+        file.save(str(filepath))
+        
+        # Verify face exists using deepface
+        try:
+            from deepface import DeepFace
+            
+            # Check if face exists in image
+            try:
+                faces = DeepFace.extract_faces(
+                    img_path=str(filepath),
+                    detector_backend='opencv'
+                )
+                if not faces or len(faces) == 0:
+                    if filepath.exists():
+                        filepath.unlink()
+                    return jsonify({'error': 'No face detected in image. Please upload an image with a clear face.'}), 400
+            except ValueError as e:
+                if 'Face could not be detected' in str(e) or 'No face detected' in str(e):
+                    if filepath.exists():
+                        filepath.unlink()
+                    return jsonify({'error': 'No face detected in image. Please upload an image with a clear face.'}), 400
+                raise
+            
+            # Extract face embedding
+            source_embedding = DeepFace.represent(
+                img_path=str(filepath),
+                model_name='VGG-Face',
+                enforce_detection=False
+            )
+            if not source_embedding or len(source_embedding) == 0:
+                if filepath.exists():
+                    filepath.unlink()
+                return jsonify({'error': 'Could not extract face features'}), 400
+            
+            source_embedding_vector = source_embedding[0]['embedding']
+            print(f"✅ Extracted face embedding: {len(source_embedding_vector)} dimensions")
+            
+        except ImportError:
+            print("⚠️  DeepFace not installed - skipping face detection")
+        except Exception as e:
+            if filepath.exists():
+                filepath.unlink()
+            error_msg = str(e)
+            if 'Face could not be detected' in error_msg:
+                return jsonify({'error': 'No face detected in image. Please upload an image with a clear face.'}), 400
+            return jsonify({'error': f'Face detection failed: {error_msg}'}), 400
+        
+        # Perform reverse image search
+        search_results, imgur_deletehash = dfacecheck_perform_reverse_image_search(str(filepath))
+        
+        # Verify faces in results
+        verified_results = []
+        if 'source_embedding_vector' in locals():
+            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector)
+        else:
+            verified_results = search_results
+        
+        # Cross-reference with ShadowStack domains
+        flagged_results = []
+        for result in verified_results:
+            if not isinstance(result, dict):
+                continue
+            domain = dfacecheck_extract_domain(result.get('url', ''))
+            if domain and domain in SHADOWSTACK_DOMAINS_CACHE:
+                result['flagged'] = True
+                result['flag_reason'] = 'Known NCII site'
+            else:
+                result['flagged'] = False
+            flagged_results.append(result)
+        
+        # Delete from Imgur (privacy)
+        if imgur_deletehash:
+            try:
+                dfacecheck_delete_from_imgur(imgur_deletehash)
+            except Exception as e:
+                print(f"⚠️  Could not delete from Imgur: {e}")
+        
+        # Clean up uploaded file
+        if filepath.exists():
+            filepath.unlink()
+        
+        return jsonify({
+            'success': True,
+            'results': flagged_results,
+            'total_results': len(flagged_results),
+            'flagged_count': sum(1 for r in flagged_results if r.get('flagged'))
+        })
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Search failed: {str(e)}'}), 500
+
+def dfacecheck_perform_reverse_image_search(image_path):
+    """Perform reverse image search using free APIs."""
+    results = []
+    imgur_deletehash = None
+    
+    # Upload to Imgur temporarily
+    image_url, imgur_deletehash = dfacecheck_upload_to_imgur(image_path)
+    
+    if not image_url:
+        return results, None
+    
+    # Try free reverse image search methods
+    if image_url:
+        try:
+            yandex_results = dfacecheck_search_yandex_images(image_url)
+            if isinstance(yandex_results, list):
+                results.extend(yandex_results)
+        except Exception as e:
+            print(f"⚠️  Yandex search failed: {e}")
+        
+        try:
+            google_results = dfacecheck_search_google_images(image_url)
+            if isinstance(google_results, list):
+                results.extend(google_results)
+        except Exception as e:
+            print(f"⚠️  Google Images search failed: {e}")
+        
+        try:
+            bing_results = dfacecheck_search_bing_visual(image_url)
+            if isinstance(bing_results, list):
+                results.extend(bing_results)
+        except Exception as e:
+            print(f"⚠️  Bing search failed: {e}")
+    
+    # SerpAPI fallback (if available and needed)
+    serpapi_key = os.getenv('SERPAPI_API_KEY')
+    if serpapi_key and image_url and len(results) < 5:
+        try:
+            serpapi_results = dfacecheck_search_serpapi(image_url, serpapi_key)
+            if isinstance(serpapi_results, list):
+                results.extend(serpapi_results)
+        except Exception as e:
+            print(f"⚠️  SerpAPI search failed: {e}")
+    
+    # Remove duplicates
+    seen_urls = set()
+    unique_results = []
+    for result in results:
+        if not isinstance(result, dict):
+            continue
+        url = result.get('url', '')
+        if url and url not in seen_urls:
+            seen_urls.add(url)
+            unique_results.append(result)
+    
+    return unique_results, imgur_deletehash
+
+def dfacecheck_upload_to_imgur(image_path):
+    """Upload image to Imgur temporarily."""
+    try:
+        url = "https://api.imgur.com/3/image"
+        with open(image_path, 'rb') as f:
+            image_data = f.read()
+        
+        imgur_client_id = os.getenv('IMGUR_CLIENT_ID', '')
+        headers = {}
+        if imgur_client_id:
+            headers['Authorization'] = f'Client-ID {imgur_client_id}'
+        else:
+            headers['Authorization'] = 'Client-ID 546c25a59c58ad7'
+        
+        files = {'image': image_data}
+        response = requests.post(url, headers=headers, files=files, timeout=30)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get('success') and data.get('data'):
+                return data['data'].get('link'), data['data'].get('deletehash')
+        return None, None
+    except Exception as e:
+        print(f"Imgur upload error: {e}")
+        return None, None
+
+def dfacecheck_delete_from_imgur(deletehash):
+    """Delete image from Imgur."""
+    try:
+        url = f"https://api.imgur.com/3/image/{deletehash}"
+        imgur_client_id = os.getenv('IMGUR_CLIENT_ID', '')
+        headers = {}
+        if imgur_client_id:
+            headers['Authorization'] = f'Client-ID {imgur_client_id}'
+        else:
+            headers['Authorization'] = 'Client-ID 546c25a59c58ad7'
+        response = requests.delete(url, headers=headers, timeout=10)
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Imgur deletion error: {e}")
+        return False
+
+def dfacecheck_search_yandex_images(image_url):
+    """Search Yandex Images reverse search."""
+    try:
+        search_url = f"https://yandex.com/images/search?rpt=imageview&url={image_url}"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        response = requests.get(search_url, headers=headers, timeout=30, allow_redirects=True)
+        if response.status_code != 200:
+            return []
+        
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+        results = []
+        
+        for link in soup.find_all('a', href=True):
+            href = link.get('href', '')
+            if href.startswith('http') and 'yandex' not in href.lower():
+                title = link.get_text(strip=True) or link.get('title', '')
+                if title or href:
+                    results.append({
+                        'url': href,
+                        'title': title[:200] if title else '',
+                        'source_name': 'Yandex Images'
+                    })
+        
+        for item in soup.find_all(['div', 'li'], class_=lambda x: x and ('serp-item' in x.lower() or 'result' in x.lower())):
+            link_elem = item.find('a', href=True)
+            if link_elem:
+                href = link_elem.get('href', '')
+                if href.startswith('http') and 'yandex' not in href.lower():
+                    title = link_elem.get_text(strip=True) or link_elem.get('title', '')
+                    if href not in [r['url'] for r in results]:
+                        results.append({
+                            'url': href,
+                            'title': title[:200] if title else '',
+                            'source_name': 'Yandex Images'
+                        })
+        
+        return results[:20]
+    except Exception as e:
+        print(f"Yandex search error: {e}")
+        return []
+
+def dfacecheck_search_google_images(image_url):
+    """Search Google Images reverse search."""
+    try:
+        search_url = f"https://lens.google.com/uploadbyurl?url={image_url}"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        response = requests.get(search_url, headers=headers, timeout=30, allow_redirects=True)
+        if response.status_code != 200:
+            return []
+        
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+        results = []
+        
+        for link in soup.find_all('a', href=True):
+            href = link.get('href', '')
+            if href.startswith('http') and 'google' not in href.lower() and 'lens' not in href.lower():
+                title = link.get_text(strip=True) or link.get('title', '')
+                if title or href:
+                    results.append({
+                        'url': href,
+                        'title': title[:200] if title else '',
+                        'source_name': 'Google Lens'
+                    })
+        
+        return results[:20]
+    except Exception as e:
+        print(f"Google Images search error: {e}")
+        return []
+
+def dfacecheck_search_bing_visual(image_url):
+    """Search Bing Visual Search."""
+    try:
+        search_url = f"https://www.bing.com/images/search?view=detailv2&iss=sbi&form=SBIVSP&sbisrc=UrlPaste&q=imgurl:{image_url}"
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        response = requests.get(search_url, headers=headers, timeout=30, allow_redirects=True)
+        if response.status_code != 200:
+            return []
+        
+        from bs4 import BeautifulSoup
+        soup = BeautifulSoup(response.text, 'html.parser')
+        results = []
+        
+        for link in soup.find_all('a', href=True):
+            href = link.get('href', '')
+            if href.startswith('http') and 'bing' not in href.lower() and 'microsoft' not in href.lower():
+                title = link.get_text(strip=True) or link.get('title', '')
+                if title or href:
+                    results.append({
+                        'url': href,
+                        'title': title[:200] if title else '',
+                        'source_name': 'Bing Visual Search'
+                    })
+        
+        return results[:20]
+    except Exception as e:
+        print(f"Bing search error: {e}")
+        return []
+
+def dfacecheck_search_serpapi(image_url, api_key):
+    """Search using SerpAPI."""
+    try:
+        from serpapi import GoogleSearch
+        search = GoogleSearch({
+            "engine": "google_lens",
+            "url": image_url,
+            "api_key": api_key
+        })
+        results_data = search.get_dict()
+        results = []
+        visual_matches = results_data.get('visual_matches', [])
+        for match in visual_matches:
+            results.append({
+                'url': match.get('link', ''),
+                'title': match.get('title', ''),
+                'source': match.get('source', ''),
+                'source_name': 'Google Lens (via SerpAPI)'
+            })
+        return results
+    except Exception as e:
+        print(f"SerpAPI search error: {e}")
+        return []
+
+def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.6):
+    """Verify if candidate images contain the same person using face recognition."""
+    verified = []
+    try:
+        from deepface import DeepFace
+        import numpy as np
+        
+        for result in search_results:
+            if not isinstance(result, dict):
+                continue
+            image_url = result.get('url', '')
+            if not image_url:
+                continue
+            
+            try:
+                response = requests.get(image_url, timeout=10, stream=True, headers={
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                })
+                if response.status_code != 200:
+                    continue
+                
+                with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        tmp_file.write(chunk)
+                    tmp_path = tmp_file.name
+                
+                try:
+                    candidate_embedding = DeepFace.represent(
+                        img_path=tmp_path,
+                        model_name='VGG-Face',
+                        enforce_detection=False
+                    )
+                    if candidate_embedding and len(candidate_embedding) > 0:
+                        candidate_vector = candidate_embedding[0]['embedding']
+                        similarity = dfacecheck_cosine_similarity(source_embedding, candidate_vector)
+                        if similarity >= similarity_threshold:
+                            result['face_similarity'] = round(similarity, 3)
+                            result['verified'] = True
+                            result['match_confidence'] = 'High' if similarity >= 0.8 else 'Medium' if similarity >= 0.7 else 'Low'
+                            verified.append(result)
+                finally:
+                    if os.path.exists(tmp_path):
+                        os.unlink(tmp_path)
+            except Exception as e:
+                continue
+    except ImportError:
+        return search_results
+    except Exception as e:
+        print(f"⚠️  Face verification error: {e}")
+        return search_results
+    return verified
+
+def dfacecheck_cosine_similarity(vec1, vec2):
+    """Calculate cosine similarity between two face embedding vectors."""
+    import numpy as np
+    vec1 = np.array(vec1)
+    vec2 = np.array(vec2)
+    dot_product = np.dot(vec1, vec2)
+    norm1 = np.linalg.norm(vec1)
+    norm2 = np.linalg.norm(vec2)
+    if norm1 == 0 or norm2 == 0:
+        return 0.0
+    return dot_product / (norm1 * norm2)
+
+def dfacecheck_extract_domain(url):
+    """Extract domain from URL."""
+    try:
+        from urllib.parse import urlparse
+        parsed = urlparse(url)
+        domain = parsed.netloc
+        if domain.startswith('www.'):
+            domain = domain[4:]
+        return domain
+    except:
+        return None
