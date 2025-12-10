@@ -371,7 +371,18 @@ def _trace_single_entity(entity_type: str, value: str, postgres_client, neo4j_cl
             app_logger.info(f"✅ Risk assessment completed: {risk_assessment.get('threat_level')} (score: {risk_assessment.get('severity_score')})")
         except Exception as e:
             app_logger.error(f"Risk assessment failed: {e}", exc_info=True)
-            # Don't fail the whole trace if risk assessment fails
+            # Provide a default risk assessment if it fails
+            enrichment_data["risk_assessment"] = {
+                "threat_level": "unknown",
+                "severity_score": 0,
+                "risk_factors": [],
+                "actionable_insights": {
+                    "summary": "Risk assessment could not be completed. Basic enrichment data is available.",
+                    "key_findings": [],
+                    "recommended_actions": []
+                },
+                "error": str(e)
+            }
         
         return jsonify({
             "message": f"{entity_type.title()} traced successfully",
@@ -513,7 +524,18 @@ def _trace_multiple_entities(entities: Dict, postgres_client, neo4j_client):
                     app_logger.info(f"✅ Risk assessment for {entity_type}: {risk_assessment.get('threat_level')} (score: {risk_assessment.get('severity_score')})")
                 except Exception as e:
                     app_logger.error(f"Risk assessment failed for {entity_type}: {e}", exc_info=True)
-                    # Don't fail the whole trace if risk assessment fails
+                    # Provide a default risk assessment if it fails
+                    enrichment_data["risk_assessment"] = {
+                        "threat_level": "unknown",
+                        "severity_score": 0,
+                        "risk_factors": [],
+                        "actionable_insights": {
+                            "summary": "Risk assessment could not be completed. Basic enrichment data is available.",
+                            "key_findings": [],
+                            "recommended_actions": []
+                        },
+                        "error": str(e)
+                    }
                 
                 results.append({
                     "type": entity_type,
