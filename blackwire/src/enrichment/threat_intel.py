@@ -51,17 +51,22 @@ def check_threat_intel(domain: Optional[str] = None, ip: Optional[str] = None,
         results["threat_sources"].extend(ip_results.get("sources", []))
         results["details"]["ip"] = ip_results
     
+    # Ensure threat_level is always set before using it
+    if not results.get("threat_level"):
+        results["threat_level"] = "clean"
+    
     # Calculate reputation score (0-100, lower is worse)
     # Only adjust if we have actual threat data
     if results.get("details"):
         if results["is_malicious"]:
             # Base score on threat level
-            if results["threat_level"] == "high":
-                results["reputation_score"] = max(0, 20 - (len(results["threat_sources"]) * 5))
-            elif results["threat_level"] == "medium":
-                results["reputation_score"] = max(0, 40 - (len(results["threat_sources"]) * 5))
-            elif results["threat_level"] == "low":
-                results["reputation_score"] = max(60, 80 - (len(results["threat_sources"]) * 5))
+            threat_level = results.get("threat_level", "clean")
+            if threat_level == "high":
+                results["reputation_score"] = max(0, 20 - (len(results.get("threat_sources", [])) * 5))
+            elif threat_level == "medium":
+                results["reputation_score"] = max(0, 40 - (len(results.get("threat_sources", [])) * 5))
+            elif threat_level == "low":
+                results["reputation_score"] = max(60, 80 - (len(results.get("threat_sources", [])) * 5))
             else:
                 results["reputation_score"] = 100
         # If not malicious but we have data, keep the score from details
