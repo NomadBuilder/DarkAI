@@ -34,7 +34,15 @@ class Neo4jClient:
         user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
         password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
         
-        logger.info(f"🔌 Attempting Neo4j connection to {uri} with user {user}")
+        # Neo4j Aura uses neo4j+s:// or neo4j+ssc:// URIs - ensure port is not specified
+        # The driver will handle SSL automatically for these protocols
+        if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
+            # Remove any port specification - Aura handles this automatically
+            if ":7687" in uri:
+                uri = uri.replace(":7687", "")
+            logger.info(f"🔌 Attempting Neo4j Aura connection to {uri} (SSL enabled)")
+        else:
+            logger.info(f"🔌 Attempting Neo4j connection to {uri} with user {user}")
         
         try:
             # Neo4j Aura requires SSL - the driver handles this automatically for neo4j+s:// URIs
@@ -78,6 +86,10 @@ class Neo4jClient:
         if not self.driver:
             # Create new connection with retries for ServiceUnavailable errors
             uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+            # Neo4j Aura uses neo4j+s:// or neo4j+ssc:// URIs - ensure port is not specified
+            if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
+                if ":7687" in uri:
+                    uri = uri.replace(":7687", "")
             user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
             password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
             

@@ -284,33 +284,66 @@ class PostgresClient:
         
         domain_id = cursor.fetchone()[0]
         
-        # Insert enrichment data
+        # Check if is_shortlink column exists
         cursor.execute("""
-            INSERT INTO domain_enrichment (
-                domain_id, ip_address, ip_addresses, host_name, registrar,
-                is_shortlink, shortlink_provider, dns_records
-            )
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-            ON CONFLICT (domain_id)
-            DO UPDATE SET
-                ip_address = EXCLUDED.ip_address,
-                ip_addresses = EXCLUDED.ip_addresses,
-                host_name = EXCLUDED.host_name,
-                registrar = EXCLUDED.registrar,
-                is_shortlink = EXCLUDED.is_shortlink,
-                shortlink_provider = EXCLUDED.shortlink_provider,
-                dns_records = EXCLUDED.dns_records,
-                enriched_at = CURRENT_TIMESTAMP
-        """, (
-            domain_id,
-            enrichment_data.get("ip_address"),
-            Json(enrichment_data.get("ip_addresses", [])),
-            enrichment_data.get("host_name"),
-            enrichment_data.get("registrar"),
-            enrichment_data.get("is_shortlink", False),
-            enrichment_data.get("shortlink_provider"),
-            Json(enrichment_data.get("dns_records", {}))
-        ))
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name='domain_enrichment' AND column_name='is_shortlink'
+        """)
+        has_shortlink_column = cursor.fetchone() is not None
+        
+        # Insert enrichment data (handle missing columns gracefully)
+        if has_shortlink_column:
+            cursor.execute("""
+                INSERT INTO domain_enrichment (
+                    domain_id, ip_address, ip_addresses, host_name, registrar,
+                    is_shortlink, shortlink_provider, dns_records
+                )
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (domain_id)
+                DO UPDATE SET
+                    ip_address = EXCLUDED.ip_address,
+                    ip_addresses = EXCLUDED.ip_addresses,
+                    host_name = EXCLUDED.host_name,
+                    registrar = EXCLUDED.registrar,
+                    is_shortlink = EXCLUDED.is_shortlink,
+                    shortlink_provider = EXCLUDED.shortlink_provider,
+                    dns_records = EXCLUDED.dns_records,
+                    enriched_at = CURRENT_TIMESTAMP
+            """, (
+                domain_id,
+                enrichment_data.get("ip_address"),
+                Json(enrichment_data.get("ip_addresses", [])),
+                enrichment_data.get("host_name"),
+                enrichment_data.get("registrar"),
+                enrichment_data.get("is_shortlink", False),
+                enrichment_data.get("shortlink_provider"),
+                Json(enrichment_data.get("dns_records", {}))
+            ))
+        else:
+            # Fallback for databases without is_shortlink column
+            cursor.execute("""
+                INSERT INTO domain_enrichment (
+                    domain_id, ip_address, ip_addresses, host_name, registrar,
+                    dns_records
+                )
+                VALUES (%s, %s, %s, %s, %s, %s)
+                ON CONFLICT (domain_id)
+                DO UPDATE SET
+                    ip_address = EXCLUDED.ip_address,
+                    ip_addresses = EXCLUDED.ip_addresses,
+                    host_name = EXCLUDED.host_name,
+                    registrar = EXCLUDED.registrar,
+                    dns_records = EXCLUDED.dns_records,
+                    enriched_at = CURRENT_TIMESTAMP
+            """, (
+                domain_id,
+                enrichment_data.get("ip_address"),
+                Json(enrichment_data.get("ip_addresses", [])),
+                enrichment_data.get("host_name"),
+                enrichment_data.get("registrar"),
+                Json(enrichment_data.get("dns_records", {}))
+            ))
         
         self.conn.commit()
         cursor.close()

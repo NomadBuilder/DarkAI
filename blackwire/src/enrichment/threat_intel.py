@@ -82,7 +82,7 @@ def _check_domain_threats(domain: str) -> Dict:
         "sources": [],
         "details": {},
         "context": [],
-        "threat_level": None
+        "threat_level": "clean"  # Default to clean, will be updated if threats found
     }
     
     # Check cache first
