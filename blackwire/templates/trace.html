@@ -991,6 +991,29 @@
                 <p style="color: var(--text-main); margin-bottom: 1rem; font-size: 1.05rem; line-height: 1.6;">${insights.summary || 'Risk assessment completed.'}</p>
               `;
               
+              // Risk Factors Breakdown (show all contributing factors)
+              const riskFactors = risk.risk_factors || [];
+              if (riskFactors.length > 0) {
+                cardHTML += `
+                  <div style="margin-top: 1rem;">
+                    <strong style="color: var(--accent);">📊 Risk Factors Breakdown:</strong>
+                    <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: var(--text-muted); line-height: 1.8;">
+                      ${riskFactors.map(factor => {
+                        const severity = factor.severity || 'low';
+                        const severityColor = severity === 'critical' ? '#ef4444' : 
+                                             severity === 'high' ? '#f59e0b' : 
+                                             severity === 'medium' ? '#fbbf24' : '#10b981';
+                        return `<li style="margin-bottom: 0.5rem;">
+                          <span style="color: ${severityColor}; font-weight: 600;">[${severity.toUpperCase()}]</span> 
+                          ${factor.message || 'Risk factor identified'}
+                          ${factor.sources && factor.sources.length > 0 ? ` <span style="color: var(--text-soft); font-size: 0.9em;">(${factor.sources.join(', ')})</span>` : ''}
+                        </li>`;
+                      }).join('')}
+                    </ul>
+                  </div>
+                `;
+              }
+              
               // Key Findings (always show section, even if empty)
               cardHTML += `
                 <div style="margin-top: 1rem;">
