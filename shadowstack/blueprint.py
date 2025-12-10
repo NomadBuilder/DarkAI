@@ -3377,12 +3377,20 @@ def dfacecheck_search():
         # Perform reverse image search
         search_results, imgur_deletehash = dfacecheck_perform_reverse_image_search(str(filepath))
         
-        # Verify faces in results
+        # Verify faces in results - CRITICAL: Only return results with verified faces
         verified_results = []
         if 'source_embedding_vector' in locals():
-            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector)
+            print(f"🔍 Verifying {len(search_results)} search results for face matches...")
+            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector, similarity_threshold=0.65)
+            print(f"✅ Face verification complete: {len(verified_results)}/{len(search_results)} results contain matching faces")
+            
+            # If no verified results, return empty (don't show non-face matches)
+            if len(verified_results) == 0:
+                print("⚠️  No face matches found - filtering out all results")
         else:
-            verified_results = search_results
+            # If face detection failed, don't return any results (safety)
+            print("⚠️  Face embedding not available - skipping all results")
+            verified_results = []
         
         # Cross-reference with ShadowStack domains
         flagged_results = []
@@ -3643,14 +3651,24 @@ def dfacecheck_search_serpapi(image_url, api_key):
         print(f"SerpAPI search error: {e}")
         return []
 
-def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.6):
-    """Verify if candidate images contain the same person using face recognition."""
+def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.65):
+    """
+    Verify if candidate images contain the same person using face recognition.
+    
+    CRITICAL: Only returns results where:
+    1. A face is detected in the candidate image (enforce_detection=True)
+    2. The face matches the source face (similarity >= threshold)
+    
+    This filters out jewelry, objects, and other non-face matches.
+    """
     verified = []
     try:
         from deepface import DeepFace
         import numpy as np
         
-        for result in search_results:
+        print(f"   Processing {len(search_results)} candidate images for face verification...")
+        
+        for i, result in enumerate(search_results):
             if not isinstance(result, dict):
                 continue
             image_url = result.get('url', '')
@@ -3658,41 +3676,67 @@ def dfacecheck_verify_faces_in_results(search_results, source_embedding, similar
                 continue
             
             try:
+                # Download candidate image
                 response = requests.get(image_url, timeout=10, stream=True, headers={
                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
                 })
                 if response.status_code != 200:
                     continue
                 
+                # Save to temp file
                 with tempfile.NamedTemporaryFile(delete=False, suffix='.jpg') as tmp_file:
                     for chunk in response.iter_content(chunk_size=8192):
                         tmp_file.write(chunk)
                     tmp_path = tmp_file.name
                 
                 try:
+                    # CRITICAL: enforce_detection=True means we ONLY accept images with faces
+                    # This filters out jewelry, objects, etc. that don't have faces
                     candidate_embedding = DeepFace.represent(
                         img_path=tmp_path,
                         model_name='VGG-Face',
-                        enforce_detection=False
+                        enforce_detection=True  # STRICT: Must have a face or it will raise ValueError
                     )
+                    
                     if candidate_embedding and len(candidate_embedding) > 0:
                         candidate_vector = candidate_embedding[0]['embedding']
                         similarity = dfacecheck_cosine_similarity(source_embedding, candidate_vector)
+                        
                         if similarity >= similarity_threshold:
                             result['face_similarity'] = round(similarity, 3)
                             result['verified'] = True
                             result['match_confidence'] = 'High' if similarity >= 0.8 else 'Medium' if similarity >= 0.7 else 'Low'
                             verified.append(result)
+                            print(f"   [{i+1}/{len(search_results)}] ✅ Face match: {similarity:.3f} - {image_url[:60]}...")
+                        else:
+                            print(f"   [{i+1}/{len(search_results)}] ❌ Low similarity: {similarity:.3f} - {image_url[:60]}...")
+                    else:
+                        print(f"   [{i+1}/{len(search_results)}] ❌ No face detected - {image_url[:60]}...")
+                        
+                except ValueError as e:
+                    # Face not detected in candidate image - filter it out (this is expected for jewelry/objects)
+                    if 'Face could not be detected' in str(e) or 'No face detected' in str(e):
+                        print(f"   [{i+1}/{len(search_results)}] ❌ No face in image (filtered) - {image_url[:60]}...")
+                    else:
+                        raise
+                except Exception as e:
+                    print(f"   [{i+1}/{len(search_results)}] ⚠️  Error: {str(e)[:50]}")
                 finally:
                     if os.path.exists(tmp_path):
                         os.unlink(tmp_path)
+                        
             except Exception as e:
                 continue
+                
     except ImportError:
-        return search_results
+        print("⚠️  DeepFace not available - cannot verify faces")
+        return []  # Return empty instead of unverified results
     except Exception as e:
         print(f"⚠️  Face verification error: {e}")
-        return search_results
+        import traceback
+        traceback.print_exc()
+        return []  # Return empty instead of unverified results
+    
     return verified
 
 def dfacecheck_cosine_similarity(vec1, vec2):
