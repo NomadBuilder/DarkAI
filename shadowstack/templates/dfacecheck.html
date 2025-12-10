@@ -14,7 +14,6 @@
   <meta name="description" content="Search for deepfaked versions of yourself online using reverse image search and AI face recognition." />
   <link rel="icon" type="image/svg+xml" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
   <link rel="alternate icon" href="{{ url_for('shadowstack.static', filename='images/favicon.svg') }}" />
-  <link rel="stylesheet" href="/shadowstack/static/css/style.css">
   {% from "_shadowstack_navigation.html" import render_nav %}
 
   <style>
@@ -34,26 +33,173 @@
       --transition-fast: 150ms ease-out;
     }
 
-    .dfacecheck-container {
-      max-width: var(--max-width);
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .dfacecheck-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .dfacecheck-header h1 {
-      font-size: 2.5rem;
+    html, body {
+      height: 100%;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text-main);
-      margin-bottom: 0.5rem;
+      background: radial-gradient(circle at top, #141825 0, #020308 60%);
     }
 
-    .dfacecheck-header .subtitle {
+    body {
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .page { min-height: 80vh; display: flex; flex-direction: column; }
+    main { flex: 1; }
+    .section { padding: 4rem 1.5rem; }
+    .section--tight { padding-top: 2.5rem; padding-bottom: 3.5rem; }
+    .section__inner { max-width: var(--max-width); margin: 0 auto; }
+
+    /* HERO */
+    .hero { position: relative; min-height: 49vh; display: flex; flex-direction: column; padding: 2.5rem 1.5rem 5rem; overflow: hidden; background: #03040a; }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.4)), url("{{ url_for('shadowstack.static', filename='images/action.png') }}");
+      background-size: cover;
+      background-position: left center;
+      opacity: 0.8;
+      z-index: 0;
+    }
+    .hero__content { position: relative; z-index: 1; max-width: var(--max-width); margin: 0 auto; display: flex; flex-direction: column; gap: 4rem; flex: 1; padding-top: 2rem; }
+    .hero__grid { display: grid; grid-template-columns: minmax(0, 2.1fr) minmax(0, 1.4fr); gap: 3rem; align-items: center; }
+    @media (max-width: 880px) { .hero__grid { grid-template-columns: minmax(0, 1fr); } }
+    .hero__headline { font-size: 3rem; line-height: 1.18; letter-spacing: 0.5px; margin-bottom: 2.5rem; color: var(--text-main); }
+    .hero__subtitle { font-size: 1.2rem; line-height: 1.6; color: var(--text-muted); margin-bottom: 3rem; max-width: 600px; }
+
+    /* SECTION STYLES */
+    .section-kicker { font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem; }
+    .section-title { font-size: 1.9rem; line-height: 1.3; font-weight: 700; margin-bottom: 1.5rem; color: var(--text-main); }
+    .section-lead { font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 2.5rem; max-width: 600px; }
+
+    /* UPLOAD SECTION */
+    .upload-form {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      margin-bottom: 2rem;
+    }
+
+    .upload-area {
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius-md);
+      padding: 3rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      background: rgba(5, 7, 11, 0.5);
+      margin-bottom: 1.5rem;
+    }
+
+    .upload-area:hover {
+      border-color: var(--accent-red);
+      background: rgba(217, 53, 62, 0.1);
+    }
+
+    .upload-area svg {
       color: var(--text-muted);
-      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .upload-area p {
+      color: var(--text-main);
+      margin: 0.5rem 0;
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    #preview-container {
+      position: relative;
+      display: inline-block;
+      margin-top: 20px;
+      width: 100%;
+      text-align: center;
+    }
+
+    #preview-image {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: var(--radius-md);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      background: rgba(239, 68, 68, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      z-index: 10;
+    }
+
+    .remove-btn:hover {
+      background: rgba(239, 68, 68, 1);
+      transform: scale(1.1);
+    }
+
+    .btn {
+      padding: 0.9rem 1.7rem;
+      border-radius: 999px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      border: none;
+      font-size: 0.9rem;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn--primary {
+      background: linear-gradient(to right, #f97373, var(--accent-red));
+      color: white;
+    }
+
+    .btn--primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(217, 53, 62, 0.4);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .info-section {
@@ -98,107 +244,13 @@
       color: #60a5fa;
     }
 
-    .upload-section {
-      background: rgba(15, 23, 42, 0.6);
-      border-radius: var(--radius-md);
-      padding: 2rem;
-      margin-bottom: 2rem;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .upload-area {
-      border: 2px dashed rgba(255, 255, 255, 0.3);
-      border-radius: var(--radius-md);
-      padding: 3rem;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-      background: rgba(5, 7, 11, 0.5);
-    }
-
-    .upload-area:hover {
-      border-color: var(--accent-red);
-      background: rgba(217, 53, 62, 0.1);
-    }
-
-    .upload-area svg {
-      color: var(--text-muted);
-      margin-bottom: 1rem;
-    }
-
-    .upload-area p {
-      color: var(--text-main);
-      margin: 0.5rem 0;
-    }
-
-    .hint {
-      font-size: 0.9rem;
-      color: var(--text-muted);
-    }
-
-    #preview-container {
-      position: relative;
-      display: inline-block;
-      margin-top: 20px;
-    }
-
-    .remove-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 36px;
-      height: 36px;
-      background: rgba(239, 68, 68, 0.9);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      font-size: 24px;
-      font-weight: bold;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-      z-index: 10;
-    }
-
-    .remove-btn:hover {
-      background: rgba(239, 68, 68, 1);
-      transform: scale(1.1);
-    }
-
-    .search-btn {
-      width: 100%;
-      padding: 1rem 2rem;
-      background: linear-gradient(135deg, var(--accent-red), #ee5a6f);
-      color: white;
-      border: none;
-      border-radius: var(--radius-md);
-      font-size: 1.1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      margin-top: 1rem;
-    }
-
-    .search-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(217, 53, 62, 0.3);
-    }
-
-    .search-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     .loading {
       text-align: center;
       padding: 3rem;
       background: rgba(15, 23, 42, 0.6);
       border-radius: var(--radius-md);
       border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 2rem;
     }
 
     .spinner {
@@ -260,13 +312,16 @@
     .results-section {
       background: rgba(15, 23, 42, 0.6);
       border-radius: var(--radius-md);
-      padding: 2rem;
+      padding: 2.5rem;
       border: 1px solid rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      margin-top: 2rem;
     }
 
     .results-section h2 {
       margin-bottom: 1.5rem;
       color: var(--accent-red);
+      font-size: 1.9rem;
     }
 
     .result-item {
@@ -309,6 +364,7 @@
       border-radius: 4px;
       font-size: 0.85rem;
       font-weight: 600;
+      margin-left: 0.5rem;
     }
 
     .error {
@@ -320,13 +376,18 @@
       margin: 1rem 0;
     }
 
+    /* Responsive */
     @media (max-width: 768px) {
-      .dfacecheck-header h1 {
-        font-size: 2rem;
-      }
-      .upload-area {
-        padding: 2rem 1rem;
-      }
+      .hero { min-height: 38vh; padding: 2rem 1rem 3rem; }
+      .hero__headline { font-size: 2rem; margin-bottom: 1.5rem; }
+      .hero__subtitle { font-size: 1rem; margin-bottom: 2rem; }
+      .section { padding: 3rem 1rem; }
+      .section--tight { padding-top: 2rem; padding-bottom: 2.5rem; }
+      .section-title { font-size: 1.5rem; }
+      .section-lead { font-size: 1rem; }
+      .upload-form { padding: 1.5rem; }
+      .upload-area { padding: 2rem 1rem; }
+      .results-section { padding: 1.5rem; }
     }
   </style>
 </head>
@@ -338,87 +399,103 @@
   {% from "_shadowstack_navigation.html" import render_nav %}
   {{ render_nav('dfacecheck') }}
   <main>
-    <div class="dfacecheck-container">
-      <header class="dfacecheck-header">
-        <h1>🔍 DFace Check</h1>
-        <p class="subtitle">Search for deepfaked versions of yourself online</p>
-      </header>
-
-      <div class="info-section">
-        <h3>How it works</h3>
-        <ol>
-          <li><strong>Upload your photo</strong> - We detect and extract your face features</li>
-          <li><strong>Reverse image search</strong> - We search Yandex, Google, and Bing for similar images</li>
-          <li><strong>Face recognition verification</strong> - We verify each result to find the same person (even if the image is altered)</li>
-          <li><strong>ShadowStack cross-reference</strong> - Results are flagged if they're from known NCII sites</li>
-        </ol>
-        <div class="privacy-notice">
-          <strong>🔒 Privacy:</strong> Your image is temporarily uploaded to Imgur for reverse image search, then <strong>immediately deleted</strong> after the search completes. We never store your images.
-        </div>
-      </div>
-
-      <div class="upload-section">
-        <div class="upload-box" id="upload-box">
-          <input type="file" id="image-input" accept="image/*" style="display: none;">
-          <div class="upload-area" id="upload-area">
-            <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points="17 8 12 3 7 8"></polyline>
-              <line x1="12" y1="3" x2="12" y2="15"></line>
-            </svg>
-            <p>Click to upload or drag and drop</p>
-            <p class="hint">PNG, JPG, JPEG, GIF, WEBP (max 10MB)</p>
-          </div>
-          <div id="preview-container" style="position: relative; display: none; margin-top: 20px;">
-            <img id="preview-image" style="max-width: 100%; max-height: 400px; border-radius: 8px; display: block;">
-            <button id="remove-btn" class="remove-btn" title="Remove image">×</button>
-          </div>
-        </div>
-
-        <button id="search-btn" class="search-btn" disabled>Search for Similar Faces</button>
-      </div>
-
-      <div id="results-section" class="results-section" style="display: none;">
-        <h2>Search Results</h2>
-        <div id="results-container"></div>
-      </div>
-
-      <div id="loading" class="loading" style="display: none;">
-        <div class="spinner"></div>
-        <div id="loading-status">
-          <p class="status-text">Initializing search...</p>
-          <div class="status-steps">
-            <div class="status-step" id="step-1">
-              <span class="step-icon">⏳</span>
-              <span class="step-text">Detecting face in image</span>
-            </div>
-            <div class="status-step" id="step-2">
-              <span class="step-icon">⏳</span>
-              <span class="step-text">Uploading to temporary host (will be deleted)</span>
-            </div>
-            <div class="status-step" id="step-3">
-              <span class="step-icon">⏳</span>
-              <span class="step-text">Searching Yandex, Google, and Bing</span>
-            </div>
-            <div class="status-step" id="step-4">
-              <span class="step-icon">⏳</span>
-              <span class="step-text">Verifying faces with AI recognition</span>
-            </div>
-            <div class="status-step" id="step-5">
-              <span class="step-icon">⏳</span>
-              <span class="step-text">Cross-referencing with ShadowStack database</span>
-            </div>
-            <div class="status-step" id="step-6">
-              <span class="step-icon">⏳</span>
-              <span class="step-text">Deleting temporary image (privacy)</span>
-            </div>
+    <header class="hero">
+      <div class="hero__content">
+        <div class="hero__grid">
+          <div>
+            <h1 class="hero__headline">Find deepfaked versions of yourself.</h1>
+            <p class="hero__subtitle">Upload your photo to search for similar faces online using reverse image search and AI face recognition. Results are cross-referenced with known NCII sites.</p>
           </div>
         </div>
       </div>
-    </div>
+    </header>
+
+    <section class="section section--tight">
+      <div class="section__inner">
+        <header style="margin-bottom: 2.5rem;">
+          <div class="section-kicker">
+            <svg width="16" height="16" fill="#d9353e"><circle cx="8" cy="8" r="8"/></svg>
+            Deepfake Detection
+          </div>
+          <h2 class="section-title">Search for your face online</h2>
+          <p class="section-lead">Upload a clear photo of yourself. We'll search Yandex, Google, and Bing for similar images, then verify each result using AI face recognition to find the same person—even if the image has been altered or deepfaked.</p>
+        </header>
+
+        <div class="info-section">
+          <h3>How it works</h3>
+          <ol>
+            <li><strong>Upload your photo</strong> - We detect and extract your face features</li>
+            <li><strong>Reverse image search</strong> - We search Yandex, Google, and Bing for similar images</li>
+            <li><strong>Face recognition verification</strong> - We verify each result to find the same person (even if the image is altered)</li>
+            <li><strong>ShadowStack cross-reference</strong> - Results are flagged if they're from known NCII sites</li>
+          </ol>
+          <div class="privacy-notice">
+            <strong>🔒 Privacy:</strong> Your image is temporarily uploaded to Imgur for reverse image search, then <strong>immediately deleted</strong> after the search completes. We never store your images.
+          </div>
+        </div>
+
+        <div class="upload-form">
+          <div class="upload-box" id="upload-box">
+            <input type="file" id="image-input" accept="image/*" style="display: none;">
+            <div class="upload-area" id="upload-area">
+              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <p>Click to upload or drag and drop</p>
+              <p class="hint">PNG, JPG, JPEG, GIF, WEBP (max 10MB)</p>
+            </div>
+            <div id="preview-container" style="position: relative; display: none; margin-top: 20px;">
+              <img id="preview-image" style="max-width: 100%; max-height: 400px; border-radius: 8px; display: block;">
+              <button id="remove-btn" class="remove-btn" title="Remove image">×</button>
+            </div>
+          </div>
+
+          <button id="search-btn" class="btn btn--primary" disabled>Search for Similar Faces</button>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">
+          <div class="spinner"></div>
+          <div id="loading-status">
+            <p class="status-text">Initializing search...</p>
+            <div class="status-steps">
+              <div class="status-step" id="step-1">
+                <span class="step-icon">⏳</span>
+                <span class="step-text">Detecting face in image</span>
+              </div>
+              <div class="status-step" id="step-2">
+                <span class="step-icon">⏳</span>
+                <span class="step-text">Uploading to temporary host (will be deleted)</span>
+              </div>
+              <div class="status-step" id="step-3">
+                <span class="step-icon">⏳</span>
+                <span class="step-text">Searching Yandex, Google, and Bing</span>
+              </div>
+              <div class="status-step" id="step-4">
+                <span class="step-icon">⏳</span>
+                <span class="step-text">Verifying faces with AI recognition</span>
+              </div>
+              <div class="status-step" id="step-5">
+                <span class="step-icon">⏳</span>
+                <span class="step-text">Cross-referencing with ShadowStack database</span>
+              </div>
+              <div class="status-step" id="step-6">
+                <span class="step-icon">⏳</span>
+                <span class="step-text">Deleting temporary image (privacy)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="results-section" class="results-section" style="display: none;">
+          <h2>Search Results</h2>
+          <div id="results-container"></div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="/shadowstack/static/js/dfacecheck.js"></script>
 </body>
 </html>
-
