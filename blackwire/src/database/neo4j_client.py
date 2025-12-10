@@ -30,12 +30,14 @@ class Neo4jClient:
             return
             
         uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+        original_uri = uri
         # Support both NEO4J_USER and NEO4J_USERNAME (Neo4j Aura uses USERNAME)
         user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
         password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
         
         # Neo4j Aura uses neo4j+s:// or neo4j+ssc:// URIs - ensure port is not specified
         # The driver will handle SSL automatically for these protocols
+        # If neo4j+s:// fails, try https:// scheme as fallback (uses port 443, more compatible)
         if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
             # Remove any port specification - Aura handles this automatically
             if ":7687" in uri:
@@ -66,12 +68,51 @@ class Neo4jClient:
                 self.driver.verify_connectivity()
                 logger.info(f"✅ Neo4j connection established to {uri}")
             except Exception as verify_error:
-                # If verify_connectivity fails, try manual session test as fallback
-                logger.warning(f"verify_connectivity() failed, trying manual test: {verify_error}")
-                with self.driver.session() as session:
-                    result = session.run("RETURN 1 as test")
-                    result.consume()
-                logger.info(f"✅ Neo4j connection established to {uri} (via manual test)")
+                error_str = str(verify_error).lower()
+                # If neo4j+s:// fails with "cannot resolve" or port issues, try https:// scheme
+                if (uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")) and ("cannot resolve" in error_str or "7687" in error_str):
+                    logger.warning(f"neo4j+s:// connection failed ({verify_error}), trying https:// scheme as fallback...")
+                    # Convert neo4j+s://hostname to https://hostname:7473 (Aura HTTPS port)
+                    https_uri = uri.replace("neo4j+s://", "https://").replace("neo4j+ssc://", "https://")
+                    try:
+                        # Close old driver
+                        self.driver.close()
+                        # Try with https:// scheme
+                        self.driver = GraphDatabase.driver(
+                            https_uri,
+                            auth=(user, password),
+                            max_connection_lifetime=1800,
+                            max_connection_pool_size=10,
+                            connection_acquisition_timeout=30,
+                            connection_timeout=30,
+                            keep_alive=True
+                        )
+                        self.driver.verify_connectivity()
+                        logger.info(f"✅ Neo4j connection established via https:// scheme: {https_uri}")
+                    except Exception as https_error:
+                        logger.error(f"https:// scheme also failed: {https_error}")
+                        # Fall back to manual session test with original URI
+                        self.driver.close()
+                        self.driver = GraphDatabase.driver(
+                            uri,
+                            auth=(user, password),
+                            max_connection_lifetime=1800,
+                            max_connection_pool_size=10,
+                            connection_acquisition_timeout=30,
+                            connection_timeout=30,
+                            keep_alive=True
+                        )
+                        with self.driver.session() as session:
+                            result = session.run("RETURN 1 as test")
+                            result.consume()
+                        logger.info(f"✅ Neo4j connection established to {uri} (via manual test fallback)")
+                else:
+                    # If verify_connectivity fails, try manual session test as fallback
+                    logger.warning(f"verify_connectivity() failed, trying manual test: {verify_error}")
+                    with self.driver.session() as session:
+                        result = session.run("RETURN 1 as test")
+                        result.consume()
+                    logger.info(f"✅ Neo4j connection established to {uri} (via manual test)")
         except Exception as e:
             import traceback
             error_details = traceback.format_exc()

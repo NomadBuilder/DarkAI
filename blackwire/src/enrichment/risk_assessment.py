@@ -38,7 +38,9 @@ def assess_risk(
     
     # 1. External Threat Intelligence (works even with no internal data)
     external_threats = _assess_external_threats(entity_type, value, enrichment_data)
-    if external_threats.get("is_malicious") or external_threats.get("threat_level") in ["medium", "high"]:
+    has_external_threats = external_threats.get("is_malicious") or external_threats.get("threat_level") in ["medium", "high"]
+    
+    if has_external_threats:
         severity_score += 40
         risk_factors.append({
             "type": "external_threat",
@@ -53,23 +55,25 @@ def assess_risk(
     if infrastructure_risk.get("score", 0) > 0:
         risk_factors.extend(infrastructure_risk.get("factors", []))
     
-    # 3. Internal Investigation History (if available)
-    if internal_history:
-        internal_risk = _assess_internal_history(internal_history)
-        severity_score += internal_risk.get("score", 0)
-        if internal_risk.get("score", 0) > 0:
-            risk_factors.extend(internal_risk.get("factors", []))
-    elif postgres_client:
-        # Try to get internal history from database
-        try:
-            internal_history = _get_internal_history(entity_type, value, postgres_client)
-            if internal_history:
-                internal_risk = _assess_internal_history(internal_history)
-                severity_score += internal_risk.get("score", 0)
-                if internal_risk.get("score", 0) > 0:
-                    risk_factors.extend(internal_risk.get("factors", []))
-        except Exception as e:
-            logger.debug(f"Could not get internal history: {e}")
+    # 3. Internal Investigation History (ONLY if there are external threats - don't inflate score from search history alone)
+    # This prevents internal search history from inflating risk scores without actual external threat intelligence
+    if has_external_threats:
+        if internal_history:
+            internal_risk = _assess_internal_history(internal_history)
+            severity_score += internal_risk.get("score", 0)
+            if internal_risk.get("score", 0) > 0:
+                risk_factors.extend(internal_risk.get("factors", []))
+        elif postgres_client:
+            # Try to get internal history from database
+            try:
+                internal_history = _get_internal_history(entity_type, value, postgres_client)
+                if internal_history:
+                    internal_risk = _assess_internal_history(internal_history)
+                    severity_score += internal_risk.get("score", 0)
+                    if internal_risk.get("score", 0) > 0:
+                        risk_factors.extend(internal_risk.get("factors", []))
+            except Exception as e:
+                logger.debug(f"Could not get internal history: {e}")
     
     # 4. Pattern Analysis (time-based, coordination indicators)
     pattern_risk = _assess_patterns(entity_type, enrichment_data, postgres_client)
