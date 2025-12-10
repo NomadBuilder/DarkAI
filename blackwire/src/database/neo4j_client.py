@@ -195,17 +195,24 @@ class Neo4jClient:
                         
                         # Recreate connection with fresh settings
                         uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+                        # Neo4j Aura uses neo4j+s:// or neo4j+ssc:// URIs - ensure port is not specified
+                        if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
+                            if ":7687" in uri:
+                                uri = uri.replace(":7687", "")
+                            logger.info(f"🔌 Reconnecting to Neo4j Aura: {uri} (no port needed)")
                         user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
                         password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
                         
                         from neo4j import GraphDatabase
+                        # For Aura, use longer timeout
+                        timeout = 30 if (uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")) else 15
                         self.driver = GraphDatabase.driver(
                             uri, 
                             auth=(user, password),
                             max_connection_lifetime=1800,  # 30 minutes (shorter for free tier)
                             max_connection_pool_size=10,  # Smaller pool for free tier
                             connection_acquisition_timeout=30,  # Shorter timeout
-                            connection_timeout=15,  # Shorter timeout
+                            connection_timeout=timeout,  # Longer for Aura
                             keep_alive=True  # Enable keep-alive
                         )
                         
