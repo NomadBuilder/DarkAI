@@ -1178,24 +1178,42 @@ def get_graph():
     
     if not neo4j_client.driver:
         app_logger.warning("Graph API called but Neo4j driver not available")
-        # Try to verify connection status
+        # Try to reconnect if client exists but driver is None
         try:
-            if hasattr(neo4j_client, 'driver') and neo4j_client.driver:
-                # Driver exists, test connection
-                with neo4j_client.driver.session() as test_session:
-                    test_session.run("RETURN 1").consume()
-                app_logger.info("Neo4j driver connection test passed")
-            else:
-                app_logger.warning("Neo4j driver is None")
-        except Exception as conn_test:
-            app_logger.error(f"Neo4j connection test failed: {conn_test}")
+            if neo4j_client and hasattr(neo4j_client, '_reconnect_if_needed'):
+                app_logger.info("Attempting to reconnect Neo4j...")
+                neo4j_client._reconnect_if_needed()
+                if neo4j_client.driver:
+                    app_logger.info("✅ Neo4j reconnected successfully")
+                else:
+                    app_logger.warning("Neo4j reconnection failed - driver still None")
+        except Exception as reconnect_error:
+            app_logger.error(f"Neo4j reconnection attempt failed: {reconnect_error}")
         
-        return jsonify({
-            "nodes": [],
-            "edges": [],
-            "message": "Neo4j is required for BlackWire graph visualization",
-            "error": "Neo4j connection not established. Neo4j is required for core functionality. Please configure NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD in your environment variables."
-        }), 503  # Return 503 Service Unavailable to indicate required service is missing
+        # Check if driver is still None after reconnection attempt
+        if not neo4j_client.driver:
+            # Check environment variables to provide better error message
+            import os
+            neo4j_uri = os.getenv("NEO4J_URI") or os.getenv("NEO4J_URI")
+            neo4j_user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER")
+            neo4j_pass = os.getenv("NEO4J_PASSWORD")
+            
+            error_msg = "Neo4j connection not established. "
+            if not neo4j_uri:
+                error_msg += "NEO4J_URI is not set. "
+            if not neo4j_user:
+                error_msg += "NEO4J_USERNAME/NEO4J_USER is not set. "
+            if not neo4j_pass:
+                error_msg += "NEO4J_PASSWORD is not set. "
+            if neo4j_uri and neo4j_user and neo4j_pass:
+                error_msg += "Environment variables are set but connection failed. Check Neo4j server status and credentials."
+            
+            return jsonify({
+                "nodes": [],
+                "edges": [],
+                "message": "Neo4j is required for BlackWire graph visualization",
+                "error": error_msg
+            }), 503  # Return 503 Service Unavailable to indicate required service is missing
     
     try:
         # Check if filtering by specific entities (from current search)
