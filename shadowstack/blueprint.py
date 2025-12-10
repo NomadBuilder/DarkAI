@@ -3445,7 +3445,7 @@ def dfacecheck_search():
         return jsonify({'error': f'Search failed: {str(e)}'}), 500
 
 def dfacecheck_perform_reverse_image_search(image_path):
-    """Perform reverse image search using free APIs."""
+    """Perform reverse image search using SerpAPI (primary) and free APIs (fallback)."""
     results = []
     imgur_deletehash = None
     
@@ -3455,12 +3455,27 @@ def dfacecheck_perform_reverse_image_search(image_path):
     if not image_url:
         return results, None
     
-    # Try free reverse image search methods
-    if image_url:
+    # PRIMARY: Try SerpAPI first (most reliable, fast, structured results)
+    serpapi_key = os.getenv('SERPAPI_API_KEY')
+    if serpapi_key and image_url:
+        try:
+            print("🔍 Using SerpAPI (Google Lens) for reverse image search...")
+            serpapi_results = dfacecheck_search_serpapi(image_url, serpapi_key)
+            if isinstance(serpapi_results, list) and len(serpapi_results) > 0:
+                results.extend(serpapi_results)
+                print(f"✅ SerpAPI found {len(serpapi_results)} results")
+        except Exception as e:
+            print(f"⚠️  SerpAPI search failed: {e}")
+    
+    # FALLBACK: If SerpAPI didn't return enough results, try free methods
+    if len(results) < 10 and image_url:
+        print(f"📊 SerpAPI returned {len(results)} results, trying free methods as fallback...")
+        
         try:
             yandex_results = dfacecheck_search_yandex_images(image_url)
             if isinstance(yandex_results, list):
                 results.extend(yandex_results)
+                print(f"   Yandex found {len(yandex_results)} additional results")
         except Exception as e:
             print(f"⚠️  Yandex search failed: {e}")
         
@@ -3468,6 +3483,7 @@ def dfacecheck_perform_reverse_image_search(image_path):
             google_results = dfacecheck_search_google_images(image_url)
             if isinstance(google_results, list):
                 results.extend(google_results)
+                print(f"   Google found {len(google_results)} additional results")
         except Exception as e:
             print(f"⚠️  Google Images search failed: {e}")
         
@@ -3475,18 +3491,9 @@ def dfacecheck_perform_reverse_image_search(image_path):
             bing_results = dfacecheck_search_bing_visual(image_url)
             if isinstance(bing_results, list):
                 results.extend(bing_results)
+                print(f"   Bing found {len(bing_results)} additional results")
         except Exception as e:
             print(f"⚠️  Bing search failed: {e}")
-    
-    # SerpAPI fallback (if available and needed)
-    serpapi_key = os.getenv('SERPAPI_API_KEY')
-    if serpapi_key and image_url and len(results) < 5:
-        try:
-            serpapi_results = dfacecheck_search_serpapi(image_url, serpapi_key)
-            if isinstance(serpapi_results, list):
-                results.extend(serpapi_results)
-        except Exception as e:
-            print(f"⚠️  SerpAPI search failed: {e}")
     
     # Remove duplicates
     seen_urls = set()
@@ -3499,6 +3506,7 @@ def dfacecheck_perform_reverse_image_search(image_path):
             seen_urls.add(url)
             unique_results.append(result)
     
+    print(f"📊 Total unique results: {len(unique_results)}")
     return unique_results, imgur_deletehash
 
 def dfacecheck_upload_to_imgur(image_path):
