@@ -1627,11 +1627,24 @@
           }));
           
           if (nodes.length === 0) {
-            let message = "No entities in graph yet. ";
-            if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
-              message += "Entities may still be processing. The graph will auto-update when ready.";
+            let message = "";
+            if (data.error || data.message) {
+              // Check if Neo4j is not available
+              if (data.error && (data.error.includes("Neo4j") || data.error.includes("not initialized"))) {
+                message = "Network graph requires Neo4j database. Neo4j is currently disabled. ";
+                message += "To enable graph visualization, configure NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD environment variables.";
+              } else if (data.message) {
+                message = data.message;
+              } else {
+                message = "No entities found. They may not have been stored in the graph database.";
+              }
             } else {
-              message += "Trace some entities to see them here!";
+              message = "No entities in graph yet. ";
+              if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
+                message += "Entities may still be processing. The graph will auto-update when ready.";
+              } else {
+                message += "Trace some entities to see them here!";
+              }
             }
             
             const textEl = svg.append("text")
@@ -1640,10 +1653,12 @@
               .attr("text-anchor", "middle")
               .attr("fill", "#9ca3af")
               .style("font-size", "16px")
+              .style("max-width", "80%")
+              .style("word-wrap", "break-word")
               .text(message);
             
-            // Auto-retry if we have entities to show (they might still be processing)
-            if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
+            // Auto-retry if we have entities to show (they might still be processing) AND Neo4j is available
+            if (window.currentSearchEntities && window.currentSearchEntities.length > 0 && !data.error) {
               let retryCount = 0;
               const maxRetries = 3;
               const retryInterval = setInterval(() => {
