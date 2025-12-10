@@ -152,59 +152,21 @@ class Neo4jClient:
                         import time
                         time.sleep(0.5)
                         
-                        # Recreate connection with fresh settings
+                        # Recreate connection - use simple approach like ShadowStack
                         uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-                        # Neo4j Aura optimization: Clean URI and ensure no port is specified
-                        is_aura = uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")
-                        if is_aura:
-                            # Remove ANY port specification - Aura handles this automatically
+                        # Neo4j Aura: Remove port if present (Aura handles routing automatically)
+                        if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
                             import re
                             uri = re.sub(r':\d+', '', uri)  # Remove :port from URI
-                            logger.info(f"🔌 Reconnecting to Neo4j Aura: {uri} (no port - Aura handles routing)")
+                        
                         user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
                         password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
                         
                         from neo4j import GraphDatabase
-                        
-                        # Optimized connection settings for Aura
-                        driver_config = {
-                            "auth": (user, password),
-                            "max_connection_lifetime": 1800,
-                            "max_connection_pool_size": 10,
-                            "connection_acquisition_timeout": 30,
-                            "keep_alive": True
-                        }
-                        
-                        # For Aura, use longer timeout
-                        if is_aura:
-                            driver_config["connection_timeout"] = 60  # Longer for Aura DNS resolution
-                        else:
-                            driver_config["connection_timeout"] = 15
-                        
-                        self.driver = GraphDatabase.driver(uri, **driver_config)
-                        
-                        # Verify new connection with retry - use verify_connectivity() for Aura
-                        max_verify_attempts = 3
-                        for verify_attempt in range(max_verify_attempts):
-                            try:
-                                if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
-                                    self.driver.verify_connectivity()
-                                    logger.info("✅ Neo4j Aura connection re-established successfully")
-                                else:
-                                    with self.driver.session() as verify_session:
-                                        verify_session.run("RETURN 1").consume()
-                                    logger.info("✅ Neo4j connection re-established successfully")
-                                return True
-                            except Exception as verify_error:
-                                verify_error_str = str(verify_error).lower()
-                                is_routing_error = "service unavailable" in verify_error_str or "routing" in verify_error_str or "unable to retrieve" in verify_error_str or "cannot resolve" in verify_error_str
-                                
-                                if verify_attempt < max_verify_attempts - 1:
-                                    wait_time = 1 * (verify_attempt + 1) if is_routing_error else 0.5
-                                    logger.debug(f"Connection verification attempt {verify_attempt + 1} failed ({'routing error' if is_routing_error else 'connection error'}), retrying in {wait_time}s...")
-                                    time.sleep(wait_time)
-                                else:
-                                    raise verify_error
+                        # Use simple connection like ShadowStack - it works!
+                        self.driver = GraphDatabase.driver(uri, auth=(user, password))
+                        logger.info(f"✅ Neo4j reconnected to {uri}")
+                        return True
                     except Exception as reconnect_error:
                         logger.error(f"❌ Failed to reconnect to Neo4j: {reconnect_error}")
                         self.driver = None
