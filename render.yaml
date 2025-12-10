@@ -12,8 +12,8 @@ services:
       - key: FLASK_ENV
         value: production
       - key: SKIP_NEO4J
-        value: "1"
-        comment: "Skip Neo4j connection (optional - set to 0 if Neo4j is available)"
+        value: "0"
+        comment: "Neo4j is configured in Render dashboard (NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD)"
       
       # Shared Database - All services use the same database
       # Using the existing blackwire database
@@ -41,14 +41,9 @@ services:
       # All services (PersonaForge, BlackWire, ShadowStack) will use the same POSTGRES_* vars
       # They use different table names so there's no conflict
       
-      # Neo4j (optional - shared or separate for each service)
-      # Uncomment and set manually if you want to use Neo4j:
-      # - key: NEO4J_URI
-      #   sync: false
-      # - key: NEO4J_USER
-      #   sync: false
-      # - key: NEO4J_PASSWORD
-      #   sync: false
+      # Neo4j - Set in Render dashboard (not in render.yaml for security)
+      # Required: NEO4J_URI, NEO4J_USERNAME (or NEO4J_USER), NEO4J_PASSWORD
+      # These are already configured in your Render environment variables
       
       # API Keys - set these manually in Render dashboard
       # PersonaForge API Keys
