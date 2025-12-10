@@ -127,11 +127,13 @@ class Neo4jClient:
         if not self.driver:
             # Create new connection with retries for ServiceUnavailable errors
             uri = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-            # Neo4j Aura uses neo4j+s:// or neo4j+ssc:// URIs - ensure port is not specified
-            if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
-                if ":7687" in uri:
-                    uri = uri.replace(":7687", "")
-                logger.info(f"🔌 Reconnecting to Neo4j Aura: {uri} (no port needed)")
+            # Neo4j Aura optimization: Clean URI and ensure no port is specified
+            is_aura = uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")
+            if is_aura:
+                # Remove ANY port specification - Aura handles this automatically
+                import re
+                uri = re.sub(r':\d+', '', uri)  # Remove :port from URI
+                logger.info(f"🔌 Reconnecting to Neo4j Aura: {uri} (no port - Aura handles routing)")
             else:
                 logger.info(f"🔌 Reconnecting to Neo4j: {uri}")
             user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
@@ -141,17 +143,23 @@ class Neo4jClient:
             for retry in range(max_retries):
                 try:
                     from neo4j import GraphDatabase
+                    
+                    # Optimized connection settings for Aura
+                    driver_config = {
+                        "auth": (user, password),
+                        "max_connection_lifetime": 1800,
+                        "max_connection_pool_size": 10,
+                        "connection_acquisition_timeout": 30,
+                        "keep_alive": True
+                    }
+                    
                     # For Aura, use longer timeout
-                    timeout = 30 if (uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")) else 15
-                    self.driver = GraphDatabase.driver(
-                        uri, 
-                        auth=(user, password),
-                        max_connection_lifetime=1800,  # 30 minutes (shorter for free tier)
-                        max_connection_pool_size=10,  # Smaller pool for free tier
-                        connection_acquisition_timeout=30,  # Shorter timeout
-                        connection_timeout=timeout,  # Longer for Aura
-                        keep_alive=True  # Enable keep-alive
-                    )
+                    if is_aura:
+                        driver_config["connection_timeout"] = 60  # Longer for Aura DNS resolution
+                    else:
+                        driver_config["connection_timeout"] = 15
+                    
+                    self.driver = GraphDatabase.driver(uri, **driver_config)
                     # Verify connection - use verify_connectivity() for Aura, manual test for others
                     for verify_retry in range(3):
                         try:
