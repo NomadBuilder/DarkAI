@@ -3376,25 +3376,39 @@ def dfacecheck_search():
         
         # Perform reverse image search
         search_results, imgur_deletehash = dfacecheck_perform_reverse_image_search(str(filepath))
+        print(f"📊 Reverse image search found {len(search_results)} candidate URLs")
         
-        # Verify faces in results - CRITICAL: Only return results with verified faces
+        # Verify faces in results
         verified_results = []
+        unverified_results = []
+        
         if 'source_embedding_vector' in locals():
             print(f"🔍 Verifying {len(search_results)} search results for face matches...")
-            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector, similarity_threshold=0.58)
+            verified_results = dfacecheck_verify_faces_in_results(search_results, source_embedding_vector, similarity_threshold=0.55)
             print(f"✅ Face verification complete: {len(verified_results)}/{len(search_results)} results contain matching faces")
             
-            # If no verified results, return empty (don't show non-face matches)
-            if len(verified_results) == 0:
-                print("⚠️  No face matches found - filtering out all results")
+            # If we have verified results, use those. Otherwise, show unverified as fallback
+            if len(verified_results) == 0 and len(search_results) > 0:
+                print("⚠️  No verified face matches - showing unverified results as fallback")
+                # Show first 10 unverified results as fallback (might be legitimate matches)
+                unverified_results = search_results[:10]
+                for result in unverified_results:
+                    result['verified'] = False
+                    result['match_confidence'] = 'Unverified'
         else:
-            # If face detection failed, don't return any results (safety)
-            print("⚠️  Face embedding not available - skipping all results")
-            verified_results = []
+            # If face detection failed, show unverified results as fallback
+            print("⚠️  Face embedding not available - showing unverified results")
+            unverified_results = search_results[:10]
+            for result in unverified_results:
+                result['verified'] = False
+                result['match_confidence'] = 'Unverified'
+        
+        # Combine verified and unverified (verified first)
+        all_results = verified_results + unverified_results
         
         # Cross-reference with ShadowStack domains
         flagged_results = []
-        for result in verified_results:
+        for result in all_results:
             if not isinstance(result, dict):
                 continue
             domain = dfacecheck_extract_domain(result.get('url', ''))
@@ -3420,6 +3434,8 @@ def dfacecheck_search():
             'success': True,
             'results': flagged_results,
             'total_results': len(flagged_results),
+            'verified_count': len(verified_results),
+            'unverified_count': len(unverified_results),
             'flagged_count': sum(1 for r in flagged_results if r.get('flagged'))
         })
         
@@ -3530,72 +3546,128 @@ def dfacecheck_delete_from_imgur(deletehash):
 def dfacecheck_search_yandex_images(image_url):
     """Search Yandex Images reverse search."""
     try:
+        # Yandex reverse image search URL
         search_url = f"https://yandex.com/images/search?rpt=imageview&url={image_url}"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://yandex.com/'
+        }
         response = requests.get(search_url, headers=headers, timeout=30, allow_redirects=True)
+        print(f"   Yandex response: {response.status_code}")
+        
         if response.status_code != 200:
+            print(f"   Yandex returned non-200: {response.status_code}")
             return []
         
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
         results = []
         
+        # Try to find result links in various formats
+        # Method 1: Look for links with data attributes
         for link in soup.find_all('a', href=True):
             href = link.get('href', '')
-            if href.startswith('http') and 'yandex' not in href.lower():
-                title = link.get_text(strip=True) or link.get('title', '')
-                if title or href:
+            # Yandex uses redirect URLs, try to extract real URLs
+            if 'yandex' not in href.lower() and ('http' in href.lower() or href.startswith('/')):
+                # Handle Yandex redirect URLs
+                if 'yandex.com/images/touch' in href or '/redir/' in href:
+                    # Try to extract target URL from data attributes
+                    target = link.get('data-url') or link.get('data-href') or href
+                    if target and target.startswith('http') and 'yandex' not in target.lower():
+                        title = link.get_text(strip=True) or link.get('title', '') or link.get('aria-label', '')
+                        results.append({
+                            'url': target,
+                            'title': title[:200] if title else '',
+                            'source_name': 'Yandex Images'
+                        })
+                elif href.startswith('http') and 'yandex' not in href.lower():
+                    title = link.get_text(strip=True) or link.get('title', '') or link.get('aria-label', '')
                     results.append({
                         'url': href,
                         'title': title[:200] if title else '',
                         'source_name': 'Yandex Images'
                     })
         
-        for item in soup.find_all(['div', 'li'], class_=lambda x: x and ('serp-item' in x.lower() or 'result' in x.lower())):
-            link_elem = item.find('a', href=True)
-            if link_elem:
-                href = link_elem.get('href', '')
-                if href.startswith('http') and 'yandex' not in href.lower():
-                    title = link_elem.get_text(strip=True) or link_elem.get('title', '')
-                    if href not in [r['url'] for r in results]:
+        # Method 2: Look for JSON data in script tags (Yandex loads results via JS)
+        for script in soup.find_all('script'):
+            if script.string and 'serp-item' in script.string.lower():
+                import json
+                import re
+                # Try to extract URLs from JSON
+                urls = re.findall(r'https?://[^\s"\'<>]+', script.string)
+                for url in urls:
+                    if 'yandex' not in url.lower() and url not in [r['url'] for r in results]:
                         results.append({
-                            'url': href,
-                            'title': title[:200] if title else '',
+                            'url': url,
+                            'title': '',
                             'source_name': 'Yandex Images'
                         })
         
+        print(f"   Yandex found {len(results)} results")
         return results[:20]
     except Exception as e:
         print(f"Yandex search error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 def dfacecheck_search_google_images(image_url):
     """Search Google Images reverse search."""
     try:
-        search_url = f"https://lens.google.com/uploadbyurl?url={image_url}"
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'}
+        # Google Lens uses a different approach - try Google Images search
+        search_url = f"https://www.google.com/searchbyimage?image_url={image_url}"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Referer': 'https://www.google.com/'
+        }
         response = requests.get(search_url, headers=headers, timeout=30, allow_redirects=True)
+        print(f"   Google response: {response.status_code}")
+        
         if response.status_code != 200:
+            print(f"   Google returned non-200: {response.status_code}")
             return []
         
         from bs4 import BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
         results = []
         
-        for link in soup.find_all('a', href=True):
-            href = link.get('href', '')
-            if href.startswith('http') and 'google' not in href.lower() and 'lens' not in href.lower():
-                title = link.get_text(strip=True) or link.get('title', '')
-                if title or href:
+        # Google Images results are in specific divs
+        for item in soup.find_all(['div', 'a'], class_=lambda x: x and ('result' in str(x).lower() or 'image' in str(x).lower())):
+            link = item.find('a', href=True) if item.name != 'a' else item
+            if link:
+                href = link.get('href', '')
+                # Google uses /url?q= redirects
+                if '/url?q=' in href:
+                    import urllib.parse
+                    parsed = urllib.parse.urlparse(href)
+                    query_params = urllib.parse.parse_qs(parsed.query)
+                    if 'q' in query_params:
+                        real_url = query_params['q'][0]
+                        if real_url.startswith('http') and 'google' not in real_url.lower():
+                            title = link.get_text(strip=True) or link.get('title', '')
+                            results.append({
+                                'url': real_url,
+                                'title': title[:200] if title else '',
+                                'source_name': 'Google Images'
+                            })
+                elif href.startswith('http') and 'google' not in href.lower():
+                    title = link.get_text(strip=True) or link.get('title', '')
                     results.append({
                         'url': href,
                         'title': title[:200] if title else '',
-                        'source_name': 'Google Lens'
+                        'source_name': 'Google Images'
                     })
         
+        print(f"   Google found {len(results)} results")
         return results[:20]
     except Exception as e:
         print(f"Google Images search error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 def dfacecheck_search_bing_visual(image_url):
@@ -3651,7 +3723,7 @@ def dfacecheck_search_serpapi(image_url, api_key):
         print(f"SerpAPI search error: {e}")
         return []
 
-def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.58):
+def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.55):
     """
     Verify if candidate images contain the same person using face recognition.
     

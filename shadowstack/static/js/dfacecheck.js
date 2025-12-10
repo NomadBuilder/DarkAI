@@ -179,12 +179,25 @@ function displayResults(data) {
         return;
     }
     
+    const verifiedCount = data.verified_count || 0;
+    const unverifiedCount = data.unverified_count || 0;
+    
     let html = `
-        <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(5, 7, 11, 0.8); border-radius: 8px;">
-            <strong>Total Results:</strong> ${data.total_results} | 
-            <strong style="color: #d9353e;">Flagged:</strong> ${data.flagged_count}
+        <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(15, 23, 42, 0.7); border-radius: 8px; border: 1px solid rgba(255, 255, 255, 0.08);">
+            <strong>Total Results:</strong> ${data.total_results} 
+            ${verifiedCount > 0 ? `| <strong style="color: #10b981;">Verified:</strong> ${verifiedCount}` : ''}
+            ${unverifiedCount > 0 ? `| <strong style="color: #f59e0b;">Unverified:</strong> ${unverifiedCount}` : ''}
+            ${data.flagged_count > 0 ? `| <strong style="color: #d9353e;">Flagged:</strong> ${data.flagged_count}` : ''}
         </div>
     `;
+    
+    if (unverifiedCount > 0) {
+        html += `
+            <div style="margin-bottom: 1rem; padding: 1rem; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 8px; color: #fbbf24;">
+                <strong>ℹ️ Note:</strong> Some results are unverified (face recognition couldn't confirm). These may still be legitimate matches from reverse image search engines.
+            </div>
+        `;
+    }
     
     data.results.forEach((result, index) => {
         const flaggedClass = result.flagged ? 'flagged' : '';
@@ -192,13 +205,15 @@ function displayResults(data) {
             ? '<span class="flag-badge">⚠️ Known NCII Site</span>' 
             : '';
         
-        // Show face similarity if available
-        let similarityBadge = '';
-        if (result.face_similarity !== undefined) {
+        // Show verification status
+        let verificationBadge = '';
+        if (result.verified === false) {
+            verificationBadge = '<span class="similarity-badge" style="background: #f59e0b; margin-left: 0.5rem;">⚠️ Unverified</span>';
+        } else if (result.face_similarity !== undefined) {
             const similarity = (result.face_similarity * 100).toFixed(1);
             const confidence = result.match_confidence || 'Medium';
             const confidenceColor = confidence === 'High' ? '#10b981' : confidence === 'Medium' ? '#f59e0b' : '#ef4444';
-            similarityBadge = `<span class="similarity-badge" style="background: ${confidenceColor}; margin-left: 0.5rem;">👤 ${similarity}% match (${confidence})</span>`;
+            verificationBadge = `<span class="similarity-badge" style="background: ${confidenceColor}; margin-left: 0.5rem;">👤 ${similarity}% match (${confidence})</span>`;
         }
         
         html += `
@@ -206,9 +221,10 @@ function displayResults(data) {
                 <div>
                     <a href="${result.url}" target="_blank" class="url">${result.url}</a>
                     ${flagBadge}
-                    ${similarityBadge}
+                    ${verificationBadge}
                 </div>
                 ${result.title ? `<p style="margin-top: 0.5rem; color: #9ca3af;">${result.title}</p>` : ''}
+                ${result.source_name ? `<p style="margin-top: 0.25rem; font-size: 0.85rem; color: #9ca3af;">Source: ${result.source_name}</p>` : ''}
             </div>
         `;
     });
