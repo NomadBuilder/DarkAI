@@ -116,18 +116,24 @@ class Neo4jClient:
                         connection_timeout=15,  # Shorter timeout
                         keep_alive=True  # Enable keep-alive
                     )
-                    # Verify connection with retry
+                    # Verify connection - use verify_connectivity() for Aura, manual test for others
                     for verify_retry in range(3):
                         try:
-                            with self.driver.session() as verify_session:
-                                verify_session.run("RETURN 1").consume()
-                            logger.info("✅ Neo4j connection established")
+                            if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
+                                # For Aura, use verify_connectivity() - more reliable
+                                self.driver.verify_connectivity()
+                                logger.info("✅ Neo4j Aura connection established")
+                            else:
+                                # For local/bolt, use manual session test
+                                with self.driver.session() as verify_session:
+                                    verify_session.run("RETURN 1").consume()
+                                logger.info("✅ Neo4j connection established")
                             return True
                         except Exception as verify_error:
                             error_str = str(verify_error).lower()
-                            if "service unavailable" in error_str or "routing" in error_str:
+                            if "service unavailable" in error_str or "routing" in error_str or "cannot resolve" in error_str:
                                 if verify_retry < 2:
-                                    logger.debug(f"Routing error during verification (attempt {verify_retry + 1}/3), retrying...")
+                                    logger.debug(f"Connection error during verification (attempt {verify_retry + 1}/3), retrying...")
                                     time.sleep(1 * (verify_retry + 1))  # Exponential backoff
                                     continue
                             raise verify_error
