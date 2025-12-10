@@ -853,6 +853,9 @@ def _store_investigation_session(session_id: str, results: List[Dict], postgres_
         return
     
     try:
+        # Rollback any failed transaction first
+        postgres_client.conn.rollback()
+        
         cursor = postgres_client.conn.cursor()
         for result in results:
             if result.get("status") != "success":
@@ -870,6 +873,7 @@ def _store_investigation_session(session_id: str, results: List[Dict], postgres_
         cursor.close()
         app_logger.info(f"Stored investigation session {session_id} with {len(results)} entities")
     except Exception as e:
+        postgres_client.conn.rollback()  # Rollback on error
         app_logger.error(f"Failed to store investigation session: {e}", exc_info=True)
 
 
