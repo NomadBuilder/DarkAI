@@ -3708,27 +3708,64 @@ def dfacecheck_search_bing_visual(image_url):
         return []
 
 def dfacecheck_search_serpapi(image_url, api_key):
-    """Search using SerpAPI."""
+    """Search using SerpAPI Google Lens (primary method - most reliable)."""
     try:
         from serpapi import GoogleSearch
+        
+        # Use Google Lens engine for reverse image search
         search = GoogleSearch({
             "engine": "google_lens",
             "url": image_url,
             "api_key": api_key
         })
+        
         results_data = search.get_dict()
         results = []
+        
+        # Extract visual matches (similar images)
         visual_matches = results_data.get('visual_matches', [])
         for match in visual_matches:
-            results.append({
-                'url': match.get('link', ''),
-                'title': match.get('title', ''),
-                'source': match.get('source', ''),
-                'source_name': 'Google Lens (via SerpAPI)'
-            })
-        return results
+            link = match.get('link', '')
+            if link and link.startswith('http'):
+                results.append({
+                    'url': link,
+                    'title': match.get('title', '') or match.get('source', ''),
+                    'source_name': 'Google Lens (SerpAPI)',
+                    'thumbnail': match.get('thumbnail', '')
+                })
+        
+        # Also check for inline results (sometimes in different format)
+        inline_results = results_data.get('inline_results', [])
+        for result in inline_results:
+            link = result.get('link', '')
+            if link and link.startswith('http') and link not in [r['url'] for r in results]:
+                results.append({
+                    'url': link,
+                    'title': result.get('title', '') or result.get('source', ''),
+                    'source_name': 'Google Lens (SerpAPI)',
+                    'thumbnail': result.get('thumbnail', '')
+                })
+        
+        # Also check knowledge_graph for related images
+        knowledge_graph = results_data.get('knowledge_graph', {})
+        if knowledge_graph:
+            for item in knowledge_graph.get('images', []):
+                link = item.get('link', '')
+                if link and link.startswith('http') and link not in [r['url'] for r in results]:
+                    results.append({
+                        'url': link,
+                        'title': item.get('title', ''),
+                        'source_name': 'Google Lens (SerpAPI)',
+                        'thumbnail': item.get('thumbnail', '')
+                    })
+        
+        print(f"   SerpAPI returned {len(results)} results from visual_matches")
+        return results[:30]  # Return up to 30 results (SerpAPI is reliable)
+        
     except Exception as e:
         print(f"SerpAPI search error: {e}")
+        import traceback
+        traceback.print_exc()
         return []
 
 def dfacecheck_verify_faces_in_results(search_results, source_embedding, similarity_threshold=0.55):
