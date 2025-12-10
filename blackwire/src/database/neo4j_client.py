@@ -230,7 +230,7 @@ class Neo4jClient:
                                 return True
                             except Exception as verify_error:
                                 verify_error_str = str(verify_error).lower()
-                                is_routing_error = "service unavailable" in verify_error_str or "routing" in verify_error_str or "unable to retrieve" in verify_error_str
+                                is_routing_error = "service unavailable" in verify_error_str or "routing" in verify_error_str or "unable to retrieve" in verify_error_str or "cannot resolve" in verify_error_str
                                 
                                 if verify_attempt < max_verify_attempts - 1:
                                     wait_time = 1 * (verify_attempt + 1) if is_routing_error else 0.5
