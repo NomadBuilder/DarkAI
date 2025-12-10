@@ -100,6 +100,9 @@ class Neo4jClient:
             if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
                 if ":7687" in uri:
                     uri = uri.replace(":7687", "")
+                logger.info(f"🔌 Reconnecting to Neo4j Aura: {uri} (no port needed)")
+            else:
+                logger.info(f"🔌 Reconnecting to Neo4j: {uri}")
             user = os.getenv("NEO4J_USERNAME") or os.getenv("NEO4J_USER", "neo4j")
             password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
             
@@ -107,13 +110,15 @@ class Neo4jClient:
             for retry in range(max_retries):
                 try:
                     from neo4j import GraphDatabase
+                    # For Aura, use longer timeout
+                    timeout = 30 if (uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")) else 15
                     self.driver = GraphDatabase.driver(
                         uri, 
                         auth=(user, password),
                         max_connection_lifetime=1800,  # 30 minutes (shorter for free tier)
                         max_connection_pool_size=10,  # Smaller pool for free tier
                         connection_acquisition_timeout=30,  # Shorter timeout
-                        connection_timeout=15,  # Shorter timeout
+                        connection_timeout=timeout,  # Longer for Aura
                         keep_alive=True  # Enable keep-alive
                     )
                     # Verify connection - use verify_connectivity() for Aura, manual test for others
@@ -204,13 +209,17 @@ class Neo4jClient:
                             keep_alive=True  # Enable keep-alive
                         )
                         
-                        # Verify new connection with retry
+                        # Verify new connection with retry - use verify_connectivity() for Aura
                         max_verify_attempts = 3
                         for verify_attempt in range(max_verify_attempts):
                             try:
-                                with self.driver.session() as verify_session:
-                                    verify_session.run("RETURN 1").consume()
-                                logger.info("✅ Neo4j connection re-established successfully")
+                                if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
+                                    self.driver.verify_connectivity()
+                                    logger.info("✅ Neo4j Aura connection re-established successfully")
+                                else:
+                                    with self.driver.session() as verify_session:
+                                        verify_session.run("RETURN 1").consume()
+                                    logger.info("✅ Neo4j connection re-established successfully")
                                 return True
                             except Exception as verify_error:
                                 verify_error_str = str(verify_error).lower()
