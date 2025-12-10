@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>HumanGate WordPress Plugin – Dark AI</title>
+  <meta name="description" content="HumanGate: A lightweight WordPress plugin that blocks AI training crawlers, adds refusal signals, and deters large-scale scraping without CAPTCHAs or heavy databases." />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://darkai.ca/humangate" />
+  <meta property="og:title" content="HumanGate WordPress Plugin – Dark AI" />
+  <meta property="og:description" content="Protect your WordPress site from AI training crawlers and scraping bots." />
+  <meta property="og:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://darkai.ca/humangate" />
+  <meta name="twitter:title" content="HumanGate WordPress Plugin – Dark AI" />
+  <meta name="twitter:description" content="Protect your WordPress site from AI training crawlers and scraping bots." />
+  <meta name="twitter:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/static/favicon.svg" />
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+    
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #05060b;
+      color: #f2f3f5;
+      position: relative;
+      line-height: 1.6;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0b14 0%, #05060b 50%, #0a0b14 100%);
+      z-index: -2;
+    }
+    
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://i.imgur.com/YTCnPOE.png');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      opacity: 0.15;
+      z-index: -1;
+    }
+    
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(5, 6, 11, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f2f3f5;
+    }
+    
+    .logo-mark {
+      width: 32px;
+      height: 32px;
+      background: #ff6b6b;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+    }
+    
+    .nav-links a {
+      color: #b8bcc8;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: color 0.2s;
+    }
+    
+    .nav-links a:hover {
+      color: #f2f3f5;
+    }
+    
+    .hero {
+      padding: 6rem 2rem 4rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .hero h1 {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #f2f3f5 0%, #b8bcc8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+    
+    .hero p {
+      font-size: 1.3rem;
+      color: #b8bcc8;
+      max-width: 800px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+    
+    .download-btn {
+      display: inline-block;
+      padding: 1rem 2.5rem;
+      background: #ff6b6b;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    }
+    
+    .download-btn:hover {
+      background: #ff5252;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
+    }
+    
+    .content {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+    
+    .section {
+      margin-bottom: 4rem;
+    }
+    
+    .section h2 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      color: #f2f3f5;
+    }
+    
+    .section h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      color: #f2f3f5;
+    }
+    
+    .section p {
+      color: #b8bcc8;
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+    
+    .section ul, .section ol {
+      color: #b8bcc8;
+      margin-left: 2rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+    }
+    
+    .section li {
+      margin-bottom: 0.75rem;
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin: 3rem 0;
+    }
+    
+    .feature-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s;
+    }
+    
+    .feature-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 107, 107, 0.3);
+      transform: translateY(-4px);
+    }
+    
+    .feature-card h4 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #f2f3f5;
+    }
+    
+    .feature-card p {
+      color: #b8bcc8;
+      margin: 0;
+    }
+    
+    .badge {
+      display: inline-block;
+      padding: 0.4rem 1rem;
+      background: rgba(255, 107, 107, 0.2);
+      color: #ff6b6b;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .note-box {
+      background: rgba(255, 193, 7, 0.1);
+      border-left: 4px solid #ffc107;
+      padding: 1.5rem;
+      border-radius: 8px;
+      margin: 2rem 0;
+    }
+    
+    .note-box p {
+      margin: 0;
+      color: #ffc107;
+    }
+    
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      color: #777c85;
+      font-size: 0.85rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .hero p {
+        font-size: 1.1rem;
+      }
+      
+      .nav-links {
+        gap: 1rem;
+        font-size: 0.9rem;
+      }
+      
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <div class="logo">
+    <a href="/" style="text-decoration: none; display: flex; align-items: center; gap: 0.75rem;">
+      <span class="logo-mark"></span>
+      <span>Dark AI</span>
+    </a>
+  </div>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/reports">Reports</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>HumanGate</h1>
+  <p>A lightweight WordPress plugin that blocks AI training crawlers, adds refusal signals, and deters large-scale scraping—without CAPTCHAs or heavy databases.</p>
+  <a href="/static/downloads/humangate.zip" class="download-btn" download>Download Plugin (ZIP)</a>
+  <p style="margin-top: 1rem; font-size: 0.9rem; color: #777c85;">
+    <span class="badge">WordPress 5.0+</span>
+    <span class="badge">PHP 7.4+</span>
+    <span class="badge">GPL-2.0+</span>
+  </p>
+</header>
+
+<main class="content">
+  <section class="section">
+    <h2>What is HumanGate?</h2>
+    <p>HumanGate is a practical enforcement layer for WordPress that gives site owners a one-click way to opt out of AI training and search indexing, while adding real runtime resistance to large-scale scraping without heavy detection systems.</p>
+    
+    <div class="note-box">
+      <p><strong>Note:</strong> This plugin is currently pending WordPress.org approval. Once approved, it will be available in the WordPress plugin directory. For now, you can download it directly from this page.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Core Features</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <h4>🌐 Global AI Refusal</h4>
+        <p>Adds AI-specific meta tags, HTTP headers, and robots.txt rules to refuse AI training crawlers (GPTBot, ClaudeBot, PerplexityBot, etc.).</p>
+      </div>
+      
+      <div class="feature-card">
+        <h4>🚫 Search Engine Blocking</h4>
+        <p>Optional setting to block all search engines (Google, Bing, etc.) using noindex/nofollow meta tags.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h4>🛡️ Active Enforcement</h4>
+        <p>Choose from Signals Only, Challenge Mode (JS verification), or Block Mode (403 Forbidden) for AI crawlers and other bots.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h4>⚡ Selective Friction</h4>
+        <p>Automatically detects bot scraping patterns (burst traffic, sequential traversal) and serves lightweight JavaScript challenges—no CAPTCHAs required.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h4>🔒 Emergency Lockdown</h4>
+        <p>One-click site lockdown with HTTP 451 responses and optional login-only access for media exposure or legal threats.</p>
+      </div>
+      
+      <div class="feature-card">
+        <h4>📊 Lightweight Telemetry</h4>
+        <p>Privacy-focused stats using WordPress transients—no database bloat, no IP storage, no long-term logging.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2>Perfect For</h2>
+    <ul>
+      <li><strong>Journalists</strong> protecting sensitive content</li>
+      <li><strong>Activists and independent creators</strong> wanting to opt out of AI training</li>
+      <li><strong>Nonprofits and whistleblower support projects</strong></li>
+      <li><strong>Anyone</strong> wanting to refuse AI training data collection</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>Installation</h2>
+    <ol>
+      <li>Download the <code>humangate.zip</code> file from this page</li>
+      <li>Go to your WordPress admin dashboard → Plugins → Add New</li>
+      <li>Click "Upload Plugin" and select the downloaded ZIP file</li>
+      <li>Click "Install Now" and then "Activate Plugin"</li>
+      <li>Go to Settings → HumanGate to configure</li>
+    </ol>
+  </section>
+
+  <section class="section">
+    <h2>How It Works</h2>
+    
+    <h3>1. Refusal Signals</h3>
+    <p>Every public response includes HTML meta tags (noindex, noai, noimageai) and HTTP headers (X-AI-Training: disallowed) that clearly signal non-consent to AI training and search indexing.</p>
+    
+    <h3>2. Active Enforcement</h3>
+    <p>Optionally block or challenge bots at the HTTP level. Challenge Mode requires JavaScript execution verification, while Block Mode returns 403 Forbidden to unauthorized bots.</p>
+    
+    <h3>3. Selective Friction</h3>
+    <p>Automatically detects suspicious bot traffic patterns (burst traffic, sequential traversal, deep-link access) and serves invisible JavaScript challenges. Real humans pass silently; scrapers stall.</p>
+    
+    <h3>4. Emergency Lockdown</h3>
+    <p>One toggle instantly forces noindex everywhere and returns HTTP 451 to all unknown agents. Perfect for media exposure, legal threats, or doxxing risk.</p>
+  </section>
+
+  <section class="section">
+    <h2>SEO Plugin Compatibility</h2>
+    <p>HumanGate is fully compatible with SEO plugins like Yoast SEO, Rank Math, All in One SEO, and SEOPress. HumanGate automatically detects SEO plugins and appends AI crawler blocks to your existing robots.txt without conflicts.</p>
+  </section>
+
+  <section class="section">
+    <h2>Design Philosophy</h2>
+    <p>HumanGate follows these principles:</p>
+    <ul>
+      <li><strong>Friction, Not Perfection</strong> – Increase scraping cost instead of chasing perfect identification</li>
+      <li><strong>Human-First Public Access</strong> – Public for people, hostile to automation at scale</li>
+      <li><strong>Low Infrastructure Load</strong> – No heavy databases, no constant writes, no background daemons</li>
+      <li><strong>Operational Simplicity</strong> – Works on shared hosting, not just high-end stacks</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>Requirements</h2>
+    <ul>
+      <li>WordPress 5.0 or higher</li>
+      <li>PHP 7.4 or higher</li>
+      <li>No external dependencies</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <h2>License</h2>
+    <p>HumanGate is licensed under <strong>GPL-2.0+</strong> (GNU General Public License v2 or later).</p>
+  </section>
+
+  <section class="section">
+    <h2>Support</h2>
+    <p>For issues, feature requests, or contributions, please visit the project repository or contact us through the <a href="/about" style="color: #ff6b6b;">About page</a>.</p>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2025 Dark AI. HumanGate is developed by Dark AI as a practical enforcement artifact for AI non-consent and content sovereignty.</p>
+</footer>
+</body>
+</html>
+

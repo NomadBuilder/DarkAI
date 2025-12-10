@@ -147,6 +147,16 @@ def about():
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'about.html')
 
+@app.route('/humangate')
+def humangate():
+    """HumanGate WordPress plugin page."""
+    from flask import render_template
+    try:
+        return render_template('humangate.html')
+    except:
+        # Fallback to send_from_directory if template not found
+        return send_from_directory('templates', 'humangate.html')
+
 
 @app.route('/contact', methods=['POST'])
 def contact():
