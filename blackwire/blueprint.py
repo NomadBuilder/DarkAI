@@ -820,10 +820,13 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
             
             app_logger.info(f"✅ Stored {entity_type} ({value}) in Neo4j graph")
         except Exception as e:
-            app_logger.error(f"⚠️  Failed to store {entity_type} ({value}) in Neo4j: {e}", exc_info=True)
-            # Re-raise to see full traceback in logs
-            import traceback
-            app_logger.error(f"Full traceback: {traceback.format_exc()}")
+            # Don't log as error - Neo4j is optional
+            error_str = str(e).lower()
+            if "cannot resolve" in error_str or "7687" in error_str or "name or service not known" in error_str:
+                app_logger.debug(f"⚠️  Neo4j unavailable (DNS/network issue): {str(e)[:100]}")
+            else:
+                app_logger.debug(f"⚠️  Neo4j storage failed (non-critical): {str(e)[:100]}")
+            # Don't re-raise - Neo4j is optional, app should continue
     
     return related_entities
 
