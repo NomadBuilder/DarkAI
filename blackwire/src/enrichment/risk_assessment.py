@@ -40,14 +40,30 @@ def assess_risk(
     external_threats = _assess_external_threats(entity_type, value, enrichment_data)
     has_external_threats = external_threats.get("is_malicious") or external_threats.get("threat_level") in ["medium", "high"]
     
+    # Check if detections are historical (>90 days old)
+    is_historical = external_threats.get("historical_detection", False)
+    days_since_detection = external_threats.get("days_since_most_recent")
+    
     if has_external_threats:
-        severity_score += 40
-        risk_factors.append({
-            "type": "external_threat",
-            "severity": "high",
-            "message": f"Flagged by {len(external_threats.get('threat_sources', []))} threat intelligence source(s)",
-            "sources": external_threats.get("threat_sources", [])
-        })
+        # Reduce score if all detections are >90 days old (historical, likely resolved)
+        if is_historical and days_since_detection and days_since_detection > 90:
+            # Historical detections: reduce score by 50% (from 40 to 20)
+            severity_score += 20
+            risk_factors.append({
+                "type": "external_threat",
+                "severity": "medium",
+                "message": f"Flagged by {len(external_threats.get('threat_sources', []))} threat intelligence source(s) (historical: {days_since_detection} days ago - likely resolved)",
+                "sources": external_threats.get("threat_sources", [])
+            })
+        else:
+            # Recent detections: full score
+            severity_score += 40
+            risk_factors.append({
+                "type": "external_threat",
+                "severity": "high",
+                "message": f"Flagged by {len(external_threats.get('threat_sources', []))} threat intelligence source(s)",
+                "sources": external_threats.get("threat_sources", [])
+            })
     
     # 2. Infrastructure Patterns (indicators of abuse)
     infrastructure_risk = _assess_infrastructure_patterns(entity_type, enrichment_data)

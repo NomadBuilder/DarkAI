@@ -111,6 +111,12 @@ def _check_domain_threats(domain: str) -> Dict:
                 # Reputation: 0 = unknown/poor, higher = better (typically 0-100)
                 # If reputation is high (>50) and no URLs flagged, domain is clean
                 
+                # Check detection recency
+                days_since_most_recent = vt_result.get("most_recent_scan_days_ago")
+                days_since_oldest = vt_result.get("oldest_scan_days_ago")
+                most_recent_date = vt_result.get("most_recent_scan_date")
+                all_detections_old = vt_result.get("all_detections_old", False)  # True if ALL detections are >90 days old
+                
                 if malicious_count == 0:
                     # No URLs flagged - domain is clean
                     if reputation > 0:
@@ -124,26 +130,59 @@ def _check_domain_threats(domain: str) -> Dict:
                     # Context about what VirusTotal actually checks
                     results["context"].append(f"VirusTotal scanned {total_scans} URLs on this domain")
                     results["context"].append(f"{malicious_count} URLs flagged by security engines")
+                    if most_recent_date and days_since_most_recent is not None:
+                        if all_detections_old:
+                            results["context"].append(f"⚠️ All detections are >90 days old (most recent: {days_since_most_recent} days ago, {most_recent_date}) - likely historical/resolved")
+                        elif days_since_most_recent > 90:
+                            results["context"].append(f"⚠️ Most recent detection: {days_since_most_recent} days ago ({most_recent_date}) - may be historical")
+                        else:
+                            results["context"].append(f"Most recent detection: {days_since_most_recent} days ago ({most_recent_date})")
                     if reputation > 0:
                         results["context"].append(f"Domain reputation: {reputation}/100")
                     
                     # Assess threat level based on multiple factors
+                    # If ALL detections are >90 days old, reduce threat level (likely resolved)
+                    is_historical = all_detections_old
+                    
                     # High threat: Many URLs flagged AND high positive count per URL AND low reputation
                     if (detection_ratio >= 0.3 and max_positives >= 10) or (malicious_count >= 10 and avg_positives >= 5) or reputation < 20:
-                        results["is_malicious"] = True
-                        results["threat_level"] = "high"
-                        results["context"].append(f"High threat: {detection_ratio:.1%} of URLs flagged, up to {max_positives} engines per URL")
+                        if is_historical:
+                            # Historical high threat - downgrade to medium
+                            results["is_malicious"] = True
+                            results["threat_level"] = "medium"
+                            results["context"].append(f"Medium threat (historical): {detection_ratio:.1%} of URLs flagged, but all detections are >90 days old")
+                            results["historical_detection"] = True
+                            results["days_since_most_recent"] = days_since_most_recent
+                        else:
+                            results["is_malicious"] = True
+                            results["threat_level"] = "high"
+                            results["context"].append(f"High threat: {detection_ratio:.1%} of URLs flagged, up to {max_positives} engines per URL")
                     # Medium threat: Moderate detections
                     elif detection_ratio >= 0.15 or (malicious_count >= 5 and avg_positives >= 3) or (reputation < 40 and reputation > 0):
-                        results["is_malicious"] = True
-                        results["threat_level"] = "medium"
-                        results["context"].append(f"Medium threat: {detection_ratio:.1%} of URLs flagged")
+                        if is_historical:
+                            # Historical medium threat - downgrade to low
+                            results["threat_level"] = "low"
+                            results["false_positive_risk"] = True
+                            results["context"].append(f"Low threat (historical): {detection_ratio:.1%} of URLs flagged, but all detections are >90 days old - likely resolved")
+                            results["historical_detection"] = True
+                            results["days_since_most_recent"] = days_since_most_recent
+                        else:
+                            results["is_malicious"] = True
+                            results["threat_level"] = "medium"
+                            results["context"].append(f"Medium threat: {detection_ratio:.1%} of URLs flagged")
                     # Low threat: Few detections - likely false positive or isolated issue
                     else:
-                        results["threat_level"] = "low"
-                        results["false_positive_risk"] = True
-                        results["context"].append(f"Low threat: Only {malicious_count}/{total_scans} URLs flagged - likely false positive or isolated issue")
-                        results["context"].append("Note: VirusTotal checks individual URLs, not the domain itself. Legitimate sites can have flagged URLs.")
+                        if is_historical:
+                            results["threat_level"] = "clean"
+                            results["false_positive_risk"] = True
+                            results["context"].append(f"Clean (historical): Only {malicious_count}/{total_scans} URLs flagged, all >90 days old - likely resolved")
+                            results["historical_detection"] = True
+                            results["days_since_most_recent"] = days_since_most_recent
+                        else:
+                            results["threat_level"] = "low"
+                            results["false_positive_risk"] = True
+                            results["context"].append(f"Low threat: Only {malicious_count}/{total_scans} URLs flagged - likely false positive or isolated issue")
+                            results["context"].append("Note: VirusTotal checks individual URLs, not the domain itself. Legitimate sites can have flagged URLs.")
                     
                     results["sources"].append(f"VirusTotal ({malicious_count}/{total_scans} URLs flagged)")
                 
@@ -273,6 +312,37 @@ def _check_virustotal_domain(domain: str) -> Optional[Dict]:
                 max_positives = max([url.get("positives", 0) for url in detected_urls] + [0])
                 avg_positives = sum([url.get("positives", 0) for url in malicious_urls]) / max(malicious_count, 1) if malicious_count > 0 else 0
                 
+                # Calculate detection recency (age of most recent and oldest detection)
+                from datetime import datetime
+                most_recent_scan = None
+                oldest_scan = None
+                all_detections_old = False
+                if malicious_urls:
+                    scan_dates = []
+                    for url_data in malicious_urls:
+                        scan_date_str = url_data.get("scan_date")
+                        if scan_date_str:
+                            try:
+                                # VirusTotal format: "YYYY-MM-DD HH:MM:SS"
+                                scan_date = datetime.strptime(scan_date_str, "%Y-%m-%d %H:%M:%S")
+                                scan_dates.append(scan_date)
+                            except:
+                                pass
+                    
+                    if scan_dates:
+                        most_recent_scan = max(scan_dates)
+                        oldest_scan = min(scan_dates)
+                        days_since_most_recent = (datetime.now() - most_recent_scan).days
+                        days_since_oldest = (datetime.now() - oldest_scan).days
+                        # Check if ALL detections are >90 days old
+                        all_detections_old = all((datetime.now() - scan_date).days > 90 for scan_date in scan_dates)
+                    else:
+                        days_since_most_recent = None
+                        days_since_oldest = None
+                else:
+                    days_since_most_recent = None
+                    days_since_oldest = None
+                
                 return {
                     "malicious_count": malicious_count,
                     "total_scans": len(detected_urls),
@@ -281,6 +351,10 @@ def _check_virustotal_domain(domain: str) -> Optional[Dict]:
                     "reputation": data.get("reputation", 0),
                     "categories": data.get("categories", {}),
                     "subdomains": data.get("subdomains", [])[:10],  # Limit to 10
+                    "most_recent_scan_days_ago": days_since_most_recent,
+                    "oldest_scan_days_ago": days_since_oldest,
+                    "most_recent_scan_date": most_recent_scan.strftime("%Y-%m-%d") if most_recent_scan else None,
+                    "all_detections_old": all_detections_old,  # True if ALL detections are >90 days old
                     "note": "VirusTotal checks URLs on the domain, not the domain itself. Low detections may be false positives."
                 }
         elif response.status_code == 204:
