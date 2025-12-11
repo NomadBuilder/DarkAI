@@ -1335,21 +1335,49 @@
         if (result.results.length > 1 && result.relationships && result.relationships.length > 0) {
           dataEl.innerHTML += '<div style="margin-top: 2rem; padding-top: 2rem; border-top: 3px solid var(--accent-soft);"><strong style="color: var(--accent); font-size: 1.1rem;">🔗 Relationships Between Traced Entities:</strong>';
           
+          // Group relationships by domain pair (from -> to, normalized)
+          const relationshipGroups = {};
+          
           result.relationships.forEach(rel => {
+            // Normalize the pair (always use alphabetical order to avoid duplicates)
+            const pair = [rel.from, rel.to].sort().join(' ↔ ');
+            
+            if (!relationshipGroups[pair]) {
+              relationshipGroups[pair] = {
+                from: rel.from,
+                to: rel.to,
+                reasons: []
+              };
+            }
+            
+            // Add reason if not already present (avoid duplicates)
+            if (!relationshipGroups[pair].reasons.includes(rel.reason)) {
+              relationshipGroups[pair].reasons.push(rel.reason);
+            }
+          });
+          
+          // Display grouped relationships
+          Object.values(relationshipGroups).forEach(group => {
             const relRow = document.createElement('div');
             relRow.className = 'results__row';
             relRow.style.marginTop = '0.75rem';
-            relRow.style.padding = '0.75rem';
+            relRow.style.padding = '1rem';
             relRow.style.background = 'rgba(249, 115, 115, 0.1)';
             relRow.style.borderRadius = 'var(--radius-md)';
             relRow.style.border = '1px solid var(--accent-soft)';
+            
+            let reasonsHtml = '';
+            if (group.reasons.length === 1) {
+              reasonsHtml = `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">${group.reasons[0]}</div>`;
+            } else {
+              reasonsHtml = `<div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;"><strong>Connected by:</strong><ul style="margin: 0.5rem 0 0 1.5rem; padding: 0; list-style-type: disc;">${group.reasons.map(r => `<li style="margin-bottom: 0.25rem;">${r}</li>`).join('')}</ul></div>`;
+            }
+            
             relRow.innerHTML = `
               <div class="results__label">Connection</div>
               <div class="results__value">
-                <strong>${rel.from}</strong> → <strong>${rel.to}</strong>
-                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
-                  ${rel.reason}
-                </div>
+                <strong>${group.from}</strong> ↔ <strong>${group.to}</strong>
+                ${reasonsHtml}
               </div>
             `;
             dataEl.appendChild(relRow);
