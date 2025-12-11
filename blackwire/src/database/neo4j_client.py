@@ -160,7 +160,7 @@ class Neo4jClient:
         if not self.driver:
             return None
         
-        max_retries = 3
+        max_retries = 2  # Reduced retries - fail fast
         for attempt in range(max_retries):
             try:
                 # Try to execute query - don't pre-check connection (it might die between check and use)
@@ -168,7 +168,7 @@ class Neo4jClient:
                     return list(session.run(query, parameters or {}))
             except Exception as e:
                 error_str = str(e).lower()
-                # Check if it's a connection error (including routing/ServiceUnavailable)
+                # Check if it's a connection error (including DNS resolution failures)
                 is_connection_error = (
                     "defunct" in error_str or 
                     "failed to write" in error_str or 
@@ -176,10 +176,20 @@ class Neo4jClient:
                     "connection" in error_str and ("closed" in error_str or "dead" in error_str) or
                     "service unavailable" in error_str or
                     "routing" in error_str or
-                    "unable to retrieve" in error_str
+                    "unable to retrieve" in error_str or
+                    "cannot resolve" in error_str or
+                    "name or service not known" in error_str or
+                    "7687" in error_str  # Port 7687 errors indicate connection issues
                 )
                 
                 if is_connection_error:
+                    # For DNS/connection errors, don't retry - just fail gracefully
+                    if "cannot resolve" in error_str or "name or service not known" in error_str or "7687" in error_str:
+                        logger.debug(f"⚠️  Neo4j connection failed (DNS/network issue): {str(e)[:150]}")
+                        logger.debug("   Neo4j is optional - continuing without graph features")
+                        self.driver = None  # Mark as unavailable
+                        return None
+                    
                     if attempt < max_retries - 1:
                         logger.warning(f"⚠️  Neo4j connection error (attempt {attempt + 1}/{max_retries}): {str(e)[:100]}. Reconnecting...")
                         # Force reconnection by setting driver to None temporarily
@@ -199,11 +209,13 @@ class Neo4jClient:
                         import time
                         time.sleep(0.5)
                     else:
-                        logger.error(f"❌ Neo4j connection failed after {max_retries} attempts: {str(e)[:200]}")
+                        logger.debug(f"⚠️  Neo4j connection failed after {max_retries} attempts: {str(e)[:150]}")
+                        logger.debug("   Neo4j is optional - continuing without graph features")
+                        self.driver = None  # Mark as unavailable
                         return None
                 else:
-                    # Not a connection error, re-raise
-                    raise
+                    logger.debug(f"⚠️  Neo4j query failed: {str(e)[:150]}")
+                    return None
         return None
     
     # Phone number nodes
