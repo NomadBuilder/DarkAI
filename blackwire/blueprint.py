@@ -639,9 +639,14 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                     if result:
                         app_logger.info(f"✅ Successfully stored phone {formatted} in Neo4j")
                     else:
-                        app_logger.warning(f"⚠️  create_phone returned None for {formatted}")
+                        app_logger.debug(f"⚠️  create_phone returned None for {formatted} (Neo4j may be unavailable)")
                 except Exception as store_error:
-                    app_logger.error(f"❌ Error storing phone {formatted}: {store_error}", exc_info=True)
+                    # Don't log as error - Neo4j is optional
+                    error_str = str(store_error).lower()
+                    if "cannot resolve" in error_str or "7687" in error_str or "name or service not known" in error_str:
+                        app_logger.debug(f"⚠️  Neo4j unavailable (DNS/network issue): {str(store_error)[:100]}")
+                    else:
+                        app_logger.debug(f"⚠️  Neo4j storage failed (non-critical): {str(store_error)[:100]}")
                     raise  # Re-raise to be caught by outer try/except
                 
                 # Link to country (use formatted phone as key)
@@ -686,9 +691,14 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                     if result:
                         app_logger.info(f"✅ Successfully stored domain {domain_normalized} in Neo4j")
                     else:
-                        app_logger.warning(f"⚠️  create_domain returned None for {domain_normalized}")
+                        app_logger.debug(f"⚠️  create_domain returned None for {domain_normalized} (Neo4j may be unavailable)")
                 except Exception as store_error:
-                    app_logger.error(f"❌ Error storing domain {domain_normalized}: {store_error}", exc_info=True)
+                    # Don't log as error - Neo4j is optional
+                    error_str = str(store_error).lower()
+                    if "cannot resolve" in error_str or "7687" in error_str or "name or service not known" in error_str:
+                        app_logger.debug(f"⚠️  Neo4j unavailable (DNS/network issue): {str(store_error)[:100]}")
+                    else:
+                        app_logger.debug(f"⚠️  Neo4j storage failed (non-critical): {str(store_error)[:100]}")
                 
                 # Link to host
                 if enrichment_data.get("host_name") or enrichment_data.get("isp"):
@@ -746,9 +756,14 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                     if result:
                         app_logger.info(f"✅ Successfully stored wallet {value} in Neo4j")
                     else:
-                        app_logger.warning(f"⚠️  create_wallet returned None for {value}")
+                        app_logger.debug(f"⚠️  create_wallet returned None for {value} (Neo4j may be unavailable)")
                 except Exception as store_error:
-                    app_logger.error(f"❌ Error storing wallet {value}: {store_error}", exc_info=True)
+                    # Don't log as error - Neo4j is optional
+                    error_str = str(store_error).lower()
+                    if "cannot resolve" in error_str or "7687" in error_str or "name or service not known" in error_str:
+                        app_logger.debug(f"⚠️  Neo4j unavailable (DNS/network issue): {str(store_error)[:100]}")
+                    else:
+                        app_logger.debug(f"⚠️  Neo4j storage failed (non-critical): {str(store_error)[:100]}")
                 
                 # Link to currency
                 currency = enrichment_data.get("currency")
@@ -782,9 +797,14 @@ def _find_and_link_entities(entity_type: str, value: str, enrichment_data: Dict,
                     if result:
                         app_logger.info(f"✅ Successfully stored handle {handle_normalized} (platform: {platform}) in Neo4j")
                     else:
-                        app_logger.warning(f"⚠️  create_messaging_handle returned None for {handle_normalized}")
+                        app_logger.debug(f"⚠️  create_messaging_handle returned None for {handle_normalized} (Neo4j may be unavailable)")
                 except Exception as store_error:
-                    app_logger.error(f"❌ Error storing handle {handle_normalized}: {store_error}", exc_info=True)
+                    # Don't log as error - Neo4j is optional
+                    error_str = str(store_error).lower()
+                    if "cannot resolve" in error_str or "7687" in error_str or "name or service not known" in error_str:
+                        app_logger.debug(f"⚠️  Neo4j unavailable (DNS/network issue): {str(store_error)[:100]}")
+                    else:
+                        app_logger.debug(f"⚠️  Neo4j storage failed (non-critical): {str(store_error)[:100]}")
                 
                 # Link to platform
                 if platform and platform != "Unknown":
