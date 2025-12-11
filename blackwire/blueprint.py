@@ -1292,7 +1292,7 @@ def get_graph():
                     if total_nodes > 0:
                         app_logger.warning(f"Neo4j has {total_nodes} nodes but graph query returned 0. Check query filters.")
             except Exception as count_error:
-                app_logger.error(f"Error counting Neo4j nodes: {count_error}")
+                app_logger.debug(f"⚠️  Error counting Neo4j nodes (Neo4j unavailable): {str(count_error)[:100]}")
         
         return jsonify(graph_data), 200
     except Exception as e:
