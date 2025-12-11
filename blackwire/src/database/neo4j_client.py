@@ -35,17 +35,31 @@ class Neo4jClient:
         password = os.getenv("NEO4J_PASSWORD", "blackwire123password")
         
         # Neo4j Aura: Remove port if present (Aura handles routing automatically)
+        # CRITICAL: For Aura, the URI must NOT have a port - driver will fail if port is present
         if uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://"):
             import re
+            # Remove any port specification (7687, 7473, etc.)
+            original_uri = uri
             uri = re.sub(r':\d+', '', uri)  # Remove :port from URI
+            if original_uri != uri:
+                logger.info(f"🔧 Removed port from Aura URI: {original_uri} -> {uri}")
         
         try:
             from neo4j import GraphDatabase
-            # Use simple connection like ShadowStack - it works!
+            # Use EXACT same approach as ShadowStack - it works there!
+            # For Aura, the driver handles routing automatically - no port needed
             self.driver = GraphDatabase.driver(uri, auth=(user, password))
             logger.info(f"✅ Neo4j driver initialized for {uri}")
         except Exception as e:
-            logger.error(f"⚠️  Could not connect to Neo4j: {e}")
+            error_str = str(e).lower()
+            # Check if error mentions port 7687 - means driver is trying to use default port
+            if "7687" in error_str and (uri.startswith("neo4j+s://") or uri.startswith("neo4j+ssc://")):
+                logger.error(f"⚠️  Neo4j Aura connection failed - driver may be appending port 7687: {e}")
+                logger.error(f"   URI used: {uri}")
+                logger.error(f"   This suggests the Neo4j Python driver is internally using port 7687")
+                logger.error(f"   ShadowStack uses the same approach - if it works there, this may be a DNS/network issue")
+            else:
+                logger.error(f"⚠️  Could not connect to Neo4j: {e}")
             logger.warning("   Neo4j will be optional. Graph features will be disabled.")
             self.driver = None
     
