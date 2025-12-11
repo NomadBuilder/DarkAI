@@ -31,9 +31,6 @@
   <link rel="icon" type="image/svg+xml" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
   <link rel="alternate icon" type="image/png" href="{{ url_for('blackwire.static', filename='favicon.svg') }}" />
   
-  <!-- D3.js for graph visualization -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  
   <style>
     :root {
       --bg: #050711;
@@ -232,7 +229,6 @@
       .results-section { padding: 1rem; }
       .results-grid { grid-template-columns: 1fr; gap: 1rem; }
       
-      .graph-container { min-height: 400px; }
     }
     
     /* Small Mobile (max-width: 480px) */
@@ -1325,7 +1321,7 @@
               dataEl.appendChild(relRow);
             });
             
-            dataEl.innerHTML += '<div style="margin-top: 0.75rem; font-size: 0.9rem; color: var(--text-muted);">💡 These entities are linked in the network graph. View the <a href="/blackwire/dashboard" style="color: var(--accent);">Dashboard</a> to see relationships.</div></div>';
+            dataEl.innerHTML += '</div>';
           }
           
           // Show errors if any
@@ -1365,39 +1361,11 @@
           graphSectionDiv.innerHTML = `
             <div style="margin-bottom: 1rem;">
               <strong style="color: var(--accent); font-size: 1rem;">🔗 Coordinated Pattern Detected!</strong>
-              <p style="margin: 0.5rem 0 0 0; color: var(--text-muted); font-size: 0.9rem;">These entities are linked. Explore the relationships in the network graph below.</p>
-            </div>
-            <div id="networkGraphContainer" style="width: 100%; height: 500px; background: rgba(2, 6, 23, 0.8); border-radius: var(--radius-md); position: relative; border: 1px solid var(--border-soft);">
-              <div id="graphLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Loading graph...</div>
-              <svg id="networkGraph" style="width: 100%; height: 100%;"></svg>
-              <div id="graphTooltip" class="tooltip" style="display: none; position: absolute; background: rgba(5, 7, 17, 0.95); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 0.75rem; color: var(--text-main); font-size: 0.85rem; pointer-events: none; z-index: 1000; box-shadow: var(--shadow-soft); max-width: 250px;"></div>
+              <p style="margin: 0.5rem 0 0 0; color: var(--text-muted); font-size: 0.9rem;">These entities are linked.</p>
             </div>
           `;
           dataEl.appendChild(graphSectionDiv);
           dataEl.innerHTML += '</div>';
-          
-          // Load and render graph (small delay to ensure DOM is ready)
-          setTimeout(() => renderNetworkGraph(), 300);
-        } else {
-          // Show graph section even if no relationships detected
-          const graphSectionDiv = document.createElement('div');
-          graphSectionDiv.id = 'graphSection';
-          graphSectionDiv.style.cssText = 'margin-top: 2rem; padding: 1rem; background: rgba(59, 130, 246, 0.05); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: var(--radius-md);';
-          graphSectionDiv.innerHTML = `
-            <div style="margin-bottom: 1rem;">
-              <strong style="color: #3b82f6; font-size: 1rem;">📊 Network Graph</strong>
-              <p style="margin: 0.5rem 0 0 0; color: var(--text-muted); font-size: 0.9rem;">All traced entities visualized in the network graph.</p>
-            </div>
-            <div id="networkGraphContainer" style="width: 100%; height: 500px; background: rgba(2, 6, 23, 0.8); border-radius: var(--radius-md); position: relative; border: 1px solid var(--border-soft);">
-              <div id="graphLoading" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: var(--text-muted);">Loading graph...</div>
-              <svg id="networkGraph" style="width: 100%; height: 100%;"></svg>
-              <div id="graphTooltip" class="tooltip" style="display: none; position: absolute; background: rgba(5, 7, 17, 0.95); border: 1px solid var(--border-soft); border-radius: var(--radius-md); padding: 0.75rem; color: var(--text-main); font-size: 0.85rem; pointer-events: none; z-index: 1000; box-shadow: var(--shadow-soft); max-width: 250px;"></div>
-            </div>
-          `;
-          dataEl.appendChild(graphSectionDiv);
-          
-          // Load and render graph (small delay to ensure DOM is ready)
-          setTimeout(() => renderNetworkGraph(), 300);
         }
         
         // Add "Generate Escalation Packet" section at the bottom
@@ -1536,10 +1504,7 @@
               ${result.errors && result.errors.length > 0 ? `<br><br>⚠️ Errors: ${result.errors.length}<br><small style="color: var(--text-muted);">${result.errors.slice(0, 3).join('<br>')}${result.errors.length > 3 ? '<br>...' : ''}</small>` : ''}
               <br><br>
               <div style="display: flex; gap: 1rem; align-items: center; margin-top: 1rem; flex-wrap: wrap;">
-                <a href="/blackwire/dashboard" class="btn btn--primary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.4rem;">
-                  🔍 View Network Graph →
-                </a>
-                <span style="color: var(--text-muted); font-size: 0.9rem;">All entities are now in the graph visualization</span>
+                <span style="color: var(--text-muted); font-size: 0.9rem;">All entities have been traced successfully</span>
               </div>
             `;
             
@@ -1566,343 +1531,6 @@
       console.log('Event listeners attached successfully');
     });
     
-    // Network Graph Visualization (embedded on trace page)
-    function renderNetworkGraph() {
-      const container = document.getElementById('networkGraphContainer');
-      if (!container) return;
-      
-      const svgEl = document.getElementById('networkGraph');
-      const loadingEl = document.getElementById('graphLoading');
-      const tooltipEl = document.getElementById('graphTooltip');
-      
-      if (!svgEl) return;
-      
-      // Clear existing graph
-      d3.select(svgEl).selectAll("*").remove();
-      
-      const containerRect = container.getBoundingClientRect();
-      const width = containerRect.width || 800;
-      const height = containerRect.height || 500;
-      
-      const svg = d3.select(svgEl)
-        .attr("width", width)
-        .attr("height", height);
-      
-      const g = svg.append("g");
-      
-      // Zoom behavior
-      const zoom = d3.zoom()
-        .scaleExtent([0.1, 4])
-        .on("zoom", (event) => {
-          g.attr("transform", event.transform);
-        });
-      
-      svg.call(zoom);
-      
-      // Color mapping for node types
-      const nodeColors = {
-        "PhoneNumber": "#f97373",
-        "Domain": "#3b82f6",
-        "Wallet": "#10b981",
-        "MessagingHandle": "#f59e0b",
-        "VOIPProvider": "#ec4899",
-        "Country": "#8b5cf6",
-        "Currency": "#10b981",
-        "Platform": "#f59e0b",
-        "Host": "#6366f1",
-        "CDN": "#06b6d4",
-        "Registrar": "#a855f7",
-        "CMS": "#f97316",
-        "Nameserver": "#14b8a6",
-        "Cluster": "#8b5cf6"
-      };
-      
-      // Build entity filter for current search - ALWAYS use filter if available
-      let graphUrl = "/blackwire/api/graph";
-      if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
-        // Remove duplicates from currentSearchEntities
-        const uniqueEntities = [...new Set(window.currentSearchEntities)];
-        const entityFilter = uniqueEntities.join(',');
-        graphUrl = `/blackwire/api/graph?entities=${encodeURIComponent(entityFilter)}`;
-        console.log('🔍 Fetching graph with filter:', entityFilter);
-        console.log('📊 Total unique entities in current search:', uniqueEntities.length);
-      } else {
-        console.log('⚠️ No currentSearchEntities found, will show all nodes');
-      }
-      
-      // Load graph data (filtered to current search if available)
-      fetch(graphUrl)
-        .then(response => response.json())
-        .then(data => {
-          if (loadingEl) loadingEl.style.display = "none";
-          
-          console.log('📊 Graph data received:', {
-            nodes: data.nodes?.length || 0,
-            edges: data.edges?.length || 0,
-            message: data.message
-          });
-          
-          const nodes = data.nodes || [];
-          const links = (data.edges || []).map(link => ({
-            source: typeof link.source === 'string' ? link.source : (link.source?.id || link.source),
-            target: typeof link.target === 'string' ? link.target : (link.target?.id || link.target),
-            type: link.type || link.rel_type || 'UNKNOWN'
-          }));
-          
-          if (nodes.length === 0) {
-            let message = "";
-            if (data.error || data.message) {
-              // Check if Neo4j is not available
-              if (data.error && (data.error.includes("Neo4j") || data.error.includes("not initialized"))) {
-                message = "Network graph requires Neo4j database. Neo4j is currently disabled. ";
-                message += "To enable graph visualization, configure NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD environment variables.";
-              } else if (data.message) {
-                message = data.message;
-              } else {
-                message = "No entities found. They may not have been stored in the graph database.";
-              }
-            } else {
-              message = "No entities in graph yet. ";
-              if (window.currentSearchEntities && window.currentSearchEntities.length > 0) {
-                message += "Entities may still be processing. The graph will auto-update when ready.";
-              } else {
-                message += "Trace some entities to see them here!";
-              }
-            }
-            
-            const textEl = svg.append("text")
-              .attr("x", width / 2)
-              .attr("y", height / 2)
-              .attr("text-anchor", "middle")
-              .attr("fill", "#9ca3af")
-              .style("font-size", "16px")
-              .style("max-width", "80%")
-              .style("word-wrap", "break-word")
-              .text(message);
-            
-            // Auto-retry if we have entities to show (they might still be processing) AND Neo4j is available
-            if (window.currentSearchEntities && window.currentSearchEntities.length > 0 && !data.error) {
-              let retryCount = 0;
-              const maxRetries = 3;
-              const retryInterval = setInterval(() => {
-                retryCount++;
-                if (retryCount > maxRetries) {
-                  clearInterval(retryInterval);
-                  textEl.text("No entities found. They may not have been stored in the graph database.");
-                  return;
-                }
-                
-                console.log(`🔄 Retrying graph fetch (attempt ${retryCount}/${maxRetries})...`);
-                const entityFilter = window.currentSearchEntities.join(',');
-                const retryUrl = `/blackwire/api/graph?entities=${encodeURIComponent(entityFilter)}`;
-                
-                fetch(retryUrl)
-                  .then(response => response.json())
-                  .then(data => {
-                    const retryNodes = data.nodes || [];
-                    if (retryNodes.length > 0) {
-                      clearInterval(retryInterval);
-                      // Reload the graph
-                      renderNetworkGraph();
-                    }
-                  })
-                  .catch(err => {
-                    console.error('Retry failed:', err);
-                  });
-              }, 2000); // Retry every 2 seconds
-            }
-            
-            return;
-          }
-          
-          // Create links
-          const link = g.append("g")
-            .attr("class", "links")
-            .selectAll("line")
-            .data(links)
-            .enter()
-            .append("line")
-            .attr("class", "link")
-            .attr("stroke", "rgba(148,163,184,0.6)")
-            .attr("stroke-opacity", 0.6)
-            .attr("stroke-width", 1.5);
-          
-          // Create nodes
-          const node = g.append("g")
-            .attr("class", "nodes")
-            .selectAll("g")
-            .data(nodes)
-            .enter()
-            .append("g")
-            .attr("class", "node")
-            .call(d3.drag()
-              .on("start", dragstarted)
-              .on("drag", dragged)
-              .on("end", dragended));
-          
-          node.append("circle")
-            .attr("r", d => {
-              const label = d.label || d.properties?.label || '';
-              // Make relationship nodes (Country, Currency, etc.) larger
-              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
-                return 12;
-              }
-              return 8;
-            })
-            .attr("fill", d => {
-              const label = d.label || d.properties?.label || '';
-              return nodeColors[label] || "#6b7280";
-            })
-            .attr("stroke", "#fff")
-            .attr("stroke-width", d => {
-              const label = d.label || d.properties?.label || '';
-              // Thicker stroke for relationship nodes
-              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
-                return 3;
-              }
-              return 2;
-            })
-            .on("mouseover", function(event, d) {
-              showTooltip(event, d, tooltipEl, container);
-            })
-            .on("mouseout", function() {
-              if (tooltipEl) tooltipEl.style.display = "none";
-            });
-          
-          node.append("text")
-            .attr("dx", 12)
-            .attr("dy", 4)
-            .text(d => {
-              const label = d.label || d.properties?.label || '';
-              // For relationship nodes, show shorter names
-              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
-                return d.display_name || d.properties?.name || d.id.substring(0, 10);
-              }
-              return d.display_name || d.properties?.phone || d.properties?.domain || 
-                     d.properties?.address || d.properties?.handle || d.id.substring(0, 10);
-            })
-            .attr("font-size", d => {
-              const label = d.label || d.properties?.label || '';
-              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
-                return "11px";
-              }
-              return "10px";
-            })
-            .attr("font-weight", d => {
-              const label = d.label || d.properties?.label || '';
-              if (["Country", "Currency", "Platform", "Host", "CDN", "Registrar", "CMS", "Nameserver", "VOIPProvider"].includes(label)) {
-                return "600";
-              }
-              return "normal";
-            })
-            .attr("fill", "#9ca3af");
-          
-          // Force simulation
-          const simulation = d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(100))
-            .force("charge", d3.forceManyBody().strength(-300))
-            .force("center", d3.forceCenter(width / 2, height / 2))
-            .force("collision", d3.forceCollide().radius(30));
-          
-          // Update positions on tick
-          simulation.on("tick", () => {
-            link
-              .attr("x1", d => d.source.x)
-              .attr("y1", d => d.source.y)
-              .attr("x2", d => d.target.x)
-              .attr("y2", d => d.target.y);
-            
-            node
-              .attr("transform", d => `translate(${Math.max(10, Math.min(width - 10, d.x))},${Math.max(10, Math.min(height - 10, d.y))})`);
-          });
-          
-          // Drag functions
-          function dragstarted(event, d) {
-            if (!event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-          }
-          
-          function dragged(event, d) {
-            d.fx = event.x;
-            d.fy = event.y;
-          }
-          
-          function dragended(event, d) {
-            if (!event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-          }
-          
-          // Tooltip function
-          function showTooltip(event, d, tooltip, container) {
-            if (!tooltip) return;
-            const props = d.properties || {};
-            const label = d.label || d.properties?.label || 'Unknown';
-            
-            let content = `<div style="font-weight: 600; color: var(--accent); margin-bottom: 0.5rem;">${label}</div>`;
-            
-            // Entity-specific details
-            if (props.phone || props.formatted) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Phone:</span> ${props.formatted || props.phone}</div>`;
-              if (props.country) {
-                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Country:</span> ${props.country}</div>`;
-              }
-            }
-            if (props.domain) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Domain:</span> ${props.domain}</div>`;
-            }
-            if (props.address) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Wallet:</span> ${props.address.substring(0, 20)}...</div>`;
-              if (props.currency) {
-                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Currency:</span> ${props.currency}</div>`;
-              }
-            }
-            if (props.handle) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Handle:</span> ${props.handle}</div>`;
-              if (props.platform) {
-                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">Platform:</span> ${props.platform}</div>`;
-              }
-            }
-            
-            // Relationship node details
-            if (label === "Country" && props.name) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">All phone numbers from this country</div>`;
-            }
-            if (label === "Currency" && props.name) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">All wallets using ${props.name}</div>`;
-            }
-            if (label === "Platform" && props.name) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">All handles on ${props.name}</div>`;
-            }
-            if (label === "Host" && props.name) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">Hosting provider: ${props.name}</div>`;
-              if (props.isp) {
-                content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;"><span style="color: var(--text-muted);">ISP:</span> ${props.isp}</div>`;
-              }
-            }
-            if (label === "CDN" && props.name) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">CDN provider: ${props.name}</div>`;
-            }
-            if (label === "Registrar" && props.name) {
-              content += `<div style="margin-bottom: 0.25rem; font-size: 0.85rem;">Domain registrar: ${props.name}</div>`;
-            }
-            
-            tooltip.innerHTML = content;
-            tooltip.style.display = "block";
-            const rect = container.getBoundingClientRect();
-            tooltip.style.left = (event.pageX - rect.left + 10) + "px";
-            tooltip.style.top = (event.pageY - rect.top + 10) + "px";
-          }
-        })
-        .catch(error => {
-          console.error("Error loading graph:", error);
-          if (loadingEl) {
-            loadingEl.textContent = "❌ Neo4j is required for graph visualization. Please configure NEO4J_URI, NEO4J_USER, and NEO4J_PASSWORD.";
-            loadingEl.style.color = "#f97373";
-          }
-        });
-    }
   </script>
 </body>
 </html>
