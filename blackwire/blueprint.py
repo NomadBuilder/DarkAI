@@ -1231,7 +1231,7 @@ def get_graph():
                 else:
                     app_logger.warning("Neo4j reconnection failed - driver still None")
         except Exception as reconnect_error:
-            app_logger.error(f"Neo4j reconnection attempt failed: {reconnect_error}")
+            app_logger.debug(f"⚠️  Neo4j reconnection attempt failed (Neo4j unavailable): {str(reconnect_error)[:100]}")
         
         # Check if driver is still None after reconnection attempt
         if not neo4j_client.driver:
