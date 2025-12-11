@@ -547,9 +547,14 @@ def _trace_multiple_entities(entities: Dict, postgres_client, neo4j_client):
                 })
         
         # Store investigation session - entities traced together in this request
+        # Use a separate transaction to avoid issues if previous operations failed
         import uuid
         session_id = str(uuid.uuid4())
-        _store_investigation_session(session_id, results, postgres_client)
+        try:
+            _store_investigation_session(session_id, results, postgres_client)
+        except Exception as e:
+            # Don't fail the whole request if session storage fails
+            app_logger.warning(f"Could not store investigation session (non-critical): {e}")
         
         # Detect relationships between the traced entities themselves
         relationships = _detect_cross_entity_relationships(results, neo4j_client, postgres_client)
@@ -581,6 +586,12 @@ def _store_entity(entity_type: str, value: str, enrichment_data: Dict, postgres_
         return None
     
     try:
+        # Rollback any failed transaction first to ensure clean state
+        try:
+            postgres_client.conn.rollback()
+        except:
+            pass  # Ignore rollback errors
+        
         if entity_type == "phone":
             return postgres_client.insert_phone(value, enrichment_data)
         elif entity_type == "domain":
@@ -590,6 +601,11 @@ def _store_entity(entity_type: str, value: str, enrichment_data: Dict, postgres_
         elif entity_type == "handle":
             return postgres_client.insert_handle(value, enrichment_data)
     except Exception as e:
+        # Rollback on error to prevent transaction issues
+        try:
+            postgres_client.conn.rollback()
+        except:
+            pass
         app_logger.error(f"⚠️  Failed to store {entity_type} in PostgreSQL: {e}", exc_info=True)
     
     return None
