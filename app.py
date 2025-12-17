@@ -397,6 +397,128 @@ def vendor_intelligence_report():
         return send_from_directory('templates', 'report_vendor_intelligence.html')
 
 
+@app.route('/reports/shadowstack-infrastructure-report')
+def shadowstack_infrastructure_report():
+    """ShadowStack Infrastructure Intelligence Report page."""
+    from flask import render_template
+    return render_template('report_shadowstack_infrastructure.html')
+
+
+@app.route('/api/reports/shadowstack-infrastructure/export')
+def export_shadowstack_infrastructure():
+    """Export ShadowStack infrastructure intelligence report as CSV or JSON."""
+    from flask import request, Response
+    import json
+    import csv
+    import io
+    
+    format_type = request.args.get('format', 'csv').lower()
+    
+    if format_type not in ['csv', 'json']:
+        return jsonify({"error": "Invalid format. Use 'csv' or 'json'"}), 400
+    
+    try:
+        # Generate report data dynamically
+        from shadowstack.blueprint import _generate_shadowstack_report_data
+        data = _generate_shadowstack_report_data()
+        
+        if format_type == 'csv':
+            # Create CSV export
+            output = io.StringIO()
+            writer = csv.writer(output)
+            
+            # Write summary stats
+            writer.writerow(['Metric', 'Value'])
+            writer.writerow(['Total Domains', data.get('total_domains', 0)])
+            writer.writerow(['Enriched Domains', data.get('enriched_domains', 0)])
+            writer.writerow(['Enrichment Percentage', f"{data.get('enrichment_percentage', 0)}%"])
+            writer.writerow([])
+            
+            # Write top stats
+            stats = data.get('stats', {})
+            writer.writerow(['Top Provider', 'Name'])
+            writer.writerow(['Top Hosting', stats.get('top_hosting', 'N/A')])
+            writer.writerow(['Top CDN', stats.get('top_cdn', 'N/A')])
+            writer.writerow(['Top ISP', stats.get('top_isp', 'N/A')])
+            writer.writerow(['Top Registrar', stats.get('top_registrar', 'N/A')])
+            writer.writerow(['Top Country', stats.get('top_country', 'N/A')])
+            writer.writerow([])
+            
+            # Write hosting providers
+            writer.writerow(['Hosting Provider', 'Domain Count'])
+            infrastructure = data.get('infrastructure', {})
+            if 'hosting_providers' in infrastructure:
+                for provider, count in list(infrastructure['hosting_providers'].items())[:20]:
+                    writer.writerow([provider, count])
+            writer.writerow([])
+            
+            # Write CDNs
+            writer.writerow(['CDN', 'Domain Count'])
+            if 'cdns' in infrastructure:
+                for cdn, count in list(infrastructure['cdns'].items())[:20]:
+                    writer.writerow([cdn, count])
+            writer.writerow([])
+            
+            # Write ISPs
+            writer.writerow(['ISP', 'Domain Count'])
+            if 'isps' in infrastructure:
+                for isp, count in list(infrastructure['isps'].items())[:20]:
+                    writer.writerow([isp, count])
+            writer.writerow([])
+            
+            # Write Registrars
+            writer.writerow(['Registrar', 'Domain Count'])
+            if 'registrars' in infrastructure:
+                for registrar, count in list(infrastructure['registrars'].items())[:20]:
+                    writer.writerow([registrar, count])
+            writer.writerow([])
+            
+            # Write Countries
+            writer.writerow(['Country', 'Domain Count'])
+            geography = data.get('geography', {})
+            if 'countries' in geography:
+                for country, count in list(geography['countries'].items())[:20]:
+                    writer.writerow([country, count])
+            writer.writerow([])
+            
+            # Write Payment Processors
+            writer.writerow(['Payment Processor', 'Domain Count'])
+            if 'payment_processors' in infrastructure:
+                for processor, count in list(infrastructure['payment_processors'].items())[:20]:
+                    writer.writerow([processor, count])
+            writer.writerow([])
+            
+            # Write Key Service Providers
+            writer.writerow(['Service Provider', 'Domain Count', 'Percentage'])
+            key_providers = data.get('key_service_providers', {})
+            if 'top_service_providers' in key_providers:
+                for provider in key_providers['top_service_providers']:
+                    writer.writerow([provider.get('name', 'N/A'), provider.get('count', 0), f"{provider.get('percentage', 0)}%"])
+            
+            output.seek(0)
+            return Response(
+                output.getvalue(),
+                mimetype='text/csv',
+                headers={
+                    'Content-Disposition': 'attachment; filename=shadowstack_infrastructure_report.csv'
+                }
+            )
+        
+        elif format_type == 'json':
+            return Response(
+                json.dumps(data, indent=2, default=str),
+                mimetype='application/json',
+                headers={
+                    'Content-Disposition': 'attachment; filename=shadowstack_infrastructure_report.json'
+                }
+            )
+    
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/api/reports/survey-data')
 def get_survey_data():
     """Process and return survey data for visualizations.

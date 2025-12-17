@@ -57,8 +57,11 @@ function saveColumnPreferences() {
 
 // Initialize visualization
 function initVisualization() {
-    // Restore last view from localStorage
-    const lastView = localStorage.getItem('lastView') || 'graph';
+    // Check URL hash first, then localStorage
+    const hashView = window.location.hash.replace('#', '');
+    const lastView = hashView && ['graph', 'table', 'dns-history', 'analysis', 'about'].includes(hashView) 
+        ? hashView 
+        : (localStorage.getItem('lastView') || 'graph');
     
     // View toggle handlers
     document.getElementById("graph-view-btn").addEventListener("click", () => {
@@ -73,6 +76,7 @@ function initVisualization() {
     document.getElementById("dns-history-view-btn").addEventListener("click", () => {
         switchView("dns-history");
         localStorage.setItem('lastView', 'dns-history');
+        window.location.hash = 'dns-history';
         loadDnsHistory(); // Load DNS history when view is shown
     });
     document.getElementById("analysis-view-btn").addEventListener("click", () => {
@@ -191,6 +195,8 @@ function switchView(view) {
         dnsHistoryBtn.classList.add("active");
         resetZoomBtn.style.display = "none";
         loadDnsHistory(); // Load DNS history when view is shown
+        resetZoomBtn.style.display = "none";
+        loadDnsHistory(); // Load DNS history when view is shown
     } else if (view === "analysis") {
         analysisView.style.display = "block";
         analysisBtn.classList.add("active");
@@ -250,7 +256,11 @@ async function refreshAll() {
     
     // Only restore view if we're initializing (not when user clicks refresh)
     if (!refreshAll._skipViewRestore) {
-        let lastView = localStorage.getItem('lastView') || 'graph';
+        // Check URL hash first, then localStorage
+        const hashView = window.location.hash.replace('#', '');
+        let lastView = hashView && ['graph', 'table', 'dns-history', 'analysis', 'about'].includes(hashView)
+            ? hashView
+            : (localStorage.getItem('lastView') || 'graph');
         // If saved view was 'list', default to 'graph' since list view was removed
         if (lastView === 'list') {
             lastView = 'graph';

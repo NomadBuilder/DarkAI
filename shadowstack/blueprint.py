@@ -264,6 +264,445 @@ def get_enrich_domain_function():
     
     return enrich_func
 
+def _generate_shadowstack_report_data():
+    """Internal function to generate ShadowStack infrastructure intelligence report data.
+    Returns the data dictionary (not a Flask response).
+    """
+    if not postgres_client or not postgres_client.conn:
+        raise Exception("PostgreSQL not available")
+    
+    try:
+        from collections import Counter, defaultdict
+        import psycopg2.extras
+        
+        # Rollback any failed transaction first
+        try:
+            postgres_client.conn.rollback()
+        except:
+            pass
+        
+        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        
+        # Get total domain count
+        cursor.execute("""
+            SELECT COUNT(*) as total 
+            FROM domains
+            WHERE source != 'DUMMY_DATA_FOR_TESTING'
+              AND source IS NOT NULL
+              AND source != ''
+              AND (source ILIKE 'SHADOWSTACK%' OR source ILIKE 'ShadowStack%')
+        """)
+        total_domains = cursor.fetchone()['total']
+        
+        # Get enriched domain count
+        cursor.execute("""
+            SELECT COUNT(DISTINCT d.id) as enriched_count
+            FROM domains d
+            INNER JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+              AND de.enriched_at IS NOT NULL
+        """)
+        enriched_count = cursor.fetchone()['enriched_count']
+        
+        # Get infrastructure data using SQL aggregations (much faster)
+        cursor.execute("""
+            SELECT 
+                de.cdn,
+                de.host_name as hosting,
+                de.isp,
+                de.registrar,
+                de.payment_processor,
+                de.asn,
+                de.cms,
+                de.web_server
+            FROM domains d
+            INNER JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+              AND de.enriched_at IS NOT NULL
+        """)
+        infrastructure_rows = cursor.fetchall()
+        
+        # Process infrastructure data
+        hosting_providers = Counter()
+        cdns = Counter()
+        isps = Counter()
+        registrars = Counter()
+        payment_processors = Counter()
+        asns = Counter()
+        cms_platforms = Counter()
+        web_servers = Counter()
+        
+        for row in infrastructure_rows:
+            host = row.get('hosting')
+            if host and host.strip() and host.lower() not in ['', 'none', 'unknown', 'n/a']:
+                hosting_providers[host.strip()] += 1
+            
+            cdn = row.get('cdn')
+            if cdn and cdn.strip() and cdn.lower() not in ['', 'none', 'unknown', 'n/a']:
+                cdns[cdn.strip()] += 1
+            
+            isp = row.get('isp')
+            if isp and isp.strip() and isp.lower() not in ['', 'none', 'unknown', 'n/a']:
+                isps[isp.strip()] += 1
+            
+            registrar = row.get('registrar')
+            if registrar and registrar.strip() and registrar.lower() not in ['', 'none', 'unknown', 'n/a']:
+                registrars[registrar.strip()] += 1
+            
+            payment = row.get('payment_processor')
+            if payment and payment.strip() and payment.lower() not in ['', 'none', 'unknown', 'n/a']:
+                for p in payment.split(','):
+                    p_clean = p.strip()
+                    if p_clean:
+                        payment_processors[p_clean] += 1
+            
+            asn = row.get('asn')
+            if asn and str(asn).strip() and str(asn).lower() not in ['', 'none', 'unknown', 'n/a', '0']:
+                asns[str(asn).strip()] += 1
+            
+            cms = row.get('cms')
+            if cms and cms.strip() and cms.lower() not in ['', 'none', 'unknown', 'n/a']:
+                cms_platforms[cms.strip()] += 1
+            
+            web_server = row.get('web_server')
+            if web_server and web_server.strip() and web_server.lower() not in ['', 'none', 'unknown', 'n/a']:
+                web_servers[web_server.strip()] += 1
+        
+        # Get security data
+        cursor.execute("""
+            SELECT 
+                COUNT(*) FILTER (WHERE de.ssl_info IS NOT NULL) as ssl_count,
+                COUNT(*) FILTER (WHERE de.http_headers IS NOT NULL) as headers_count,
+                COUNT(*) FILTER (WHERE de.ssl_info->>'valid' = 'true') as valid_ssl_count,
+                COUNT(*) FILTER (WHERE de.ssl_info->>'self_signed' = 'true') as self_signed_count,
+                COUNT(*) FILTER (WHERE de.ssl_info->>'expired' = 'true') as expired_ssl_count
+            FROM domains d
+            INNER JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+              AND de.enriched_at IS NOT NULL
+        """)
+        security_row = cursor.fetchone()
+        
+        security_stats = {
+            "domains_with_ssl": security_row['ssl_count'] or 0,
+            "domains_with_headers": security_row['headers_count'] or 0,
+            "valid_ssl": security_row['valid_ssl_count'] or 0,
+            "self_signed_ssl": security_row['self_signed_count'] or 0,
+            "expired_ssl": security_row['expired_ssl_count'] or 0
+        }
+        
+        # Get source distribution
+        cursor.execute("""
+            SELECT source, COUNT(*) as count
+            FROM domains
+            WHERE source != 'DUMMY_DATA_FOR_TESTING'
+              AND source IS NOT NULL
+              AND source != ''
+              AND (source ILIKE 'SHADOWSTACK%' OR source ILIKE 'ShadowStack%')
+            GROUP BY source
+        """)
+        source_rows = cursor.fetchall()
+        sources = {row['source']: row['count'] for row in source_rows}
+        
+        # Calculate percentages
+        hosting_pct = {}
+        if total_domains > 0:
+            for host, count in hosting_providers.most_common(10):
+                hosting_pct[host] = round(count / total_domains * 100, 1)
+        
+        cdn_pct = {}
+        if total_domains > 0:
+            for cdn, count in cdns.most_common(10):
+                cdn_pct[cdn] = round(count / total_domains * 100, 1)
+        
+        # Get geographic data from DNS history (unique domains per country)
+        # Normalize country names and count unique domains per country
+        def normalize_country_name(country):
+            """Normalize country names to handle variations."""
+            if not country:
+                return None
+            country = country.strip()
+            country_lower = country.lower()
+            
+            # US variations
+            if country_lower in ['us', 'usa', 'united states', 'united states of america']:
+                return 'United States'
+            
+            # UK variations
+            if country_lower in ['uk', 'united kingdom', 'gb', 'great britain']:
+                return 'United Kingdom'
+            
+            # Other common normalizations
+            country_map = {
+                'russia': 'Russia',
+                'russian federation': 'Russia',
+                'de': 'Germany',
+                'germany': 'Germany',
+                'fr': 'France',
+                'france': 'France',
+                'nl': 'Netherlands',
+                'the netherlands': 'Netherlands',
+                'netherlands': 'Netherlands',
+                'ca': 'Canada',
+                'canada': 'Canada',
+                'au': 'Australia',
+                'australia': 'Australia',
+                'jp': 'Japan',
+                'japan': 'Japan',
+                'cn': 'China',
+                'china': 'China',
+                'ua': 'Ukraine',
+                'ukraine': 'Ukraine',
+            }
+            
+            if country_lower in country_map:
+                return country_map[country_lower]
+            
+            # Capitalize properly for other countries
+            return country.title() if country else None
+        
+        # Track unique domains per country (not IP addresses)
+        country_domains = defaultdict(set)  # country -> set of domain IDs
+        
+        cursor.execute("""
+            SELECT 
+                d.id,
+                de.dns_records->'viewdns_ip_history'->'historical_ips' as historical_ips
+            FROM domains d
+            INNER JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+              AND de.dns_records->'viewdns_ip_history'->'historical_ips' IS NOT NULL
+        """)
+        geo_rows = cursor.fetchall()
+        
+        for row in geo_rows:
+            domain_id = row['id']
+            historical_ips = row.get('historical_ips')
+            if historical_ips:
+                if isinstance(historical_ips, str):
+                    try:
+                        import json
+                        historical_ips = json.loads(historical_ips)
+                    except:
+                        historical_ips = []
+                
+                if isinstance(historical_ips, list):
+                    # Collect unique countries for this domain
+                    domain_countries = set()
+                    for ip_entry in historical_ips:
+                        if isinstance(ip_entry, dict):
+                            country = ip_entry.get('country')
+                            if country and country.strip() and country.lower() not in ['', 'unknown', 'n/a', 'none']:
+                                normalized = normalize_country_name(country)
+                                if normalized:
+                                    domain_countries.add(normalized)
+                    
+                    # Count this domain for each country it appears in
+                    for country in domain_countries:
+                        country_domains[country].add(domain_id)
+        
+        # Convert to counts (unique domains per country)
+        countries = Counter({country: len(domain_set) for country, domain_set in country_domains.items()})
+        
+        # Get key service providers (consolidated - providers that appear in multiple roles)
+        service_provider_domains = defaultdict(set)
+        cursor.execute("""
+            SELECT 
+                d.id,
+                de.host_name,
+                de.cdn,
+                de.isp
+            FROM domains d
+            INNER JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+              AND de.enriched_at IS NOT NULL
+        """)
+        provider_rows = cursor.fetchall()
+        
+        for row in provider_rows:
+            domain_id = row['id']
+            host = row.get('host_name')
+            cdn = row.get('cdn')
+            isp = row.get('isp')
+            
+            # Normalize provider names (simple normalization)
+            def normalize_provider(name):
+                if not name or name.strip().lower() in ['', 'none', 'unknown', 'n/a']:
+                    return None
+                name = name.strip()
+                # Common normalizations
+                if 'cloudflare' in name.lower():
+                    return 'Cloudflare, Inc.'
+                if 'amazon' in name.lower() or 'aws' in name.lower():
+                    return 'Amazon.com, Inc.'
+                return name
+            
+            providers = set()
+            if host:
+                normalized = normalize_provider(host)
+                if normalized:
+                    providers.add(normalized)
+            if cdn:
+                normalized = normalize_provider(cdn)
+                if normalized:
+                    providers.add(normalized)
+            if isp:
+                normalized = normalize_provider(isp)
+                if normalized:
+                    providers.add(normalized)
+            
+            for provider in providers:
+                service_provider_domains[provider].add(domain_id)
+        
+        # Convert to counts and percentages
+        service_providers = Counter({provider: len(domains_set) 
+                                    for provider, domains_set in service_provider_domains.items()})
+        
+        # Get key domains (domains with most infrastructure connections or interesting patterns)
+        # For now, we'll get domains that have multiple infrastructure elements
+        cursor.execute("""
+            SELECT 
+                d.domain,
+                de.host_name,
+                de.cdn,
+                de.isp,
+                de.registrar,
+                de.payment_processor,
+                de.cms
+            FROM domains d
+            INNER JOIN domain_enrichment de ON d.id = de.domain_id
+            WHERE d.source != 'DUMMY_DATA_FOR_TESTING'
+              AND d.source IS NOT NULL
+              AND d.source != ''
+              AND (d.source ILIKE 'SHADOWSTACK%' OR d.source ILIKE 'ShadowStack%')
+              AND de.enriched_at IS NOT NULL
+            ORDER BY d.domain
+            LIMIT 20
+        """)
+        key_domains_rows = cursor.fetchall()
+        
+        key_domains = []
+        for row in key_domains_rows:
+            domain = row.get('domain')
+            if domain:
+                infrastructure_count = sum([
+                    1 if row.get('host_name') else 0,
+                    1 if row.get('cdn') else 0,
+                    1 if row.get('isp') else 0,
+                    1 if row.get('registrar') else 0,
+                    1 if row.get('payment_processor') else 0,
+                    1 if row.get('cms') else 0
+                ])
+                key_domains.append({
+                    "domain": domain,
+                    "hosting": row.get('host_name'),
+                    "cdn": row.get('cdn'),
+                    "isp": row.get('isp'),
+                    "registrar": row.get('registrar'),
+                    "payment_processor": row.get('payment_processor'),
+                    "cms": row.get('cms'),
+                    "infrastructure_count": infrastructure_count
+                })
+        
+        # Sort by infrastructure count (most interesting first)
+        key_domains.sort(key=lambda x: x['infrastructure_count'], reverse=True)
+        
+        # Prepare key service providers data (similar to analysis section)
+        def filter_by_count(items, limit=10):
+            """Filter items to top N with 5+ domains."""
+            return [{"name": name, "count": count, "percentage": round(count/total_domains*100, 1)} 
+                   for name, count in items.most_common(limit) if count >= 5]
+        
+        key_service_providers = {
+            "top_isps": filter_by_count(isps, 10),
+            "top_hosts": filter_by_count(hosting_providers, 10),
+            "top_registrars": filter_by_count(registrars, 10),
+            "top_cdns": filter_by_count(cdns, 10),
+            "top_service_providers": filter_by_count(service_providers, 10),
+            "top_cms": filter_by_count(cms_platforms, 10)
+        }
+        
+        # Get registrars data for key service providers section
+        top_registrars_list = filter_by_count(registrars, 10)
+        
+        return {
+            "total_domains": total_domains,
+            "enriched_domains": enriched_count,
+            "enrichment_percentage": round(enriched_count / total_domains * 100, 1) if total_domains > 0 else 0,
+            "infrastructure": {
+                "hosting_providers": dict(hosting_providers.most_common(15)),
+                "hosting_percentages": hosting_pct,
+                "cdns": dict(cdns.most_common(10)),
+                "cdn_percentages": cdn_pct,
+                "isps": dict(isps.most_common(15)),
+                "registrars": dict(registrars.most_common(15)),
+                "payment_processors": dict(payment_processors.most_common(10)),
+                "asns": dict(asns.most_common(10)),
+                "cms_platforms": dict(cms_platforms.most_common(10)),
+                "web_servers": dict(web_servers.most_common(10))
+            },
+            "geography": {
+                "countries": dict(countries.most_common(15))
+            },
+            "key_service_providers": key_service_providers,
+            "key_domains": key_domains[:15],  # Top 15 most interesting domains
+            "security": security_stats,
+            "sources": sources,
+            "stats": {
+                "top_hosting": hosting_providers.most_common(1)[0][0] if hosting_providers else "N/A",
+                "top_cdn": cdns.most_common(1)[0][0] if cdns else "N/A",
+                "top_isp": isps.most_common(1)[0][0] if isps else "N/A",
+                "top_registrar": registrars.most_common(1)[0][0] if registrars else "N/A",
+                "top_country": countries.most_common(1)[0][0] if countries else "N/A"
+            }
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise
+    finally:
+        try:
+            if 'cursor' in locals() and cursor:
+                cursor.close()
+        except:
+            pass
+
+
+@shadowstack_bp.route('/api/reports/infrastructure-intelligence-data', methods=['GET'])
+def get_shadowstack_report_data():
+    """Get comprehensive data for the ShadowStack infrastructure intelligence report."""
+    # Try to initialize connection if not available
+    global postgres_client
+    if not postgres_client or not (hasattr(postgres_client, 'conn') and postgres_client.conn):
+        try:
+            postgres_client = PostgresClient()
+        except Exception as e:
+            return jsonify({"error": f"Database not available: {str(e)}"}), 503
+    
+    try:
+        data = _generate_shadowstack_report_data()
+        return jsonify(data), 200
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 @shadowstack_bp.route('/')
 def index():
     """Render the splash/landing page."""

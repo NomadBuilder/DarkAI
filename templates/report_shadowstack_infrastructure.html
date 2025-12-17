@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>ShadowStack Infrastructure Intelligence Report – Dark AI</title>
+  <meta name="description" content="Comprehensive analysis of infrastructure enabling NCII and deepfake content distribution - hosting providers, CDNs, payment processors, and security postures." />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://darkai.ca/reports/shadowstack-infrastructure-report" />
+  <meta property="og:title" content="ShadowStack Infrastructure Intelligence Report – Dark AI" />
+  <meta property="og:description" content="Comprehensive analysis of infrastructure enabling NCII and deepfake content distribution." />
+  <meta property="og:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://darkai.ca/reports/shadowstack-infrastructure-report" />
+  <meta name="twitter:title" content="ShadowStack Infrastructure Intelligence Report – Dark AI" />
+  <meta name="twitter:description" content="Comprehensive analysis of infrastructure enabling NCII and deepfake content distribution." />
+  <meta name="twitter:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/static/favicon.svg" />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+    
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif;
+      background: #0a0b14;
+      color: #f2f3f5;
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(100, 181, 246, 0.08) 0%, transparent 50%),
+        linear-gradient(180deg, #0a0b14 0%, #0f1119 100%);
+      z-index: -1;
+    }
+    
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(10, 11, 20, 0.95);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.25rem 2rem;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    
+    nav .logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    nav .logo-mark:hover {
+      transform: scale(1.1);
+    }
+    
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    
+    .nav-dropdown {
+      position: relative;
+    }
+    
+    .nav-dropdown-toggle {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      transition: color 0.3s;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .nav-dropdown-toggle:hover {
+      color: #ff6b6b;
+    }
+    
+    .nav-dropdown-toggle::after {
+      content: '▼';
+      font-size: 0.7rem;
+      transition: transform 0.3s;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    
+    .nav-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.5rem;
+      background: rgba(10, 11, 20, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.5rem 0;
+      min-width: 200px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    
+    .nav-dropdown.active .nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.9rem 1.75rem;
+      color: #e0e0e0;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.2s, color 0.2s;
+      margin: 0;
+    }
+    
+    .nav-dropdown-menu a:hover {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff6b6b;
+    }
+    
+    nav a {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #e0e0e0;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #ff6b6b;
+    }
+    nav .logo a {
+      margin-left: 0;
+    }
+    
+    header.hero {
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      position: relative;
+      animation: fadeInUp 1s ease-out;
+    }
+    
+    header.hero h1 {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ff4444 50%, #64b5f6 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.02em;
+    }
+    
+    header.hero .subtitle {
+      font-size: 1.3rem;
+      color: #b4bac3;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    header.hero .meta {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      color: #9aa0a6;
+      font-size: 0.95rem;
+      margin-top: 2rem;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      max-width: 1400px;
+      margin: 4rem auto;
+      padding: 0 2rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+      gap: 2.5rem;
+    }
+    
+    @media (max-width: 768px) {
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    
+    .stat-card {
+      background: linear-gradient(135deg, rgba(11, 13, 22, 0.95) 0%, rgba(20, 22, 35, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: visible;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+      min-width: 0;
+      box-sizing: border-box;
+      width: 100%;
+    }
+    
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #ff6b6b, #ff4444, #ff6b6b);
+      background-size: 200% 100%;
+      animation: shimmer 3s infinite;
+    }
+    
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 20px 60px rgba(255, 107, 107, 0.4);
+      border-color: rgba(255, 107, 107, 0.4);
+    }
+    
+    .stat-card .number {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff6b6b, #ff4444);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 auto 0.5rem;
+      line-height: 1.3;
+      max-width: 100%;
+      overflow: visible;
+      padding: 0 1rem;
+      box-sizing: border-box;
+      text-align: center;
+      min-height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      word-break: break-word;
+      white-space: normal;
+    }
+    
+    .stat-card .label {
+      font-size: 0.9rem;
+      color: #b4bac3;
+      margin-top: 0.5rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0 0.75rem;
+      box-sizing: border-box;
+      text-align: center;
+    }
+    
+    .chart-section {
+      margin: 5rem auto;
+      max-width: 1200px;
+      padding: 0 2rem;
+    }
+    
+    .chart-container {
+      background: linear-gradient(135deg, rgba(11, 13, 22, 0.95) 0%, rgba(20, 22, 35, 0.95) 100%);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 24px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      transition: all 0.4s ease;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .chart-container h3 {
+      font-size: 1.6rem;
+      color: #ff6b6b;
+      margin-bottom: 2rem;
+      margin-top: 0;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .chart-container h3::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(180deg, #ff6b6b, #ff4444);
+      border-radius: 2px;
+    }
+    
+    .chart-wrapper {
+      position: relative;
+      height: 450px;
+      margin-top: 1rem;
+    }
+    
+    .report-content {
+      padding: 4rem 2rem 6rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .report-section {
+      margin-bottom: 6rem;
+      opacity: 0;
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+    
+    .section-header h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #ff6b6b;
+      margin: 0 0 2rem 0;
+      letter-spacing: -0.02em;
+    }
+    
+    .section-content {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #d1d5db;
+    }
+    
+    .section-content p {
+      margin-bottom: 1.5rem;
+    }
+    
+    .highlight-box {
+      background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 68, 68, 0.05) 100%);
+      border-left: 4px solid #ff6b6b;
+      padding: 1.5rem 2rem;
+      border-radius: 12px;
+      margin: 2rem 0;
+    }
+    
+    .highlight-box strong {
+      color: #ff6b6b;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #9aa0a6;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      margin-top: 6rem;
+    }
+    
+    footer a {
+      color: #64b5f6;
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .export-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .export-btn {
+      padding: 0.75rem 1.5rem;
+      background: rgba(255, 107, 107, 0.15);
+      border: 1px solid rgba(255, 107, 107, 0.3);
+      border-radius: 8px;
+      color: #fee2e2;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: inherit;
+    }
+    
+    .export-btn:hover {
+      background: rgba(255, 107, 107, 0.25);
+      border-color: rgba(255, 107, 107, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 107, 0.2);
+    }
+    
+    .export-btn:active {
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+      header.hero {
+        padding: 3rem 1rem 2rem;
+      }
+      
+      header.hero h1 {
+        font-size: 2rem;
+      }
+      
+      header.hero .subtitle {
+        font-size: 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 0 1rem;
+        margin: 2rem auto;
+      }
+      
+      .stat-card {
+        padding: 1.5rem 0.75rem;
+        min-width: 0;
+      }
+      
+      .stat-card .number {
+        font-size: 1.2rem;
+        padding: 0 0.75rem;
+        min-height: 2rem;
+        line-height: 1.4;
+      }
+      
+      .stat-card {
+        padding: 1.5rem 0.75rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        min-width: 0;
+      }
+      
+      .stat-card .label {
+        font-size: 0.85rem;
+      }
+      
+      .chart-wrapper {
+        height: 300px;
+      }
+      
+      .chart-container {
+        padding: 1rem;
+      }
+      
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .report-content {
+        padding: 2rem 1rem;
+      }
+      
+      .section-content {
+        padding: 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 1rem;
+      }
+      
+      .stat-card .number {
+        font-size: 1.2rem;
+        padding: 0 1rem;
+      }
+      
+      .stat-card {
+        padding: 1.5rem 1rem;
+      }
+      
+      header.hero h1 {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  
+  <nav>
+    <div class="logo">
+      <div class="logo-mark"></div>
+      <a href="/">Dark AI</a>
+    </div>
+    <div class="nav-links">
+      <a href="/about">About</a>
+      <div class="nav-dropdown" id="reportsDropdown">
+        <span class="nav-dropdown-toggle">Reports</span>
+        <div class="nav-dropdown-menu">
+          <a href="/reports/2025-deepfake-report">2025 Deepfake Report</a>
+          <a href="/reports/vendor-intelligence-report">Vendor Intelligence Report</a>
+          <a href="/reports/shadowstack-infrastructure-report">ShadowStack Infrastructure Report</a>
+        </div>
+      </div>
+      <a href="/shadowstack">ShadowStack</a>
+      <a href="/blackwire">BlackWire</a>
+      <a href="/personaforge">PersonaForge</a>
+      <a href="/about#contact">Contact</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <h1>ShadowStack Infrastructure Intelligence Report</h1>
+    <p class="subtitle">Analysis of infrastructure supporting NCII and deepfake content distribution, based on data from ShadowStack's domain monitoring</p>
+    <div class="meta">
+      <span>Published: December 2025</span>
+      <span>Data Source: ShadowStack Intelligence Platform</span>
+    </div>
+    <div class="export-buttons">
+      <button onclick="exportReport('csv')" class="export-btn">📥 Download CSV</button>
+      <button onclick="exportReport('json')" class="export-btn">📥 Download JSON</button>
+    </div>
+  </header>
+
+  <!-- Key Statistics -->
+  <div class="stats-grid" id="key-stats">
+    <div class="stat-card">
+      <div class="number" id="enriched-domains">—</div>
+      <div class="label">Domains Enriched</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="top-hosting">—</div>
+      <div class="label">Top Hosting Provider</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="top-cdn">—</div>
+      <div class="label">Top CDN</div>
+    </div>
+    <div class="stat-card">
+      <div class="number" id="top-registrar">—</div>
+      <div class="label">Top Registrar</div>
+    </div>
+  </div>
+
+  <!-- Report Content -->
+  <div class="report-content">
+    <!-- Executive Summary -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Executive Summary</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          This report examines the infrastructure used to host and distribute NCII (Non-Consensual Intimate Image) 
+          and deepfake content. We analyzed domains to identify hosting providers, CDNs, payment processors, and 
+          security configurations that support this content.
+        </p>
+        <div class="highlight-box">
+          <strong>Key Finding:</strong> 
+          <strong id="top-hosting-finding">Major hosting providers</strong> are being paid to host NCII content. 
+          This report shows which service providers are involved, their market share, and how to contact them to 
+          request content removal.
+        </div>
+        <p>
+          Data comes from ShadowStack's monitoring platform, which tracks domains and identifies their hosting 
+          providers, CDNs, payment processors, and security settings. This snapshot covers infrastructure observed 
+          through December 2025.
+        </p>
+      </div>
+    </section>
+
+    <!-- Infrastructure Overview -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Infrastructure Landscape Overview</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          We found a range of infrastructure providers hosting NCII content. The data shows heavy concentration 
+          among a few hosting providers, CDNs, and payment processors, which points to both how these sites operate 
+          and where to focus disruption efforts.
+        </p>
+        <div class="highlight-box">
+          <strong>Key Finding:</strong> Service providers (CDNs, hosts, ISPs) are being paid to host these sites and 
+          should be held accountable, even if they're intermediaries like Cloudflare. The top service provider hosts 
+          <strong id="top-provider-percentage">—</strong>% of all domains in this dataset.
+        </div>
+      </div>
+      
+      <div class="chart-section">
+        <div class="chart-container">
+          <h3>Top Hosting Providers</h3>
+          <div class="chart-wrapper">
+            <canvas id="hostingChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>CDN Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="cdnChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Service Providers -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Key Service Providers</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          These service providers host the most NCII domains through hosting, CDN, and ISP services. They're being 
+          paid to provide these services and should be held accountable.
+        </p>
+        <div class="highlight-box">
+          <strong>Important:</strong> All service providers in the chain (CDN, Host, ISP) are being paid and should be 
+          held accountable, including intermediaries like Cloudflare. Contacting these providers is the most effective 
+          way to get content removed.
+        </div>
+      </div>
+      
+      <div class="chart-section">
+        <div class="chart-container">
+          <h3>Top Service Providers (Consolidated)</h3>
+          <div class="chart-wrapper">
+            <canvas id="serviceProvidersChart"></canvas>
+          </div>
+        </div>
+        
+        <div class="chart-container">
+          <h3>Top ISPs</h3>
+          <div class="chart-wrapper">
+            <canvas id="ispChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="section-content" style="margin-top: 2rem;">
+        <h3 style="color: #ff6b6b; margin-bottom: 1rem;">Service Provider Breakdown</h3>
+        <div id="service-providers-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Geographic Distribution -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Geographic Distribution</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          Geographic data from DNS history and IP geolocation shows where the infrastructure hosting NCII content 
+          is located. However, geographic data is limited as many domains use privacy services, VPNs, or proxy 
+          networks that mask their true location. The data shown here represents only the visible geographic 
+          footprint and may not reflect the actual operational locations of these sites. This helps identify 
+          regional patterns and jurisdictional considerations for enforcement, but should be interpreted with 
+          caution given the limited visibility.
+        </p>
+      </div>
+      
+      <div class="chart-section">
+        <div class="chart-container">
+          <h3>Top Countries by Domain Count</h3>
+          <div class="chart-wrapper">
+            <canvas id="countriesChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Domains -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Key Domains Analysis</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          These domains are examples from the dataset with complete infrastructure mapping. They show typical 
+          infrastructure patterns and service provider relationships used for NCII content distribution.
+        </p>
+      </div>
+      
+      <div class="section-content" style="margin-top: 2rem;">
+        <div id="key-domains-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+          <!-- Will be populated by JavaScript -->
+        </div>
+        <div style="margin-top: 2.5rem; text-align: center;">
+          <a href="/shadowstack/dashboard#dns-history" 
+             style="display: inline-block; padding: 1rem 2rem; background: linear-gradient(135deg, #ff6b6b, #ff4444); color: white; text-decoration: none; border-radius: 8px; font-weight: 600; transition: transform 0.2s ease, box-shadow 0.2s ease;"
+             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(255, 107, 107, 0.4)'"
+             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+            View All Domains with DNS History →
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Payment Processors -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Payment Processing Infrastructure</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          Payment processor identification shows how these sites make money. However, most payment processors 
+          were hidden or not detected during analysis, so the data shown here is limited. Understanding payment 
+          infrastructure is critical for financial disruption efforts, but this analysis only captures a small 
+          portion of the actual payment processing used by these sites.
+        </p>
+      </div>
+      
+      <div class="chart-section">
+        <div class="chart-container">
+          <h3>Payment Processors</h3>
+          <div class="chart-wrapper">
+            <canvas id="paymentChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Technology Stack -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Technology Stack Analysis</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          CMS platforms, web servers, and technology stacks show operational patterns and potential vulnerabilities. 
+          Understanding the technology stack helps identify common infrastructure patterns and potential disruption points.
+        </p>
+      </div>
+      
+      <div class="chart-section">
+        <div class="chart-grid">
+          <div class="chart-container">
+            <h3>CMS Platforms</h3>
+            <div class="chart-wrapper">
+              <canvas id="cmsChart"></canvas>
+            </div>
+          </div>
+          
+          <div class="chart-container">
+            <h3>Web Servers</h3>
+            <div class="chart-wrapper">
+              <canvas id="webServerChart"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actionable Intelligence -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Actionable Intelligence & Recommendations</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          Based on our analysis, these service providers are the highest-priority targets for disruption efforts. 
+          Contacting them is the most effective way to get NCII content removed.
+        </p>
+        <div class="highlight-box" style="background: rgba(255, 68, 68, 0.15); border-left: 4px solid #ff4444;">
+          <strong>Priority:</strong> Service providers (CDNs, hosts, ISPs) are being paid to host these sites 
+          and must be held accountable, even if they're intermediaries. The top service provider hosts 
+          <strong id="critical-provider-percentage">—</strong>% of all domains in this dataset.
+        </div>
+        <div id="action-items" style="margin-top: 2rem;">
+          <h3 style="color: #ff6b6b; margin-bottom: 1rem;">Priority Action Items</h3>
+          <div id="action-items-list" style="display: flex; flex-direction: column; gap: 1rem;">
+            <!-- Will be populated by JavaScript -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Methodology -->
+    <section class="report-section">
+      <div class="section-header">
+        <h2>Intelligence Collection Methodology</h2>
+      </div>
+      <div class="section-content">
+        <p>
+          This report is based on data collected through ShadowStack's automated monitoring platform. The methodology includes:
+        </p>
+        <ul>
+          <li><strong>Domain Discovery:</strong> Automated identification of domains associated with NCII and deepfake 
+          content</li>
+          <li><strong>Infrastructure Mapping:</strong> WHOIS analysis, DNS enumeration, hosting provider identification, 
+          and CDN detection</li>
+          <li><strong>Domain Enrichment:</strong> Analysis of domains including payment processor detection, 
+          CMS identification, SSL/TLS certificate analysis, and security header evaluation</li>
+          <li><strong>DNS History Analysis:</strong> Historical IP address tracking and geographic location mapping 
+          from DNS records</li>
+          <li><strong>Data Correlation:</strong> Linking domains with infrastructure data to identify 
+          relationships and operational patterns</li>
+        </ul>
+        <p>
+          <strong>Data Sources:</strong> All data is collected from publicly accessible sources. No private 
+          channels, dark web access, or unauthorized data collection methods are used. This analysis covers the 
+          visible infrastructure ecosystem as monitored through December 2025.
+        </p>
+        <div class="highlight-box">
+          <strong>Limitations:</strong> This report only covers the visible infrastructure ecosystem. 
+          Domains using additional operational security measures, privacy services, or infrastructure not yet identified 
+          may not be captured. Analysis is limited to domains that have been identified and successfully 
+          enriched. Numbers should be considered minimum estimates of the actual ecosystem size.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer>
+    <p>Report generated by <a href="/shadowstack">ShadowStack</a> | <a href="/">Dark AI</a></p>
+    <p style="margin-top: 1rem; font-size: 0.9rem;">For questions or additional analysis, contact: <a href="/about#contact">Contact Us</a></p>
+  </footer>
+
+  <script>
+    const professionalChartConfig = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: '#d1d5db',
+            font: {
+              size: 12,
+              family: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Helvetica Neue", Arial, sans-serif'
+            },
+            padding: 15
+          },
+          position: 'bottom'
+        },
+        tooltip: {
+          backgroundColor: 'rgba(10, 11, 20, 0.95)',
+          titleColor: '#ff6b6b',
+          bodyColor: '#d1d5db',
+          borderColor: 'rgba(255, 107, 107, 0.3)',
+          borderWidth: 1,
+          padding: 12
+        }
+      }
+    };
+
+    async function loadReportData() {
+      try {
+        const response = await fetch('/shadowstack/api/reports/infrastructure-intelligence-data');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        
+        // Update key stats
+        document.getElementById('enriched-domains').textContent = data.enriched_domains || 0;
+        
+        // Clean text for display - prioritize showing full names
+        const cleanText = (text) => {
+          if (!text || text === 'N/A') return 'N/A';
+          
+          // Special handling for common names - always show full name
+          const nameMap = {
+            'Namecheap, Inc.': 'Namecheap',
+            'Namecheap': 'Namecheap',
+            'Cloudflare, Inc.': 'Cloudflare',
+            'Cloudflare': 'Cloudflare',
+            'GoDaddy.com, LLC': 'GoDaddy',
+            'GoDaddy': 'GoDaddy',
+            'Amazon.com, Inc.': 'Amazon',
+            'Amazon': 'Amazon'
+          };
+          
+          // Check exact match first
+          if (nameMap[text]) {
+            return nameMap[text];
+          }
+          
+          // Remove common suffixes
+          let cleaned = text
+            .replace(/, Inc\.?$/i, '')
+            .replace(/, LLC$/i, '')
+            .replace(/, Corp\.?$/i, '')
+            .replace(/, Limited$/i, '')
+            .replace(/, L\.?P\.?$/i, '')
+            .replace(/^The /i, '')
+            .replace(/\.com$/i, '')
+            .trim();
+          
+          // Check if cleaned version is in map
+          if (nameMap[cleaned]) {
+            return nameMap[cleaned];
+          }
+          
+          return cleaned;
+        };
+        
+        const topHosting = data.stats?.top_hosting || 'N/A';
+        const topCdn = data.stats?.top_cdn || 'N/A';
+        const topRegistrar = data.stats?.top_registrar || 'N/A';
+        
+        // Don't truncate - let CSS handle overflow with word-wrap
+        document.getElementById('top-hosting').textContent = cleanText(topHosting);
+        document.getElementById('top-cdn').textContent = cleanText(topCdn);
+        document.getElementById('top-registrar').textContent = cleanText(topRegistrar);
+        document.getElementById('top-hosting-finding').textContent = data.stats?.top_hosting || 'major hosting providers';
+        
+        // Hosting Providers Chart
+        const hostingData = Object.entries(data.infrastructure?.hosting_providers || {})
+          .filter(([name, count]) => name && count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+        
+        if (hostingData.length > 0) {
+          new Chart(document.getElementById('hostingChart'), {
+            type: 'bar',
+            data: {
+              labels: hostingData.map(d => d[0]),
+              datasets: [{
+                label: 'Domains',
+                data: hostingData.map(d => d[1]),
+                backgroundColor: 'rgba(255, 107, 107, 0.6)',
+                borderColor: '#ff6b6b',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              ...professionalChartConfig,
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                y: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+              }
+            }
+          });
+        }
+        
+        // CDN Chart
+        const cdnData = Object.entries(data.infrastructure?.cdns || {})
+          .filter(([name, count]) => name && count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 8);
+        
+        if (cdnData.length > 0) {
+          new Chart(document.getElementById('cdnChart'), {
+            type: 'doughnut',
+            data: {
+              labels: cdnData.map(d => d[0]),
+              datasets: [{
+                data: cdnData.map(d => d[1]),
+                backgroundColor: [
+                  'rgba(255, 107, 107, 0.8)',
+                  'rgba(100, 181, 246, 0.8)',
+                  'rgba(255, 193, 7, 0.8)',
+                  'rgba(156, 39, 176, 0.8)',
+                  'rgba(76, 175, 80, 0.8)'
+                ],
+                borderColor: [
+                  '#ff6b6b',
+                  '#64b5f6',
+                  '#ffc107',
+                  '#9c27b0',
+                  '#4caf50'
+                ],
+                borderWidth: 2
+              }]
+            },
+            options: professionalChartConfig
+          });
+        }
+        
+        // Payment Processors Chart
+        const paymentData = Object.entries(data.infrastructure?.payment_processors || {})
+          .filter(([name, count]) => name && count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+        
+        if (paymentData.length > 0) {
+          new Chart(document.getElementById('paymentChart'), {
+            type: 'bar',
+            data: {
+              labels: paymentData.map(d => d[0]),
+              datasets: [{
+                label: 'Domains',
+                data: paymentData.map(d => d[1]),
+                backgroundColor: 'rgba(100, 181, 246, 0.6)',
+                borderColor: '#64b5f6',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              ...professionalChartConfig,
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                y: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+              }
+            }
+          });
+        } else {
+          document.getElementById('paymentChart').parentElement.innerHTML = 
+            '<p style="color: #9aa0a6; text-align: center; padding: 2rem;">No payment processor data available</p>';
+        }
+        
+        // CMS Platforms Chart
+        const cmsData = Object.entries(data.infrastructure?.cms_platforms || {})
+          .filter(([name, count]) => name && count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+        
+        if (cmsData.length > 0) {
+          new Chart(document.getElementById('cmsChart'), {
+            type: 'doughnut',
+            data: {
+              labels: cmsData.map(d => d[0]),
+              datasets: [{
+                data: cmsData.map(d => d[1]),
+                backgroundColor: [
+                  'rgba(255, 107, 107, 0.8)',
+                  'rgba(100, 181, 246, 0.8)',
+                  'rgba(255, 193, 7, 0.8)',
+                  'rgba(156, 39, 176, 0.8)',
+                  'rgba(76, 175, 80, 0.8)'
+                ],
+                borderColor: [
+                  '#ff6b6b',
+                  '#64b5f6',
+                  '#ffc107',
+                  '#9c27b0',
+                  '#4caf50'
+                ],
+                borderWidth: 2
+              }]
+            },
+            options: professionalChartConfig
+          });
+        } else {
+          document.getElementById('cmsChart').parentElement.innerHTML = 
+            '<p style="color: #9aa0a6; text-align: center; padding: 2rem;">No CMS data available</p>';
+        }
+        
+        // Web Servers Chart
+        const webServerData = Object.entries(data.infrastructure?.web_servers || {})
+          .filter(([name, count]) => name && count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 10);
+        
+        if (webServerData.length > 0) {
+          new Chart(document.getElementById('webServerChart'), {
+            type: 'doughnut',
+            data: {
+              labels: webServerData.map(d => d[0]),
+              datasets: [{
+                data: webServerData.map(d => d[1]),
+                backgroundColor: [
+                  'rgba(255, 107, 107, 0.8)',
+                  'rgba(100, 181, 246, 0.8)',
+                  'rgba(255, 193, 7, 0.8)',
+                  'rgba(156, 39, 176, 0.8)',
+                  'rgba(76, 175, 80, 0.8)'
+                ],
+                borderColor: [
+                  '#ff6b6b',
+                  '#64b5f6',
+                  '#ffc107',
+                  '#9c27b0',
+                  '#4caf50'
+                ],
+                borderWidth: 2
+              }]
+            },
+            options: professionalChartConfig
+          });
+        } else {
+          document.getElementById('webServerChart').parentElement.innerHTML = 
+            '<p style="color: #9aa0a6; text-align: center; padding: 2rem;">No web server data available</p>';
+        }
+        
+        // Update top provider percentage
+        const topProvider = data.key_service_providers?.top_service_providers?.[0];
+        if (topProvider) {
+          document.getElementById('top-provider-percentage').textContent = topProvider.percentage || 0;
+        }
+        
+        // Service Providers Chart (Consolidated)
+        const serviceProvidersData = data.key_service_providers?.top_service_providers || [];
+        if (serviceProvidersData.length > 0) {
+          new Chart(document.getElementById('serviceProvidersChart'), {
+            type: 'bar',
+            data: {
+              labels: serviceProvidersData.map(d => d.name),
+              datasets: [{
+                label: 'Domains',
+                data: serviceProvidersData.map(d => d.count),
+                backgroundColor: 'rgba(255, 107, 107, 0.6)',
+                borderColor: '#ff6b6b',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              ...professionalChartConfig,
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                y: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+              }
+            }
+          });
+        }
+        
+        // ISP Chart
+        const ispData = data.key_service_providers?.top_isps || [];
+        if (ispData.length > 0) {
+          new Chart(document.getElementById('ispChart'), {
+            type: 'bar',
+            data: {
+              labels: ispData.map(d => d.name),
+              datasets: [{
+                label: 'Domains',
+                data: ispData.map(d => d.count),
+                backgroundColor: 'rgba(100, 181, 246, 0.6)',
+                borderColor: '#64b5f6',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              ...professionalChartConfig,
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                },
+                y: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+              }
+            }
+          });
+        }
+        
+        // Countries Chart (unique domains per country)
+        const countriesData = Object.entries(data.geography?.countries || {})
+          .filter(([name, count]) => name && count > 0)
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 15);
+        
+        if (countriesData.length > 0) {
+          new Chart(document.getElementById('countriesChart'), {
+            type: 'bar',
+            data: {
+              labels: countriesData.map(d => d[0]),
+              datasets: [{
+                label: 'Domains',
+                data: countriesData.map(d => d[1]),
+                backgroundColor: 'rgba(255, 193, 7, 0.6)',
+                borderColor: '#ffc107',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              ...professionalChartConfig,
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                  title: {
+                    display: true,
+                    text: 'Number of Domains',
+                    color: '#9aa0a6'
+                  }
+                },
+                y: {
+                  ticks: { color: '#9aa0a6' },
+                  grid: { color: 'rgba(255, 255, 255, 0.05)' }
+                }
+              }
+            }
+          });
+        }
+        
+        // Service Providers List
+        const providersList = document.getElementById('service-providers-list');
+        if (providersList && serviceProvidersData.length > 0) {
+          providersList.innerHTML = serviceProvidersData.slice(0, 9).map(provider => `
+            <div style="background: rgba(255, 107, 107, 0.05); padding: 1.5rem; border-radius: 12px; border-left: 3px solid #ff6b6b;">
+              <h4 style="color: #ff6b6b; margin-top: 0; margin-bottom: 0.75rem;">${provider.name}</h4>
+              <div style="color: #ccc; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                <strong>${provider.count}</strong> domains (${provider.percentage}%)
+              </div>
+              <div style="color: #9aa0a6; font-size: 0.85rem;">
+                CRITICAL: Being paid to enable these sites
+              </div>
+            </div>
+          `).join('');
+        }
+        
+        // Key Domains List
+        const domainsList = document.getElementById('key-domains-list');
+        if (domainsList && data.key_domains && data.key_domains.length > 0) {
+          domainsList.innerHTML = data.key_domains.slice(0, 12).map(domain => `
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1);">
+              <h4 style="color: #ff6b6b; margin-top: 0; margin-bottom: 1rem; word-break: break-all;">${domain.domain}</h4>
+              <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: #b4bac3;">
+                ${domain.hosting ? `<div><strong>Host:</strong> ${domain.hosting}</div>` : ''}
+                ${domain.cdn ? `<div><strong>CDN:</strong> ${domain.cdn}</div>` : ''}
+                ${domain.isp ? `<div><strong>ISP:</strong> ${domain.isp}</div>` : ''}
+                ${domain.registrar ? `<div><strong>Registrar:</strong> ${domain.registrar}</div>` : ''}
+                ${domain.payment_processor ? `<div><strong>Payment:</strong> ${domain.payment_processor}</div>` : ''}
+                ${domain.cms ? `<div><strong>CMS:</strong> ${domain.cms}</div>` : ''}
+              </div>
+            </div>
+          `).join('');
+        } else if (domainsList) {
+          domainsList.innerHTML = '<p style="color: #9aa0a6;">Key domains data not available. Enrich domains to see detailed infrastructure mapping.</p>';
+        }
+        
+        // Add registrars to service providers list if not already included
+        const registrarsData = data.key_service_providers?.top_registrars || [];
+        if (registrarsData.length > 0 && providersList) {
+          const existingHTML = providersList.innerHTML;
+          const registrarsHTML = registrarsData.slice(0, 3).map(reg => `
+            <div style="background: rgba(100, 181, 246, 0.05); padding: 1.5rem; border-radius: 12px; border-left: 3px solid #64b5f6;">
+              <h4 style="color: #64b5f6; margin-top: 0; margin-bottom: 0.75rem;">${reg.name}</h4>
+              <div style="color: #ccc; font-size: 0.95rem; margin-bottom: 0.5rem;">
+                <strong>${reg.count}</strong> domains (${reg.percentage}%)
+              </div>
+              <div style="color: #9aa0a6; font-size: 0.85rem;">
+                Registrar - Domain registration terms violations
+              </div>
+            </div>
+          `).join('');
+          providersList.innerHTML = existingHTML + registrarsHTML;
+        }
+        
+        // Action Items
+        const actionItemsList = document.getElementById('action-items-list');
+        const criticalProviderPct = document.getElementById('critical-provider-percentage');
+        if (topProvider && criticalProviderPct) {
+          criticalProviderPct.textContent = topProvider.percentage || 0;
+        }
+        
+        if (actionItemsList) {
+          const actionItems = [];
+          
+          // Add top service providers as action items
+          if (serviceProvidersData.length > 0) {
+            const topProvider = serviceProvidersData[0];
+            actionItems.push({
+              priority: topProvider.percentage >= 40 ? 'CRITICAL' : topProvider.percentage >= 20 ? 'HIGH' : 'MEDIUM',
+              provider: topProvider.name,
+              count: topProvider.count,
+              percentage: topProvider.percentage,
+              roles: ['Service Provider (CDN/Host/ISP)'],
+              details: [
+                'They are being paid to enable these sites',
+                `Abuse contact: abuse@${topProvider.name.toLowerCase().replace(/[^a-z0-9]/g, '')}.com`,
+                'Reference: They are profiting from enabling NCII content distribution'
+              ]
+            });
+          }
+          
+          // Add top registrar
+          if (registrarsData.length > 0) {
+            const topRegistrar = registrarsData[0];
+            actionItems.push({
+              priority: topRegistrar.percentage >= 15 ? 'CRITICAL' : 'HIGH',
+              provider: topRegistrar.name,
+              count: topRegistrar.count,
+              percentage: topRegistrar.percentage,
+              roles: ['Domain Registrar'],
+              details: [
+                'Focus on their abuse department',
+                'Reference: Domain registration terms violations, hosting NCII content'
+              ]
+            });
+          }
+          
+          // Add top hosting provider (if different from top service provider)
+          const topHost = data.key_service_providers?.top_hosts?.[0];
+          if (topHost && (!serviceProvidersData[0] || topHost.name !== serviceProvidersData[0].name)) {
+            actionItems.push({
+              priority: topHost.percentage >= 30 ? 'CRITICAL' : 'HIGH',
+              provider: topHost.name,
+              count: topHost.count,
+              percentage: topHost.percentage,
+              roles: ['Hosting Provider'],
+              details: [
+                'Reference: Terms of Service violations, illegal content hosting'
+              ]
+            });
+          }
+          
+          if (actionItems.length > 0) {
+            actionItemsList.innerHTML = actionItems.map((item, idx) => `
+              <div style="background: ${item.priority === 'CRITICAL' ? 'rgba(255, 68, 68, 0.1)' : item.priority === 'HIGH' ? 'rgba(255, 193, 7, 0.1)' : 'rgba(100, 181, 246, 0.1)'}; padding: 1.5rem; border-radius: 12px; border-left: 4px solid ${item.priority === 'CRITICAL' ? '#ff4444' : item.priority === 'HIGH' ? '#ffc107' : '#64b5f6'};">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                  <div>
+                    <h4 style="color: ${item.priority === 'CRITICAL' ? '#ff4444' : item.priority === 'HIGH' ? '#ffc107' : '#64b5f6'}; margin-top: 0; margin-bottom: 0.5rem;">
+                      ${idx + 1}. Contact ${item.provider}
+                    </h4>
+                    <div style="color: #9aa0a6; font-size: 0.85rem; margin-bottom: 0.5rem;">
+                      Priority: <strong style="color: ${item.priority === 'CRITICAL' ? '#ff4444' : item.priority === 'HIGH' ? '#ffc107' : '#64b5f6'};">${item.priority}</strong>
+                    </div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #ff6b6b;">${item.percentage}%</div>
+                    <div style="color: #9aa0a6; font-size: 0.85rem;">${item.count} domains</div>
+                  </div>
+                </div>
+                <div style="color: #ccc; font-size: 0.9rem; margin-bottom: 0.75rem;">
+                  <strong>Roles:</strong> ${item.roles.join(', ')}
+                </div>
+                <ul style="color: #b4bac3; font-size: 0.9rem; margin: 0; padding-left: 1.5rem;">
+                  ${item.details.map(detail => `<li>${detail}</li>`).join('')}
+                </ul>
+              </div>
+            `).join('');
+          }
+        }
+        
+      } catch (error) {
+        console.error('Error loading report data:', error);
+        const statsGrid = document.getElementById('key-stats');
+        if (statsGrid) {
+          statsGrid.innerHTML = `
+            <div class="stat-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: rgba(255, 107, 107, 0.1); border: 2px solid #ff6b6b;">
+              <div style="color: #ff6b6b; font-size: 1.5rem; margin-bottom: 1rem;">⚠️ Error Loading Data</div>
+              <div style="color: #ccc; margin-bottom: 0.5rem;">Failed to fetch report data</div>
+              <div style="color: #9aa0a6; margin-top: 1rem; font-size: 0.9rem;">
+                ${error.message || 'Unknown error occurred'}<br>
+                <span style="font-size: 0.85rem; margin-top: 0.5rem; display: block;">Please check the browser console for details.</span>
+              </div>
+            </div>
+          `;
+        } else {
+          // Fallback if stats grid doesn't exist
+          document.getElementById('enriched-domains').textContent = '—';
+          document.getElementById('top-hosting').textContent = '—';
+          document.getElementById('top-cdn').textContent = '—';
+          document.getElementById('top-registrar').textContent = '—';
+        }
+      }
+    }
+    
+    // Load data when page loads
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadReportData);
+    } else {
+      loadReportData();
+    }
+    
+    // Export functionality
+    function exportReport(format) {
+      const url = `/api/reports/shadowstack-infrastructure/export?format=${format}`;
+      window.location.href = url;
+    }
+    
+    // Reports dropdown toggle
+    const reportsDropdown = document.getElementById('reportsDropdown');
+    if (reportsDropdown) {
+      const dropdownToggle = reportsDropdown.querySelector('.nav-dropdown-toggle');
+      
+      dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        reportsDropdown.classList.toggle('active');
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!reportsDropdown.contains(event.target)) {
+          reportsDropdown.classList.remove('active');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
