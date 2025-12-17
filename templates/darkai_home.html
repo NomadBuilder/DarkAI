@@ -583,10 +583,16 @@
         <a href="/reports/deepfake-infrastructure-report">DeepFake Infrastructure Report</a>
       </div>
     </div>
+    <div class="nav-dropdown" id="toolsDropdown">
+      <span class="nav-dropdown-toggle">Tools</span>
+      <div class="nav-dropdown-menu">
+        <a href="shadowstack">ShadowStack</a>
+        <a href="blackwire">BlackWire</a>
+        <a href="personaforge">PersonaForge</a>
+      </div>
+    </div>
     <a href="/humangate">HumanGate</a>
-    <a href="shadowstack">ShadowStack</a>
-    <a href="blackwire">BlackWire</a>
-    <a href="personaforge">PersonaForge</a>
+    <a href="/faq">FAQ</a>
     <a href="about#contact">Contact</a>
   </div>
 </nav>
@@ -783,16 +789,34 @@
     // Dropdown toggle
     if (reportsDropdown) {
       const dropdownToggle = reportsDropdown.querySelector('.nav-dropdown-toggle');
-      
+
       dropdownToggle.addEventListener('click', function(e) {
         e.preventDefault();
         reportsDropdown.classList.toggle('active');
       });
-      
+
       // Close dropdown when clicking outside
       document.addEventListener('click', function(event) {
         if (!reportsDropdown.contains(event.target)) {
           reportsDropdown.classList.remove('active');
+        }
+      });
+    }
+    
+    // Tools dropdown toggle
+    const toolsDropdown = document.getElementById('toolsDropdown');
+    if (toolsDropdown) {
+      const dropdownToggle = toolsDropdown.querySelector('.nav-dropdown-toggle');
+
+      dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        toolsDropdown.classList.toggle('active');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!toolsDropdown.contains(event.target)) {
+          toolsDropdown.classList.remove('active');
         }
       });
     }

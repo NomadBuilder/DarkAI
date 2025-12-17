@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-MZ69VXXL');</script>
+  <!-- End Google Tag Manager -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>FAQ – Dark AI</title>
+  <meta name="description" content="Frequently asked questions about Dark AI's investigative tools for mapping synthetic identities, deepfake infrastructure, and AI-powered harms." />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://darkai.ca/faq" />
+  <meta property="og:title" content="FAQ – Dark AI" />
+  <meta property="og:description" content="Frequently asked questions about Dark AI's investigative tools." />
+  <meta property="og:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://darkai.ca/faq" />
+  <meta name="twitter:title" content="FAQ – Dark AI" />
+  <meta name="twitter:description" content="Frequently asked questions about Dark AI's investigative tools." />
+  <meta name="twitter:image" content="https://i.imgur.com/YTCnPOE.png" />
+  
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg" />
+  <link rel="alternate icon" href="/static/favicon.svg" />
+
+  <style>
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 100px;
+    }
+    
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #05060b;
+      background-size: cover;
+      color: #f2f3f5;
+      position: relative;
+    }
+    
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('https://i.imgur.com/YTCnPOE.png');
+      background-size: cover;
+      background-position: center center;
+      background-attachment: scroll;
+      will-change: transform;
+      background-repeat: no-repeat;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(5, 6, 11, 0.85);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    body > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.2rem 2rem;
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(16px);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      z-index: 1001;
+    }
+    
+    .hamburger span {
+      display: block;
+      width: 25px;
+      height: 3px;
+      background: #f2f3f5;
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+    
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+    }
+    
+    @media (max-width: 768px) {
+      nav {
+        padding: 1rem;
+        flex-wrap: nowrap;
+      }
+      
+      .hamburger {
+        display: flex;
+      }
+      
+      .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        height: 100dvh;
+        height: calc(var(--vh, 1vh) * 100);
+        max-height: 100vh;
+        background: rgba(5, 6, 11, 0.98);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 5rem 2rem 2rem;
+        gap: 0;
+        transition: right 0.3s ease;
+        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+      }
+      
+      .nav-links.active {
+        right: 0;
+      }
+      
+      .nav-links a,
+      .nav-dropdown {
+        display: block;
+        width: 100%;
+        margin-left: 0;
+      }
+      
+      .nav-dropdown-toggle {
+        width: 100%;
+        padding: 1rem 0;
+        font-size: 1.1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: color 0.2s;
+      }
+      
+      .nav-dropdown-toggle:hover {
+        color: #ff6b6b;
+      }
+      
+      .nav-dropdown-menu {
+        position: static;
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        margin-top: 0;
+        margin-left: 0;
+        display: none;
+      }
+      
+      .nav-dropdown.active .nav-dropdown-menu {
+        display: block;
+      }
+      
+      .nav-dropdown-menu a {
+        padding: 0.9rem 0;
+        margin: 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      
+      .nav-links a {
+        padding: 0.9rem 0;
+        font-size: 1rem;
+      }
+      
+      .nav-links a {
+        display: block;
+        width: 100%;
+        padding: 1rem 0;
+        font-size: 1.1rem;
+        color: #e0e0e0;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        transition: color 0.2s;
+      }
+      
+      .nav-links a:hover {
+        color: #ff6b6b;
+      }
+      
+      nav .logo {
+        font-size: 1.1rem;
+        flex: 1;
+      }
+      
+      nav a {
+        margin-left: 0;
+      }
+      
+      header.hero {
+        padding: 3rem 1rem 2rem;
+      }
+      
+      header.hero h1 {
+        font-size: 2rem;
+      }
+      
+      header.hero p {
+        font-size: 1rem;
+      }
+      
+      section.faq-content {
+        padding: 2rem 1rem;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      nav {
+        padding: 0.75rem;
+      }
+      
+      nav .logo {
+        font-size: 1rem;
+      }
+      
+      nav a {
+        margin-left: 0.5rem;
+        font-size: 0.75rem;
+      }
+      
+      header.hero h1 {
+        font-size: 1.75rem;
+      }
+    }
+    
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.4rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    
+    nav .logo-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 20%, #f97373, #dc2626 48%, #111827 100%);
+      box-shadow: 0 0 22px rgba(248,113,113,0.8), 0 0 60px rgba(127,29,29,0.8);
+      position: relative;
+      flex-shrink: 0;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    nav .logo-mark:hover {
+      transform: scale(1.1);
+    }
+    
+    nav a {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #d4d7dd;
+      font-size: 0.95rem;
+    }
+    
+    nav a:hover {
+      color: #ff6b6b;
+    }
+    
+    nav .logo a {
+      margin-left: 0;
+    }
+    
+    .nav-dropdown {
+      position: relative;
+    }
+    
+    .nav-dropdown-toggle {
+      text-decoration: none;
+      margin-left: 1.8rem;
+      color: #d4d7dd;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    
+    .nav-dropdown-toggle:hover {
+      color: #ff6b6b;
+    }
+    
+    .nav-dropdown-toggle::after {
+      content: '▼';
+      font-size: 0.7rem;
+      transition: transform 0.3s;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-toggle::after {
+      transform: rotate(180deg);
+    }
+    
+    .nav-dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 0.5rem;
+      background: rgba(5, 6, 11, 0.98);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      padding: 0.75rem 0;
+      min-width: 220px;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      z-index: 1002;
+    }
+    
+    .nav-dropdown.active .nav-dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .nav-dropdown-menu a {
+      display: block;
+      padding: 0.9rem 1.75rem;
+      color: #d4d7dd;
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.2s, color 0.2s;
+      border-radius: 4px;
+      margin: 0.25rem 0;
+    }
+    
+    .nav-dropdown-menu a:hover {
+      background: rgba(255, 107, 107, 0.1);
+      color: #ff6b6b;
+    }
+
+    header.hero {
+      padding: 5rem 2rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    header.hero h1 {
+      font-size: 3.5rem;
+      max-width: 900px;
+      line-height: 1.15;
+      margin: 0 auto 1.5rem;
+      font-weight: 700;
+    }
+    
+    header.hero p {
+      max-width: 700px;
+      color: #9aa0a6;
+      font-size: 1.2rem;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    section.faq-content {
+      padding: 4rem 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .faq-section {
+      margin-bottom: 3rem;
+    }
+    
+    .faq-section-title {
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      color: #ff6b6b;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    
+    .faq-accordion {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .faq-item {
+      background: #0b0d16;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    
+    .faq-item:hover {
+      border-color: rgba(255, 107, 107, 0.3);
+    }
+    
+    .faq-item.active {
+      border-color: rgba(255, 107, 107, 0.5);
+    }
+    
+    .faq-question {
+      padding: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #f2f3f5;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: color 0.2s;
+      user-select: none;
+    }
+    
+    .faq-question:hover {
+      color: #ff6b6b;
+    }
+    
+    .faq-question::after {
+      content: '+';
+      font-size: 1.5rem;
+      color: #9aa0a6;
+      transition: transform 0.3s, color 0.2s;
+      flex-shrink: 0;
+      margin-left: 1rem;
+    }
+    
+    .faq-item.active .faq-question::after {
+      content: '−';
+      transform: rotate(0deg);
+      color: #ff6b6b;
+    }
+    
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, padding 0.3s ease;
+      padding: 0 1.5rem;
+    }
+    
+    .faq-item.active .faq-answer {
+      max-height: 1000px;
+      padding: 0 1.5rem 1.5rem;
+    }
+    
+    .faq-answer p {
+      color: #b4bac3;
+      line-height: 1.8;
+      margin: 0;
+      font-size: 1rem;
+    }
+    
+    .faq-answer ul,
+    .faq-answer ol {
+      color: #b4bac3;
+      line-height: 1.8;
+      margin: 1rem 0;
+      padding-left: 1.5rem;
+    }
+    
+    .faq-answer li {
+      margin-bottom: 0.5rem;
+    }
+    
+    .faq-answer a {
+      color: #ff6b6b;
+      text-decoration: underline;
+    }
+    
+    .faq-answer a:hover {
+      color: #ff4444;
+    }
+    
+    .reports-highlight {
+      background: linear-gradient(135deg, #0b0d16 0%, #1a1d2a 100%);
+      padding: 3rem 2.5rem;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 107, 107, 0.2);
+      box-shadow: 0 0 30px rgba(0,0,0,0.45), 0 0 60px rgba(255, 107, 107, 0.1);
+      margin: 4rem 0;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .reports-highlight::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #ff6b6b, #ff4444, transparent);
+    }
+    
+    .reports-highlight h2 {
+      font-size: 2rem;
+      margin: 0 0 1.5rem;
+      color: #ff6b6b;
+      font-weight: 700;
+    }
+    
+    .reports-highlight p {
+      color: #b4bac3;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    
+    .report-card {
+      background: #161923;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .report-card:hover {
+      border-color: rgba(255, 107, 107, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(255, 107, 107, 0.2);
+    }
+    
+    .report-card h3 {
+      color: #f2f3f5;
+      font-size: 1.2rem;
+      margin: 0 0 0.5rem;
+      font-weight: 600;
+    }
+    
+    .report-card p {
+      color: #9aa0a6;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    footer {
+      padding: 2rem;
+      text-align: center;
+      color: #777c85;
+      font-size: 0.85rem;
+      margin-top: 4rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    @media (max-width: 968px) {
+      header.hero h1 {
+        font-size: 2.5rem;
+      }
+      
+      .faq-section-title {
+        font-size: 1.75rem;
+      }
+      
+      .reports-highlight {
+        padding: 2rem 1.5rem;
+      }
+      
+      .reports-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZ69VXXL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+
+<nav>
+  <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
+    <a href="/" class="logo-mark-link" style="text-decoration: none; display: flex; align-items: center;">
+      <span class="logo-mark"></span>
+    </a>
+    <a href="/" style="text-decoration: none; color: inherit;">Dark AI</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="/about">About</a>
+    <div class="nav-dropdown" id="reportsDropdown">
+      <span class="nav-dropdown-toggle">Reports</span>
+      <div class="nav-dropdown-menu">
+        <a href="/reports/2025-deepfake-report">2025 Deepfake Report</a>
+        <a href="/reports/vendor-intelligence-report">Vendor Intelligence Report</a>
+        <a href="/reports/deepfake-infrastructure-report">DeepFake Infrastructure Report</a>
+      </div>
+    </div>
+    <div class="nav-dropdown" id="toolsDropdown">
+      <span class="nav-dropdown-toggle">Tools</span>
+      <div class="nav-dropdown-menu">
+        <a href="/shadowstack">ShadowStack</a>
+        <a href="/blackwire">BlackWire</a>
+        <a href="/personaforge">PersonaForge</a>
+      </div>
+    </div>
+    <a href="/humangate">HumanGate</a>
+    <a href="/faq">FAQ</a>
+    <a href="/about#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>Frequently Asked Questions</h1>
+  <p>Everything you need to know about Dark AI's investigative tools and research reports.</p>
+</header>
+
+<section class="faq-content">
+  <div class="faq-section">
+    <h2 class="faq-section-title">Platform Overview</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What is Dark AI?
+        </div>
+        <div class="faq-answer">
+          <p>Dark AI is a platform of investigative tools designed to expose AI-powered harms, including synthetic identity fraud, deepfake exploitation, and cyber-enabled extortion networks. We provide journalists, researchers, and investigators with data-driven insights to map and understand these emerging threats.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Who is Dark AI for?
+        </div>
+        <div class="faq-answer">
+          <p>Dark AI is designed for journalists, researchers, cybersecurity professionals, and anyone investigating AI-powered harms. Our tools help map infrastructure, track synthetic identities, analyze deepfake networks, and expose malicious actors operating in these spaces.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Is Dark AI free to use?
+        </div>
+        <div class="faq-answer">
+          <p>Yes, Dark AI is free to use. We believe that investigative tools for exposing AI harms should be accessible to journalists and researchers. Some advanced features may require API keys for third-party services, but the core functionality is available at no cost.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-section-title">Tools</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What is PersonaForge?
+        </div>
+        <div class="faq-answer">
+          <p>PersonaForge maps synthetic identity vendors and their infrastructure. It tracks domains, hosting providers, payment processors, and communication channels used by vendors selling fake IDs, passports, and other identity documents. The tool helps investigators understand the ecosystem of synthetic identity fraud.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What is ShadowStack?
+        </div>
+        <div class="faq-answer">
+          <p>ShadowStack tracks the infrastructure behind deepfake and "nudify" services. It monitors domains, DNS history, hosting providers, CDNs, and other technical infrastructure used by services that create non-consensual deepfake imagery. This helps researchers map the technical footprint of these operations.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What is BlackWire?
+        </div>
+        <div class="faq-answer">
+          <p>BlackWire provides threat intelligence and security analysis for domains and infrastructure. It aggregates data from multiple sources to provide comprehensive security assessments, helping investigators identify malicious infrastructure and understand threat patterns.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What is HumanGate?
+        </div>
+        <div class="faq-answer">
+          <p>HumanGate is a WordPress plugin designed to help website owners protect their content from AI scraping and deepfake generation. It provides technical controls to prevent automated systems from harvesting images and content for use in AI training or deepfake creation.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What is DFaceSearch?
+        </div>
+        <div class="faq-answer">
+          <p>DFaceSearch is a face recognition tool that helps identify when the same person appears across multiple deepfake or synthetic media. It uses privacy-preserving techniques to match faces without storing biometric data, helping investigators track the reuse of images across different platforms and services.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-section-title">Reports</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What research reports are available?
+        </div>
+        <div class="faq-answer">
+          <p>Dark AI publishes several research reports:</p>
+          <ul>
+            <li><strong>2025 Deepfake Report:</strong> Survey-based analysis of public awareness and experience with deepfake and "nudify" tools.</li>
+            <li><strong>Vendor Intelligence Report:</strong> Comprehensive mapping of synthetic identity vendors, their infrastructure, and operational patterns.</li>
+            <li><strong>DeepFake Infrastructure Report:</strong> Technical analysis of the infrastructure behind deepfake and non-consensual image generation services.</li>
+          </ul>
+          <p>All reports include downloadable data exports (CSV and JSON formats) for further analysis.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Can I use report data in my own research?
+        </div>
+        <div class="faq-answer">
+          <p>Yes, our reports are designed to support investigative journalism and research. You can download the data in CSV or JSON format from each report page. We encourage attribution when using our data, and we're happy to collaborate on research projects. Please reach out through our contact form if you have specific research needs.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-section-title">Data & Methodology</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Where does the data come from?
+        </div>
+        <div class="faq-answer">
+          <p>Our data comes from multiple sources:</p>
+          <ul>
+            <li><strong>Public sources:</strong> WHOIS records, DNS data, SSL certificates, and other publicly available information.</li>
+            <li><strong>API integrations:</strong> We integrate with various threat intelligence and domain analysis APIs to enrich our data.</li>
+            <li><strong>Manual research:</strong> Our team conducts ongoing research to identify and catalog new vendors, services, and infrastructure.</li>
+            <li><strong>Community contributions:</strong> Researchers and journalists can contribute findings through our contact form.</li>
+          </ul>
+          <p>We prioritize publicly available data and do not engage in hacking, unauthorized access, or illegal data collection.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How often is the data updated?
+        </div>
+        <div class="faq-answer">
+          <p>Data updates vary by tool:</p>
+          <ul>
+            <li><strong>PersonaForge:</strong> Continuous monitoring with daily updates for new domains and vendor information.</li>
+            <li><strong>ShadowStack:</strong> DNS history and infrastructure data updated regularly as new services are discovered.</li>
+            <li><strong>BlackWire:</strong> Threat intelligence data refreshed from multiple sources on a regular schedule.</li>
+          </ul>
+          <p>Reports are typically updated quarterly or when significant new findings emerge.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What technical terms should I know?
+        </div>
+        <div class="faq-answer">
+          <p>Here are some key terms used throughout our platform:</p>
+          <ul>
+            <li><strong>CDN (Content Delivery Network):</strong> A network of servers that deliver content to users based on geographic location, improving speed and performance.</li>
+            <li><strong>ASN (Autonomous System Number):</strong> A unique identifier for a network or group of networks under a single administrative control.</li>
+            <li><strong>Registrar:</strong> A company that manages domain name registrations (e.g., GoDaddy, Namecheap).</li>
+            <li><strong>WHOIS:</strong> A protocol for querying databases that store information about domain names and IP addresses.</li>
+            <li><strong>DNS History:</strong> Historical records of domain name system changes, showing how domains have been configured over time.</li>
+            <li><strong>SSL/TLS Certificate:</strong> Digital certificates that enable encrypted connections between web servers and browsers.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-section-title">Legal & Privacy</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Is using Dark AI legal?
+        </div>
+        <div class="faq-answer">
+          <p>Yes, Dark AI only uses publicly available data and legitimate research methods. We do not engage in hacking, unauthorized access, or illegal data collection. All data sources are publicly accessible or obtained through legitimate API services. However, how you use the information is your responsibility—always ensure your research and reporting comply with applicable laws and ethical guidelines.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Does Dark AI store personal information?
+        </div>
+        <div class="faq-answer">
+          <p>Dark AI focuses on infrastructure and technical data (domains, IP addresses, hosting providers, etc.), not personal information about individuals. We do not collect or store personal data about users of our platform. Some tools, like DFaceSearch, use privacy-preserving techniques that do not store biometric data. We prioritize user privacy and data protection.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Can I report abuse or request data removal?
+        </div>
+        <div class="faq-answer">
+          <p>If you believe our platform contains inaccurate information or data that should be removed, please contact us through our contact form. We review all requests and will remove or correct data when appropriate. However, note that we primarily track infrastructure and technical data, not personal information about individuals.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <h2 class="faq-section-title">Usage & Taking Action</h2>
+    <div class="faq-accordion">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How can journalists use Dark AI?
+        </div>
+        <div class="faq-answer">
+          <p>Journalists can use Dark AI to:</p>
+          <ul>
+            <li>Map infrastructure behind synthetic identity vendors or deepfake services</li>
+            <li>Track domain changes and infrastructure shifts over time</li>
+            <li>Identify patterns in hosting providers, payment processors, and other technical services</li>
+            <li>Export data for further analysis and visualization</li>
+            <li>Use research reports as sources for investigative stories</li>
+          </ul>
+          <p>Our tools are designed to support investigative reporting on AI-powered harms.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What should I do if I find someone I know in the data?
+        </div>
+        <div class="faq-answer">
+          <p>Dark AI tracks infrastructure and technical data, not personal information. If you discover infrastructure related to a service that has harmed you or someone you know, you may want to:</p>
+          <ul>
+            <li>Document the findings for law enforcement or legal action</li>
+            <li>Report the service to relevant platforms (hosting providers, payment processors, etc.)</li>
+            <li>Contact support organizations that help victims of deepfake abuse</li>
+            <li>Reach out to us if you need assistance understanding the technical data</li>
+          </ul>
+          <p>We are not a law enforcement agency, but we can help you understand the technical infrastructure data.</p>
+        </div>
+      </div>
+      
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How can I contribute data or findings?
+        </div>
+        <div class="faq-answer">
+          <p>We welcome contributions from researchers and journalists. You can:</p>
+          <ul>
+            <li>Report new vendors, services, or infrastructure through our contact form</li>
+            <li>Share research findings or patterns you've discovered</li>
+            <li>Suggest improvements to our tools or reports</li>
+            <li>Collaborate on research projects</li>
+          </ul>
+          <p>All contributions help improve our understanding of AI-powered harms and make our tools more effective.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="reports-highlight">
+    <h2>Research Reports</h2>
+    <p>Explore our in-depth research reports on synthetic identity fraud, deepfake infrastructure, and AI-powered harms. All reports include downloadable data exports.</p>
+    <div class="reports-grid">
+      <a href="/reports/2025-deepfake-report" class="report-card">
+        <h3>2025 Deepfake Report</h3>
+        <p>Survey-based analysis of public awareness and experience with deepfake and "nudify" tools, including demographic breakdowns and cross-tabulations.</p>
+      </a>
+      <a href="/reports/vendor-intelligence-report" class="report-card">
+        <h3>Vendor Intelligence Report</h3>
+        <p>Comprehensive mapping of synthetic identity vendors, their infrastructure, communication channels, and operational patterns.</p>
+      </a>
+      <a href="/reports/deepfake-infrastructure-report" class="report-card">
+        <h3>DeepFake Infrastructure Report</h3>
+        <p>Technical analysis of the infrastructure behind deepfake and non-consensual image generation services, including hosting, CDNs, and payment processors.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Dark AI. Tools for exposing AI-powered harms.</p>
+</footer>
+
+<script>
+  // Handle orientation change
+  let orientationChangeTimeout;
+  function handleOrientationChange() {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    
+    if (hamburger && navLinks) {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('active');
+    }
+    
+    document.body.style.display = 'none';
+    requestAnimationFrame(function() {
+      document.body.style.display = '';
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    });
+  }
+  
+  window.addEventListener('orientationchange', function() {
+    clearTimeout(orientationChangeTimeout);
+    orientationChangeTimeout = setTimeout(handleOrientationChange, 100);
+  });
+  
+  let resizeTimeout;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(function() {
+      const currentWidth = window.innerWidth;
+      const currentHeight = window.innerHeight;
+      if (Math.abs(currentWidth - (window.lastWidth || currentWidth)) > 100 ||
+          Math.abs(currentHeight - (window.lastHeight || currentHeight)) > 100) {
+        handleOrientationChange();
+        window.lastWidth = currentWidth;
+        window.lastHeight = currentHeight;
+      }
+    }, 150);
+  });
+  
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+  
+  // Hamburger menu toggle
+  document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('navLinks');
+    const reportsDropdown = document.getElementById('reportsDropdown');
+    
+    if (hamburger && navLinks) {
+      hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navLinks.classList.toggle('active');
+      });
+      
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', function() {
+          hamburger.classList.remove('active');
+          navLinks.classList.remove('active');
+        });
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+          hamburger.classList.remove('active');
+          navLinks.classList.remove('active');
+        }
+      });
+    }
+    
+    // Dropdown toggle
+    if (reportsDropdown) {
+      const dropdownToggle = reportsDropdown.querySelector('.nav-dropdown-toggle');
+      
+      dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        reportsDropdown.classList.toggle('active');
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!reportsDropdown.contains(event.target)) {
+          reportsDropdown.classList.remove('active');
+        }
+      });
+    }
+    
+    // Tools dropdown toggle
+    const toolsDropdown = document.getElementById('toolsDropdown');
+    if (toolsDropdown) {
+      const dropdownToggle = toolsDropdown.querySelector('.nav-dropdown-toggle');
+      
+      dropdownToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        toolsDropdown.classList.toggle('active');
+      });
+      
+      document.addEventListener('click', function(event) {
+        if (!toolsDropdown.contains(event.target)) {
+          toolsDropdown.classList.remove('active');
+        }
+      });
+    }
+  });
+  
+  // FAQ accordion functionality
+  function toggleFaq(element) {
+    const faqItem = element.closest('.faq-item');
+    const isActive = faqItem.classList.contains('active');
+    
+    // Close all FAQ items
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.classList.remove('active');
+    });
+    
+    // Open clicked item if it wasn't active
+    if (!isActive) {
+      faqItem.classList.add('active');
+    }
+  }
+</script>
+
+</body>
+</html>
