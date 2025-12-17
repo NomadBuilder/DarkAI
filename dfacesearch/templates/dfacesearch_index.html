@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DFaceSearch - Deepfake Image Search</title>
+    <link rel="icon" type="image/svg+xml" href="/dfacesearch/static/favicon.svg">
+    <link rel="alternate icon" href="/dfacesearch/static/favicon.svg">
+    <link rel="stylesheet" href="/dfacesearch/static/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 DFaceSearch</h1>
+            <p class="subtitle">Search for deepfaked versions of yourself online</p>
+        </header>
+
+        <div class="info-section">
+            <h3>How it works</h3>
+            <ol>
+                <li><strong>Upload your photo</strong> - We detect and extract your face features</li>
+                <li><strong>Reverse image search</strong> - We search Yandex, Google, and Bing for similar images</li>
+                <li><strong>Face recognition verification</strong> - We verify each result to find the same person (even if the image is altered)</li>
+                <li><strong>ShadowStack cross-reference</strong> - Results are flagged if they're from known NCII sites</li>
+            </ol>
+            <div class="privacy-notice">
+                <strong>🔒 Privacy:</strong> Your image is temporarily uploaded to Imgur for reverse image search, then <strong>immediately deleted</strong> after the search completes. We never store your images.
+            </div>
+        </div>
+
+        <main>
+            <div class="upload-section">
+                <div class="upload-box" id="upload-box">
+                    <input type="file" id="image-input" accept="image/*" style="display: none;">
+                    <div class="upload-area" id="upload-area">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p>Click to upload or drag and drop</p>
+                        <p class="hint">PNG, JPG, JPEG, GIF, WEBP (max 10MB)</p>
+                    </div>
+                    <div id="preview-container" style="position: relative; display: none; margin-top: 20px;">
+                        <img id="preview-image" style="max-width: 100%; max-height: 400px; border-radius: 8px; display: block;">
+                        <button id="remove-btn" class="remove-btn" title="Remove image">×</button>
+                    </div>
+                </div>
+
+                <button id="search-btn" class="search-btn" disabled>Search for Similar Faces</button>
+            </div>
+
+            <div id="results-section" class="results-section" style="display: none;">
+                <h2>Search Results</h2>
+                <div id="results-container"></div>
+            </div>
+
+            <div id="loading" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <div id="loading-status">
+                    <p class="status-text">Initializing search...</p>
+                    <div class="status-steps">
+                        <div class="status-step" id="step-1">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Detecting face in image</span>
+                        </div>
+                        <div class="status-step" id="step-2">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Uploading to temporary host (will be deleted)</span>
+                        </div>
+                        <div class="status-step" id="step-3">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Searching Yandex, Google, and Bing</span>
+                        </div>
+                        <div class="status-step" id="step-4">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Verifying faces with AI recognition</span>
+                        </div>
+                        <div class="status-step" id="step-5">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Cross-referencing with ShadowStack database</span>
+                        </div>
+                        <div class="status-step" id="step-6">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Deleting temporary image (privacy)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/dfacesearch/static/js/main.js"></script>
+</body>
+</html>
+

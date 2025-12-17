@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#60a5fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#grad)" />
+  <!-- Face outline -->
+  <circle cx="50" cy="45" r="20" fill="none" stroke="#ffffff" stroke-width="3" />
+  <!-- Eyes -->
+  <circle cx="43" cy="40" r="3" fill="#ffffff" />
+  <circle cx="57" cy="40" r="3" fill="#ffffff" />
+  <!-- Mouth -->
+  <path d="M 40 50 Q 50 55 60 50" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" />
+  <!-- Search magnifying glass -->
+  <circle cx="70" cy="30" r="8" fill="none" stroke="#ffffff" stroke-width="2.5" />
+  <line x1="76" y1="36" x2="82" y2="42" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" />
+</svg>
+

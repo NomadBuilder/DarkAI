@@ -397,14 +397,14 @@ def vendor_intelligence_report():
         return send_from_directory('templates', 'report_vendor_intelligence.html')
 
 
-@app.route('/reports/shadowstack-infrastructure-report')
+@app.route('/reports/deepfake-infrastructure-report')
 def shadowstack_infrastructure_report():
-    """ShadowStack Infrastructure Intelligence Report page."""
+    """DeepFake Infrastructure Report page."""
     from flask import render_template
     return render_template('report_shadowstack_infrastructure.html')
 
 
-@app.route('/api/reports/shadowstack-infrastructure/export')
+@app.route('/api/reports/deepfake-infrastructure/export')
 def export_shadowstack_infrastructure():
     """Export ShadowStack infrastructure intelligence report as CSV or JSON."""
     from flask import request, Response
