@@ -290,6 +290,7 @@ def enrich_domain(domain: str) -> Dict:
             
             # Email security (SPF/DMARC/DKIM) - always runs
             try:
+                # Check rate limit, but if it fails, still try (DNS lookups are cheap)
                 if check_rate_limit("email_security"):
                     email_result = analyze_email_security(domain)
                     # Always add email security data (function always returns a dict)
@@ -300,8 +301,25 @@ def enrich_domain(domain: str) -> Dict:
                         "security_score": email_result.get("security_score", 0)
                     }
                     record_api_request("email_security")
+                else:
+                    # Rate limited, but still try (DNS is cheap)
+                    logger.debug("Email security rate limited, but attempting anyway (DNS is cheap)")
+                    email_result = analyze_email_security(domain)
+                    result["email_security"] = {
+                        "spf": email_result.get("spf", {}),
+                        "dmarc": email_result.get("dmarc", {}),
+                        "dkim": email_result.get("dkim", {}),
+                        "security_score": email_result.get("security_score", 0)
+                    }
             except Exception as e:
                 logger.debug(f"Email security analysis failed: {e}")
+                # Add empty structure so UI knows we tried
+                result["email_security"] = {
+                    "spf": {"present": False, "issues": ["Analysis failed"]},
+                    "dmarc": {"present": False, "issues": ["Analysis failed"]},
+                    "dkim": {"present": False, "issues": ["Analysis failed"]},
+                    "security_score": 0
+                }
             
             # Typosquatting detection - always runs (no rate limit needed)
             try:
