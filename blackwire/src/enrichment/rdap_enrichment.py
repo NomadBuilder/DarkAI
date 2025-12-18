@@ -6,7 +6,6 @@ Inspired by rdap-lookup tool capabilities.
 
 import socket
 import ssl
-import dns.resolver
 from typing import Dict, Optional, List
 from datetime import datetime
 import re
@@ -19,6 +18,15 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.utils.logger import logger
 from src.utils.retry import retry_with_backoff
 from src.utils.rate_limiter import check_rate_limit, record_api_request
+
+# Try to import dns.resolver (required for email security)
+try:
+    import dns.resolver
+    DNS_AVAILABLE = True
+except ImportError:
+    DNS_AVAILABLE = False
+    dns = None
+    logger.warning("dnspython not available - email security analysis will be limited")
 
 
 # Try to import whoisit for RDAP lookups (optional)
@@ -272,6 +280,10 @@ def analyze_email_security(domain: str) -> Dict:
         "security_score": 0,
         "errors": []
     }
+    
+    if not DNS_AVAILABLE:
+        result["errors"].append("dnspython not available - email security analysis requires dnspython")
+        return result
     
     try:
         # Check SPF record
