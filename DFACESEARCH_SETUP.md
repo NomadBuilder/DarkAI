@@ -13,18 +13,35 @@ DFaceSearch is a completely isolated tool for searching for deepfaked versions o
 
 ## Features
 1. **Face Detection**: Uses DeepFace to verify a face exists in uploaded image
-2. **Reverse Image Search**: Searches for similar images online
-3. **Domain Flagging**: Cross-references results with ShadowStack domains to flag known NCII sites
-4. **Privacy**: Uploaded images are automatically deleted after processing
+2. **Deepfake Detection**: Analyzes images for deepfake indicators using EfficientNetV2 (ML-based) or artifact analysis (fallback)
+3. **Reverse Image Search**: Searches for similar images online
+4. **Domain Flagging**: Cross-references results with ShadowStack domains to flag known NCII sites
+5. **Privacy**: Uploaded images are automatically deleted after processing
 
 ## Installation
 
 ### Required Dependencies
 ```bash
-pip install deepface opencv-python
+pip install deepface opencv-python numpy Pillow
 # Optional: tensorflow (or tensorflow-cpu for lighter install)
 # pip install tensorflow  # or tensorflow-cpu
 ```
+
+### Deepfake Detection Dependencies
+
+**Artifact-Based Detection (Always Available):**
+- ✅ `opencv-python` - Image processing
+- ✅ `numpy` - Numerical analysis
+- ✅ `Pillow` - Image handling
+- **Works on any Python version**
+
+**EfficientNetV2 Detection (Enhanced Accuracy):**
+- ✅ `tensorflow>=2.13.0` - Machine learning framework
+- ✅ `keras-efficientnet-v2` (optional) - Pre-trained EfficientNetV2 models
+- ⚠️ **Requires Python 3.12 or earlier** (TensorFlow doesn't support Python 3.13+ yet)
+- **Falls back to artifact-based detection if TensorFlow unavailable**
+
+**Note:** The code automatically uses the best available method. Artifact-based detection works without TensorFlow, but EfficientNetV2 provides higher accuracy when available.
 
 ### Optional API Keys (for reverse image search)
 - **SerpAPI Key**: `SERPAPI_API_KEY` (optional fallback only - 100/month free tier)
@@ -100,4 +117,30 @@ dfacesearch/
 - Consider `tensorflow-cpu` for lighter install
 - First run will download face recognition models (~100MB)
 - All processing is done locally (privacy-friendly)
+
+## Deepfake Detection
+
+DFaceSearch includes built-in deepfake detection that analyzes uploaded images for signs of manipulation:
+
+### Detection Methods (Priority Order):
+
+1. **EfficientNetV2 (ML-Based)** - Highest accuracy
+   - Uses pre-trained EfficientNetV2 model for feature extraction
+   - Analyzes high-level image features for deepfake indicators
+   - Requires: Python 3.12 or earlier + TensorFlow
+   - Automatically enabled if dependencies available
+
+2. **Artifact Analysis (Fallback)** - Always available
+   - Detects compression artifacts, edge inconsistencies, color anomalies
+   - Works on any Python version
+   - No TensorFlow required
+   - Less accurate than ML-based but still functional
+
+### Python Version Compatibility:
+
+- **Python 3.12 or earlier**: Full support (EfficientNetV2 + artifact analysis)
+- **Python 3.13+**: Artifact-based detection only (TensorFlow not yet supported)
+- **Production (Render)**: Typically uses Python 3.12, so EfficientNetV2 will work automatically
+
+The detection runs automatically during image upload and results are included in the API response.
 

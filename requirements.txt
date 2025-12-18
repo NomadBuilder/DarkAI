@@ -26,5 +26,9 @@ selenium==4.15.2
 setuptools>=80.0.0  # Required for python-wappalyzer
 flask-swagger-ui==4.11.1  # Swagger/OpenAPI documentation
 deepface>=0.0.79  # Face recognition library (free, local)
-opencv-python>=4.8.0  # Required for deepface
-tensorflow>=2.13.0  # Required for deepface (or use tensorflow-cpu for lighter install)
+opencv-python>=4.8.0  # Required for deepface and deepfake detection
+tensorflow>=2.13.0  # Required for deepface and EfficientNetV2 deepfake detection (requires Python 3.12 or earlier)
+Pillow>=10.0.0  # Required for deepfake detection image processing
+numpy>=1.24.0  # Required for deepfake detection (artifact analysis)
+keras-efficientnet-v2>=0.1.0  # EfficientNetV2 models for deepfake detection (optional, falls back to tf.keras if not available)
+# Note: Deepfake detection works with artifact analysis (no TensorFlow needed) but EfficientNetV2 requires Python 3.12 or earlier

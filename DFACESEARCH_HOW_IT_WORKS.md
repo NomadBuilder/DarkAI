@@ -43,6 +43,34 @@ DeepFace.extract_faces()
 
 ---
 
+### Step 2b: Deepfake Detection (Optional Analysis)
+```
+Face detected
+    ↓
+Deepfake detection analysis
+    ↓
+Returns: is_deepfake, confidence, method
+```
+
+**What happens:**
+- Analyzes image for deepfake indicators
+- **Method 1 (if TensorFlow available)**: EfficientNetV2 feature extraction + heuristic analysis
+- **Method 2 (fallback)**: Artifact-based detection (compression, edges, color inconsistencies)
+- Results included in API response: `deepfake_detection` object
+
+**Detection Methods:**
+- **EfficientNetV2**: Uses pre-trained model features, analyzes for anomalies (requires Python 3.12 or earlier + TensorFlow)
+- **Artifact Analysis**: Detects compression artifacts, edge inconsistencies, color anomalies (works on any Python version)
+
+**Why this step?**
+- Helps identify if uploaded image itself might be a deepfake
+- Provides additional context for search results
+- Runs automatically in background
+
+**Note:** Detection works even without TensorFlow (uses artifact analysis), but EfficientNetV2 provides higher accuracy when available.
+
+---
+
 ### Step 3: Upload to Imgur (Get Public URL)
 ```
 Local image file

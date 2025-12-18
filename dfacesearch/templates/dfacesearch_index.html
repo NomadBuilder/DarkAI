@@ -64,6 +64,10 @@
                             <span class="step-icon">⏳</span>
                             <span class="step-text">Detecting face in image</span>
                         </div>
+                        <div class="status-step" id="step-1b">
+                            <span class="step-icon">⏳</span>
+                            <span class="step-text">Analyzing for deepfake indicators</span>
+                        </div>
                         <div class="status-step" id="step-2">
                             <span class="step-icon">⏳</span>
                             <span class="step-text">Uploading to temporary host (will be deleted)</span>
@@ -84,6 +88,10 @@
                             <span class="step-icon">⏳</span>
                             <span class="step-text">Deleting temporary image (privacy)</span>
                         </div>
+                    </div>
+                    <div id="deepfake-alert" style="display: none; margin-top: 1rem; padding: 1rem; background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; border-radius: 8px;">
+                        <strong style="color: #ef4444;">⚠️ Deepfake Detected:</strong>
+                        <p id="deepfake-message" style="margin: 0.5rem 0 0 0; color: #fca5a5;"></p>
                     </div>
                 </div>
             </div>

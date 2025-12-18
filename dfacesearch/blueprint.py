@@ -192,6 +192,22 @@ def search_image():
                 return jsonify({'error': 'No face detected in image. Please upload an image with a clear face.'}), 400
             return jsonify({'error': f'Face detection failed: {error_msg}'}), 400
         
+        # Deepfake detection (optional - runs after face detection)
+        deepfake_result = None
+        try:
+            # Import from same directory (blueprint_dir is already in sys.path)
+            from deepfake_detection import detect_deepfake
+            deepfake_result = detect_deepfake(str(filepath))
+            if deepfake_result.get("available"):
+                print(f"🔍 Deepfake detection: {'LIKELY DEEPFAKE' if deepfake_result.get('is_deepfake') else 'Likely Real'} (confidence: {deepfake_result.get('confidence', 0):.2%})")
+            else:
+                print("⚠️  Deepfake detection not available (missing dependencies)")
+        except ImportError as e:
+            print(f"⚠️  Deepfake detection module not available: {e}")
+        except Exception as e:
+            print(f"⚠️  Deepfake detection failed: {e}")
+            # Don't fail the whole search if deepfake detection fails
+        
         # Perform reverse image search to find candidate images
         request_host = request.host if request.host else None
         search_results, imgur_deletehash = perform_reverse_image_search(str(filepath), request_host=request_host)
@@ -232,12 +248,23 @@ def search_image():
         if filepath.exists():
             filepath.unlink()
         
-        return jsonify({
+        response_data = {
             'success': True,
             'results': flagged_results,
             'total_results': len(flagged_results),
             'flagged_count': sum(1 for r in flagged_results if r.get('flagged'))
-        })
+        }
+        
+        # Add deepfake detection result if available
+        if deepfake_result and deepfake_result.get("available"):
+            response_data['deepfake_detection'] = {
+                'is_deepfake': deepfake_result.get('is_deepfake', False),
+                'confidence': deepfake_result.get('confidence', 0.0),
+                'method': deepfake_result.get('method', 'unknown'),
+                'details': deepfake_result.get('details', {})
+            }
+        
+        return jsonify(response_data)
         
     except Exception as e:
         import traceback

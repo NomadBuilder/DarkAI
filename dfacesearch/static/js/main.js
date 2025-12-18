@@ -112,6 +112,18 @@ searchBtn.addEventListener('click', async () => {
             step.querySelector('.step-icon').textContent = '⏳';
         }
     }
+    // Reset step 1b (deepfake detection)
+    const step1b = document.getElementById('step-1b');
+    if (step1b) {
+        step1b.classList.remove('active', 'completed');
+        step1b.querySelector('.step-icon').textContent = '⏳';
+    }
+    
+    // Hide deepfake alert
+    const deepfakeAlert = document.getElementById('deepfake-alert');
+    if (deepfakeAlert) {
+        deepfakeAlert.style.display = 'none';
+    }
     
     // Update status text
     const statusText = document.querySelector('.status-text');
@@ -124,6 +136,18 @@ searchBtn.addEventListener('click', async () => {
             method: 'POST',
             body: formData
         });
+        
+        // Step 1b: Deepfake detection (happens in backend)
+        setTimeout(() => {
+            const step1b = document.getElementById('step-1b');
+            if (step1b) {
+                const statusText = document.querySelector('.status-text');
+                if (statusText) {
+                    statusText.textContent = 'Analyzing for deepfake indicators...';
+                }
+                step1b.classList.add('active');
+            }
+        }, 1000);
         
         // Step 2: Uploading (happens in backend)
         updateStatusStep(2, 'Uploading to temporary host...');
@@ -146,6 +170,17 @@ searchBtn.addEventListener('click', async () => {
         setTimeout(() => {
             loading.style.display = 'none';
             displayResults(data);
+            
+            // Show deepfake detection result if available
+            if (data.deepfake_detection && data.deepfake_detection.is_deepfake) {
+                const deepfakeAlert = document.getElementById('deepfake-alert');
+                const deepfakeMessage = document.getElementById('deepfake-message');
+                if (deepfakeAlert && deepfakeMessage) {
+                    const confidence = (data.deepfake_detection.confidence * 100).toFixed(1);
+                    deepfakeMessage.textContent = `This image shows signs of being a deepfake (${confidence}% confidence). The image may have been AI-generated or manipulated.`;
+                    deepfakeAlert.style.display = 'block';
+                }
+            }
         }, 500);
         
     } catch (error) {
@@ -165,13 +200,22 @@ function updateStatusStep(stepNum, text) {
     }
     
     if (step) {
-        // Mark previous steps as completed
+        // Mark previous steps as completed (including step-1b if we're past step 1)
         for (let i = 1; i < stepNum; i++) {
             const prevStep = document.getElementById(`step-${i}`);
             if (prevStep) {
                 prevStep.classList.remove('active');
                 prevStep.classList.add('completed');
                 prevStep.querySelector('.step-icon').textContent = '✅';
+            }
+        }
+        // Also mark step-1b as completed if we're past step 1
+        if (stepNum > 1) {
+            const step1b = document.getElementById('step-1b');
+            if (step1b) {
+                step1b.classList.remove('active');
+                step1b.classList.add('completed');
+                step1b.querySelector('.step-icon').textContent = '✅';
             }
         }
         
