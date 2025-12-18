@@ -65,6 +65,7 @@ def detect_deepfake(image_path: str) -> Dict:
     }
     
     if not os.path.exists(image_path):
+        result["details"] = {"error": f"Image file not found: {image_path}"}
         return result
     
     # Method 1: Try EfficientNetV2-based detection (if model available)
@@ -72,15 +73,24 @@ def detect_deepfake(image_path: str) -> Dict:
         efficientnet_result = _detect_with_efficientnet(image_path)
         if efficientnet_result.get("available"):
             return efficientnet_result
+        # Store error for debugging if EfficientNet failed
+        if efficientnet_result.get("details", {}).get("error"):
+            result["details"]["efficientnet_error"] = efficientnet_result["details"]["error"]
+        elif efficientnet_result.get("details", {}).get("message"):
+            result["details"]["efficientnet_message"] = efficientnet_result["details"]["message"]
     
     # Method 2: Fallback to artifact-based detection
     if OPENCV_AVAILABLE:
         artifact_result = _detect_with_artifacts(image_path)
         if artifact_result.get("available"):
             return artifact_result
+        # Store error for debugging if artifact detection failed
+        if artifact_result.get("details", {}).get("error"):
+            result["details"]["artifact_error"] = artifact_result["details"]["error"]
     
-    # If no methods available, return unavailable status
-    result["details"] = {"message": "Deepfake detection not available - missing dependencies"}
+    # If no methods available, return unavailable status with details
+    if not result["details"]:
+        result["details"] = {"message": "Deepfake detection not available - missing dependencies"}
     return result
 
 
@@ -124,7 +134,7 @@ def _load_efficientnet_model():
             }
             return _EFFICIENTNET_MODEL
             
-        except (ImportError, AttributeError):
+        except (ImportError, AttributeError) as e:
             # Fallback: Try keras-efficientnet-v2 package (if installed)
             try:
                 import keras_efficientnet_v2
@@ -147,12 +157,15 @@ def _load_efficientnet_model():
                     'type': 'keras_efficientnet_v2'
                 }
                 return _EFFICIENTNET_MODEL
-            except ImportError:
+            except ImportError as e2:
                 # TensorFlow version might not have EfficientNetV2
+                print(f"⚠️  EfficientNetV2 not available: tf.keras error: {e}, keras_efficientnet_v2 error: {e2}")
                 return None
                 
     except Exception as e:
         print(f"⚠️  Failed to load EfficientNetV2 model: {e}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
@@ -180,7 +193,8 @@ def _detect_with_efficientnet(image_path: str) -> Dict:
         if model_data is None:
             result["details"] = {
                 "message": "EfficientNetV2 model not available",
-                "note": "Install keras-efficientnet-v2 or use TensorFlow 2.13+ with EfficientNetV2 support"
+                "note": "Install keras-efficientnet-v2 or use TensorFlow 2.13+ with EfficientNetV2 support",
+                "tensorflow_version": tf.__version__ if TENSORFLOW_AVAILABLE else "not available"
             }
             return result
         
@@ -293,7 +307,13 @@ def _detect_with_efficientnet(image_path: str) -> Dict:
         return result
         
     except Exception as e:
-        result["details"] = {"error": str(e)}
+        import traceback
+        error_trace = traceback.format_exc()
+        result["details"] = {
+            "error": str(e),
+            "error_type": type(e).__name__,
+            "traceback": error_trace
+        }
         return result
 
 
