@@ -517,17 +517,29 @@
     try {
       const stored = localStorage.getItem('escalationEntities');
       if (stored) {
-        // Auto-generate the packet
-        generateEscalationPacket();
-        // Scroll to the packet section if we're on the report section
-        if (window.location.hash === '#report' || window.location.hash === '') {
+        // If we have a hash, scroll to the report section first
+        if (window.location.hash === '#report') {
+          // Wait for page to fully render, then scroll
+          setTimeout(() => {
+            const reportSection = document.getElementById('report');
+            if (reportSection) {
+              reportSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
+        }
+        
+        // Auto-generate the packet after a short delay to ensure DOM is ready
+        setTimeout(() => {
+          generateEscalationPacket();
+          
+          // Scroll to the packet div after it's generated and shown
           setTimeout(() => {
             const packetDiv = document.getElementById('escalation-packet');
-            if (packetDiv) {
-              packetDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (packetDiv && packetDiv.style.display !== 'none') {
+              packetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
-          }, 500);
-        }
+          }, 300);
+        }, 200);
       }
     } catch (e) {
       console.error('Error auto-generating escalation packet:', e);
@@ -708,10 +720,12 @@ Best regards,
       textarea.value = defaultPacket;
       packetDiv.style.display = 'block';
       
-      // Smooth scroll to the packet
-      packetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Ensure the packet is visible and scroll to it
+      setTimeout(() => {
+        packetDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
     } else {
-      console.error('Escalation packet elements not found');
+      console.error('Escalation packet elements not found', { textarea: !!textarea, packetDiv: !!packetDiv });
     }
   }
   
