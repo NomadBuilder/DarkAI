@@ -139,11 +139,32 @@
         display: flex;
       }
       
+      /* Backdrop overlay - only on mobile */
+      .nav-backdrop {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+      }
+      
+      .nav-backdrop.active {
+        opacity: 1;
+        visibility: visible;
+      }
+      
       .nav-links {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 280px;
+        width: 85%;
+        max-width: 320px;
         height: 100vh;
         height: 100dvh;
         height: calc(var(--vh, 1vh) * 100);
@@ -157,10 +178,18 @@
         transition: right 0.3s ease;
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.5);
         z-index: 1000;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
       }
       
       .nav-links.active {
         right: 0;
+      }
+      
+      body.menu-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
       }
       
       .nav-links a,
@@ -622,6 +651,9 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
+  <!-- Mobile menu backdrop -->
+  <div class="nav-backdrop" id="navBackdrop"></div>
+
 <nav>
   <div class="logo" style="display: flex; align-items: center; gap: 0.75rem;">
     <a href="/" class="logo-mark-link" style="text-decoration: none; display: flex; align-items: center;">
@@ -944,10 +976,15 @@
   function handleOrientationChange() {
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
+    const navBackdrop = document.getElementById('navBackdrop');
     
     if (hamburger && navLinks) {
       hamburger.classList.remove('active');
       navLinks.classList.remove('active');
+      if (navBackdrop) {
+        navBackdrop.classList.remove('active');
+      }
+      document.body.classList.remove('menu-open');
     }
     
     document.body.style.display = 'none';
@@ -985,25 +1022,59 @@
   document.addEventListener('DOMContentLoaded', function() {
     const hamburger = document.getElementById('hamburger');
     const navLinks = document.getElementById('navLinks');
+    const navBackdrop = document.getElementById('navBackdrop');
     const reportsDropdown = document.getElementById('reportsDropdown');
     
+    function toggleMenu() {
+      const isActive = navLinks.classList.contains('active');
+      hamburger.classList.toggle('active');
+      navLinks.classList.toggle('active');
+      if (navBackdrop) {
+        navBackdrop.classList.toggle('active');
+      }
+      
+      // Lock/unlock body scroll
+      if (!isActive) {
+        document.body.classList.add('menu-open');
+      } else {
+        document.body.classList.remove('menu-open');
+      }
+    }
+    
+    function closeMenu() {
+      hamburger.classList.remove('active');
+      navLinks.classList.remove('active');
+      if (navBackdrop) {
+        navBackdrop.classList.remove('active');
+      }
+      document.body.classList.remove('menu-open');
+    }
+    
     if (hamburger && navLinks) {
-      hamburger.addEventListener('click', function() {
-        hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
+      hamburger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        toggleMenu();
       });
+      
+      // Close menu when backdrop is clicked
+      if (navBackdrop) {
+        navBackdrop.addEventListener('click', function() {
+          closeMenu();
+        });
+      }
       
       navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', function() {
-          hamburger.classList.remove('active');
-          navLinks.classList.remove('active');
+          closeMenu();
         });
       });
       
+      // Close menu when clicking outside (but not on backdrop, handled separately)
       document.addEventListener('click', function(event) {
-        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
-          hamburger.classList.remove('active');
-          navLinks.classList.remove('active');
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target) && !navBackdrop.contains(event.target)) {
+          if (navLinks.classList.contains('active')) {
+            closeMenu();
+          }
         }
       });
     }
