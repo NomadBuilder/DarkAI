@@ -252,6 +252,7 @@ def enrich_domain(domain: str) -> Dict:
         
         # RDAP and Advanced Security Analysis (RDAP, SSL/TLS, Email Security, Typosquatting)
         # These run independently - SSL/TLS, email security, and typosquatting don't require whoisit
+        # Note: check_rate_limit and record_api_request are already imported at module level
         try:
             from src.enrichment.rdap_enrichment import (
                 enrich_with_rdap,
@@ -259,7 +260,6 @@ def enrich_domain(domain: str) -> Dict:
                 analyze_email_security,
                 detect_typosquatting
             )
-            from src.utils.rate_limiter import check_rate_limit, record_api_request
             
             # RDAP lookup (requires whoisit, optional)
             try:
