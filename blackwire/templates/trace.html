@@ -1193,30 +1193,35 @@
             }
             
             // SSL/TLS Analysis
-            if (enrichmentData.ssl_info && enrichmentData.ssl_info.available) {
+            if (enrichmentData.ssl_info) {
               const ssl = enrichmentData.ssl_info;
-              if (ssl.security_grade) {
-                const gradeColors = {'A': '#10b981', 'B': '#3b82f6', 'C': '#fbbf24', 'D': '#f59e0b', 'F': '#ef4444'};
-                const color = gradeColors[ssl.security_grade] || '#6b7280';
-                addResultRow(entityDataContainer, 'SSL/TLS Security Grade', 
-                  `<span style="color: ${color}; font-weight: bold; font-size: 1.2em;">${ssl.security_grade}</span>`);
-              }
-              if (ssl.certificate && ssl.certificate.issuer) {
-                const issuer = ssl.certificate.issuer;
-                const issuerName = issuer.organizationName || issuer.commonName || 'Unknown';
-                addResultRow(entityDataContainer, 'SSL Certificate Issuer', issuerName);
-              }
-              if (ssl.certificate && ssl.certificate.days_until_expiry !== undefined) {
-                const days = ssl.certificate.days_until_expiry;
-                const expiryText = days > 0 ? `${days} days` : 'Expired';
-                addResultRow(entityDataContainer, 'SSL Certificate Expiry', expiryText);
-              }
-              if (ssl.protocols && ssl.protocols.version) {
-                addResultRow(entityDataContainer, 'TLS Version', ssl.protocols.version);
-              }
-              if (ssl.security_issues && ssl.security_issues.length > 0) {
-                addResultRow(entityDataContainer, 'SSL Security Issues', 
-                  '<span style="color: #ef4444;">⚠️ ' + ssl.security_issues.join(', ') + '</span>');
+              if (ssl.available) {
+                if (ssl.security_grade) {
+                  const gradeColors = {'A': '#10b981', 'B': '#3b82f6', 'C': '#fbbf24', 'D': '#f59e0b', 'F': '#ef4444'};
+                  const color = gradeColors[ssl.security_grade] || '#6b7280';
+                  addResultRow(entityDataContainer, 'SSL/TLS Security Grade', 
+                    `<span style="color: ${color}; font-weight: bold; font-size: 1.2em;">${ssl.security_grade}</span>`);
+                }
+                if (ssl.certificate && ssl.certificate.issuer) {
+                  const issuer = ssl.certificate.issuer;
+                  const issuerName = issuer.organizationName || issuer.commonName || 'Unknown';
+                  addResultRow(entityDataContainer, 'SSL Certificate Issuer', issuerName);
+                }
+                if (ssl.certificate && ssl.certificate.days_until_expiry !== undefined) {
+                  const days = ssl.certificate.days_until_expiry;
+                  const expiryText = days > 0 ? `${days} days` : 'Expired';
+                  addResultRow(entityDataContainer, 'SSL Certificate Expiry', expiryText);
+                }
+                if (ssl.protocols && ssl.protocols.version) {
+                  addResultRow(entityDataContainer, 'TLS Version', ssl.protocols.version);
+                }
+                if (ssl.security_issues && ssl.security_issues.length > 0) {
+                  addResultRow(entityDataContainer, 'SSL Security Issues', 
+                    '<span style="color: #ef4444;">⚠️ ' + ssl.security_issues.join(', ') + '</span>');
+                }
+              } else if (ssl.errors && ssl.errors.length > 0) {
+                addResultRow(entityDataContainer, 'SSL/TLS Analysis', 
+                  `<span style="color: #f59e0b;">⚠️ Analysis failed: ${ssl.errors[0]}</span>`);
               }
             }
             
@@ -1224,42 +1229,51 @@
             if (enrichmentData.email_security) {
               const emailSec = enrichmentData.email_security;
               let emailSecStatus = [];
-              if (emailSec.spf && emailSec.spf.present) {
-                emailSecStatus.push('SPF ✓');
-                if (emailSec.spf.issues && emailSec.spf.issues.length > 0) {
-                  emailSecStatus.push(`SPF Issues: ${emailSec.spf.issues.join(', ')}`);
+              if (emailSec.spf) {
+                if (emailSec.spf.present) {
+                  emailSecStatus.push('SPF ✓');
+                  if (emailSec.spf.issues && emailSec.spf.issues.length > 0) {
+                    emailSecStatus.push(`SPF Issues: ${emailSec.spf.issues.join(', ')}`);
+                  }
+                } else {
+                  emailSecStatus.push('SPF ✗');
                 }
-              } else {
-                emailSecStatus.push('SPF ✗');
               }
-              if (emailSec.dmarc && emailSec.dmarc.present) {
-                const policy = emailSec.dmarc.policy || 'none';
-                emailSecStatus.push(`DMARC ✓ (${policy})`);
-                if (emailSec.dmarc.issues && emailSec.dmarc.issues.length > 0) {
-                  emailSecStatus.push(`DMARC Issues: ${emailSec.dmarc.issues.join(', ')}`);
+              if (emailSec.dmarc) {
+                if (emailSec.dmarc.present) {
+                  const policy = emailSec.dmarc.policy || 'none';
+                  emailSecStatus.push(`DMARC ✓ (${policy})`);
+                  if (emailSec.dmarc.issues && emailSec.dmarc.issues.length > 0) {
+                    emailSecStatus.push(`DMARC Issues: ${emailSec.dmarc.issues.join(', ')}`);
+                  }
+                } else {
+                  emailSecStatus.push('DMARC ✗');
                 }
-              } else {
-                emailSecStatus.push('DMARC ✗');
               }
-              if (emailSec.dkim && emailSec.dkim.present) {
-                emailSecStatus.push('DKIM ✓');
-              } else {
-                emailSecStatus.push('DKIM ✗');
+              if (emailSec.dkim) {
+                if (emailSec.dkim.present) {
+                  emailSecStatus.push('DKIM ✓');
+                } else {
+                  emailSecStatus.push('DKIM ✗');
+                }
               }
-              if (emailSec.security_score !== undefined) {
-                const score = emailSec.security_score;
-                const scoreColor = score >= 80 ? '#10b981' : score >= 60 ? '#fbbf24' : '#ef4444';
-                addResultRow(entityDataContainer, 'Email Security', 
-                  `${emailSecStatus.join(' | ')} <span style="color: ${scoreColor};">(Score: ${score}/100)</span>`);
-              } else {
-                addResultRow(entityDataContainer, 'Email Security', emailSecStatus.join(' | '));
+              if (emailSecStatus.length > 0) {
+                if (emailSec.security_score !== undefined) {
+                  const score = emailSec.security_score;
+                  const scoreColor = score >= 80 ? '#10b981' : score >= 60 ? '#fbbf24' : '#ef4444';
+                  addResultRow(entityDataContainer, 'Email Security', 
+                    `${emailSecStatus.join(' | ')} <span style="color: ${scoreColor};">(Score: ${score}/100)</span>`);
+                } else {
+                  addResultRow(entityDataContainer, 'Email Security', emailSecStatus.join(' | '));
+                }
               }
             }
             
             // Typosquatting Detection
             if (enrichmentData.typosquatting) {
               const typosq = enrichmentData.typosquatting;
-              if (typosq.risk_level && typosq.risk_level !== 'low') {
+              // Always show typosquatting info if available, not just when risk is high
+              if (typosq.risk_level) {
                 const riskColors = {'high': '#ef4444', 'medium': '#f59e0b', 'low': '#10b981'};
                 const riskColor = riskColors[typosq.risk_level] || '#6b7280';
                 let riskText = `<span style="color: ${riskColor}; font-weight: bold;">${typosq.risk_level.toUpperCase()} RISK</span>`;

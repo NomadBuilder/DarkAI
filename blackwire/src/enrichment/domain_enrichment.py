@@ -251,48 +251,73 @@ def enrich_domain(domain: str) -> Dict:
             # Don't add to errors - these are optional enhancements
         
         # RDAP and Advanced Security Analysis (RDAP, SSL/TLS, Email Security, Typosquatting)
+        # These run independently - SSL/TLS, email security, and typosquatting don't require whoisit
         try:
-            from src.enrichment.rdap_enrichment import enrich_with_rdap_features
+            from src.enrichment.rdap_enrichment import (
+                enrich_with_rdap,
+                analyze_ssl_tls,
+                analyze_email_security,
+                detect_typosquatting
+            )
+            from src.utils.rate_limiter import check_rate_limit, record_api_request
             
-            rdap_data = enrich_with_rdap_features(domain, result.get("ip_address"))
+            # RDAP lookup (requires whoisit, optional)
+            try:
+                if check_rate_limit("rdap"):
+                    rdap_result = enrich_with_rdap(domain, result.get("ip_address"))
+                    if rdap_result.get("rdap_available"):
+                        result["rdap"] = rdap_result.get("rdap_data", {})
+                    record_api_request("rdap")
+            except Exception as e:
+                logger.debug(f"RDAP lookup failed: {e}")
             
-            # Add RDAP data
-            if rdap_data.get("rdap", {}).get("rdap_available"):
-                result["rdap"] = rdap_data["rdap"].get("rdap_data", {})
+            # SSL/TLS analysis (always runs, no external dependencies)
+            try:
+                if check_rate_limit("ssl_analysis"):
+                    ssl_result = analyze_ssl_tls(domain)
+                    if ssl_result.get("ssl_available"):
+                        result["ssl_info"] = {
+                            "available": True,
+                            "certificate": ssl_result.get("certificate", {}),
+                            "protocols": ssl_result.get("protocols", {}),
+                            "cipher_suites": ssl_result.get("cipher_suites", []),
+                            "security_grade": ssl_result.get("grade", "F"),
+                            "security_issues": ssl_result.get("security_issues", [])
+                        }
+                    record_api_request("ssl_analysis")
+            except Exception as e:
+                logger.debug(f"SSL/TLS analysis failed: {e}")
             
-            # Add SSL/TLS analysis
-            if rdap_data.get("ssl_tls", {}).get("ssl_available"):
-                ssl_info = rdap_data["ssl_tls"]
-                result["ssl_info"] = {
-                    "available": True,
-                    "certificate": ssl_info.get("certificate", {}),
-                    "protocols": ssl_info.get("protocols", {}),
-                    "cipher_suites": ssl_info.get("cipher_suites", []),
-                    "security_grade": ssl_info.get("grade", "F"),
-                    "security_issues": ssl_info.get("security_issues", [])
-                }
+            # Email security (SPF/DMARC/DKIM) - always runs
+            try:
+                if check_rate_limit("email_security"):
+                    email_result = analyze_email_security(domain)
+                    if email_result:
+                        result["email_security"] = {
+                            "spf": email_result.get("spf", {}),
+                            "dmarc": email_result.get("dmarc", {}),
+                            "dkim": email_result.get("dkim", {}),
+                            "security_score": email_result.get("security_score", 0)
+                        }
+                    record_api_request("email_security")
+            except Exception as e:
+                logger.debug(f"Email security analysis failed: {e}")
             
-            # Add email security
-            email_security = rdap_data.get("email_security", {})
-            if email_security:
-                result["email_security"] = {
-                    "spf": email_security.get("spf", {}),
-                    "dmarc": email_security.get("dmarc", {}),
-                    "dkim": email_security.get("dkim", {}),
-                    "security_score": email_security.get("security_score", 0)
-                }
-            
-            # Add typosquatting detection
-            typosquatting = rdap_data.get("typosquatting", {})
-            if typosquatting:
-                result["typosquatting"] = {
-                    "risk_level": typosquatting.get("risk_level", "low"),
-                    "similarity_score": typosquatting.get("similarity_score", 0.0),
-                    "patterns_detected": typosquatting.get("patterns_detected", []),
-                    "recommendations": typosquatting.get("recommendations", [])
-                }
+            # Typosquatting detection - always runs
+            try:
+                typosquatting_result = detect_typosquatting(domain)
+                if typosquatting_result:
+                    result["typosquatting"] = {
+                        "risk_level": typosquatting_result.get("risk_level", "low"),
+                        "similarity_score": typosquatting_result.get("similarity_score", 0.0),
+                        "patterns_detected": typosquatting_result.get("patterns_detected", []),
+                        "recommendations": typosquatting_result.get("recommendations", [])
+                    }
+            except Exception as e:
+                logger.debug(f"Typosquatting detection failed: {e}")
+                
         except Exception as e:
-            logger.debug(f"RDAP enrichment failed: {e}")
+            logger.debug(f"RDAP enrichment module import failed: {e}")
             # Don't add to errors - RDAP enrichment is optional
         
         # Threat Intelligence (VirusTotal, abuse.ch, blocklists)
