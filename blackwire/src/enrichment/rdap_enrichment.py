@@ -183,6 +183,7 @@ def analyze_ssl_tls(domain: str) -> Dict:
                 }
                 
                 # Check certificate validity
+                days_until_expiry = None
                 not_after_str = cert.get("notAfter")
                 if not_after_str:
                     try:
@@ -226,7 +227,7 @@ def analyze_ssl_tls(domain: str) -> Dict:
                 grade_score = 100
                 if result["security_issues"]:
                     grade_score -= len(result["security_issues"]) * 20
-                if days_until_expiry < 30:
+                if days_until_expiry is not None and days_until_expiry < 30:
                     grade_score -= 10
                 
                 if grade_score >= 90:
