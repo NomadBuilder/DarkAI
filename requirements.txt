@@ -32,3 +32,4 @@ Pillow>=10.0.0  # Required for deepfake detection image processing
 numpy>=1.24.0  # Required for deepfake detection (artifact analysis)
 keras-efficientnet-v2>=0.1.0  # EfficientNetV2 models for deepfake detection (optional, falls back to tf.keras if not available)
 # Note: Deepfake detection works with artifact analysis (no TensorFlow needed) but EfficientNetV2 requires Python 3.12 or earlier
+whoisit>=0.5.0  # RDAP lookups for BlackWire (modern alternative to WHOIS)

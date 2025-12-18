@@ -250,6 +250,51 @@ def enrich_domain(domain: str) -> Dict:
             logger.debug(f"Enhanced enrichment failed: {e}")
             # Don't add to errors - these are optional enhancements
         
+        # RDAP and Advanced Security Analysis (RDAP, SSL/TLS, Email Security, Typosquatting)
+        try:
+            from src.enrichment.rdap_enrichment import enrich_with_rdap_features
+            
+            rdap_data = enrich_with_rdap_features(domain, result.get("ip_address"))
+            
+            # Add RDAP data
+            if rdap_data.get("rdap", {}).get("rdap_available"):
+                result["rdap"] = rdap_data["rdap"].get("rdap_data", {})
+            
+            # Add SSL/TLS analysis
+            if rdap_data.get("ssl_tls", {}).get("ssl_available"):
+                ssl_info = rdap_data["ssl_tls"]
+                result["ssl_info"] = {
+                    "available": True,
+                    "certificate": ssl_info.get("certificate", {}),
+                    "protocols": ssl_info.get("protocols", {}),
+                    "cipher_suites": ssl_info.get("cipher_suites", []),
+                    "security_grade": ssl_info.get("grade", "F"),
+                    "security_issues": ssl_info.get("security_issues", [])
+                }
+            
+            # Add email security
+            email_security = rdap_data.get("email_security", {})
+            if email_security:
+                result["email_security"] = {
+                    "spf": email_security.get("spf", {}),
+                    "dmarc": email_security.get("dmarc", {}),
+                    "dkim": email_security.get("dkim", {}),
+                    "security_score": email_security.get("security_score", 0)
+                }
+            
+            # Add typosquatting detection
+            typosquatting = rdap_data.get("typosquatting", {})
+            if typosquatting:
+                result["typosquatting"] = {
+                    "risk_level": typosquatting.get("risk_level", "low"),
+                    "similarity_score": typosquatting.get("similarity_score", 0.0),
+                    "patterns_detected": typosquatting.get("patterns_detected", []),
+                    "recommendations": typosquatting.get("recommendations", [])
+                }
+        except Exception as e:
+            logger.debug(f"RDAP enrichment failed: {e}")
+            # Don't add to errors - RDAP enrichment is optional
+        
         # Threat Intelligence (VirusTotal, abuse.ch, blocklists)
         try:
             from src.enrichment.threat_intel import check_threat_intel

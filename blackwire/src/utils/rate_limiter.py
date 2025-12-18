@@ -28,6 +28,9 @@ class RateLimiter:
             "urlhaus": (10, 60),  # abuse.ch URLhaus - conservative limit
             "threatfox": (10, 60),  # abuse.ch ThreatFox - conservative limit
             "crt.sh": (10, 60),  # Certificate Transparency - conservative limit
+            "rdap": (20, 60),  # RDAP lookups - conservative limit
+            "ssl_analysis": (10, 60),  # SSL/TLS analysis - connection-based, conservative
+            "email_security": (20, 60),  # Email security (SPF/DMARC/DKIM) - DNS-based, conservative
         }
     
     def can_make_request(self, api_name: str) -> bool:
