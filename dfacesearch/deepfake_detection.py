@@ -101,70 +101,53 @@ def _load_efficientnet_model():
     _MODEL_LOAD_ATTEMPTED = True
     
     try:
-        # Try to use keras-efficientnet-v2 package (if installed)
+        # Prefer TensorFlow's built-in EfficientNet (more stable)
         try:
-            import keras_efficientnet_v2
-            # Use EfficientNetV2-S (small, fast, good accuracy)
-            base_model = keras_efficientnet_v2.EfficientNetV2S(
-                pretrained="imagenet",
-                num_classes=0,  # Remove classification head
-                include_preprocessing=True
+            # Try EfficientNetV2 from tf.keras.applications
+            from tensorflow.keras.applications import EfficientNetV2S
+            from tensorflow.keras.applications.efficientnet_v2 import preprocess_input
+            
+            base_model = EfficientNetV2S(
+                weights='imagenet',
+                include_top=False,
+                input_shape=(224, 224, 3)
             )
             
-            # Add custom classification head for deepfake detection
-            # Using transfer learning: freeze base, add simple classifier
+            # Freeze base layers
             for layer in base_model.layers:
                 layer.trainable = False
             
-            # Build model with classification head
-            x = tf.keras.layers.GlobalAveragePooling2D()(base_model.output)
-            x = tf.keras.layers.Dropout(0.3)(x)
-            x = tf.keras.layers.Dense(128, activation='relu')(x)
-            x = tf.keras.layers.Dropout(0.3)(x)
-            output = tf.keras.layers.Dense(1, activation='sigmoid', name='deepfake_prob')(x)
-            
-            model = tf.keras.Model(inputs=base_model.input, outputs=output)
-            
-            # For now, use feature-based detection (no training needed)
-            # Extract features and use heuristics
-            feature_model = tf.keras.Model(
-                inputs=base_model.input,
-                outputs=base_model.output
-            )
-            
             _EFFICIENTNET_MODEL = {
                 'base': base_model,
-                'feature_extractor': feature_model,
-                'full_model': model,
-                'type': 'keras_efficientnet_v2'
+                'preprocess': preprocess_input,
+                'type': 'tf_keras'
             }
             return _EFFICIENTNET_MODEL
             
-        except ImportError:
-            # Fallback: Use TensorFlow's built-in EfficientNet
+        except (ImportError, AttributeError):
+            # Fallback: Try keras-efficientnet-v2 package (if installed)
             try:
-                # Try EfficientNetV2 from tf.keras.applications
-                from tensorflow.keras.applications import EfficientNetV2S
-                from tensorflow.keras.applications.efficientnet_v2 import preprocess_input
-                
-                base_model = EfficientNetV2S(
-                    weights='imagenet',
-                    include_top=False,
-                    input_shape=(224, 224, 3)
+                import keras_efficientnet_v2
+                # Use EfficientNetV2-S (small, fast, good accuracy)
+                # For feature extraction only - no classification head needed
+                base_model = keras_efficientnet_v2.EfficientNetV2S(
+                    pretrained="imagenet",
+                    num_classes=0,  # Remove classification head
+                    include_preprocessing=True
                 )
                 
-                # Freeze base layers
+                # Freeze base layers (we're using it as a feature extractor)
                 for layer in base_model.layers:
                     layer.trainable = False
                 
+                # Use base model directly as feature extractor
                 _EFFICIENTNET_MODEL = {
                     'base': base_model,
-                    'preprocess': preprocess_input,
-                    'type': 'tf_keras'
+                    'feature_extractor': base_model,  # Use base model directly
+                    'type': 'keras_efficientnet_v2'
                 }
                 return _EFFICIENTNET_MODEL
-                
-            except (ImportError, AttributeError):
+            except ImportError:
                 # TensorFlow version might not have EfficientNetV2
                 return None
                 
@@ -211,12 +194,24 @@ def _detect_with_efficientnet(image_path: str) -> Dict:
         
         if model_data['type'] == 'keras_efficientnet_v2':
             # Use keras-efficientnet-v2 preprocessing
+            # The model includes preprocessing, so we just need to normalize to [0, 1]
             img_array = img_array.astype(np.float32) / 255.0
             img_array = np.expand_dims(img_array, axis=0)
             
-            # Extract features using the feature extractor
+            # Extract features using the feature extractor (base model)
+            # Use predict() which handles tensor conversion properly
             feature_extractor = model_data['feature_extractor']
-            features = feature_extractor.predict(img_array, verbose=0)
+            try:
+                features = feature_extractor.predict(img_array, verbose=0)
+            except Exception as e:
+                # Fallback: call model directly and convert
+                features_tensor = feature_extractor(img_array, training=False)
+                if hasattr(features_tensor, 'numpy'):
+                    features = features_tensor.numpy()
+                else:
+                    # Convert tensor to numpy
+                    with tf.device('/CPU:0'):  # Force CPU to avoid GPU issues
+                        features = np.array(features_tensor)
             
         elif model_data['type'] == 'tf_keras':
             # Use TensorFlow Keras preprocessing
@@ -365,6 +360,9 @@ def _detect_with_artifacts(image_path: str) -> Dict:
         confidence_score = min(confidence_score, 1.0)
         
         # Threshold: if confidence > 0.4, likely a deepfake
+        # Note: Artifact-based detection has limitations - high-quality deepfakes
+        # from AI porn sites often pass artifact checks but fail ML-based detection.
+        # EfficientNetV2 is recommended for better accuracy.
         is_deepfake = confidence_score > 0.4
         
         result.update({
