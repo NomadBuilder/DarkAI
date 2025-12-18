@@ -249,59 +249,234 @@ def _detect_with_efficientnet(image_path: str) -> Dict:
         # Flatten features for analysis
         features_flat = features.flatten()
         
-        # Calculate statistics
+        # Calculate basic statistics
         feature_mean = float(np.mean(features_flat))
         feature_std = float(np.std(features_flat))
         feature_max = float(np.max(features_flat))
         feature_min = float(np.min(features_flat))
+        feature_median = float(np.median(features_flat))
+        
+        # Calculate advanced statistics
+        # Feature entropy (measure of randomness/unpredictability)
+        # Normalize features to [0, 1] for entropy calculation
+        feature_range = feature_max - feature_min
+        if feature_range > 1e-10:
+            features_normalized = (features_flat - feature_min) / feature_range
+            features_normalized = np.clip(features_normalized, 0, 1)
+            # Create histogram for entropy
+            hist, _ = np.histogram(features_normalized, bins=50, range=(0, 1))
+            hist = hist + 1e-10  # Avoid log(0)
+            hist = hist / np.sum(hist)  # Normalize
+            feature_entropy = float(-np.sum(hist * np.log2(hist)))
+        else:
+            # All features are the same, entropy is 0
+            feature_entropy = 0.0
+        
+        # Outlier analysis (using IQR method)
+        q1 = float(np.percentile(features_flat, 25))
+        q3 = float(np.percentile(features_flat, 75))
+        iqr = q3 - q1
+        if iqr > 1e-10:
+            outlier_threshold_low = q1 - 1.5 * iqr
+            outlier_threshold_high = q3 + 1.5 * iqr
+            outlier_count = float(np.sum((features_flat < outlier_threshold_low) | (features_flat > outlier_threshold_high)))
+            outlier_ratio = outlier_count / len(features_flat)
+        else:
+            # No IQR, use standard deviation method instead
+            outlier_threshold_low = feature_mean - 3 * feature_std
+            outlier_threshold_high = feature_mean + 3 * feature_std
+            outlier_count = float(np.sum((features_flat < outlier_threshold_low) | (features_flat > outlier_threshold_high)))
+            outlier_ratio = outlier_count / len(features_flat)
+        
+        # Distribution shape analysis
+        # Skewness (asymmetry) and Kurtosis (tail heaviness)
+        if feature_std > 1e-10:
+            normalized_features = (features_flat - feature_mean) / feature_std
+            feature_skew = float(np.mean(normalized_features ** 3))
+            feature_kurtosis = float(np.mean(normalized_features ** 4) - 3)
+        else:
+            # No variance, so no skewness or kurtosis
+            feature_skew = 0.0
+            feature_kurtosis = 0.0
+        
+        # Feature consistency (if features have spatial dimensions)
+        if len(features.shape) > 2 and features.shape[1] > 1 and features.shape[2] > 1:
+            try:
+                # Calculate spatial variance (inconsistency across spatial locations)
+                spatial_variance = float(np.mean(np.std(features, axis=(1, 2))))
+                # Calculate feature map smoothness (gradient magnitude)
+                # Calculate gradients in spatial dimensions
+                grad_x = np.diff(features, axis=2)
+                grad_y = np.diff(features, axis=1)
+                # Handle dimension mismatch
+                min_h = min(grad_x.shape[1], grad_y.shape[1])
+                min_w = min(grad_x.shape[2], grad_y.shape[2])
+                gradient_magnitude = float(np.mean(np.sqrt(
+                    grad_x[:, :min_h, :min_w]**2 + grad_y[:, :min_h, :min_w]**2
+                )))
+            except Exception:
+                spatial_variance = None
+                gradient_magnitude = None
+        else:
+            spatial_variance = None
+            gradient_magnitude = None
+        
+        # Feature correlation analysis (if we have multiple feature maps)
+        if len(features.shape) > 1 and features.shape[0] > 1:
+            try:
+                # Flatten each feature map and calculate correlation
+                feature_maps = features.reshape(features.shape[0], -1)
+                if feature_maps.shape[0] > 1 and feature_maps.shape[1] > 1:
+                    # Calculate pairwise correlations
+                    correlations = np.corrcoef(feature_maps)
+                    # Remove diagonal (self-correlation)
+                    if correlations.shape[0] > 1:
+                        mask = ~np.eye(correlations.shape[0], dtype=bool)
+                        avg_correlation = float(np.mean(correlations[mask]))
+                        correlation_std = float(np.std(correlations[mask]))
+                    else:
+                        avg_correlation = None
+                        correlation_std = None
+                else:
+                    avg_correlation = None
+                    correlation_std = None
+            except Exception:
+                avg_correlation = None
+                correlation_std = None
+        else:
+            avg_correlation = None
+            correlation_std = None
         
         # Heuristic: Deepfakes often have:
         # - Higher variance in features (inconsistent patterns)
         # - Extreme feature values (outliers)
         # - Unusual feature distributions
+        # - Low entropy (less natural variation)
+        # - High outlier ratio (anomalous values)
+        # - Unusual distribution shapes (high skewness/kurtosis)
+        # - Inconsistent spatial patterns
+        # - Unusual feature correlations
         
         confidence_score = 0.0
         indicators = []
+        indicator_details = {}
         
         # Check 1: High feature variance (inconsistent patterns)
-        if feature_std > 0.5:  # Threshold based on ImageNet-trained model behavior
+        if feature_std > 0.5:
             indicators.append("high_feature_variance")
-            confidence_score += 0.25
+            confidence_score += 0.15
+            indicator_details["high_feature_variance"] = round(feature_std, 4)
         
         # Check 2: Extreme feature values (outliers)
         if abs(feature_max) > 10 or abs(feature_min) < -10:
             indicators.append("extreme_feature_values")
-            confidence_score += 0.2
+            confidence_score += 0.12
+            indicator_details["extreme_feature_values"] = f"max={round(feature_max, 2)}, min={round(feature_min, 2)}"
         
         # Check 3: Unusual feature distribution (skewed)
-        feature_median = float(np.median(features_flat))
         if abs(feature_mean - feature_median) > 0.3:
             indicators.append("skewed_distribution")
-            confidence_score += 0.15
+            confidence_score += 0.10
+            indicator_details["skewed_distribution"] = round(abs(feature_mean - feature_median), 4)
         
         # Check 4: Feature sparsity (many zero or near-zero features)
         zero_features = float(np.sum(np.abs(features_flat) < 0.01)) / len(features_flat)
-        if zero_features > 0.3:  # More than 30% near-zero
+        if zero_features > 0.3:
             indicators.append("high_sparsity")
-            confidence_score += 0.1
+            confidence_score += 0.08
+            indicator_details["high_sparsity"] = f"{zero_features:.1%}"
         
-        # Normalize confidence
+        # Check 5: Low entropy (unnatural feature distribution)
+        # Real images typically have higher entropy (more natural variation)
+        # Deepfakes may have lower entropy due to generation artifacts
+        if feature_entropy < 4.0:  # Threshold based on typical image entropy
+            indicators.append("low_entropy")
+            confidence_score += 0.12
+            indicator_details["low_entropy"] = round(feature_entropy, 4)
+        
+        # Check 6: High outlier ratio (anomalous values)
+        if outlier_ratio > 0.15:  # More than 15% outliers
+            indicators.append("high_outlier_ratio")
+            confidence_score += 0.10
+            indicator_details["high_outlier_ratio"] = f"{outlier_ratio:.1%}"
+        
+        # Check 7: Unusual distribution shape (high skewness)
+        if abs(feature_skew) > 2.0:  # Highly skewed distribution
+            indicators.append("high_skewness")
+            confidence_score += 0.08
+            indicator_details["high_skewness"] = round(feature_skew, 4)
+        
+        # Check 8: Unusual distribution shape (high kurtosis - heavy tails)
+        if feature_kurtosis > 5.0:  # Heavy-tailed distribution
+            indicators.append("high_kurtosis")
+            confidence_score += 0.08
+            indicator_details["high_kurtosis"] = round(feature_kurtosis, 4)
+        
+        # Check 9: Spatial inconsistency (if spatial dimensions exist)
+        if spatial_variance is not None and spatial_variance > 0.8:
+            indicators.append("spatial_inconsistency")
+            confidence_score += 0.10
+            indicator_details["spatial_inconsistency"] = round(spatial_variance, 4)
+        
+        # Check 10: Unusual feature correlations
+        if avg_correlation is not None:
+            # Deepfakes might have either very low (inconsistent) or very high (over-regularized) correlations
+            if avg_correlation < 0.1 or avg_correlation > 0.9:
+                indicators.append("unusual_correlations")
+                confidence_score += 0.08
+                indicator_details["unusual_correlations"] = round(avg_correlation, 4)
+        
+        # Check 11: High gradient magnitude (unnatural transitions)
+        if gradient_magnitude is not None and gradient_magnitude > 2.0:
+            indicators.append("high_gradient_magnitude")
+            confidence_score += 0.08
+            indicator_details["high_gradient_magnitude"] = round(gradient_magnitude, 4)
+        
+        # Normalize confidence (cap at 1.0)
         confidence_score = min(confidence_score, 1.0)
         
         # Threshold: > 0.35 indicates likely deepfake
+        # Adjusted threshold based on more comprehensive indicators
         is_deepfake = confidence_score > 0.35
+        
+        # Build details dictionary
+        details = {
+            "indicators": indicators,
+            "indicator_details": indicator_details,
+            "feature_statistics": {
+                "mean": round(feature_mean, 4),
+                "std": round(feature_std, 4),
+                "median": round(feature_median, 4),
+                "range": f"{round(feature_min, 2)} to {round(feature_max, 2)}",
+                "entropy": round(feature_entropy, 4),
+                "skewness": round(feature_skew, 4),
+                "kurtosis": round(feature_kurtosis, 4),
+                "outlier_ratio": f"{outlier_ratio:.1%}"
+            }
+        }
+        
+        # Add spatial analysis if available
+        if spatial_variance is not None:
+            details["spatial_analysis"] = {
+                "spatial_variance": round(spatial_variance, 4)
+            }
+            if gradient_magnitude is not None:
+                details["spatial_analysis"]["gradient_magnitude"] = round(gradient_magnitude, 4)
+        
+        # Add correlation analysis if available
+        if avg_correlation is not None:
+            details["correlation_analysis"] = {
+                "avg_correlation": round(avg_correlation, 4),
+                "correlation_std": round(correlation_std, 4) if correlation_std is not None else None
+            }
+        
+        details["note"] = "Using EfficientNetV2 feature extraction with comprehensive heuristic analysis"
         
         result.update({
             "is_deepfake": is_deepfake,
             "confidence": round(confidence_score, 3),
             "available": True,
-            "details": {
-                "indicators": indicators,
-                "feature_mean": round(feature_mean, 4),
-                "feature_std": round(feature_std, 4),
-                "feature_range": f"{round(feature_min, 2)} to {round(feature_max, 2)}",
-                "note": "Using EfficientNetV2 feature extraction with heuristic analysis"
-            }
+            "details": details
         })
         
         return result
