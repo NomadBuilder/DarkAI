@@ -1558,27 +1558,42 @@
           }, 0);
           
           // Generate escalation packet button
-          document.getElementById('generateEscalationBtn').addEventListener('click', () => {
-            // Query checkboxes fresh on each click to avoid stale references
-            const resultsContainer = document.getElementById('resultsData');
-            const checkboxes = resultsContainer ? resultsContainer.querySelectorAll('.escalation-checkbox') : [];
-            const selectedIndices = Array.from(checkboxes)
-              .filter(cb => cb && cb.checked)
-              .map(cb => parseInt(cb.dataset.index));
+          // Remove any existing event listeners first (in case displayResults is called multiple times)
+          const generateBtn = document.getElementById('generateEscalationBtn');
+          if (generateBtn) {
+            // Clone and replace to remove old listeners
+            const newBtn = generateBtn.cloneNode(true);
+            generateBtn.parentNode.replaceChild(newBtn, generateBtn);
             
-            if (selectedIndices.length === 0) {
-              alert('Please select at least one entity to include in the escalation packet.');
-              return;
-            }
-            
-            const selectedEntities = selectedIndices.map(idx => result.results[idx]);
-            
-            // Store in localStorage
-            localStorage.setItem('escalationEntities', JSON.stringify(selectedEntities));
-            
-            // Navigate to support page with hash
-            window.location.href = '/blackwire/support#report';
-          });
+            newBtn.addEventListener('click', () => {
+              // Query checkboxes fresh on each click to avoid stale references
+              const resultsContainer = document.getElementById('resultsData');
+              const checkboxes = resultsContainer ? resultsContainer.querySelectorAll('.escalation-checkbox') : [];
+              const selectedIndices = Array.from(checkboxes)
+                .filter(cb => cb && cb.checked)
+                .map(cb => parseInt(cb.dataset.index));
+              
+              if (selectedIndices.length === 0) {
+                alert('Please select at least one entity to include in the escalation packet.');
+                return;
+              }
+              
+              // Use window.traceResults which is set at the start of displayResults
+              const traceResults = window.traceResults || result.results || [];
+              const selectedEntities = selectedIndices.map(idx => traceResults[idx]).filter(e => e); // Filter out undefined
+              
+              if (selectedEntities.length === 0) {
+                alert('Error: Could not find selected entities. Please try again.');
+                return;
+              }
+              
+              // Store in localStorage
+              localStorage.setItem('escalationEntities', JSON.stringify(selectedEntities));
+              
+              // Navigate to support page with hash
+              window.location.href = '/blackwire/support#report';
+            });
+          }
         }
       } else {
         // Fallback for single entity format (backward compatibility)
