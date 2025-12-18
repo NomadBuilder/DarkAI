@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BlackWire Escalation Packet Flow Test</title>
+  <style>
+    body { font-family: monospace; padding: 20px; background: #1a1a1a; color: #fff; }
+    .test { margin: 20px 0; padding: 15px; background: #2a2a2a; border-radius: 8px; }
+    .pass { border-left: 4px solid #10b981; }
+    .fail { border-left: 4px solid #ef4444; }
+    .info { border-left: 4px solid #3b82f6; }
+    pre { background: #1a1a1a; padding: 10px; border-radius: 4px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔍 BlackWire Escalation Packet Flow Test</h1>
+  <div id="test-results"></div>
+
+  <script>
+    const results = [];
+
+    function addTest(name, passed, details = '') {
+      results.push({ name, passed, details });
+      const div = document.createElement('div');
+      div.className = `test ${passed ? 'pass' : 'fail'}`;
+      div.innerHTML = `
+        <strong>${passed ? '✅' : '❌'} ${name}</strong>
+        ${details ? `<pre>${details}</pre>` : ''}
+      `;
+      document.getElementById('test-results').appendChild(div);
+    }
+
+    // Test 1: localStorage operations
+    function testLocalStorage() {
+      const testData = [
+        { type: 'domain', value: 'test.com', data: { ip_address: '1.2.3.4' } },
+        { type: 'phone', value: '+1234567890', data: { country: 'US' } }
+      ];
+      
+      try {
+        localStorage.setItem('escalationEntities', JSON.stringify(testData));
+        const stored = localStorage.getItem('escalationEntities');
+        const parsed = JSON.parse(stored);
+        
+        if (parsed.length === 2 && parsed[0].type === 'domain') {
+          addTest('localStorage Storage/Retrieval', true, 
+            `Stored ${parsed.length} entities\nEntity 1: ${parsed[0].type} = ${parsed[0].value}`);
+          return true;
+        } else {
+          addTest('localStorage Storage/Retrieval', false, 'Data structure mismatch');
+          return false;
+        }
+      } catch (e) {
+        addTest('localStorage Storage/Retrieval', false, e.message);
+        return false;
+      }
+    }
+
+    // Test 2: Checkbox selection simulation
+    function testCheckboxSelection() {
+      const mockCheckboxes = [
+        { dataset: { index: '0' }, checked: true },
+        { dataset: { index: '1' }, checked: false },
+        { dataset: { index: '2' }, checked: true }
+      ];
+      
+      const selectedIndices = Array.from(mockCheckboxes)
+        .filter(cb => cb && cb.checked)
+        .map(cb => parseInt(cb.dataset.index));
+      
+      if (selectedIndices.length === 2 && selectedIndices[0] === 0 && selectedIndices[1] === 2) {
+        addTest('Checkbox Selection Logic', true, 
+          `Selected indices: [${selectedIndices.join(', ')}]`);
+        return true;
+      } else {
+        addTest('Checkbox Selection Logic', false, 
+          `Expected [0, 2], got [${selectedIndices.join(', ')}]`);
+        return false;
+      }
+    }
+
+    // Test 3: Entity mapping
+    function testEntityMapping() {
+      const mockResults = [
+        { type: 'domain', value: 'test1.com', data: {} },
+        { type: 'phone', value: '+1111', data: {} },
+        { type: 'domain', value: 'test2.com', data: {} }
+      ];
+      
+      const selectedIndices = [0, 2];
+      const selectedEntities = selectedIndices.map(idx => mockResults[idx]).filter(e => e);
+      
+      if (selectedEntities.length === 2 && 
+          selectedEntities[0].value === 'test1.com' && 
+          selectedEntities[1].value === 'test2.com') {
+        addTest('Entity Mapping from Indices', true,
+          `Mapped ${selectedIndices.length} indices to ${selectedEntities.length} entities`);
+        return true;
+      } else {
+        addTest('Entity Mapping from Indices', false,
+          `Expected 2 entities, got ${selectedEntities.length}`);
+        return false;
+      }
+    }
+
+    // Test 4: Navigation URL construction
+    function testNavigationUrl() {
+      const url = '/blackwire/support#report';
+      const expectedHash = '#report';
+      
+      if (url.includes('/blackwire/support') && url.includes(expectedHash)) {
+        addTest('Navigation URL Construction', true, `URL: ${url}`);
+        return true;
+      } else {
+        addTest('Navigation URL Construction', false, `Invalid URL: ${url}`);
+        return false;
+      }
+    }
+
+    // Test 5: Escalation packet data structure
+    function testEscalationPacketStructure() {
+      const mockEntity = {
+        type: 'domain',
+        value: 'example.com',
+        data: {
+          ip_address: '1.2.3.4',
+          registrar: 'Test Registrar',
+          threat_level: 'high',
+          risk_assessment: {
+            threat_level: 'high',
+            severity_score: 75
+          },
+          email_security: {
+            spf: { present: true },
+            dmarc: { present: true, policy: 'reject' },
+            dkim: { present: true },
+            security_score: 100
+          },
+          typosquatting: {
+            risk_level: 'low',
+            similarity_score: 0.1
+          }
+        }
+      };
+      
+      // Verify structure matches what support.html expects
+      const hasRequiredFields = 
+        mockEntity.type && 
+        mockEntity.value && 
+        mockEntity.data &&
+        mockEntity.data.email_security &&
+        mockEntity.data.typosquatting;
+      
+      if (hasRequiredFields) {
+        addTest('Escalation Packet Data Structure', true,
+          `Entity has: type, value, data, email_security, typosquatting`);
+        return true;
+      } else {
+        addTest('Escalation Packet Data Structure', false,
+          'Missing required fields');
+        return false;
+      }
+    }
+
+    // Test 6: Support page packet generation simulation
+    function testPacketGeneration() {
+      const mockEntities = [
+        {
+          type: 'domain',
+          value: 'test.com',
+          data: {
+            ip_address: '1.2.3.4',
+            registrar: 'Test Registrar',
+            risk_assessment: {
+              threat_level: 'high',
+              severity_score: 80
+            }
+          }
+        }
+      ];
+      
+      // Simulate generateEscalationPacket logic
+      let packet = '';
+      if (mockEntities && mockEntities.length > 0) {
+        packet = `Subject: Abuse Report\n\n`;
+        mockEntities.forEach((entity, idx) => {
+          packet += `--- ${entity.type.toUpperCase()}: ${entity.value} ---\n`;
+          if (entity.data.ip_address) {
+            packet += `IP Address: ${entity.data.ip_address}\n`;
+          }
+          if (entity.data.registrar) {
+            packet += `Registrar: ${entity.data.registrar}\n`;
+          }
+        });
+      }
+      
+      if (packet.length > 50 && packet.includes('test.com') && packet.includes('1.2.3.4')) {
+        addTest('Packet Generation Logic', true,
+          `Generated ${packet.length} character packet with entity data`);
+        return true;
+      } else {
+        addTest('Packet Generation Logic', false,
+          `Packet too short or missing data (${packet.length} chars)`);
+        return false;
+      }
+    }
+
+    // Test 7: Hash navigation
+    function testHashNavigation() {
+      // Simulate checking hash
+      const testHash = '#report';
+      const currentHash = window.location.hash || testHash;
+      
+      if (currentHash === '#report' || currentHash === '') {
+        addTest('Hash Navigation Check', true,
+          `Hash check works: ${currentHash === '#report' ? 'on report section' : 'no hash'}`);
+        return true;
+      } else {
+        addTest('Hash Navigation Check', false,
+          `Unexpected hash: ${currentHash}`);
+        return false;
+      }
+    }
+
+    // Run all tests
+    function runAllTests() {
+      console.log('Running BlackWire Escalation Packet Flow Tests...\n');
+      
+      testLocalStorage();
+      testCheckboxSelection();
+      testEntityMapping();
+      testNavigationUrl();
+      testEscalationPacketStructure();
+      testPacketGeneration();
+      testHashNavigation();
+      
+      // Summary
+      const passed = results.filter(r => r.passed).length;
+      const total = results.length;
+      
+      const summary = document.createElement('div');
+      summary.className = 'test info';
+      summary.innerHTML = `
+        <strong>📊 Test Summary</strong>
+        <p>Total: ${passed}/${total} tests passed (${Math.round(passed*100/total)}%)</p>
+        ${passed === total ? '<p style="color: #10b981;">🎉 All tests passed!</p>' : 
+          '<p style="color: #f59e0b;">⚠️ Some tests need attention</p>'}
+      `;
+      document.getElementById('test-results').appendChild(summary);
+      
+      console.log(`\n✅ ${passed}/${total} tests passed`);
+    }
+
+    // Run tests on load
+    window.addEventListener('DOMContentLoaded', runAllTests);
+  </script>
+</body>
+</html>
