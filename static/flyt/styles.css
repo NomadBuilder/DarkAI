@@ -728,6 +728,16 @@
     border: none !important;
     padding: 0 !important;
     max-width: 100% !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+.flyt-page #sib-container[style*="background-color"] {
+    background: transparent !important;
+}
+
+.flyt-page #sib-container[style*="border-color"] {
+    border: none !important;
 }
 
 .flyt-page .sib-form-block {
@@ -803,6 +813,7 @@
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
     margin: 0 !important;
     font-family: 'Inter', sans-serif !important;
+    text-align: center !important;
 }
 
 .flyt-page #sib-container button[type="submit"]:hover,
@@ -846,15 +857,20 @@
     color: #22c55e !important;
 }
 
-.flyt-page .sib-captcha {
-    margin: 16px 0;
-    display: flex;
-    justify-content: center;
+.flyt-page .g-recaptcha-v3 {
+    display: none !important;
 }
 
-.flyt-page .sib-captcha .g-recaptcha {
-    transform: scale(0.9);
-    transform-origin: center;
+.flyt-page .entry__label {
+    color: var(--text-primary) !important;
+    margin-bottom: 8px !important;
+    display: block !important;
+}
+
+.flyt-page .entry__specification {
+    margin-top: 8px !important;
+    color: var(--text-secondary) !important;
+    opacity: 0.7 !important;
 }
 
 .flyt-page .submit-button {
