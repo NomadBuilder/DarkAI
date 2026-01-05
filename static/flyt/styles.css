@@ -974,7 +974,7 @@
 /* Field-level error messages */
 .flyt-page .entry__error,
 .flyt-page .entry__error--primary {
-    display: block !important;
+    display: none !important;
     margin-top: 8px !important;
     padding: 10px 14px !important;
     font-size: 14px !important;
@@ -986,12 +986,25 @@
     border-radius: 8px !important;
     text-align: left !important;
     line-height: 1.5 !important;
-    min-height: 20px !important;
+    min-height: auto !important;
+}
+
+/* Only show when there's actual content */
+.flyt-page .entry__error:not(:empty),
+.flyt-page .entry__error--primary:not(:empty) {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .flyt-page .entry__error:empty,
 .flyt-page .entry__error--primary:empty {
     display: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
 }
 
 .flyt-page .entry__error[style],
@@ -1000,7 +1013,16 @@
     background-color: rgba(239, 68, 68, 0.1) !important;
     border-color: rgba(239, 68, 68, 0.3) !important;
     font-family: 'Inter', sans-serif !important;
-    display: block !important;
+}
+
+/* Override inline styles that might show empty errors */
+.flyt-page .entry__error[style]:empty,
+.flyt-page .entry__error--primary[style]:empty {
+    display: none !important;
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
 .flyt-page .entry__error[style*="display: none"],
@@ -1008,8 +1030,9 @@
     display: none !important;
 }
 
-.flyt-page .entry__error:not(:empty),
-.flyt-page .entry__error--primary:not(:empty) {
+/* Only show when there's text content */
+.flyt-page .entry__error:not(:empty):not([style*="display: none"]),
+.flyt-page .entry__error--primary:not(:empty):not([style*="display: none"]) {
     display: block !important;
     opacity: 1 !important;
     visibility: visible !important;
