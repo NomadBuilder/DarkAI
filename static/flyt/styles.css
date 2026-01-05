@@ -713,59 +713,117 @@
 }
 
 /* Brevo Form Styling */
-.flyt-page #brevo-form-container {
+.flyt-page #brevo-form-container,
+.flyt-page .sib-form,
+.flyt-page .sib-form-container {
     max-width: 600px;
     margin: 0 auto;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
 }
 
 .flyt-page #sib-container {
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
+    max-width: 100% !important;
 }
 
-.flyt-page #sib-container .email-input {
-    width: 100%;
-    background: rgba(30, 41, 59, 0.5);
-    border: 1px solid rgba(51, 65, 85, 0.5);
-    border-radius: 12px;
-    padding: 16px 24px;
-    font-size: 16px;
-    color: var(--text-primary);
-    font-family: 'Inter', sans-serif;
+.flyt-page .sib-form-block {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-.flyt-page #sib-container .email-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+.flyt-page .sib-input,
+.flyt-page .form__entry,
+.flyt-page .entry_block {
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-.flyt-page #sib-container .submit-button {
-    width: 100%;
-    background: var(--gradient-1) !important;
+.flyt-page .form__label-row {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.flyt-page #sib-container input[type="text"],
+.flyt-page #sib-container .email-input,
+.flyt-page #sib-container .input,
+.flyt-page #sib-container #EMAIL {
+    width: 100% !important;
+    max-width: 100% !important;
+    background: rgba(30, 41, 59, 0.5) !important;
+    border: 1px solid rgba(51, 65, 85, 0.5) !important;
+    border-radius: 12px !important;
+    padding: 16px 24px !important;
+    font-size: 16px !important;
+    color: var(--text-primary) !important;
+    font-family: 'Inter', sans-serif !important;
+    box-sizing: border-box !important;
+    margin: 0 !important;
+}
+
+.flyt-page #sib-container input[type="text"]:focus,
+.flyt-page #sib-container .email-input:focus,
+.flyt-page #sib-container .input:focus,
+.flyt-page #sib-container #EMAIL:focus {
+    outline: none !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.flyt-page #sib-container input[type="text"]::placeholder,
+.flyt-page #sib-container .email-input::placeholder,
+.flyt-page #sib-container .input::placeholder,
+.flyt-page #sib-container #EMAIL::placeholder {
+    color: rgba(148, 163, 184, 0.7) !important;
+    opacity: 1 !important;
+}
+
+.flyt-page #sib-container button[type="submit"],
+.flyt-page #sib-container .submit-button,
+.flyt-page #sib-container .sib-form-block__button,
+.flyt-page #sib-container .sib-form-block__button-with-loader {
+    width: 100% !important;
+    max-width: 100% !important;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
     border: none !important;
     border-radius: 12px !important;
     padding: 16px 32px !important;
     font-size: 16px !important;
     font-weight: 600 !important;
     color: white !important;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
+    margin: 0 !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
-.flyt-page #sib-container .submit-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
+.flyt-page #sib-container button[type="submit"]:hover,
+.flyt-page #sib-container .submit-button:hover,
+.flyt-page #sib-container .sib-form-block__button:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3) !important;
 }
 
+.flyt-page #sib-container button[type="submit"]:disabled,
 .flyt-page #sib-container .submit-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+}
+
+.flyt-page #sib-container .sib-hide-loader-icon {
+    display: none !important;
+}
+
+.flyt-page #sib-container .progress-indicator__icon {
+    display: none !important;
 }
 
 .flyt-page .sib-form-message-panel {
@@ -794,8 +852,13 @@
     justify-content: center;
 }
 
+.flyt-page .sib-captcha .g-recaptcha {
+    transform: scale(0.9);
+    transform-origin: center;
+}
+
 .flyt-page .submit-button {
-    background: var(--gradient-1);
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     color: white;
     border: none;
     padding: 16px 32px;
