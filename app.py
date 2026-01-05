@@ -167,6 +167,16 @@ def humangate():
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'humangate.html')
 
+@app.route('/flyt')
+def flyt():
+    """Flyt landing page."""
+    from flask import render_template
+    try:
+        return render_template('flyt.html')
+    except:
+        # Fallback to send_from_directory if template not found
+        return send_from_directory('templates', 'flyt.html')
+
 
 @app.route('/contact', methods=['POST'])
 def contact():
@@ -305,6 +315,171 @@ This email was sent from the Dark AI contact form.
         import traceback
         traceback.print_exc()
         return jsonify({'success': False, 'error': 'Failed to send message. Please try again later.'}), 500
+
+
+@app.route('/api/waitlist', methods=['POST', 'OPTIONS'])
+def waitlist():
+    """Handle Flyt waitlist email submission - stores in database and optionally sends confirmation."""
+    # Handle CORS preflight
+    if request.method == 'OPTIONS':
+        response = jsonify({})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        response.headers.add('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
+        return response
+    
+    try:
+        data = request.get_json()
+        email = data.get('email', '').strip().lower()
+        
+        # Validate email
+        if not email or '@' not in email:
+            response = jsonify({'success': False, 'error': 'Invalid email address'})
+            response.headers.add('Access-Control-Allow-Origin', '*')
+            return response, 400
+        
+        # Try to store in database (reuse PostgresClient if available)
+        stored_in_db = False
+        try:
+            from personaforge.src.database.postgres_client import PostgresClient
+            postgres_client = PostgresClient()
+            
+            if postgres_client and postgres_client.conn:
+                # Create waitlist table if it doesn't exist
+                cursor = postgres_client.conn.cursor()
+                cursor.execute("""
+                    CREATE TABLE IF NOT EXISTS flyt_waitlist (
+                        id SERIAL PRIMARY KEY,
+                        email VARCHAR(255) UNIQUE NOT NULL,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        confirmed BOOLEAN DEFAULT FALSE
+                    )
+                """)
+                postgres_client.conn.commit()
+                
+                # Insert email (or update if exists)
+                cursor.execute("""
+                    INSERT INTO flyt_waitlist (email) 
+                    VALUES (%s)
+                    ON CONFLICT (email) DO NOTHING
+                    RETURNING id
+                """, (email,))
+                
+                if cursor.rowcount > 0:
+                    postgres_client.conn.commit()
+                    stored_in_db = True
+                    print(f"✅ Email stored in database: {email}")
+                else:
+                    print(f"ℹ️  Email already exists in database: {email}")
+                    stored_in_db = True  # Still counts as success
+                
+                cursor.close()
+        except Exception as db_error:
+            print(f"⚠️  Database storage failed (continuing anyway): {db_error}")
+            # Continue even if database fails - we can still send email
+        
+        # Optionally send confirmation email (reuse existing email infrastructure)
+        send_confirmation = os.getenv('SEND_WAITLIST_CONFIRMATION', 'false').lower() == 'true'
+        
+        if send_confirmation:
+            resend_api_key = os.getenv('RESEND_API_KEY', '')
+            from_email = os.getenv('FROM_EMAIL', 'onboarding@resend.dev')
+            
+            if resend_api_key:
+                try:
+                    url = "https://api.resend.com/emails"
+                    headers = {
+                        "Authorization": f"Bearer {resend_api_key}",
+                        "Content-Type": "application/json"
+                    }
+                    payload = {
+                        "from": from_email,
+                        "to": email,
+                        "subject": "You're on the Flyt waitlist! 🚀",
+                        "html": f"""
+                        <h2>Welcome to the Flyt waitlist!</h2>
+                        <p>Thanks for joining! We'll notify you as soon as Flyt is available.</p>
+                        <p>You'll be able to control your computer with the wave of your hand - complete freedom, total control.</p>
+                        <hr>
+                        <p><em>Flyt - At the wave of your hand.</em></p>
+                        """,
+                        "text": f"""Welcome to the Flyt waitlist!
+
+Thanks for joining! We'll notify you as soon as Flyt is available.
+
+You'll be able to control your computer with the wave of your hand - complete freedom, total control.
+
+---
+Flyt - At the wave of your hand.
+"""
+                    }
+                    
+                    response = requests.post(url, json=payload, headers=headers)
+                    if response.status_code == 200:
+                        print(f"✅ Confirmation email sent to {email}")
+                    else:
+                        print(f"⚠️  Failed to send confirmation email: {response.status_code}")
+                except Exception as e:
+                    print(f"⚠️  Error sending confirmation email: {e}")
+        
+        # Success response
+        response = jsonify({
+            'success': True,
+            'message': 'Email added to waitlist',
+            'stored_in_db': stored_in_db
+        })
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 200
+        
+    except Exception as e:
+        error_msg = f"Error processing waitlist submission: {e}"
+        print(f"❌ {error_msg}")
+        import traceback
+        traceback.print_exc()
+        response = jsonify({'success': False, 'error': 'Failed to process submission. Please try again later.'})
+        response.headers.add('Access-Control-Allow-Origin', '*')
+        return response, 500
+
+
+@app.route('/api/waitlist/view', methods=['GET'])
+def view_waitlist():
+    """View all emails in the waitlist (admin endpoint)."""
+    try:
+        from personaforge.src.database.postgres_client import PostgresClient
+        postgres_client = PostgresClient()
+        
+        if not postgres_client or not postgres_client.conn:
+            return jsonify({'error': 'Database not available'}), 500
+        
+        cursor = postgres_client.conn.cursor()
+        cursor.execute("""
+            SELECT email, created_at, confirmed 
+            FROM flyt_waitlist 
+            ORDER BY created_at DESC
+        """)
+        
+        emails = []
+        for row in cursor.fetchall():
+            emails.append({
+                'email': row[0],
+                'created_at': row[1].isoformat() if row[1] else None,
+                'confirmed': row[2]
+            })
+        
+        cursor.close()
+        
+        return jsonify({
+            'success': True,
+            'count': len(emails),
+            'emails': emails
+        }), 200
+        
+    except Exception as e:
+        error_msg = f"Error fetching waitlist: {e}"
+        print(f"❌ {error_msg}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': 'Failed to fetch waitlist'}), 500
 
 
 @app.route('/reports/2025-deepfake-report')
