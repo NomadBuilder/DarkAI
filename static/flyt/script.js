@@ -65,59 +65,46 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Watch field-level error messages and hide empty ones immediately
     fieldErrors.forEach(function(fieldError) {
-        // Immediately hide if empty on page load
-        if (!fieldError.textContent.trim()) {
-            fieldError.style.display = 'none';
-            fieldError.style.margin = '0';
-            fieldError.style.padding = '0';
-            fieldError.style.border = 'none';
-            fieldError.style.background = 'transparent';
-            fieldError.style.backgroundColor = 'transparent';
-            fieldError.style.borderColor = 'transparent';
-            fieldError.style.borderWidth = '0';
-            fieldError.style.height = '0';
-            fieldError.style.overflow = 'hidden';
+        // Immediately hide if empty on page load - use multiple methods
+        function hideEmptyError() {
+            if (!fieldError.textContent.trim()) {
+                // Method 1: Set all styles to hide
+                fieldError.style.cssText = 'display: none !important; margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; background-color: transparent !important; border-color: transparent !important; border-width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; opacity: 0 !important;';
+                
+                // Method 2: Add a class
+                fieldError.classList.add('flyt-error-hidden');
+                
+                // Method 3: Set attribute
+                fieldError.setAttribute('data-empty', 'true');
+            } else {
+                fieldError.classList.remove('flyt-error-hidden');
+                fieldError.removeAttribute('data-empty');
+            }
         }
         
+        // Hide immediately
+        hideEmptyError();
+        
         const fieldObserver = new MutationObserver(function(mutations) {
+            // Always check and hide/show based on content
+            hideEmptyError();
+            
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' || mutation.type === 'characterData') {
                     const hasContent = fieldError.textContent.trim().length > 0;
                     if (hasContent) {
-                        fieldError.style.display = 'block';
-                        fieldError.style.opacity = '1';
-                        fieldError.style.visibility = 'visible';
-                        fieldError.style.marginTop = '8px';
-                        fieldError.style.padding = '10px 14px';
-                        fieldError.style.height = 'auto';
-                        fieldError.style.overflow = 'visible';
+                        fieldError.style.cssText = 'display: block !important; margin-top: 8px !important; padding: 10px 14px !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; background-color: rgba(239, 68, 68, 0.1) !important; height: auto !important; overflow: visible !important; opacity: 1 !important; visibility: visible !important;';
+                        fieldError.classList.remove('flyt-error-hidden');
+                        fieldError.removeAttribute('data-empty');
                     } else {
-                        fieldError.style.display = 'none';
-                        fieldError.style.margin = '0';
-                        fieldError.style.padding = '0';
-                        fieldError.style.border = 'none';
-                        fieldError.style.background = 'transparent';
-                        fieldError.style.backgroundColor = 'transparent';
-                        fieldError.style.borderColor = 'transparent';
-                        fieldError.style.borderWidth = '0';
-                        fieldError.style.height = '0';
-                        fieldError.style.overflow = 'hidden';
+                        hideEmptyError();
                     }
                 } else if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
                     const hasContent = fieldError.textContent.trim().length > 0;
-                    if (hasContent && fieldError.style.display !== 'none') {
+                    if (!hasContent) {
+                        hideEmptyError();
+                    } else if (hasContent && fieldError.style.display !== 'none') {
                         ensureMessageVisible(fieldError);
-                    } else if (!hasContent) {
-                        fieldError.style.display = 'none';
-                        fieldError.style.margin = '0';
-                        fieldError.style.padding = '0';
-                        fieldError.style.border = 'none';
-                        fieldError.style.background = 'transparent';
-                        fieldError.style.backgroundColor = 'transparent';
-                        fieldError.style.borderColor = 'transparent';
-                        fieldError.style.borderWidth = '0';
-                        fieldError.style.height = '0';
-                        fieldError.style.overflow = 'hidden';
                     }
                 }
             });

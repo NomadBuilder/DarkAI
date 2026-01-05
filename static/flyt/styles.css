@@ -979,9 +979,33 @@
     padding: 0 !important;
     border: none !important;
     background: transparent !important;
+    background-color: transparent !important;
     min-height: 0 !important;
     height: 0 !important;
     overflow: hidden !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Additional class-based hiding */
+.flyt-page .entry__error.flyt-error-hidden,
+.flyt-page .entry__error--primary.flyt-error-hidden,
+.flyt-page .entry__error[data-empty="true"],
+.flyt-page .entry__error--primary[data-empty="true"] {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border-width: 0 !important;
+    min-height: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    line-height: 0 !important;
 }
 
 /* Override ALL inline styles for empty error fields */
