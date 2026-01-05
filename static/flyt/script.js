@@ -2,6 +2,52 @@
 document.addEventListener('DOMContentLoaded', function() {
     const flytPage = document.querySelector('.flyt-page');
     if (!flytPage) return; // Exit early if not on Flyt page
+    
+    // Ensure Brevo success/error messages display correctly
+    const successMessage = flytPage.querySelector('#success-message');
+    const errorMessage = flytPage.querySelector('#error-message');
+    
+    if (successMessage) {
+        // Watch for changes to the success message display
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const display = successMessage.style.display;
+                    if (display && display !== 'none') {
+                        successMessage.style.display = 'block';
+                        successMessage.style.opacity = '1';
+                        successMessage.style.visibility = 'visible';
+                    }
+                }
+            });
+        });
+        
+        observer.observe(successMessage, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+    }
+    
+    if (errorMessage) {
+        // Watch for changes to the error message display
+        const errorObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const display = errorMessage.style.display;
+                    if (display && display !== 'none') {
+                        errorMessage.style.display = 'block';
+                        errorMessage.style.opacity = '1';
+                        errorMessage.style.visibility = 'visible';
+                    }
+                }
+            });
+        });
+        
+        errorObserver.observe(errorMessage, {
+            attributes: true,
+            attributeFilter: ['style']
+        });
+    }
     const form = document.getElementById('waitlistForm');
     const success = document.getElementById('waitlistSuccess');
     const emailInput = document.getElementById('email');
