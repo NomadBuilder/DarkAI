@@ -726,18 +726,20 @@
 .flyt-page #sib-container {
     background: transparent !important;
     border: none !important;
-    padding: 0 !important;
+    padding: 24px !important;
     max-width: 100% !important;
-    border-radius: 12px !important;
+    border-radius: 16px !important;
     overflow: hidden !important;
 }
 
-.flyt-page #sib-container[style*="background-color"] {
+/* Override all inline styles on sib-container */
+.flyt-page #sib-container[style] {
     background: transparent !important;
-}
-
-.flyt-page #sib-container[style*="border-color"] {
     border: none !important;
+    background-color: transparent !important;
+    border-color: transparent !important;
+    border-style: none !important;
+    border-width: 0 !important;
 }
 
 .flyt-page .sib-form-block {
@@ -755,6 +757,13 @@
 .flyt-page .form__label-row {
     margin: 0 !important;
     padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+}
+
+.flyt-page .entry__field {
+    width: 100% !important;
 }
 
 .flyt-page #sib-container input[type="text"],
@@ -763,15 +772,25 @@
 .flyt-page #sib-container #EMAIL {
     width: 100% !important;
     max-width: 100% !important;
-    background: rgba(30, 41, 59, 0.5) !important;
-    border: 1px solid rgba(51, 65, 85, 0.5) !important;
+    background: rgba(15, 23, 42, 0.6) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(99, 102, 241, 0.3) !important;
     border-radius: 12px !important;
-    padding: 16px 24px !important;
+    padding: 18px 24px !important;
     font-size: 16px !important;
-    color: var(--text-primary) !important;
+    color: #f1f5f9 !important;
     font-family: 'Inter', sans-serif !important;
     box-sizing: border-box !important;
     margin: 0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.flyt-page #sib-container input[type="text"]:hover,
+.flyt-page #sib-container .email-input:hover,
+.flyt-page #sib-container .input:hover,
+.flyt-page #sib-container #EMAIL:hover {
+    border-color: rgba(99, 102, 241, 0.5) !important;
+    background: rgba(15, 23, 42, 0.8) !important;
 }
 
 .flyt-page #sib-container input[type="text"]:focus,
@@ -779,16 +798,19 @@
 .flyt-page #sib-container .input:focus,
 .flyt-page #sib-container #EMAIL:focus {
     outline: none !important;
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 4px 20px rgba(99, 102, 241, 0.1) !important;
+    background: rgba(15, 23, 42, 0.9) !important;
 }
 
 .flyt-page #sib-container input[type="text"]::placeholder,
 .flyt-page #sib-container .email-input::placeholder,
 .flyt-page #sib-container .input::placeholder,
 .flyt-page #sib-container #EMAIL::placeholder {
-    color: rgba(148, 163, 184, 0.7) !important;
+    color: rgba(148, 163, 184, 0.6) !important;
     opacity: 1 !important;
+    text-transform: none !important;
+    font-size: 16px !important;
 }
 
 .flyt-page #sib-container button[type="submit"],
@@ -800,7 +822,7 @@
     background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
     border: none !important;
     border-radius: 12px !important;
-    padding: 16px 32px !important;
+    padding: 18px 32px !important;
     font-size: 16px !important;
     font-weight: 600 !important;
     color: white !important;
@@ -810,10 +832,21 @@
     align-items: center !important;
     justify-content: center !important;
     gap: 8px !important;
-    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
-    margin: 0 !important;
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4) !important;
+    margin: 24px 0 0 0 !important;
     font-family: 'Inter', sans-serif !important;
     text-align: center !important;
+    text-transform: none !important;
+    letter-spacing: 0.5px !important;
+}
+
+.flyt-page #sib-container button[type="submit"][style],
+.flyt-page #sib-container .sib-form-block__button[style] {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+    color: white !important;
+    font-family: 'Inter', sans-serif !important;
+    border: none !important;
+    border-radius: 12px !important;
 }
 
 .flyt-page #sib-container button[type="submit"]:hover,
@@ -862,15 +895,34 @@
 }
 
 .flyt-page .entry__label {
-    color: var(--text-primary) !important;
-    margin-bottom: 8px !important;
+    color: #f1f5f9 !important;
+    margin-bottom: 12px !important;
     display: block !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    font-family: 'Inter', sans-serif !important;
+    text-align: left !important;
+    line-height: 1.5 !important;
+}
+
+.flyt-page .entry__label[style] {
+    color: #f1f5f9 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-weight: 600 !important;
 }
 
 .flyt-page .entry__specification {
     margin-top: 8px !important;
-    color: var(--text-secondary) !important;
-    opacity: 0.7 !important;
+    color: rgba(148, 163, 184, 0.7) !important;
+    font-size: 14px !important;
+    font-family: 'Inter', sans-serif !important;
+    text-align: left !important;
+    line-height: 1.5 !important;
+}
+
+.flyt-page .entry__specification[style] {
+    color: rgba(148, 163, 184, 0.7) !important;
+    font-family: 'Inter', sans-serif !important;
 }
 
 .flyt-page .submit-button {
