@@ -8,6 +8,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const errorMessage = flytPage.querySelector('#error-message');
     const fieldErrors = flytPage.querySelectorAll('.entry__error, .entry__error--primary');
     
+    // IMMEDIATELY hide all empty error fields - run before anything else
+    fieldErrors.forEach(function(fieldError) {
+        // Remove all inline styles that might make it visible
+        if (!fieldError.textContent.trim()) {
+            fieldError.removeAttribute('style');
+            fieldError.style.cssText = 'display: none !important; margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; background-color: transparent !important; border-color: transparent !important; border-width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; opacity: 0 !important; line-height: 0 !important;';
+            fieldError.classList.add('flyt-error-hidden');
+            fieldError.setAttribute('data-empty', 'true');
+        }
+    });
+    
     // Function to ensure message is visible
     function ensureMessageVisible(element) {
         if (element && element.style.display !== 'none') {

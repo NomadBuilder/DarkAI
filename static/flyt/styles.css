@@ -1008,9 +1008,11 @@
     line-height: 0 !important;
 }
 
-/* Override ALL inline styles for empty error fields */
-.flyt-page .entry__error[style],
-.flyt-page .entry__error--primary[style] {
+/* Override ALL inline styles for empty error fields - most aggressive */
+.flyt-page .entry__error[style]:empty,
+.flyt-page .entry__error--primary[style]:empty,
+.flyt-page .entry__error[style]:not(:has(*)):not(:has(text)),
+.flyt-page .entry__error--primary[style]:not(:has(*)):not(:has(text)) {
     display: none !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -1022,6 +1024,17 @@
     min-height: 0 !important;
     height: 0 !important;
     overflow: hidden !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    line-height: 0 !important;
+    font-size: 0 !important;
+}
+
+/* Override inline styles for any error field that appears empty */
+.flyt-page .entry__error[style],
+.flyt-page .entry__error--primary[style] {
+    /* Check if empty via JavaScript will handle, but CSS backup */
+    display: none !important;
 }
 
 /* Only show when there's actual text content (not just whitespace) */
