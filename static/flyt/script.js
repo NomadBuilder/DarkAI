@@ -6,17 +6,27 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ensure Brevo success/error messages display correctly
     const successMessage = flytPage.querySelector('#success-message');
     const errorMessage = flytPage.querySelector('#error-message');
+    const fieldErrors = flytPage.querySelectorAll('.entry__error, .entry__error--primary');
+    
+    // Function to ensure message is visible
+    function ensureMessageVisible(element) {
+        if (element && element.style.display !== 'none') {
+            element.style.display = 'block';
+            element.style.opacity = '1';
+            element.style.visibility = 'visible';
+        }
+    }
     
     if (successMessage) {
         // Watch for changes to the success message display
         const observer = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    const display = successMessage.style.display;
-                    if (display && display !== 'none') {
-                        successMessage.style.display = 'block';
-                        successMessage.style.opacity = '1';
-                        successMessage.style.visibility = 'visible';
+                    ensureMessageVisible(successMessage);
+                } else if (mutation.type === 'childList') {
+                    // Check if content was added
+                    if (successMessage.textContent.trim()) {
+                        ensureMessageVisible(successMessage);
                     }
                 }
             });
@@ -24,7 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         observer.observe(successMessage, {
             attributes: true,
-            attributeFilter: ['style']
+            attributeFilter: ['style'],
+            childList: true,
+            subtree: true
         });
     }
     
@@ -33,11 +45,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const errorObserver = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    const display = errorMessage.style.display;
-                    if (display && display !== 'none') {
-                        errorMessage.style.display = 'block';
-                        errorMessage.style.opacity = '1';
-                        errorMessage.style.visibility = 'visible';
+                    ensureMessageVisible(errorMessage);
+                } else if (mutation.type === 'childList') {
+                    // Check if content was added
+                    if (errorMessage.textContent.trim()) {
+                        ensureMessageVisible(errorMessage);
                     }
                 }
             });
@@ -45,9 +57,42 @@ document.addEventListener('DOMContentLoaded', function() {
         
         errorObserver.observe(errorMessage, {
             attributes: true,
-            attributeFilter: ['style']
+            attributeFilter: ['style'],
+            childList: true,
+            subtree: true
         });
     }
+    
+    // Watch field-level error messages
+    fieldErrors.forEach(function(fieldError) {
+        const fieldObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'childList' || mutation.type === 'characterData') {
+                    const hasContent = fieldError.textContent.trim().length > 0;
+                    if (hasContent) {
+                        fieldError.style.display = 'block';
+                        fieldError.style.opacity = '1';
+                        fieldError.style.visibility = 'visible';
+                    } else {
+                        fieldError.style.display = 'none';
+                    }
+                } else if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                    const hasContent = fieldError.textContent.trim().length > 0;
+                    if (hasContent && fieldError.style.display !== 'none') {
+                        ensureMessageVisible(fieldError);
+                    }
+                }
+            });
+        });
+        
+        fieldObserver.observe(fieldError, {
+            attributes: true,
+            attributeFilter: ['style'],
+            childList: true,
+            characterData: true,
+            subtree: true
+        });
+    });
     const form = document.getElementById('waitlistForm');
     const success = document.getElementById('waitlistSuccess');
     const emailInput = document.getElementById('email');
