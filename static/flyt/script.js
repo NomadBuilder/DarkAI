@@ -63,8 +63,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Watch field-level error messages
+    // Watch field-level error messages and hide empty ones immediately
     fieldErrors.forEach(function(fieldError) {
+        // Immediately hide if empty on page load
+        if (!fieldError.textContent.trim()) {
+            fieldError.style.display = 'none';
+            fieldError.style.margin = '0';
+            fieldError.style.padding = '0';
+            fieldError.style.border = 'none';
+            fieldError.style.background = 'transparent';
+            fieldError.style.backgroundColor = 'transparent';
+            fieldError.style.borderColor = 'transparent';
+            fieldError.style.borderWidth = '0';
+            fieldError.style.height = '0';
+            fieldError.style.overflow = 'hidden';
+        }
+        
         const fieldObserver = new MutationObserver(function(mutations) {
             mutations.forEach(function(mutation) {
                 if (mutation.type === 'childList' || mutation.type === 'characterData') {
@@ -73,13 +87,37 @@ document.addEventListener('DOMContentLoaded', function() {
                         fieldError.style.display = 'block';
                         fieldError.style.opacity = '1';
                         fieldError.style.visibility = 'visible';
+                        fieldError.style.marginTop = '8px';
+                        fieldError.style.padding = '10px 14px';
+                        fieldError.style.height = 'auto';
+                        fieldError.style.overflow = 'visible';
                     } else {
                         fieldError.style.display = 'none';
+                        fieldError.style.margin = '0';
+                        fieldError.style.padding = '0';
+                        fieldError.style.border = 'none';
+                        fieldError.style.background = 'transparent';
+                        fieldError.style.backgroundColor = 'transparent';
+                        fieldError.style.borderColor = 'transparent';
+                        fieldError.style.borderWidth = '0';
+                        fieldError.style.height = '0';
+                        fieldError.style.overflow = 'hidden';
                     }
                 } else if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
                     const hasContent = fieldError.textContent.trim().length > 0;
                     if (hasContent && fieldError.style.display !== 'none') {
                         ensureMessageVisible(fieldError);
+                    } else if (!hasContent) {
+                        fieldError.style.display = 'none';
+                        fieldError.style.margin = '0';
+                        fieldError.style.padding = '0';
+                        fieldError.style.border = 'none';
+                        fieldError.style.background = 'transparent';
+                        fieldError.style.backgroundColor = 'transparent';
+                        fieldError.style.borderColor = 'transparent';
+                        fieldError.style.borderWidth = '0';
+                        fieldError.style.height = '0';
+                        fieldError.style.overflow = 'hidden';
                     }
                 }
             });
