@@ -139,7 +139,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Show user-friendly error message
                 let errorMessage = 'Something went wrong. Please try again.';
-                if (error.message && error.message.includes('fetch')) {
+                if (error.name === 'AbortError') {
+                    errorMessage = 'Request timed out. The server may be slow. Please try again.';
+                } else if (error.message && error.message.includes('fetch')) {
                     errorMessage = 'Unable to connect to server. Please check your connection.';
                 } else if (error.message) {
                     errorMessage = error.message;
