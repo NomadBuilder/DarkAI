@@ -338,45 +338,53 @@ def waitlist():
             response.headers.add('Access-Control-Allow-Origin', '*')
             return response, 400
         
-        # Try to store in database (reuse PostgresClient if available)
+        # Store in database asynchronously (don't block response)
+        # Return success immediately, store in background
         stored_in_db = False
-        try:
-            from personaforge.src.database.postgres_client import PostgresClient
-            postgres_client = PostgresClient()
-            
-            if postgres_client and postgres_client.conn:
-                # Create waitlist table if it doesn't exist
-                cursor = postgres_client.conn.cursor()
-                cursor.execute("""
-                    CREATE TABLE IF NOT EXISTS flyt_waitlist (
-                        id SERIAL PRIMARY KEY,
-                        email VARCHAR(255) UNIQUE NOT NULL,
-                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                        confirmed BOOLEAN DEFAULT FALSE
-                    )
-                """)
-                postgres_client.conn.commit()
+        
+        def store_email_async(email):
+            """Store email in database in background thread."""
+            try:
+                from personaforge.src.database.postgres_client import PostgresClient
+                postgres_client = PostgresClient()
                 
-                # Insert email (or update if exists)
-                cursor.execute("""
-                    INSERT INTO flyt_waitlist (email) 
-                    VALUES (%s)
-                    ON CONFLICT (email) DO NOTHING
-                    RETURNING id
-                """, (email,))
-                
-                if cursor.rowcount > 0:
+                if postgres_client and postgres_client.conn:
+                    # Create waitlist table if it doesn't exist
+                    cursor = postgres_client.conn.cursor()
+                    cursor.execute("""
+                        CREATE TABLE IF NOT EXISTS flyt_waitlist (
+                            id SERIAL PRIMARY KEY,
+                            email VARCHAR(255) UNIQUE NOT NULL,
+                            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                            confirmed BOOLEAN DEFAULT FALSE
+                        )
+                    """)
                     postgres_client.conn.commit()
-                    stored_in_db = True
-                    print(f"✅ Email stored in database: {email}")
-                else:
-                    print(f"ℹ️  Email already exists in database: {email}")
-                    stored_in_db = True  # Still counts as success
-                
-                cursor.close()
-        except Exception as db_error:
-            print(f"⚠️  Database storage failed (continuing anyway): {db_error}")
-            # Continue even if database fails - we can still send email
+                    
+                    # Insert email (or update if exists)
+                    cursor.execute("""
+                        INSERT INTO flyt_waitlist (email) 
+                        VALUES (%s)
+                        ON CONFLICT (email) DO NOTHING
+                        RETURNING id
+                    """, (email,))
+                    
+                    if cursor.rowcount > 0:
+                        postgres_client.conn.commit()
+                        print(f"✅ Email stored in database: {email}")
+                    else:
+                        print(f"ℹ️  Email already exists in database: {email}")
+                    
+                    cursor.close()
+                    if postgres_client.conn:
+                        postgres_client.conn.close()
+            except Exception as db_error:
+                print(f"⚠️  Database storage failed: {db_error}")
+        
+        # Start database storage in background thread (non-blocking)
+        import threading
+        db_thread = threading.Thread(target=store_email_async, args=(email,), daemon=True)
+        db_thread.start()
         
         # Optionally send confirmation email (reuse existing email infrastructure)
         send_confirmation = os.getenv('SEND_WAITLIST_CONFIRMATION', 'false').lower() == 'true'
