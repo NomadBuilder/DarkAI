@@ -1,97 +1,85 @@
-# DarkAI Consolidated Platform
+# Flyt Landing Page
 
-A unified Flask application combining all three DarkAI services under a single domain (`darkai.ca`).
+A modern, flashy landing page for Flyt - the revolutionary gesture control system for Mac.
 
-## Services
+## Features
 
-- **PersonaForge** (`/personaforge`) - Synthetic Identity Intelligence
-- **BlackWire** (`/blackwire`) - Sextortion & Extortion Infrastructure Map  
-- **ShadowStack** (`/shadowstack`) - NCII Infrastructure Mapping
-- **Dark-AI Homepage** (`/`) - Main landing page
-
-## Quick Start
-
-### Local Development
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run locally
-PORT=5001 python app.py
-```
-
-Visit:
-- http://localhost:5001/ - Homepage
-- http://localhost:5001/personaforge - PersonaForge
-- http://localhost:5001/blackwire - BlackWire
-- http://localhost:5001/shadowstack - ShadowStack
-
-### Production Deployment
-
-Deploy to Render.com using the provided `render.yaml`:
-
-1. Push code to GitHub
-2. Connect repository to Render
-3. Create Web Service from `render.yaml`
-4. Configure custom domain `darkai.ca`
-5. Set environment variables in Render dashboard
+- **Modern Design**: Cutting-edge UI with gradients, animations, and smooth transitions
+- **Responsive**: Works perfectly on desktop, tablet, and mobile devices
+- **Email Waitlist**: Functional email submission form for waiting list
+- **Smooth Animations**: Scroll-triggered animations and parallax effects
+- **Brand Integration**: Uses Flyt logo and brand colors
 
 ## Structure
 
 ```
-DarkAI-consolidated/
-├── app.py                 # Main Flask app with blueprints
-├── personaforge/          # PersonaForge blueprint
-├── blackwire/             # BlackWire blueprint
-├── shadowstack/           # ShadowStack blueprint
-├── static/                # Shared static files
-├── templates/             # Shared templates
-├── requirements.txt       # Combined dependencies
-├── render.yaml            # Render.com deployment config
-└── Procfile              # Process file for deployment
+flyt-landing/
+├── index.html          # Main HTML file
+├── styles.css          # All styling
+├── script.js           # JavaScript for interactions
+├── assets/
+│   └── FlytLogo.png   # Flyt logo
+└── README.md          # This file
 ```
 
-## Database Configuration
+## Setup
 
-The app uses separate PostgreSQL databases for each service:
+1. Open `index.html` in a web browser
+2. Or serve it with a local server:
+   ```bash
+   # Python
+   python3 -m http.server 8000
+   
+   # Node.js
+   npx serve
+   ```
 
-- **PersonaForge**: Uses `POSTGRES_*` environment variables
-- **BlackWire**: Uses `BLACKWIRE_POSTGRES_*` (with fallback to `POSTGRES_*`)
-- **ShadowStack**: Uses `SHADOWSTACK_POSTGRES_*` (with fallback to `POSTGRES_*`)
+## Customization
 
-See `DEPLOYMENT.md` for detailed database setup instructions.
+### Email Submission
 
-## Environment Variables
+The waitlist form currently shows a success message. To connect it to a backend:
 
-Required for production:
+1. Update the `waitlistForm` submit handler in `script.js`
+2. Replace the console.log with your API endpoint:
+   ```javascript
+   const response = await fetch('/api/waitlist', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ email })
+   });
+   ```
 
-**PersonaForge:**
-- `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`
-- `BUILTWITH_API_KEY`, `IPLOCATE_API_KEY`, `SHODAN_API_KEY`, `OPENAI_API_KEY`, `SERPAPI_API_KEY`
+### Colors
 
-**BlackWire:**
-- `BLACKWIRE_POSTGRES_HOST`, `BLACKWIRE_POSTGRES_PORT`, `BLACKWIRE_POSTGRES_USER`, `BLACKWIRE_POSTGRES_PASSWORD`, `BLACKWIRE_POSTGRES_DB`
-- `IPAPI_KEY`, `VIRUSTOTAL_API_KEY`, `NUMLOOKUP_API_KEY`, `ETHERSCAN_API_KEY`
+Edit the CSS variables in `styles.css`:
+```css
+:root {
+    --primary: #6366f1;
+    --primary-dark: #4f46e5;
+    /* ... */
+}
+```
 
-**ShadowStack:**
-- `SHADOWSTACK_POSTGRES_HOST`, `SHADOWSTACK_POSTGRES_PORT`, `SHADOWSTACK_POSTGRES_USER`, `SHADOWSTACK_POSTGRES_PASSWORD`, `SHADOWSTACK_POSTGRES_DB`
-- `OPENAI_API_KEY`
+## Sections
 
-**Optional:**
-- `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` (for graph features)
+1. **Hero**: Main headline with CTA
+2. **Features**: 6 key features with icons
+3. **How It Works**: 4-step process
+4. **Use Cases**: Perfect for different workflows
+5. **Waitlist**: Email submission form
+6. **Footer**: Links and copyright
 
-## Documentation
+## Browser Support
 
-- `DEPLOYMENT.md` - Deployment guide
-- `TESTING.md` - Local testing guide
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers
 
-## Safety
+## Notes
 
-✅ **Original projects untouched** - All changes are in `DarkAI-consolidated/` directory  
-✅ **Fully reversible** - Can delete this directory without affecting original services  
-✅ **Testable locally** - Verify everything works before deploying
+- Logo should be placed in `assets/FlytLogo.png`
+- All animations use CSS and vanilla JavaScript (no dependencies)
+- Form validation is basic - add server-side validation for production
 
-## License
-
-See individual service licenses in their respective directories.
