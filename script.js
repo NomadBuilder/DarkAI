@@ -1,7 +1,9 @@
-// Waitlist Form Handler
+// Waitlist Form Handler - Simple Custom Form
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('waitlistForm');
-    const success = document.getElementById('waitlistSuccess');
+    const success = document.getElementById('waitlist-success');
+    const error = document.getElementById('waitlist-error');
+    const errorText = document.getElementById('error-text');
     const emailInput = document.getElementById('email');
     const submitButton = form?.querySelector('.submit-button');
     
@@ -48,28 +50,37 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Validate email before submission
             if (!email) {
-                emailInput.style.borderColor = '#ef4444';
-                emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-                emailInput.focus();
+                if (emailInput) {
+                    emailInput.style.borderColor = '#ef4444';
+                    emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    emailInput.focus();
+                }
                 showErrorMessage('Please enter your email address');
                 return;
             }
             
             if (!validateEmail(email)) {
-                emailInput.style.borderColor = '#ef4444';
-                emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-                emailInput.focus();
+                if (emailInput) {
+                    emailInput.style.borderColor = '#ef4444';
+                    emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    emailInput.focus();
+                }
                 showErrorMessage('Please enter a valid email address');
                 return;
             }
             
-            // Show loading state
+                // Show loading state
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.style.opacity = '0.6';
                 submitButton.style.cursor = 'not-allowed';
-                submitButton.querySelector('span').textContent = 'Submitting...';
+                const buttonText = submitButton.querySelector('span');
+                if (buttonText) buttonText.textContent = 'Submitting...';
             }
+            
+            // Hide previous messages
+            if (error) error.style.display = 'none';
+            if (success) success.style.display = 'none';
             
             try {
                 // Determine API URL based on environment
@@ -94,8 +105,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Email submitted successfully:', email);
                 
                 // Show success message
-                form.style.display = 'none';
-                success.style.display = 'block';
+                if (form) form.style.display = 'none';
+                if (error) error.style.display = 'none';
+                if (success) success.style.display = 'block';
                 
             } catch (error) {
                 console.error('Error submitting email:', error);
@@ -107,46 +119,28 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (error.message) {
                     errorMessage = error.message;
                 }
-                showErrorMessage(errorMessage);
+                // Show error message
+                if (errorText) errorText.textContent = errorMessage;
+                if (error) error.style.display = 'block';
+                if (success) success.style.display = 'none';
                 
                 // Re-enable submit button
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.style.opacity = '1';
                     submitButton.style.cursor = 'pointer';
-                    submitButton.querySelector('span').textContent = 'Enter Waiting List';
+                    const buttonText = submitButton.querySelector('span');
+                    if (buttonText) buttonText.textContent = 'Enter Waiting List';
                 }
             }
         });
     }
     
     function showErrorMessage(message) {
-        // Remove existing error message
-        const existingError = form.querySelector('.error-message');
-        if (existingError) {
-            existingError.remove();
-        }
-        
-        // Create and show error message
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.style.cssText = `
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 8px;
-            text-align: center;
-            animation: fadeIn 0.3s ease;
-        `;
-        errorDiv.textContent = message;
-        form.appendChild(errorDiv);
-        
-        // Remove error message after 5 seconds
-        setTimeout(() => {
-            if (errorDiv.parentNode) {
-                errorDiv.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => errorDiv.remove(), 300);
-            }
-        }, 5000);
+        // Use the new error display system
+        if (errorText) errorText.textContent = message;
+        if (error) error.style.display = 'block';
+        if (success) success.style.display = 'none';
     }
 
     // Smooth scroll for anchor links
