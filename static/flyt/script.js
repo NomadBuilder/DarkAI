@@ -1,136 +1,14 @@
-// Waitlist Form Handler
+// Waitlist Form Handler - Simple Custom Form
 document.addEventListener('DOMContentLoaded', function() {
-    const flytPage = document.querySelector('.flyt-page');
-    if (!flytPage) return; // Exit early if not on Flyt page
-    
-    // Ensure Brevo success/error messages display correctly
-    const successMessage = flytPage.querySelector('#success-message');
-    const errorMessage = flytPage.querySelector('#error-message');
-    const fieldErrors = flytPage.querySelectorAll('.entry__error, .entry__error--primary');
-    
-    // IMMEDIATELY hide all empty error fields - run before anything else
-    fieldErrors.forEach(function(fieldError) {
-        // Remove all inline styles that might make it visible
-        if (!fieldError.textContent.trim()) {
-            fieldError.removeAttribute('style');
-            fieldError.style.cssText = 'display: none !important; margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; background-color: transparent !important; border-color: transparent !important; border-width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; opacity: 0 !important; line-height: 0 !important;';
-            fieldError.classList.add('flyt-error-hidden');
-            fieldError.setAttribute('data-empty', 'true');
-        }
-    });
-    
-    // Function to ensure message is visible
-    function ensureMessageVisible(element) {
-        if (element && element.style.display !== 'none') {
-            element.style.display = 'block';
-            element.style.opacity = '1';
-            element.style.visibility = 'visible';
-        }
+    // Only run on flyt page
+    if (!document.querySelector('.flyt-page')) {
+        return;
     }
     
-    if (successMessage) {
-        // Watch for changes to the success message display
-        const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    ensureMessageVisible(successMessage);
-                } else if (mutation.type === 'childList') {
-                    // Check if content was added
-                    if (successMessage.textContent.trim()) {
-                        ensureMessageVisible(successMessage);
-                    }
-                }
-            });
-        });
-        
-        observer.observe(successMessage, {
-            attributes: true,
-            attributeFilter: ['style'],
-            childList: true,
-            subtree: true
-        });
-    }
-    
-    if (errorMessage) {
-        // Watch for changes to the error message display
-        const errorObserver = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    ensureMessageVisible(errorMessage);
-                } else if (mutation.type === 'childList') {
-                    // Check if content was added
-                    if (errorMessage.textContent.trim()) {
-                        ensureMessageVisible(errorMessage);
-                    }
-                }
-            });
-        });
-        
-        errorObserver.observe(errorMessage, {
-            attributes: true,
-            attributeFilter: ['style'],
-            childList: true,
-            subtree: true
-        });
-    }
-    
-    // Watch field-level error messages and hide empty ones immediately
-    fieldErrors.forEach(function(fieldError) {
-        // Immediately hide if empty on page load - use multiple methods
-        function hideEmptyError() {
-            if (!fieldError.textContent.trim()) {
-                // Method 1: Set all styles to hide
-                fieldError.style.cssText = 'display: none !important; margin: 0 !important; padding: 0 !important; border: none !important; background: transparent !important; background-color: transparent !important; border-color: transparent !important; border-width: 0 !important; height: 0 !important; overflow: hidden !important; visibility: hidden !important; opacity: 0 !important;';
-                
-                // Method 2: Add a class
-                fieldError.classList.add('flyt-error-hidden');
-                
-                // Method 3: Set attribute
-                fieldError.setAttribute('data-empty', 'true');
-            } else {
-                fieldError.classList.remove('flyt-error-hidden');
-                fieldError.removeAttribute('data-empty');
-            }
-        }
-        
-        // Hide immediately
-        hideEmptyError();
-        
-        const fieldObserver = new MutationObserver(function(mutations) {
-            // Always check and hide/show based on content
-            hideEmptyError();
-            
-            mutations.forEach(function(mutation) {
-                if (mutation.type === 'childList' || mutation.type === 'characterData') {
-                    const hasContent = fieldError.textContent.trim().length > 0;
-                    if (hasContent) {
-                        fieldError.style.cssText = 'display: block !important; margin-top: 8px !important; padding: 10px 14px !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; background-color: rgba(239, 68, 68, 0.1) !important; height: auto !important; overflow: visible !important; opacity: 1 !important; visibility: visible !important;';
-                        fieldError.classList.remove('flyt-error-hidden');
-                        fieldError.removeAttribute('data-empty');
-                    } else {
-                        hideEmptyError();
-                    }
-                } else if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-                    const hasContent = fieldError.textContent.trim().length > 0;
-                    if (!hasContent) {
-                        hideEmptyError();
-                    } else if (hasContent && fieldError.style.display !== 'none') {
-                        ensureMessageVisible(fieldError);
-                    }
-                }
-            });
-        });
-        
-        fieldObserver.observe(fieldError, {
-            attributes: true,
-            attributeFilter: ['style'],
-            childList: true,
-            characterData: true,
-            subtree: true
-        });
-    });
     const form = document.getElementById('waitlistForm');
-    const success = document.getElementById('waitlistSuccess');
+    const success = document.getElementById('waitlist-success');
+    const error = document.getElementById('waitlist-error');
+    const errorText = document.getElementById('error-text');
     const emailInput = document.getElementById('email');
     const submitButton = form?.querySelector('.submit-button');
     
@@ -177,35 +55,43 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Validate email before submission
             if (!email) {
-                emailInput.style.borderColor = '#ef4444';
-                emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-                emailInput.focus();
+                if (emailInput) {
+                    emailInput.style.borderColor = '#ef4444';
+                    emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    emailInput.focus();
+                }
                 showErrorMessage('Please enter your email address');
                 return;
             }
             
             if (!validateEmail(email)) {
-                emailInput.style.borderColor = '#ef4444';
-                emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
-                emailInput.focus();
+                if (emailInput) {
+                    emailInput.style.borderColor = '#ef4444';
+                    emailInput.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+                    emailInput.focus();
+                }
                 showErrorMessage('Please enter a valid email address');
                 return;
             }
             
-            // Show loading state
+                // Show loading state
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.style.opacity = '0.6';
                 submitButton.style.cursor = 'not-allowed';
-                submitButton.querySelector('span').textContent = 'Submitting...';
+                const buttonText = submitButton.querySelector('span');
+                if (buttonText) buttonText.textContent = 'Submitting...';
             }
+            
+            // Hide previous messages
+            if (error) error.style.display = 'none';
+            if (success) success.style.display = 'none';
             
             try {
                 // Determine API URL based on environment
-                // Update 'your-darkai-domain.com' to your actual DarkAI deployment URL
                 const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
                     ? 'http://localhost:5000/api/waitlist'
-                    : 'https://your-darkai-domain.com/api/waitlist';
+                    : 'https://darkai.ca/api/waitlist';
                 
                 const response = await fetch(apiUrl, {
                     method: 'POST',
@@ -224,8 +110,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Email submitted successfully:', email);
                 
                 // Show success message
-                form.style.display = 'none';
-                success.style.display = 'block';
+                if (form) form.style.display = 'none';
+                if (error) error.style.display = 'none';
+                if (success) success.style.display = 'block';
                 
             } catch (error) {
                 console.error('Error submitting email:', error);
@@ -237,55 +124,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (error.message) {
                     errorMessage = error.message;
                 }
-                showErrorMessage(errorMessage);
+                // Show error message
+                if (errorText) errorText.textContent = errorMessage;
+                if (error) error.style.display = 'block';
+                if (success) success.style.display = 'none';
                 
                 // Re-enable submit button
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.style.opacity = '1';
                     submitButton.style.cursor = 'pointer';
-                    submitButton.querySelector('span').textContent = 'Enter Waiting List';
+                    const buttonText = submitButton.querySelector('span');
+                    if (buttonText) buttonText.textContent = 'Enter Waiting List';
                 }
             }
         });
     }
     
     function showErrorMessage(message) {
-        // Remove existing error message
-        const existingError = form.querySelector('.error-message');
-        if (existingError) {
-            existingError.remove();
-        }
-        
-        // Create and show error message
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-message';
-        errorDiv.style.cssText = `
-            color: #ef4444;
-            font-size: 14px;
-            margin-top: 8px;
-            text-align: center;
-            animation: fadeIn 0.3s ease;
-        `;
-        errorDiv.textContent = message;
-        form.appendChild(errorDiv);
-        
-        // Remove error message after 5 seconds
-        setTimeout(() => {
-            if (errorDiv.parentNode) {
-                errorDiv.style.animation = 'fadeOut 0.3s ease';
-                setTimeout(() => errorDiv.remove(), 300);
-            }
-        }, 5000);
+        // Use the new error display system
+        if (errorText) errorText.textContent = message;
+        if (error) error.style.display = 'block';
+        if (success) success.style.display = 'none';
     }
 
     // Smooth scroll for anchor links
-    flytPage.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
-            const target = flytPage.querySelector(this.getAttribute('href'));
+            const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                const headerHeight = flytPage.querySelector('.nav').offsetHeight;
+                const headerHeight = document.querySelector('.nav').offsetHeight;
                 const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
                 
                 window.scrollTo({
@@ -297,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Parallax effect for hero background
-    const heroBackground = flytPage.querySelector('.hero-background');
+    const heroBackground = document.querySelector('.hero-background');
     if (heroBackground) {
         window.addEventListener('scroll', () => {
             const scrolled = window.pageYOffset;
@@ -322,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, observerOptions);
 
     // Observe all feature cards and use case cards
-    flytPage.querySelectorAll('.feature-card, .use-case-card, .step').forEach(el => {
+    document.querySelectorAll('.feature-card, .use-case-card, .step').forEach(el => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';
         el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
@@ -349,7 +218,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateCursorTrail() {
         // Remove old trail elements
-        flytPage.querySelectorAll('.cursor-trail').forEach(el => el.remove());
+        document.querySelectorAll('.cursor-trail').forEach(el => el.remove());
         
         cursorTrail.forEach((point, index) => {
             const trail = document.createElement('div');
@@ -358,14 +227,14 @@ document.addEventListener('DOMContentLoaded', function() {
             trail.style.top = point.y + 'px';
             trail.style.opacity = (index / cursorTrail.length) * 0.3;
             trail.style.transform = `scale(${index / cursorTrail.length})`;
-            flytPage.appendChild(trail);
+            document.body.appendChild(trail);
             
             setTimeout(() => trail.remove(), 300);
         });
     }
 
     // Magnetic button effect
-    flytPage.querySelectorAll('.cta-primary, .cta-secondary, .submit-button').forEach(button => {
+    document.querySelectorAll('.cta-primary, .cta-secondary, .submit-button').forEach(button => {
         button.addEventListener('mousemove', function(e) {
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -399,12 +268,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, { threshold: 0.5 });
 
-    flytPage.querySelectorAll('.section-title, .hero-title').forEach(title => {
+    document.querySelectorAll('.section-title, .hero-title').forEach(title => {
         textRevealObserver.observe(title);
     });
 
     // Gradient orb animation enhancement
-    const orbs = flytPage.querySelectorAll('.gradient-orb');
+    const orbs = document.querySelectorAll('.gradient-orb');
     orbs.forEach((orb, index) => {
         setInterval(() => {
             const randomX = (Math.random() - 0.5) * 100;
@@ -415,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Navbar scroll effect
     let lastScroll = 0;
-    const nav = flytPage.querySelector('.nav');
+    const nav = document.querySelector('.nav');
     
     window.addEventListener('scroll', () => {
         const currentScroll = window.pageYOffset;
@@ -432,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Card tilt effect on hover
-    flytPage.querySelectorAll('.feature-card, .use-case-card').forEach(card => {
+    document.querySelectorAll('.feature-card, .use-case-card').forEach(card => {
         card.addEventListener('mousemove', function(e) {
             const rect = this.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -453,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Number counter animation
-    const stats = flytPage.querySelectorAll('.stat-number');
+    const stats = document.querySelectorAll('.stat-number');
     const statObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
@@ -492,7 +361,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Glitch effect on logo hover
-    const logo = flytPage.querySelector('.logo');
+    const logo = document.querySelector('.logo');
     if (logo) {
         logo.addEventListener('mouseenter', function() {
             this.style.animation = 'glitch 0.3s ease';
@@ -503,36 +372,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Particle system for hero section (scoped to .flyt-page)
-    if (flytPage) {
-        createParticleSystem(flytPage);
-    }
+    // Particle system for hero section
+    createParticleSystem();
 });
 
-function createParticleSystem(flytPage) {
-    if (!flytPage) return;
-    
-    const canvas = document.createElement('canvas');
-    canvas.className = 'particle-canvas';
-    canvas.style.position = 'fixed';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '1';
-    canvas.style.opacity = '0.3';
-    
-    const hero = flytPage.querySelector('.hero');
-    if (hero) {
+function createParticleSystem() {
+    try {
+        const hero = document.querySelector('.flyt-page .hero');
+        if (!hero) return; // Exit if hero doesn't exist
+        
+        const canvas = document.createElement('canvas');
+        canvas.className = 'particle-canvas';
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '1';
+        canvas.style.opacity = '0.3';
+        
         hero.appendChild(canvas);
         
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        if (!ctx) return; // Exit if canvas context not available
+        
+        let animationFrameId = null;
+        let isAnimating = false;
+        
+        function resizeCanvas() {
+            canvas.width = hero.offsetWidth || window.innerWidth;
+            canvas.height = hero.offsetHeight || window.innerHeight;
+        }
+        
+        resizeCanvas();
         
         const particles = [];
-        const particleCount = 50;
+        const particleCount = 30; // Reduced for better performance
         
         class Particle {
             constructor() {
@@ -567,39 +443,60 @@ function createParticleSystem(flytPage) {
         }
         
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!isAnimating) return;
             
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            
-            // Connect nearby particles
-            particles.forEach((particle, i) => {
-                particles.slice(i + 1).forEach(otherParticle => {
-                    const dx = particle.x - otherParticle.x;
-                    const dy = particle.y - otherParticle.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 100) {
-                        ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - distance / 100)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particle.x, particle.y);
-                        ctx.lineTo(otherParticle.x, otherParticle.y);
-                        ctx.stroke();
-                    }
+            try {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
                 });
-            });
-            
-            requestAnimationFrame(animate);
+                
+                // Connect nearby particles (simplified for performance)
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < Math.min(i + 5, particles.length); j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 100) {
+                            ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - distance / 100)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                animationFrameId = requestAnimationFrame(animate);
+            } catch (e) {
+                console.error('Particle animation error:', e);
+                isAnimating = false;
+            }
         }
         
+        isAnimating = true;
         animate();
         
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const resizeHandler = () => {
+            resizeCanvas();
+        };
+        
+        window.addEventListener('resize', resizeHandler);
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            isAnimating = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            window.removeEventListener('resize', resizeHandler);
         });
+    } catch (e) {
+        console.error('Particle system error:', e);
+        // Fail silently - particle system is not critical
     }
 }
