@@ -711,13 +711,13 @@ section {
     animation: fadeIn 0.3s ease;
 }
 
-/* Brevo Form Styling */
-#brevo-form-container {
+/* Brevo Form Styling - SCOPED TO FLYT PAGE ONLY */
+.flyt-page #brevo-form-container {
     max-width: 600px;
     margin: 0 auto;
 }
 
-#sib-container {
+.flyt-page #sib-container {
     background: transparent !important;
     border: none !important;
     padding: 0 !important;
@@ -725,23 +725,23 @@ section {
     z-index: 1 !important;
 }
 
-#sib-container .entry__field,
-#sib-container .form__entry,
-#sib-container .sib-input {
+.flyt-page #sib-container .entry__field,
+.flyt-page #sib-container .form__entry,
+.flyt-page #sib-container .sib-input {
     position: relative !important;
     z-index: 1 !important;
 }
 
-#sib-container .entry__field input {
+.flyt-page #sib-container .entry__field input {
     pointer-events: auto !important;
     cursor: text !important;
 }
 
-#sib-container .email-input,
-#sib-container input.email-input,
-#sib-container input[type="email"],
-#sib-container input[type="text"][name="EMAIL"],
-#sib-container .input.email-input {
+.flyt-page #sib-container .email-input,
+.flyt-page #sib-container input.email-input,
+.flyt-page #sib-container input[type="email"],
+.flyt-page #sib-container input[type="text"][name="EMAIL"],
+.flyt-page #sib-container .input.email-input {
     width: 100% !important;
     background: rgba(30, 41, 59, 0.5) !important;
     border: 1px solid rgba(51, 65, 85, 0.5) !important;
@@ -759,26 +759,26 @@ section {
     appearance: none !important;
 }
 
-#sib-container .email-input:focus,
-#sib-container input.email-input:focus,
-#sib-container input[type="email"]:focus,
-#sib-container input[type="text"][name="EMAIL"]:focus,
-#sib-container .input.email-input:focus {
+.flyt-page #sib-container .email-input:focus,
+.flyt-page #sib-container input.email-input:focus,
+.flyt-page #sib-container input[type="email"]:focus,
+.flyt-page #sib-container input[type="text"][name="EMAIL"]:focus,
+.flyt-page #sib-container .input.email-input:focus {
     outline: none !important;
     border-color: var(--primary) !important;
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
     background: rgba(30, 41, 59, 0.7) !important;
 }
 
-#sib-container .email-input::placeholder,
-#sib-container input.email-input::placeholder,
-#sib-container input[type="email"]::placeholder,
-#sib-container input[type="text"][name="EMAIL"]::placeholder {
+.flyt-page #sib-container .email-input::placeholder,
+.flyt-page #sib-container input.email-input::placeholder,
+.flyt-page #sib-container input[type="email"]::placeholder,
+.flyt-page #sib-container input[type="text"][name="EMAIL"]::placeholder {
     color: rgba(203, 213, 225, 0.6) !important;
     opacity: 1 !important;
 }
 
-#sib-container .submit-button {
+.flyt-page #sib-container .submit-button {
     width: 100%;
     background: var(--gradient-1) !important;
     border: none !important;
@@ -795,17 +795,17 @@ section {
     gap: 8px;
 }
 
-#sib-container .submit-button:hover {
+.flyt-page #sib-container .submit-button:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);
 }
 
-#sib-container .submit-button:disabled {
+.flyt-page #sib-container .submit-button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
 
-.sib-form-message-panel {
+.flyt-page .sib-form-message-panel {
     max-width: 600px;
     margin: 0 auto 24px;
     padding: 16px;
@@ -813,43 +813,43 @@ section {
     text-align: center;
 }
 
-#error-message {
+.flyt-page #error-message {
     background-color: rgba(239, 68, 68, 0.1) !important;
     border: 1px solid rgba(239, 68, 68, 0.3) !important;
     color: #ef4444 !important;
 }
 
-#success-message {
+.flyt-page #success-message {
     background-color: rgba(34, 197, 94, 0.1) !important;
     border: 1px solid rgba(34, 197, 94, 0.3) !important;
     color: #22c55e !important;
 }
 
-.sib-captcha {
+.flyt-page .sib-captcha {
     margin: 16px 0;
     display: flex;
     justify-content: center;
 }
 
-/* Ensure form fields are interactive */
-#sib-form input,
-#sib-form .entry__field,
-#sib-form .form__entry {
+/* Ensure form fields are interactive - SCOPED TO FLYT PAGE ONLY */
+.flyt-page #sib-form input,
+.flyt-page #sib-form .entry__field,
+.flyt-page #sib-form .form__entry {
     pointer-events: auto !important;
 }
 
-#sib-form .entry__field {
+.flyt-page #sib-form .entry__field {
     width: 100% !important;
 }
 
-/* Fix any potential overlay issues */
-#sib-container .form__label-row {
+/* Fix any potential overlay issues - SCOPED TO FLYT PAGE ONLY */
+.flyt-page #sib-container .form__label-row {
     position: relative !important;
     z-index: 1 !important;
 }
 
-#sib-container .form__label-row::before,
-#sib-container .form__label-row::after {
+.flyt-page #sib-container .form__label-row::before,
+.flyt-page #sib-container .form__label-row::after {
     display: none !important;
 }
 
