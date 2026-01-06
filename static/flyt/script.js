@@ -80,7 +80,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitButton.style.opacity = '0.6';
                 submitButton.style.cursor = 'not-allowed';
                 const buttonText = submitButton.querySelector('span');
-                if (buttonText) buttonText.textContent = 'Submitting...';
+                if (buttonText) {
+                    buttonText.textContent = 'Submitting...';
+                    // Update message after 10 seconds to let user know it's still working
+                    setTimeout(() => {
+                        if (submitButton.disabled && buttonText) {
+                            buttonText.textContent = 'Still processing...';
+                        }
+                    }, 10000);
+                    // Update again after 30 seconds
+                    setTimeout(() => {
+                        if (submitButton.disabled && buttonText) {
+                            buttonText.textContent = 'Almost done...';
+                        }
+                    }, 30000);
+                }
             }
             
             // Hide previous messages
@@ -93,14 +107,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? 'http://localhost:5000/api/waitlist'
                     : 'https://darkai.ca/api/waitlist';
                 
+                // Create AbortController for timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 second timeout
+                
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ email }),
+                    signal: controller.signal
                 });
                 
+                clearTimeout(timeoutId);
                 const data = await response.json();
                 
                 if (!response.ok) {
