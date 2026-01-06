@@ -1,5 +1,10 @@
 // Waitlist Form Handler - Simple Custom Form
 document.addEventListener('DOMContentLoaded', function() {
+    // Only run on flyt page
+    if (!document.querySelector('.flyt-page')) {
+        return;
+    }
+    
     const form = document.getElementById('waitlistForm');
     const success = document.getElementById('waitlist-success');
     const error = document.getElementById('waitlist-error');
@@ -372,27 +377,38 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function createParticleSystem() {
-    const canvas = document.createElement('canvas');
-    canvas.className = 'particle-canvas';
-    canvas.style.position = 'fixed';
-    canvas.style.top = '0';
-    canvas.style.left = '0';
-    canvas.style.width = '100%';
-    canvas.style.height = '100%';
-    canvas.style.pointerEvents = 'none';
-    canvas.style.zIndex = '1';
-    canvas.style.opacity = '0.3';
-    
-    const hero = document.querySelector('.hero');
-    if (hero) {
+    try {
+        const hero = document.querySelector('.flyt-page .hero');
+        if (!hero) return; // Exit if hero doesn't exist
+        
+        const canvas = document.createElement('canvas');
+        canvas.className = 'particle-canvas';
+        canvas.style.position = 'absolute';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '1';
+        canvas.style.opacity = '0.3';
+        
         hero.appendChild(canvas);
         
         const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        if (!ctx) return; // Exit if canvas context not available
+        
+        let animationFrameId = null;
+        let isAnimating = false;
+        
+        function resizeCanvas() {
+            canvas.width = hero.offsetWidth || window.innerWidth;
+            canvas.height = hero.offsetHeight || window.innerHeight;
+        }
+        
+        resizeCanvas();
         
         const particles = [];
-        const particleCount = 50;
+        const particleCount = 30; // Reduced for better performance
         
         class Particle {
             constructor() {
@@ -427,39 +443,60 @@ function createParticleSystem() {
         }
         
         function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (!isAnimating) return;
             
-            particles.forEach(particle => {
-                particle.update();
-                particle.draw();
-            });
-            
-            // Connect nearby particles
-            particles.forEach((particle, i) => {
-                particles.slice(i + 1).forEach(otherParticle => {
-                    const dx = particle.x - otherParticle.x;
-                    const dy = particle.y - otherParticle.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 100) {
-                        ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - distance / 100)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.beginPath();
-                        ctx.moveTo(particle.x, particle.y);
-                        ctx.lineTo(otherParticle.x, otherParticle.y);
-                        ctx.stroke();
-                    }
+            try {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(particle => {
+                    particle.update();
+                    particle.draw();
                 });
-            });
-            
-            requestAnimationFrame(animate);
+                
+                // Connect nearby particles (simplified for performance)
+                for (let i = 0; i < particles.length; i++) {
+                    for (let j = i + 1; j < Math.min(i + 5, particles.length); j++) {
+                        const dx = particles[i].x - particles[j].x;
+                        const dy = particles[i].y - particles[j].y;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        
+                        if (distance < 100) {
+                            ctx.strokeStyle = `rgba(99, 102, 241, ${0.1 * (1 - distance / 100)})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.beginPath();
+                            ctx.moveTo(particles[i].x, particles[i].y);
+                            ctx.lineTo(particles[j].x, particles[j].y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+                
+                animationFrameId = requestAnimationFrame(animate);
+            } catch (e) {
+                console.error('Particle animation error:', e);
+                isAnimating = false;
+            }
         }
         
+        isAnimating = true;
         animate();
         
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const resizeHandler = () => {
+            resizeCanvas();
+        };
+        
+        window.addEventListener('resize', resizeHandler);
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            isAnimating = false;
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            window.removeEventListener('resize', resizeHandler);
         });
+    } catch (e) {
+        console.error('Particle system error:', e);
+        // Fail silently - particle system is not critical
     }
 }
