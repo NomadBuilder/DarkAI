@@ -733,7 +733,7 @@ section {
     }
     
     .flyt-page .mode-feature-item {
-        padding: 20px;
+        padding: 18px;
         flex-direction: column;
         text-align: center;
         gap: 12px;
@@ -1405,7 +1405,7 @@ section {
     margin-top: 60px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 480px) {
     .flyt-page .mode-features {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -1476,8 +1476,8 @@ section {
     }
     
     .flyt-page .mode-features {
-        grid-template-columns: 1fr;
-        gap: 24px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
         margin-top: 40px;
     }
 }
