@@ -433,6 +433,229 @@ section {
     letter-spacing: 0.01em;
 }
 
+/* Modes Section - SCOPED TO FLYT PAGE ONLY */
+.flyt-page .modes-section {
+    padding: 100px 24px 60px;
+    text-align: center;
+}
+
+/* Mode Hero Sections - SCOPED TO FLYT PAGE ONLY */
+.flyt-page .mode-hero {
+    position: relative;
+    padding: 120px 24px;
+    overflow: hidden;
+    min-height: 600px;
+    display: flex;
+    align-items: center;
+}
+
+.flyt-page .mode-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.flyt-page .mode-orb-1,
+.flyt-page .mode-orb-2 {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: float 20s ease-in-out infinite;
+}
+
+.flyt-page .mode-orb-1 {
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    top: -200px;
+    right: -200px;
+}
+
+.flyt-page .mode-orb-2 {
+    width: 600px;
+    height: 600px;
+    background: linear-gradient(135deg, #ec4899 0%, #f59e0b 100%);
+    top: -200px;
+    left: -200px;
+}
+
+.flyt-page .mode-sensor {
+    background: linear-gradient(180deg, rgba(10, 14, 26, 0.95) 0%, rgba(15, 23, 42, 0.98) 100%);
+    border-top: 1px solid rgba(99, 102, 241, 0.1);
+    border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+}
+
+.flyt-page .mode-wearable {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(10, 14, 26, 0.95) 100%);
+    border-top: 1px solid rgba(236, 72, 153, 0.1);
+    border-bottom: 1px solid rgba(236, 72, 153, 0.1);
+}
+
+.flyt-page .mode-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.flyt-page .mode-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.flyt-page .mode-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.flyt-page .mode-sensor .mode-badge {
+    background: rgba(99, 102, 241, 0.2);
+    color: #818cf8;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.flyt-page .mode-wearable .mode-badge {
+    background: rgba(236, 72, 153, 0.2);
+    color: #f472b6;
+    border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.flyt-page .mode-title {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.flyt-page .mode-name {
+    background: linear-gradient(135deg, #f1f5f9 0%, #cbd5e1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.flyt-page .mode-sensor .mode-name {
+    background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.flyt-page .mode-wearable .mode-name {
+    background: linear-gradient(135deg, #f472b6 0%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.flyt-page .mode-tagline {
+    font-size: 32px;
+    font-weight: 400;
+    color: var(--text-secondary);
+    opacity: 0.8;
+}
+
+.flyt-page .mode-description {
+    font-size: 20px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    margin-bottom: 0;
+}
+
+.flyt-page .mode-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    margin-top: 60px;
+}
+
+.flyt-page .mode-feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 28px;
+    background: rgba(30, 41, 59, 0.3);
+    border: 1px solid rgba(51, 65, 85, 0.15);
+    border-radius: 16px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.flyt-page .mode-sensor .mode-feature-item:hover {
+    border-color: rgba(99, 102, 241, 0.3);
+    background: rgba(30, 41, 59, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.1);
+}
+
+.flyt-page .mode-wearable .mode-feature-item:hover {
+    border-color: rgba(236, 72, 153, 0.3);
+    background: rgba(30, 41, 59, 0.4);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(236, 72, 153, 0.1);
+}
+
+.flyt-page .mode-feature-icon {
+    font-size: 40px;
+    flex-shrink: 0;
+}
+
+.flyt-page .mode-feature-text h4 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.flyt-page .mode-feature-text p {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .flyt-page .mode-hero {
+        padding: 80px 24px;
+        min-height: auto;
+    }
+    
+    .flyt-page .mode-title {
+        font-size: 42px;
+    }
+    
+    .flyt-page .mode-tagline {
+        font-size: 24px;
+    }
+    
+    .flyt-page .mode-description {
+        font-size: 18px;
+    }
+    
+    .flyt-page .mode-features {
+        grid-template-columns: 1fr;
+        gap: 24px;
+        margin-top: 40px;
+    }
+}
+
 /* Features */
 .features {
     padding: 120px 24px;
