@@ -814,10 +814,12 @@ section {
     display: flex;
     align-items: center;
     visibility: hidden;
+    pointer-events: none;
     transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
                 padding 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-                visibility 0s 0.8s;
+                visibility 0s 0.8s,
+                pointer-events 0s 0.8s;
     transform: translateY(-20px) scale(0.98);
     transform-origin: top center;
 }
@@ -828,24 +830,32 @@ section {
     padding: 120px 24px !important;
     min-height: 600px;
     visibility: visible !important;
+    pointer-events: auto !important;
     transform: translateY(0) scale(1);
     transition: max-height 0.8s cubic-bezier(0.4, 0, 0.2, 1),
                 opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
                 padding 0.8s cubic-bezier(0.4, 0, 0.2, 1),
                 transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s,
-                visibility 0s;
+                visibility 0s,
+                pointer-events 0s;
 }
 
 .flyt-page .mode-hero:not(.mode-section-open) .mode-content {
-    opacity: 0;
+    opacity: 0 !important;
     transform: translateY(20px);
+    visibility: hidden;
+    pointer-events: none;
 }
 
 .flyt-page .mode-hero.mode-section-open .mode-content {
     opacity: 1 !important;
-    transform: translateY(0);
-    transition: opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s;
-    visibility: visible;
+    transform: translateY(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transition: opacity 0.6s ease 0.5s, 
+                transform 0.6s ease 0.5s,
+                visibility 0s 0.5s,
+                pointer-events 0s 0.5s;
 }
 
 .flyt-page .mode-background {

@@ -219,31 +219,38 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Force reflow to trigger animations
                 targetSection.offsetHeight;
                 
-                // Animate content in with delay
+                // Ensure section is fully expanded before animating content
                 setTimeout(() => {
+                    // Force reflow to ensure section is expanded
+                    targetSection.offsetHeight;
+                    
                     const content = targetSection.querySelector('.mode-content');
                     if (content) {
-                        content.style.opacity = '1';
-                        content.style.transform = 'translateY(0)';
-                        content.style.visibility = 'visible';
+                        // Remove any inline styles that might conflict
+                        content.style.removeProperty('opacity');
+                        content.style.removeProperty('transform');
+                        content.style.removeProperty('visibility');
+                        content.style.removeProperty('pointer-events');
                     }
                     
                     // Animate visual elements
-                    const visual = targetSection.querySelector('.mode-visual');
-                    if (visual) {
-                        visual.style.opacity = '1';
-                        visual.style.transform = 'translateY(0) scale(1)';
-                    }
-                    
-                    // Animate feature items with stagger
-                    const featureItems = targetSection.querySelectorAll('.mode-feature-item');
-                    featureItems.forEach((item, index) => {
-                        setTimeout(() => {
-                            item.style.opacity = '1';
-                            item.style.transform = 'translateY(0)';
-                        }, 300 + (index * 100));
-                    });
-                }, 300);
+                    setTimeout(() => {
+                        const visual = targetSection.querySelector('.mode-visual');
+                        if (visual) {
+                            visual.style.opacity = '1';
+                            visual.style.transform = 'translateY(0) scale(1)';
+                        }
+                        
+                        // Animate feature items with stagger
+                        const featureItems = targetSection.querySelectorAll('.mode-feature-item');
+                        featureItems.forEach((item, index) => {
+                            setTimeout(() => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'translateY(0)';
+                            }, (index * 100));
+                        });
+                    }, 100);
+                }, 500);
                 
                 const headerHeight = document.querySelector('.nav')?.offsetHeight || 0;
                 
