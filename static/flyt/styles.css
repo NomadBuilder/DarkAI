@@ -1144,6 +1144,18 @@ section {
     }
 }
 
+/* Active button state */
+.flyt-page .mode-selection-button.active {
+    border-color: rgba(99, 102, 241, 0.7);
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateY(-2px);
+}
+
+.flyt-page .mode-button-wearable.active {
+    border-color: rgba(236, 72, 153, 0.7);
+    background: rgba(236, 72, 153, 0.1);
+}
+
 @media (max-width: 968px) {
     .flyt-page .mode-content {
         grid-template-columns: 1fr;
@@ -1168,6 +1180,11 @@ section {
     .flyt-page .watch-face {
         width: 100px;
         height: 120px;
+    }
+    
+    .flyt-page .mode-hero.mode-section-open {
+        padding: 80px 24px;
+        min-height: auto;
     }
 }
 
