@@ -216,6 +216,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Open the target section
                 targetSection.classList.add('mode-section-open');
                 
+                // Force reflow to trigger animations
+                targetSection.offsetHeight;
+                
+                // Ensure content is visible
+                const content = targetSection.querySelector('.mode-content');
+                if (content) {
+                    content.style.opacity = '1';
+                    content.style.transform = 'translateY(0)';
+                    content.style.visibility = 'visible';
+                }
+                
                 const headerHeight = document.querySelector('.nav')?.offsetHeight || 0;
                 
                 // Smooth scroll to section
@@ -225,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         top: sectionTop,
                         behavior: 'smooth'
                     });
-                }, 50);
+                }, 100);
             }
         });
     });
