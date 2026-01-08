@@ -219,13 +219,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Force reflow to trigger animations
                 targetSection.offsetHeight;
                 
-                // Ensure content is visible
-                const content = targetSection.querySelector('.mode-content');
-                if (content) {
-                    content.style.opacity = '1';
-                    content.style.transform = 'translateY(0)';
-                    content.style.visibility = 'visible';
-                }
+                // Animate content in with delay
+                setTimeout(() => {
+                    const content = targetSection.querySelector('.mode-content');
+                    if (content) {
+                        content.style.opacity = '1';
+                        content.style.transform = 'translateY(0)';
+                        content.style.visibility = 'visible';
+                    }
+                    
+                    // Animate visual elements
+                    const visual = targetSection.querySelector('.mode-visual');
+                    if (visual) {
+                        visual.style.opacity = '1';
+                        visual.style.transform = 'translateY(0) scale(1)';
+                    }
+                    
+                    // Animate feature items with stagger
+                    const featureItems = targetSection.querySelectorAll('.mode-feature-item');
+                    featureItems.forEach((item, index) => {
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 300 + (index * 100));
+                    });
+                }, 300);
                 
                 const headerHeight = document.querySelector('.nav')?.offsetHeight || 0;
                 
