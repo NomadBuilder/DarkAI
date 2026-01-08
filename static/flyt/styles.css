@@ -727,8 +727,8 @@ section {
     }
     
     .flyt-page .mode-features {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
         margin-top: 40px;
     }
     
@@ -736,7 +736,7 @@ section {
         padding: 20px;
         flex-direction: column;
         text-align: center;
-        gap: 16px;
+        gap: 12px;
     }
     
     .flyt-page .mode-feature-icon {
@@ -1400,9 +1400,16 @@ section {
 
 .flyt-page .mode-features {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 32px;
     margin-top: 60px;
+}
+
+@media (max-width: 640px) {
+    .flyt-page .mode-features {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }
 
 .flyt-page .mode-feature-item {
