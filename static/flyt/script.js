@@ -212,12 +212,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }, observerOptions);
 
-    // Observe all feature cards and use case cards
-    document.querySelectorAll('.feature-card, .use-case-card, .step').forEach(el => {
+    // Observe all feature cards and use case cards with staggered animation
+    document.querySelectorAll('.feature-card, .use-case-card, .step').forEach((el, index) => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        el.style.transform = 'translateY(50px) scale(0.95)';
+        el.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.1}s`;
         observer.observe(el);
+    });
+    
+    // Enhanced scroll animations for mode sections
+    const modeObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0) scale(1)';
+                
+                // Animate visual elements
+                const visual = entry.target.querySelector('.mode-visual');
+                if (visual) {
+                    visual.style.opacity = '1';
+                    visual.style.transform = 'translateY(0) scale(1)';
+                }
+            }
+        });
+    }, { threshold: 0.2 });
+    
+    document.querySelectorAll('.mode-hero').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(80px) scale(0.98)';
+        el.style.transition = 'opacity 1s ease, transform 1s cubic-bezier(0.4, 0, 0.2, 1)';
+        modeObserver.observe(el);
+        
+        const visual = el.querySelector('.mode-visual');
+        if (visual) {
+            visual.style.opacity = '0';
+            visual.style.transform = 'translateY(40px) scale(0.9)';
+            visual.style.transition = 'opacity 1.2s ease 0.3s, transform 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s';
+        }
     });
 
     // Cursor trail effect
