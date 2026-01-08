@@ -491,6 +491,43 @@ section {
     font-size: 15px;
 }
 
+/* Detection Modes Styling - SCOPED TO FLYT PAGE ONLY */
+.flyt-page .detection-mode {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: rgba(99, 102, 241, 0.05);
+    border-left: 3px solid var(--primary);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.flyt-page .detection-mode:last-child {
+    margin-bottom: 0;
+}
+
+.flyt-page .detection-mode:hover {
+    background: rgba(99, 102, 241, 0.1);
+    border-left-color: var(--primary-light);
+    transform: translateX(4px);
+}
+
+.flyt-page .mode-label {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.flyt-page .mode-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    font-size: 14px;
+    padding-left: 0;
+}
+
 /* How It Works */
 .how-it-works {
     padding: 120px 24px;
