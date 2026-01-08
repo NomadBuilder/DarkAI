@@ -1639,8 +1639,43 @@ section {
 }
 
 /* How It Works */
-.how-it-works {
+.flyt-page .how-it-works {
     padding: 120px 24px;
+}
+
+.flyt-page .how-it-works-visual {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.flyt-page .flyt-app-image {
+    max-width: 100%;
+    width: 100%;
+    max-width: 1200px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(99, 102, 241, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.flyt-page .flyt-app-image:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5),
+                0 0 60px rgba(99, 102, 241, 0.3);
+}
+
+@media (max-width: 768px) {
+    .flyt-page .how-it-works-visual {
+        margin-top: 60px;
+    }
+    
+    .flyt-page .flyt-app-image {
+        border-radius: 16px;
+    }
 }
 
 .steps {
