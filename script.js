@@ -193,19 +193,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.classList.remove('mode-section-open');
             });
             
-            // Reset visual and feature item animations
+            // Reset visual and feature item animations for all sections
             modeSections.forEach(section => {
+                // Don't reset if this is the target section that's about to open
+                if (section === targetSection && !isOpen) {
+                    return; // Skip reset for section that's about to open
+                }
+                
                 const visual = section.querySelector('.mode-visual');
                 if (visual) {
                     visual.style.opacity = '0';
                     visual.style.transform = 'translateY(40px) scale(0.9)';
+                    visual.style.transition = '';
                 }
                 
                 const featureItems = section.querySelectorAll('.mode-feature-item');
                 featureItems.forEach(item => {
                     item.style.opacity = '0';
                     item.style.transform = 'translateY(20px)';
+                    item.style.transition = '';
                 });
+                
+                const content = section.querySelector('.mode-content');
+                if (content) {
+                    content.style.opacity = '0';
+                    content.style.transform = 'translateY(20px)';
+                    content.style.transition = '';
+                }
             });
             
             // If clicking the same section that's open, close it. Otherwise, open the target
@@ -224,33 +238,41 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Force reflow to ensure section is expanded
                     targetSection.offsetHeight;
                     
+                    // Set transitions first, then animate
                     const content = targetSection.querySelector('.mode-content');
                     if (content) {
-                        // Remove any inline styles that might conflict
-                        content.style.removeProperty('opacity');
-                        content.style.removeProperty('transform');
-                        content.style.removeProperty('visibility');
-                        content.style.removeProperty('pointer-events');
+                        content.style.transition = 'opacity 0.6s ease 0.5s, transform 0.6s ease 0.5s, visibility 0s 0.5s';
+                        // Small delay before applying visible state to ensure transitions are set
+                        requestAnimationFrame(() => {
+                            requestAnimationFrame(() => {
+                                content.style.opacity = '1';
+                                content.style.transform = 'translateY(0)';
+                                content.style.visibility = 'visible';
+                                content.style.pointerEvents = 'auto';
+                            });
+                        });
                     }
                     
                     // Animate visual elements
-                    setTimeout(() => {
-                        const visual = targetSection.querySelector('.mode-visual');
-                        if (visual) {
+                    const visual = targetSection.querySelector('.mode-visual');
+                    if (visual) {
+                        visual.style.transition = 'opacity 0.8s ease 0.6s, transform 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.6s';
+                        setTimeout(() => {
                             visual.style.opacity = '1';
                             visual.style.transform = 'translateY(0) scale(1)';
-                        }
-                        
-                        // Animate feature items with stagger
-                        const featureItems = targetSection.querySelectorAll('.mode-feature-item');
-                        featureItems.forEach((item, index) => {
-                            setTimeout(() => {
-                                item.style.opacity = '1';
-                                item.style.transform = 'translateY(0)';
-                            }, (index * 100));
-                        });
-                    }, 100);
-                }, 500);
+                        }, 600);
+                    }
+                    
+                    // Animate feature items with stagger
+                    const featureItems = targetSection.querySelectorAll('.mode-feature-item');
+                    featureItems.forEach((item, index) => {
+                        item.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                        setTimeout(() => {
+                            item.style.opacity = '1';
+                            item.style.transform = 'translateY(0)';
+                        }, 700 + (index * 100));
+                    });
+                }, 400);
                 
                 const headerHeight = document.querySelector('.nav')?.offsetHeight || 0;
                 
