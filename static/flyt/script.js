@@ -340,36 +340,8 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(el);
     });
     
-    // Enhanced scroll animations for mode sections
-    const modeObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0) scale(1)';
-                
-                // Animate visual elements
-                const visual = entry.target.querySelector('.mode-visual');
-                if (visual) {
-                    visual.style.opacity = '1';
-                    visual.style.transform = 'translateY(0) scale(1)';
-                }
-            }
-        });
-    }, { threshold: 0.2 });
-    
-    document.querySelectorAll('.mode-hero').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(80px) scale(0.98)';
-        el.style.transition = 'opacity 1s ease, transform 1s cubic-bezier(0.4, 0, 0.2, 1)';
-        modeObserver.observe(el);
-        
-        const visual = el.querySelector('.mode-visual');
-        if (visual) {
-            visual.style.opacity = '0';
-            visual.style.transform = 'translateY(40px) scale(0.9)';
-            visual.style.transition = 'opacity 1.2s ease 0.3s, transform 1.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s';
-        }
-    });
+    // Don't use IntersectionObserver for mode sections - they're controlled by button clicks
+    // This prevents conflicts with manual animations
 
     // Cursor trail effect
     let cursorTrail = [];
