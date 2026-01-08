@@ -170,13 +170,75 @@ document.addEventListener('DOMContentLoaded', function() {
         if (success) success.style.display = 'none';
     }
 
-    // Smooth scroll for anchor links
+    // Mode section expand/collapse on button click
+    const modeButtons = document.querySelectorAll('.mode-selection-button');
+    const modeSections = document.querySelectorAll('.mode-hero');
+    
+    modeButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const targetSection = document.getElementById(targetId);
+            
+            if (!targetSection) return;
+            
+            // Check if section is already open
+            const isOpen = targetSection.classList.contains('mode-section-open');
+            
+            // Remove active class from all buttons
+            modeButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Close all sections first
+            modeSections.forEach(section => {
+                section.classList.remove('mode-section-open');
+            });
+            
+            // Reset visual and feature item animations
+            modeSections.forEach(section => {
+                const visual = section.querySelector('.mode-visual');
+                if (visual) {
+                    visual.style.opacity = '0';
+                    visual.style.transform = 'translateY(40px) scale(0.9)';
+                }
+                
+                const featureItems = section.querySelectorAll('.mode-feature-item');
+                featureItems.forEach(item => {
+                    item.style.opacity = '0';
+                    item.style.transform = 'translateY(20px)';
+                });
+            });
+            
+            // If clicking the same section that's open, close it. Otherwise, open the target
+            if (!isOpen) {
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Open the target section
+                targetSection.classList.add('mode-section-open');
+                
+                const headerHeight = document.querySelector('.nav')?.offsetHeight || 0;
+                
+                // Smooth scroll to section
+                setTimeout(() => {
+                    const sectionTop = targetSection.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
+                    window.scrollTo({
+                        top: sectionTop,
+                        behavior: 'smooth'
+                    });
+                }, 50);
+            }
+        });
+    });
+    
+    // Smooth scroll for other anchor links (non-mode buttons)
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        if (anchor.classList.contains('mode-selection-button')) return; // Skip mode buttons
+        
         anchor.addEventListener('click', function (e) {
             e.preventDefault();
             const target = document.querySelector(this.getAttribute('href'));
             if (target) {
-                const headerHeight = document.querySelector('.nav').offsetHeight;
+                const headerHeight = document.querySelector('.nav')?.offsetHeight || 0;
                 const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - headerHeight - 20;
                 
                 window.scrollTo({
