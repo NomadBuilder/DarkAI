@@ -7,26 +7,21 @@ services:
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "📦 Building ledger..."
-        # Check if Node.js is available, try nvm if not
-        if ! command -v node &> /dev/null; then
-          echo "📥 Node.js not found, trying nvm..."
-          export NVM_DIR="$HOME/.nvm"
-          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
-          if command -v nvm &> /dev/null; then
-            nvm install 20
-            nvm use 20
-          elif [ -s "/opt/render/.nvm/nvm.sh" ]; then
-            source /opt/render/.nvm/nvm.sh
-            nvm install 20
-            nvm use 20
-          else
-            echo "❌ ERROR: Node.js not available and nvm not found"
-            echo "Please ensure Node.js is available in the build environment"
-            exit 1
+        # Check for Node.js in standard Render location or PATH
+        if [ -d "/opt/render/project/nodes" ]; then
+          NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
+          if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
+            echo "📥 Found Node.js at: $NODE_DIR"
+            export PATH="$NODE_DIR/bin:$PATH"
           fi
         fi
-        echo "✅ Node.js version: $(node --version 2>&1 || echo 'not found')"
-        echo "✅ npm version: $(npm --version 2>&1 || echo 'not found')"
+        # Verify Node.js is available
+        if ! command -v node &> /dev/null; then
+          echo "❌ ERROR: Node.js not found in PATH or standard Render location"
+          exit 1
+        fi
+        echo "✅ Node.js version: $(node --version 2>&1)"
+        echo "✅ npm version: $(npm --version 2>&1)"
         cd ledger
         npm install || { echo "❌ npm install failed"; exit 1; }
         BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
