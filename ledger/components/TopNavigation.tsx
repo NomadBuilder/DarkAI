@@ -21,6 +21,7 @@ export default function TopNavigation() {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     let scrollTimeout: ReturnType<typeof setTimeout>
@@ -72,7 +73,7 @@ export default function TopNavigation() {
 
   return (
     <AnimatePresence>
-      {isVisible && (
+      {(isVisible || isMobileMenuOpen) && (
         <motion.nav
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
