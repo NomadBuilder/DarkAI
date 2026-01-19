@@ -1,7 +1,7 @@
 # Ignore files for Render deployment
 node_modules/
 .next/
-out/
+# Note: out/ is NOT ignored - it's needed for deployment
 .git/
 *.md
 !README.md
