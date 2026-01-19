@@ -1049,15 +1049,26 @@ def export_deepfake_report():
 
 
 # Serve Ledger static files at /ledger path
+# IMPORTANT: This route must come before other catch-all routes
 @app.route('/ledger')
 @app.route('/ledger/')
 @app.route('/ledger/<path:path>')
 def serve_ledger(path='index.html'):
     """Serve the Ledger static files at /ledger path"""
     ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
-    if path == 'index.html' or not path:
+    
+    # Handle root path
+    if path == 'index.html' or not path or path == '':
         return send_from_directory(ledger_dir, 'index.html')
-    return send_from_directory(ledger_dir, path)
+    
+    # Handle static assets (_next, data, etc.)
+    try:
+        return send_from_directory(ledger_dir, path)
+    except Exception as e:
+        # If file not found, try index.html (for client-side routing)
+        if path != 'index.html':
+            return send_from_directory(ledger_dir, 'index.html')
+        raise
 
 
 # Send MPP contact email via Resend for tracking
