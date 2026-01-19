@@ -29,6 +29,12 @@ const nextConfig = {
       path.join(projectRoot, 'node_modules'),
     ]
     
+    // Fix PostCSS plugin resolution
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+    }
+    
     if (dev) {
       config.watchOptions = {
         poll: 1000,
