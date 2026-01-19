@@ -58,15 +58,20 @@ services:
         
         echo ""
         echo "📦 Running npm install..."
-        npm install 2>&1 | tail -5 || { echo "❌ npm install failed"; exit 1; }
+        npm install || { 
+          echo "❌ npm install failed with exit code $?"
+          exit 1
+        }
         
         echo ""
         echo "🔨 Running build..."
         echo "Environment: NODE_ENV=production, BASE_PATH=/ledger, STATIC_EXPORT=true"
-        NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build 2>&1 | tee /tmp/build.log || { 
+        export NODE_ENV=production
+        export BASE_PATH=/ledger
+        export STATIC_EXPORT=true
+        npm run build || {
           echo ""
-          echo "❌ Build failed! Full error output:"
-          cat /tmp/build.log | tail -50
+          echo "❌ Build failed with exit code $?"
           exit 1
         }
         
