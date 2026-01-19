@@ -106,24 +106,42 @@ services:
           fi
         fi
         
+        # Verify from within ledger directory first
+        if [ ! -d "out" ] || [ ! -f "out/index.html" ]; then
+          echo "❌ ERROR: Build output verification failed in ledger directory"
+          echo "Current directory: $(pwd)"
+          echo "out/ exists: $([ -d "out" ] && echo "YES" || echo "NO")"
+          echo "out/index.html exists: $([ -f "out/index.html" ] && echo "YES" || echo "NO")"
+          if [ -d ".next" ]; then
+            echo "⚠️  .next/ exists - build may have run but static export failed"
+            echo "Checking next.config.js output setting..."
+            node -e "process.env.NODE_ENV='production'; process.env.STATIC_EXPORT='true'; const config = require('./next.config.js'); console.log('output:', config.output || 'NOT SET'); console.log('basePath:', config.basePath || 'NOT SET');"
+          fi
+          exit 1
+        fi
+        
+        echo "✅ Build output verified in ledger directory"
+        echo "out/index.html size: $(ls -lh out/index.html | awk '{print $5}')"
+        
         cd ..
         
         echo ""
         echo "✅ Verifying build output from parent directory..."
         echo "Current directory: $(pwd)"
         if [ ! -d "ledger/out" ]; then
-          echo "❌ ERROR: ledger/out/ directory not created"
+          echo "❌ ERROR: ledger/out/ directory not found from parent directory"
+          echo "This suggests a path or permission issue"
           echo "Contents of ledger/:"
           ls -la ledger/ | head -15
           exit 1
         fi
         if [ ! -f "ledger/out/index.html" ]; then
-          echo "❌ ERROR: ledger/out/index.html not found"
+          echo "❌ ERROR: ledger/out/index.html not found from parent directory"
           echo "Contents of ledger/out/:"
           ls -la ledger/out/ | head -10
           exit 1
         fi
-        echo "✅ ledger/out/index.html exists"
+        echo "✅ ledger/out/index.html exists and is accessible"
         echo "✅ Build artifacts:"
         ls -la ledger/out/ | head -10
         echo ""
