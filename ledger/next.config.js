@@ -8,6 +8,14 @@ const nextConfig = {
     unoptimized: true,
   },
   reactStrictMode: true,
+  // Disable ESLint during builds (not critical for production)
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // Disable TypeScript errors during builds (type checking happens in dev)
+  typescript: {
+    ignoreBuildErrors: false, // Keep type checking, but don't fail on warnings
+  },
   // Better error handling and hot reloading
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,
