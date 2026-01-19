@@ -61,6 +61,8 @@ Thumbs.db
 htmlcov/
 
 # Data directories
+# Allow Ledger processed data FIRST (needed for build)
+!ledger/public/data/processed/
 data/
 *.csv
 # Allow specific CSV files needed for reports
