@@ -4,9 +4,17 @@ services:
     env: python
     buildCommand: |
       pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
-      # Build ledger
+      # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "📦 Building ledger..."
+        # Check if Node.js is available, install if not
+        if ! command -v node &> /dev/null; then
+          echo "📥 Installing Node.js..."
+          curl -fsSL https://deb.nodesource.com/setup_20.x | bash - || { echo "❌ Failed to setup Node.js repository"; exit 1; }
+          apt-get install -y nodejs || { echo "❌ Failed to install Node.js"; exit 1; }
+        fi
+        echo "✅ Node.js version: $(node --version)"
+        echo "✅ npm version: $(npm --version)"
         cd ledger
         npm install || { echo "❌ npm install failed"; exit 1; }
         BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
