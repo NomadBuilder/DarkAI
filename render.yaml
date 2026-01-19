@@ -67,14 +67,40 @@ services:
         echo "🔨 Running build..."
         echo "Environment: NODE_ENV=production, BASE_PATH=/ledger, STATIC_EXPORT=true"
         
-        # Run build with environment variables inline (more reliable)
-        if ! NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build; then
+        # Create diagnostic log file
+        DIAG_LOG="/tmp/ledger-build-diagnostic.log"
+        echo "=== Ledger Build Diagnostic ===" > "$DIAG_LOG"
+        echo "Timestamp: $(date)" >> "$DIAG_LOG"
+        echo "Working directory: $(pwd)" >> "$DIAG_LOG"
+        echo "Node.js: $(node --version 2>&1)" >> "$DIAG_LOG"
+        echo "npm: $(npm --version 2>&1)" >> "$DIAG_LOG"
+        echo "Environment vars:" >> "$DIAG_LOG"
+        echo "  NODE_ENV=$NODE_ENV" >> "$DIAG_LOG"
+        echo "  BASE_PATH=$BASE_PATH" >> "$DIAG_LOG"
+        echo "  STATIC_EXPORT=$STATIC_EXPORT" >> "$DIAG_LOG"
+        
+        # Run build with environment variables inline (more reliable) and capture all output
+        if ! NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build >> "$DIAG_LOG" 2>&1; then
           echo ""
           echo "❌ Build failed with exit code $?"
           echo "Current directory: $(pwd)"
           echo "Checking for errors..."
+          echo "Full diagnostic log saved to: $DIAG_LOG"
+          echo "Last 50 lines of diagnostic log:"
+          tail -50 "$DIAG_LOG"
           exit 1
         fi
+        
+        # Add post-build diagnostics
+        echo "" >> "$DIAG_LOG"
+        echo "=== Post-Build Check ===" >> "$DIAG_LOG"
+        echo "out/ exists: $([ -d "out" ] && echo "YES" || echo "NO")" >> "$DIAG_LOG"
+        echo "out/index.html exists: $([ -f "out/index.html" ] && echo "YES" || echo "NO")" >> "$DIAG_LOG"
+        if [ -d "out" ]; then
+          echo "out/ contents:" >> "$DIAG_LOG"
+          ls -la out/ >> "$DIAG_LOG" 2>&1
+        fi
+        echo "Diagnostic log saved to: $DIAG_LOG"
         
         echo ""
         echo "✅ Build command completed"
