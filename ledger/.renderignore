@@ -1,0 +1,25 @@
+# Ignore files for Render deployment
+node_modules/
+.next/
+out/
+.git/
+*.md
+!README.md
+scripts/
+data/raw/
+.env.local
+.env*.local
+*.log
+.DS_Store
+BUILD_ISSUES.md
+CONSOLE_WARNINGS.md
+DATA_*.md
+DEV_SETUP.md
+ENHANCEMENT_PROPOSALS.md
+EXPANDED_ANALYSIS.md
+LAYOUT_ANALYSIS.md
+PROJECT_STATUS.md
+SETUP.md
+UI_FEATURES.md
+VENDOR_CLASSIFICATION.md
+CLASSIFICATION_LOGIC.md

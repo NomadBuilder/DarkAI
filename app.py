@@ -1048,6 +1048,18 @@ def export_deepfake_report():
         return jsonify({"error": str(e)}), 500
 
 
+# Serve Ledger static files at /ledger path
+@app.route('/ledger')
+@app.route('/ledger/')
+@app.route('/ledger/<path:path>')
+def serve_ledger(path='index.html'):
+    """Serve the Ledger static files at /ledger path"""
+    ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
+    if path == 'index.html' or not path:
+        return send_from_directory(ledger_dir, 'index.html')
+    return send_from_directory(ledger_dir, path)
+
+
 # Health check endpoint for Render
 @app.route('/healthz')
 @app.route('/health')

@@ -1,0 +1,13 @@
+# Render config for static site deployment at darkai.ca/ledger
+# Use this file if you want to deploy as a static site (rename to render.yaml)
+
+services:
+  - type: web
+    name: the-ledger
+    env: static
+    buildCommand: npm install && BASE_PATH=/ledger STATIC_EXPORT=true npm run build
+    staticPublishPath: ./out
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

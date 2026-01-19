@@ -1,0 +1,12 @@
+services:
+  # Static Site for darkai.ca/ledger (Recommended)
+  # This is configured for path-based deployment
+  - type: web
+    name: the-ledger
+    env: static
+    buildCommand: npm install && BASE_PATH=/ledger STATIC_EXPORT=true npm run build
+    staticPublishPath: ./out
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

@@ -2,7 +2,10 @@ services:
   - type: web
     name: darkai-consolidated
     env: python
-    buildCommand: pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
+    buildCommand: |
+      pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
+      # Build ledger
+      cd ledger && npm install && BASE_PATH=/ledger STATIC_EXPORT=true npm run build && cd ..
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
