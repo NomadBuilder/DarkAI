@@ -108,8 +108,12 @@ export default function TopNavigation() {
               </div>
 
               {/* Mobile Menu Button */}
-              <div className="md:hidden">
-                <MobileMenu navItems={navItems} scrollToSection={scrollToSection} />
+              <div className="md:hidden relative z-50">
+                <MobileMenu 
+                  navItems={navItems} 
+                  scrollToSection={scrollToSection}
+                  onMenuStateChange={setIsMobileMenuOpen}
+                />
               </div>
             </div>
           </div>
@@ -119,8 +123,21 @@ export default function TopNavigation() {
   )
 }
 
-function MobileMenu({ navItems, scrollToSection }: { navItems: NavItem[], scrollToSection: (id: string) => void }) {
+function MobileMenu({ 
+  navItems, 
+  scrollToSection,
+  onMenuStateChange 
+}: { 
+  navItems: NavItem[]
+  scrollToSection: (id: string) => void
+  onMenuStateChange?: (isOpen: boolean) => void
+}) {
   const [isOpen, setIsOpen] = useState(false)
+
+  // Notify parent of menu state changes
+  useEffect(() => {
+    onMenuStateChange?.(isOpen)
+  }, [isOpen, onMenuStateChange])
 
   // Prevent body scroll when menu is open
   useEffect(() => {
