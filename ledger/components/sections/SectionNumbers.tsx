@@ -221,6 +221,153 @@ export default function SectionNumbers() {
             In six years, for-profit vendor payments increased by <strong className="font-normal text-gray-700">{formatCurrency(last.for_profit_total - first.for_profit_total)}</strong>
           </p>
         </motion.div>
+
+        {/* Trend Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.8, delay: 1.0 }}
+          className="mt-8 md:mt-12"
+        >
+          <div className="bg-white rounded-2xl p-6 md:p-8 border border-gray-200 shadow-sm">
+            <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light mb-6 text-center">
+              For-Profit Spending Trend
+            </p>
+            <div className="relative w-full overflow-x-auto">
+              <svg 
+                className="w-full" 
+                viewBox={`0 0 ${Math.max(600, fordEraData.filter(d => d.for_profit_total > 0).length * 100 + 100)} 250`}
+                preserveAspectRatio="xMidYMid meet"
+                style={{ minHeight: '250px', width: '100%' }}
+              >
+                {/* Y-axis */}
+                <line
+                  x1="60"
+                  y1="20"
+                  x2="60"
+                  y2="220"
+                  stroke="#e5e7eb"
+                  strokeWidth="2"
+                />
+                
+                {/* X-axis */}
+                <line
+                  x1="60"
+                  y1="220"
+                  x2={Math.max(600, fordEraData.filter(d => d.for_profit_total > 0).length * 100 + 60)}
+                  y2="220"
+                  stroke="#e5e7eb"
+                  strokeWidth="2"
+                />
+
+                {/* Calculate max value for scaling */}
+                {(() => {
+                  const validData = fordEraData.filter(d => d.for_profit_total > 0)
+                  if (validData.length === 0) return null
+                  
+                  const maxValue = Math.max(...validData.map(d => d.for_profit_total))
+                  const minValue = Math.min(...validData.map(d => d.for_profit_total))
+                  
+                  return (
+                    <>
+                      {/* Y-axis labels */}
+                      {[0, 0.25, 0.5, 0.75, 1].map((ratio, i) => {
+                        const value = minValue + (maxValue - minValue) * ratio
+                        const y = 220 - (ratio * 200)
+                        return (
+                          <g key={i}>
+                            <line
+                              x1="55"
+                              y1={y}
+                              x2="60"
+                              y2={y}
+                              stroke="#e5e7eb"
+                              strokeWidth="1"
+                            />
+                            <text
+                              x="50"
+                              y={y + 4}
+                              textAnchor="end"
+                              className="text-[10px] sm:text-xs fill-gray-500"
+                            >
+                              {formatCurrency(value)}
+                            </text>
+                          </g>
+                        )
+                      })}
+
+                      {/* Trend line */}
+                      <polyline
+                        points={validData
+                          .map((d, i) => {
+                            const ratio = (d.for_profit_total - minValue) / (maxValue - minValue)
+                            const x = 80 + i * 100
+                            const y = 220 - (ratio * 200)
+                            return `${x},${y}`
+                          })
+                          .join(' ')}
+                        fill="none"
+                        stroke="#ef4444"
+                        strokeWidth="3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+
+                      {/* Area fill */}
+                      <polygon
+                        points={`${validData.map((d, i) => {
+                          const ratio = (d.for_profit_total - minValue) / (maxValue - minValue)
+                          const x = 80 + i * 100
+                          const y = 220 - (ratio * 200)
+                          return `${x},${y}`
+                        }).join(' ')} ${80 + (validData.length - 1) * 100},220 80,220`}
+                        fill="url(#forProfitGradient)"
+                        opacity="0.2"
+                      />
+
+                      {/* Gradient definition */}
+                      <defs>
+                        <linearGradient id="forProfitGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                          <stop offset="0%" stopColor="#ef4444" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="#ef4444" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+
+                      {/* Data points */}
+                      {validData.map((d, i) => {
+                        const ratio = (d.for_profit_total - minValue) / (maxValue - minValue)
+                        const x = 80 + i * 100
+                        const y = 220 - (ratio * 200)
+                        return (
+                          <g key={d.year}>
+                            <circle
+                              cx={x}
+                              cy={y}
+                              r="6"
+                              fill="#ef4444"
+                              stroke="white"
+                              strokeWidth="2"
+                            />
+                            {/* Year label */}
+                            <text
+                              x={x}
+                              y="240"
+                              textAnchor="middle"
+                              className="text-xs fill-gray-600"
+                            >
+                              {d.year}
+                            </text>
+                          </g>
+                        )
+                      })}
+                    </>
+                  )
+                })()}
+              </svg>
+            </div>
+          </div>
+        </motion.div>
       </div>
     </section>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { Payment, Vendor } from '@/types'
+import type { Payment, Vendor } from '../types'
 
 interface VendorCardProps {
   vendorId: string

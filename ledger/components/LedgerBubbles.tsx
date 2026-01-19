@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState, useMemo } from 'react'
-import { useLedgerStore } from '@/store/ledgerStore'
-import type { VendorYearlyPayments } from '@/types'
+import { useLedgerStore } from '../store/ledgerStore'
+import type { VendorYearlyPayments } from '../types'
 
 interface Bubble {
   id: string

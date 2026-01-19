@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../store/ledgerStore'
 import VendorCard from './VendorCard'
 import VendorList from './VendorList'
 

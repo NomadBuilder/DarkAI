@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../../store/ledgerStore'
 
 interface SystemComposition {
   year: number

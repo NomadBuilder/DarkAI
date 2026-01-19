@@ -6,40 +6,88 @@ services:
       pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
-        echo "📦 Building ledger..."
+        echo "=========================================="
+        echo "📦 Building Ledger"
+        echo "=========================================="
+        echo "Current directory: $(pwd)"
+        echo "Ledger directory exists: ✅"
         
         # Find and use Node.js
         if [ -n "$NODE_VERSION" ]; then
           NODE_DIR="/opt/render/project/nodes/node-$NODE_VERSION"
+          echo "Using NODE_VERSION: $NODE_VERSION"
         else
           NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
+          echo "Auto-detecting Node.js..."
         fi
         
         if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
           echo "✅ Found Node.js at: $NODE_DIR"
           export PATH="$NODE_DIR/bin:$PATH"
         else
-          echo "❌ ERROR: Node.js not found. Set NODE_VERSION=22.16.0 in Render dashboard"
+          echo "❌ ERROR: Node.js not found at $NODE_DIR"
+          echo "Please set NODE_VERSION=22.16.0 in Render dashboard"
           exit 1
         fi
         
-        echo "✅ Node.js: $(node --version) | npm: $(npm --version)"
+        echo "✅ Node.js: $(node --version)"
+        echo "✅ npm: $(npm --version)"
+        echo "✅ Node path: $(which node)"
         
         # Build ledger
         cd ledger || { echo "❌ Failed to cd into ledger"; exit 1; }
-        rm -rf .next out  # Clear any stale builds
-        npm install || { echo "❌ npm install failed"; exit 1; }
-        NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
+        echo ""
+        echo "📁 In ledger directory: $(pwd)"
+        echo "📄 Checking critical files:"
+        test -f "package.json" && echo "  ✅ package.json" || echo "  ❌ package.json missing"
+        test -f "tsconfig.json" && echo "  ✅ tsconfig.json" || echo "  ❌ tsconfig.json missing"
+        test -f "next.config.js" && echo "  ✅ next.config.js" || echo "  ❌ next.config.js missing"
+        test -f "app/layout.tsx" && echo "  ✅ app/layout.tsx" || echo "  ❌ app/layout.tsx missing"
+        test -f "components/ErrorBoundary.tsx" && echo "  ✅ components/ErrorBoundary.tsx" || echo "  ❌ components/ErrorBoundary.tsx missing"
+        test -f "components/ScrollyContainer.tsx" && echo "  ✅ components/ScrollyContainer.tsx" || echo "  ❌ components/ScrollyContainer.tsx missing"
+        
+        echo ""
+        echo "🧹 Clearing build cache..."
+        rm -rf .next out
+        
+        echo ""
+        echo "📦 Running npm install..."
+        npm install 2>&1 | tail -5 || { echo "❌ npm install failed"; exit 1; }
+        
+        echo ""
+        echo "🔨 Running build..."
+        echo "Environment: NODE_ENV=production, BASE_PATH=/ledger, STATIC_EXPORT=true"
+        NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build 2>&1 | tail -20 || { 
+          echo ""
+          echo "❌ Build failed! Last 20 lines above."
+          exit 1
+        }
+        
         cd ..
         
-        # Verify build output
-        if [ ! -d "ledger/out" ] || [ ! -f "ledger/out/index.html" ]; then
-          echo "❌ ERROR: Build completed but ledger/out/index.html not found"
+        echo ""
+        echo "✅ Verifying build output..."
+        if [ ! -d "ledger/out" ]; then
+          echo "❌ ERROR: ledger/out/ directory not created"
           exit 1
         fi
-        echo "✅ Ledger build successful"
+        if [ ! -f "ledger/out/index.html" ]; then
+          echo "❌ ERROR: ledger/out/index.html not found"
+          echo "Contents of ledger/out/:"
+          ls -la ledger/out/ | head -10
+          exit 1
+        fi
+        echo "✅ ledger/out/index.html exists"
+        echo "✅ Build artifacts:"
+        ls -la ledger/out/ | head -10
+        echo ""
+        echo "=========================================="
+        echo "✅ Ledger build successful!"
+        echo "=========================================="
       else
-        echo "❌ ERROR: ledger directory not found"
+        echo "❌ ERROR: ledger directory not found in $(pwd)"
+        echo "Directory contents:"
+        ls -la | head -10
         exit 1
       fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120

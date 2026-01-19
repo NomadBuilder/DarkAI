@@ -1,9 +1,9 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../store/ledgerStore'
 import * as d3 from 'd3'
-import type { VendorYearlyPayments, SystemComposition } from '@/types'
+import type { VendorYearlyPayments, SystemComposition } from '../types'
 
 interface LedgerData {
   systemComposition: SystemComposition[]

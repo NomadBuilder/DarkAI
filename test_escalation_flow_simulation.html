@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head><title>Escalation Flow Test</title></head>
+<body>
+<h1>Escalation Packet Flow Test</h1>
+<div id="test-results"></div>
+<script>
+// Simulate the exact flow from trace.html
+const result = {
+  results: [
+    { type: 'domain', value: 'example.com', data: { ip_address: '93.184.216.34' } },
+    { type: 'phone', value: '+1234567890', data: { country: 'US' } }
+  ]
+};
+
+// Simulate checkbox creation
+const checkboxes = [];
+result.results.forEach((entity, index) => {
+  const checkbox = {
+    type: 'checkbox',
+    id: `entity-checkbox-${index}`,
+    className: 'escalation-checkbox',
+    dataset: { index: index },
+    checked: index === 0 // Simulate first one checked
+  };
+  checkboxes.push(checkbox);
+});
+
+// Simulate button click handler
+function simulateButtonClick() {
+  const selectedIndices = checkboxes
+    .filter(cb => cb && cb.checked)
+    .map(cb => parseInt(cb.dataset.index));
+  
+  console.log('Selected indices:', selectedIndices);
+  
+  if (selectedIndices.length === 0) {
+    return { error: 'No entities selected' };
+  }
+  
+  const selectedEntities = selectedIndices.map(idx => result.results[idx]);
+  
+  // Store in localStorage
+  localStorage.setItem('escalationEntities', JSON.stringify(selectedEntities));
+  
+  // Verify storage
+  const stored = localStorage.getItem('escalationEntities');
+  const parsed = JSON.parse(stored);
+  
+  return {
+    success: true,
+    selectedCount: selectedIndices.length,
+    entities: parsed,
+    navigationUrl: '/blackwire/support#report'
+  };
+}
+
+// Run test
+const testResult = simulateButtonClick();
+document.getElementById('test-results').innerHTML = `
+  <pre>${JSON.stringify(testResult, null, 2)}</pre>
+  <p>✅ Test completed. Check console for details.</p>
+`;
+
+console.log('Test Result:', testResult);
+</script>
+</body>
+</html>

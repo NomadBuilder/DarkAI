@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useRef, useState, useEffect, useMemo } from 'react'
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../../store/ledgerStore'
 
 const lenses = [
   {

@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { LedgerState } from '@/types'
+import type { LedgerState } from '../types'
 
 interface LedgerStore extends LedgerState {
   setCurrentYear: (year: number) => void
