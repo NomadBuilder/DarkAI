@@ -7,14 +7,26 @@ services:
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "📦 Building ledger..."
-        # Check if Node.js is available, install if not
+        # Check if Node.js is available, try nvm if not
         if ! command -v node &> /dev/null; then
-          echo "📥 Installing Node.js..."
-          curl -fsSL https://deb.nodesource.com/setup_20.x | bash - || { echo "❌ Failed to setup Node.js repository"; exit 1; }
-          apt-get install -y nodejs || { echo "❌ Failed to install Node.js"; exit 1; }
+          echo "📥 Node.js not found, trying nvm..."
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" || true
+          if command -v nvm &> /dev/null; then
+            nvm install 20
+            nvm use 20
+          elif [ -s "/opt/render/.nvm/nvm.sh" ]; then
+            source /opt/render/.nvm/nvm.sh
+            nvm install 20
+            nvm use 20
+          else
+            echo "❌ ERROR: Node.js not available and nvm not found"
+            echo "Please ensure Node.js is available in the build environment"
+            exit 1
+          fi
         fi
-        echo "✅ Node.js version: $(node --version)"
-        echo "✅ npm version: $(npm --version)"
+        echo "✅ Node.js version: $(node --version 2>&1 || echo 'not found')"
+        echo "✅ npm version: $(npm --version 2>&1 || echo 'not found')"
         cd ledger
         npm install || { echo "❌ npm install failed"; exit 1; }
         BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
