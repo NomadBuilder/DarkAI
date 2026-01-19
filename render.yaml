@@ -45,6 +45,12 @@ services:
         test -f "app/layout.tsx" && echo "  ✅ app/layout.tsx" || echo "  ❌ app/layout.tsx missing"
         test -f "components/ErrorBoundary.tsx" && echo "  ✅ components/ErrorBoundary.tsx" || echo "  ❌ components/ErrorBoundary.tsx missing"
         test -f "components/ScrollyContainer.tsx" && echo "  ✅ components/ScrollyContainer.tsx" || echo "  ❌ components/ScrollyContainer.tsx missing"
+        test -f "postcss.config.js" && echo "  ✅ postcss.config.js" || echo "  ❌ postcss.config.js missing"
+        test -f "tailwind.config.js" && echo "  ✅ tailwind.config.js" || echo "  ❌ tailwind.config.js missing"
+        
+        echo ""
+        echo "📄 Verifying postcss.config.js format:"
+        cat postcss.config.js | head -5
         
         echo ""
         echo "🧹 Clearing build cache..."
@@ -57,9 +63,10 @@ services:
         echo ""
         echo "🔨 Running build..."
         echo "Environment: NODE_ENV=production, BASE_PATH=/ledger, STATIC_EXPORT=true"
-        NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build 2>&1 | tail -20 || { 
+        NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build 2>&1 | tee /tmp/build.log || { 
           echo ""
-          echo "❌ Build failed! Last 20 lines above."
+          echo "❌ Build failed! Full error output:"
+          cat /tmp/build.log | tail -50
           exit 1
         }
         
