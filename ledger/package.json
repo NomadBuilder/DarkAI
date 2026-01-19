@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@react-spring/web": "^10.0.3",
+    "@types/d3": "^7.4.3",
     "autoprefixer": "^10.4.16",
     "d3": "^7.8.5",
     "framer-motion": "^10.16.4",
@@ -29,7 +30,6 @@
     "zustand": "^4.4.7"
   },
   "devDependencies": {
-    "@types/d3": "^7.4.3",
     "@types/node": "^20.10.0",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
