@@ -1,0 +1,13 @@
+# Add this to the END of your existing build command in Render Settings
+# 
+# Current command: pip install -r requirements.txt
+# 
+# New command (paste this ENTIRE line):
+
+pip install -r requirements.txt && if [ -d "ledger" ]; then export PATH="/opt/render/project/nodes/node-22.16.0/bin:$PATH" && cd ledger && rm -rf .next out node_modules && npm install --include=dev && NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build && cd .. && echo "✅ Ledger build completed" || echo "❌ Ledger build failed"; fi
+
+# 
+# This will:
+# 1. Install Python dependencies (existing functionality - unchanged)
+# 2. THEN build the ledger (new addition)
+# 3. Everything else continues to work as before
