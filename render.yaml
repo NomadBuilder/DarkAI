@@ -7,34 +7,76 @@ services:
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "📦 Building ledger..."
+        echo "Current PATH: $PATH"
+        echo "Current directory: $(pwd)"
+        echo "Checking for Node.js..."
+        
         # Check for Node.js in standard Render location or PATH
         if [ -d "/opt/render/project/nodes" ]; then
           NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
           if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
             echo "📥 Found Node.js at: $NODE_DIR"
             export PATH="$NODE_DIR/bin:$PATH"
+            echo "Updated PATH: $PATH"
+          else
+            echo "⚠️  No Node.js found in /opt/render/project/nodes"
           fi
+        else
+          echo "⚠️  /opt/render/project/nodes directory not found"
         fi
+        
+        # Also check if node is already in PATH
+        if command -v node &> /dev/null; then
+          echo "✅ Node.js found in PATH at: $(which node)"
+        else
+          echo "⚠️  Node.js not in PATH, checking common locations..."
+          # Try common locations
+          for NODE_PATH in /usr/local/bin/node /usr/bin/node /opt/render/project/nodes/node-*/bin/node; do
+            if [ -f "$NODE_PATH" ]; then
+              echo "📥 Found Node.js at: $NODE_PATH"
+              export PATH="$(dirname $NODE_PATH):$PATH"
+              break
+            fi
+          done
+        fi
+        
         # Verify Node.js is available
         if ! command -v node &> /dev/null; then
-          echo "❌ ERROR: Node.js not found in PATH or standard Render location"
+          echo "❌ ERROR: Node.js not found"
+          echo "Tried: /opt/render/project/nodes, PATH, and common locations"
           exit 1
         fi
         echo "✅ Node.js version: $(node --version 2>&1)"
         echo "✅ npm version: $(npm --version 2>&1)"
-        cd ledger
+        echo "✅ Node.js path: $(which node)"
+        echo "✅ npm path: $(which npm)"
+        
+        cd ledger || { echo "❌ Failed to cd into ledger directory"; exit 1; }
+        echo "📦 Running npm install..."
         npm install || { echo "❌ npm install failed"; exit 1; }
+        echo "📦 Running npm run build..."
         BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
         cd ..
         if [ -d "ledger/out" ]; then
           echo "✅ Ledger build successful - ledger/out/ exists"
-          ls -la ledger/out/ | head -5
+          echo "Contents of ledger/out/:"
+          ls -la ledger/out/ | head -10
+          if [ -f "ledger/out/index.html" ]; then
+            echo "✅ index.html exists"
+          else
+            echo "❌ WARNING: index.html not found in ledger/out/"
+          fi
         else
           echo "❌ ERROR: ledger/out/ directory not created after build"
+          echo "Current directory contents:"
+          ls -la ledger/ | head -10
           exit 1
         fi
       else
         echo "❌ ERROR: ledger directory not found"
+        echo "Current directory: $(pwd)"
+        echo "Directory contents:"
+        ls -la | head -10
         exit 1
       fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
