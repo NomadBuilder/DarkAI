@@ -66,12 +66,9 @@ services:
         echo ""
         echo "🔨 Running build..."
         echo "Environment: NODE_ENV=production, BASE_PATH=/ledger, STATIC_EXPORT=true"
-        export NODE_ENV=production
-        export BASE_PATH=/ledger
-        export STATIC_EXPORT=true
         
-        # Run build and capture output
-        if ! npm run build; then
+        # Run build with environment variables inline (more reliable)
+        if ! NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build; then
           echo ""
           echo "❌ Build failed with exit code $?"
           echo "Current directory: $(pwd)"
