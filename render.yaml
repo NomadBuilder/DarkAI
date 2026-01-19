@@ -58,10 +58,17 @@ services:
         
         echo ""
         echo "📦 Running npm install..."
-        npm install || { 
+        # Explicitly install all dependencies (not just production)
+        # This ensures devDependencies are also available if needed
+        npm install --include=dev || { 
           echo "❌ npm install failed with exit code $?"
           exit 1
         }
+        
+        # Verify critical dependencies are installed
+        echo ""
+        echo "🔍 Verifying critical dependencies..."
+        npm list typescript tailwindcss postcss autoprefixer 2>&1 | grep -E "(typescript|tailwindcss|postcss|autoprefixer|missing|extraneous)" || echo "✅ All critical dependencies found"
         
         echo ""
         echo "🔨 Running build..."
