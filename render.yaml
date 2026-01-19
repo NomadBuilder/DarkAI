@@ -7,49 +7,48 @@ services:
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "📦 Building ledger..."
-        echo "Current PATH: $PATH"
-        echo "Current directory: $(pwd)"
-        echo "Checking for Node.js..."
+        echo "NODE_VERSION env var: ${NODE_VERSION:-not set}"
         
-        # Check for Node.js in standard Render location or PATH
-        if [ -d "/opt/render/project/nodes" ]; then
-          NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
-          if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
-            echo "📥 Found Node.js at: $NODE_DIR"
+        # Use NODE_VERSION if set, otherwise try to find Node.js automatically
+        if [ -n "$NODE_VERSION" ]; then
+          echo "📥 Using Node.js version from NODE_VERSION: $NODE_VERSION"
+          # Check for Node.js in standard Render location with specific version
+          NODE_DIR="/opt/render/project/nodes/node-$NODE_VERSION"
+          if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
+            echo "✅ Found Node.js at: $NODE_DIR"
             export PATH="$NODE_DIR/bin:$PATH"
-            echo "Updated PATH: $PATH"
           else
-            echo "⚠️  No Node.js found in /opt/render/project/nodes"
+            echo "⚠️  Node.js $NODE_VERSION not found at $NODE_DIR, trying auto-detect..."
+            # Fall back to auto-detection
+            if [ -d "/opt/render/project/nodes" ]; then
+              NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
+              if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
+                echo "📥 Found Node.js at: $NODE_DIR"
+                export PATH="$NODE_DIR/bin:$PATH"
+              fi
+            fi
           fi
         else
-          echo "⚠️  /opt/render/project/nodes directory not found"
-        fi
-        
-        # Also check if node is already in PATH
-        if command -v node &> /dev/null; then
-          echo "✅ Node.js found in PATH at: $(which node)"
-        else
-          echo "⚠️  Node.js not in PATH, checking common locations..."
-          # Try common locations
-          for NODE_PATH in /usr/local/bin/node /usr/bin/node /opt/render/project/nodes/node-*/bin/node; do
-            if [ -f "$NODE_PATH" ]; then
-              echo "📥 Found Node.js at: $NODE_PATH"
-              export PATH="$(dirname $NODE_PATH):$PATH"
-              break
+          echo "📥 Auto-detecting Node.js..."
+          # Check for Node.js in standard Render location
+          if [ -d "/opt/render/project/nodes" ]; then
+            NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
+            if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
+              echo "📥 Found Node.js at: $NODE_DIR"
+              export PATH="$NODE_DIR/bin:$PATH"
             fi
-          done
+          fi
         fi
         
         # Verify Node.js is available
         if ! command -v node &> /dev/null; then
           echo "❌ ERROR: Node.js not found"
-          echo "Tried: /opt/render/project/nodes, PATH, and common locations"
+          echo "Please ensure NODE_VERSION is set in Render dashboard (e.g., 22.16.0)"
           exit 1
         fi
         echo "✅ Node.js version: $(node --version 2>&1)"
         echo "✅ npm version: $(npm --version 2>&1)"
         echo "✅ Node.js path: $(which node)"
-        echo "✅ npm path: $(which npm)"
         
         cd ledger || { echo "❌ Failed to cd into ledger directory"; exit 1; }
         echo "📦 Running npm install..."
