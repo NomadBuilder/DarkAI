@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import type { Payment, Vendor } from '../types'
+import { getDataFile } from '../utils/dataPath'
 
 interface VendorCardProps {
   vendorId: string
@@ -17,8 +18,8 @@ export default function VendorCard({ vendorId }: VendorCardProps) {
       setLoading(true)
       try {
         const [vendorsList, paymentsList] = await Promise.all([
-          fetch(`/data/processed/vendors_master.json`).then(r => r.json()).catch(() => []),
-          fetch(`/data/processed/payments_by_year.json`).then(r => r.json()).catch(() => []),
+          fetch(getDataFile('vendors_master.json')).then(r => r.json()).catch(() => []),
+          fetch(getDataFile('payments_by_year.json')).then(r => r.json()).catch(() => []),
         ])
 
         const vendorData = Array.isArray(vendorsList) 

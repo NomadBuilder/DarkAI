@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { getDataFile } from '../../utils/dataPath'
 
 interface SystemComposition {
   year: number
@@ -14,7 +15,7 @@ export default function SectionBeforeAfter() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/data/processed/system_composition.json')
+    fetch(getDataFile('system_composition.json'))
       .then(r => r.json())
       .then(d => {
         const sorted = d.sort((a: SystemComposition, b: SystemComposition) => a.year - b.year)

@@ -2,6 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLedgerStore } from '../store/ledgerStore'
+import { getDataFile } from '../utils/dataPath'
 import { useEffect, useState } from 'react'
 
 interface SystemComposition {
@@ -19,7 +20,7 @@ export default function VisualizationLegend() {
   useEffect(() => {
     let cancelled = false
     
-    fetch('/data/processed/system_composition.json')
+    fetch(getDataFile('system_composition.json'))
       .then(r => {
         if (!r.ok) {
           throw new Error(`HTTP ${r.status}`)

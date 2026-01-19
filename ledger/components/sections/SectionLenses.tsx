@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useLedgerStore } from '../../store/ledgerStore'
+import { getDataFile } from '../../utils/dataPath'
 
 const lenses = [
   {
@@ -40,7 +41,7 @@ export default function SectionLenses() {
   useEffect(() => {
     const calculateFirstAppearances = async () => {
       try {
-        const response = await fetch('/data/processed/vendors_master.json')
+        const response = await fetch(getDataFile('vendors_master.json'))
         if (!response.ok) return
         const vendors = await response.json()
         

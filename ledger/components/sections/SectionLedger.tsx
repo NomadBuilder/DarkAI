@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState, useEffect } from 'react'
 import { useLedgerStore } from '../../store/ledgerStore'
+import { getDataFile } from '../../utils/dataPath'
 
 interface SystemComposition {
   year: number
@@ -28,7 +29,7 @@ export default function SectionLedger() {
 
   // Load data
   useEffect(() => {
-    fetch('/data/processed/system_composition.json')
+    fetch(getDataFile('system_composition.json'))
       .then(r => r.json())
       .then(d => {
         const sorted = Array.isArray(d) 

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
+import { getDataFile } from '../../utils/dataPath'
 
 interface Vendor {
   name: string
@@ -17,7 +18,7 @@ export default function SectionVendorCallouts() {
 
   useEffect(() => {
     // Load vendor data
-    fetch('/data/processed/vendors_master.json')
+    fetch(getDataFile('vendors_master.json'))
       .then(r => r.json())
       .then(data => {
         // Find specific vendors that first appeared 2018+

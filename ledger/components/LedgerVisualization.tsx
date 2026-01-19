@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useLedgerStore } from '../store/ledgerStore'
+import { getDataFile } from '../utils/dataPath'
 import * as d3 from 'd3'
 import type { VendorYearlyPayments, SystemComposition } from '../types'
 
@@ -37,8 +38,8 @@ export default function LedgerVisualization() {
     const loadData = async () => {
       try {
         const [compositionRes, vendorsRes] = await Promise.all([
-          fetch('/data/processed/system_composition.json').catch(() => null),
-          fetch('/data/processed/vendors_master.json').catch(() => null),
+          fetch(getDataFile('system_composition.json')).catch(() => null),
+          fetch(getDataFile('vendors_master.json')).catch(() => null),
         ])
         
         let composition = null

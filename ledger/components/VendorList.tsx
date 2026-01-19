@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useLedgerStore } from '../store/ledgerStore'
+import { getDataFile } from '../utils/dataPath'
 
 interface Vendor {
   vendor_id: string
@@ -20,7 +21,7 @@ export default function VendorList() {
   useEffect(() => {
     const loadVendors = async () => {
       try {
-        const response = await fetch('/data/processed/vendors_master.json')
+        const response = await fetch(getDataFile('vendors_master.json'))
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }

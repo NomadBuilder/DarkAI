@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import { useLedgerStore } from '../../store/ledgerStore'
+import { getDataFile } from '../../utils/dataPath'
 
 interface SystemComposition {
   year: number
@@ -57,7 +58,7 @@ export default function SectionLedgerEnhanced() {
       }
     }, 10000) // 10 second timeout
     
-    fetch('/data/processed/system_composition.json', {
+    fetch(getDataFile('system_composition.json'), {
       cache: 'no-cache',
       headers: {
         'Cache-Control': 'no-cache',
@@ -116,7 +117,7 @@ export default function SectionLedgerEnhanced() {
   useEffect(() => {
     const calculateFirstAppearances = async () => {
       try {
-        const response = await fetch('/data/processed/vendors_master.json')
+        const response = await fetch(getDataFile('vendors_master.json'))
         if (!response.ok) return
         const vendors = await response.json()
         
