@@ -15,6 +15,12 @@ const nextConfig = {
   },
   // Ensure webpack doesn't cache broken builds
   webpack: (config, { dev, isServer }) => {
+    // Resolve path aliases for webpack
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      '@': require('path').resolve(__dirname),
+    }
+    
     if (dev) {
       config.watchOptions = {
         poll: 1000,
