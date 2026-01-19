@@ -7,75 +7,39 @@ services:
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "📦 Building ledger..."
-        echo "NODE_VERSION env var: ${NODE_VERSION:-not set}"
         
-        # Use NODE_VERSION if set, otherwise try to find Node.js automatically
+        # Find and use Node.js
         if [ -n "$NODE_VERSION" ]; then
-          echo "📥 Using Node.js version from NODE_VERSION: $NODE_VERSION"
-          # Check for Node.js in standard Render location with specific version
           NODE_DIR="/opt/render/project/nodes/node-$NODE_VERSION"
-          if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
-            echo "✅ Found Node.js at: $NODE_DIR"
-            export PATH="$NODE_DIR/bin:$PATH"
-          else
-            echo "⚠️  Node.js $NODE_VERSION not found at $NODE_DIR, trying auto-detect..."
-            # Fall back to auto-detection
-            if [ -d "/opt/render/project/nodes" ]; then
-              NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
-              if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
-                echo "📥 Found Node.js at: $NODE_DIR"
-                export PATH="$NODE_DIR/bin:$PATH"
-              fi
-            fi
-          fi
         else
-          echo "📥 Auto-detecting Node.js..."
-          # Check for Node.js in standard Render location
-          if [ -d "/opt/render/project/nodes" ]; then
-            NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
-            if [ -n "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
-              echo "📥 Found Node.js at: $NODE_DIR"
-              export PATH="$NODE_DIR/bin:$PATH"
-            fi
-          fi
+          NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
         fi
         
-        # Verify Node.js is available
-        if ! command -v node &> /dev/null; then
-          echo "❌ ERROR: Node.js not found"
-          echo "Please ensure NODE_VERSION is set in Render dashboard (e.g., 22.16.0)"
+        if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
+          echo "✅ Found Node.js at: $NODE_DIR"
+          export PATH="$NODE_DIR/bin:$PATH"
+        else
+          echo "❌ ERROR: Node.js not found. Set NODE_VERSION=22.16.0 in Render dashboard"
           exit 1
         fi
-        echo "✅ Node.js version: $(node --version 2>&1)"
-        echo "✅ npm version: $(npm --version 2>&1)"
-        echo "✅ Node.js path: $(which node)"
         
-        cd ledger || { echo "❌ Failed to cd into ledger directory"; exit 1; }
-        echo "📦 Running npm install..."
+        echo "✅ Node.js: $(node --version) | npm: $(npm --version)"
+        
+        # Build ledger
+        cd ledger || { echo "❌ Failed to cd into ledger"; exit 1; }
+        rm -rf .next out  # Clear any stale builds
         npm install || { echo "❌ npm install failed"; exit 1; }
-        echo "📦 Running npm run build..."
-        BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
+        NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
         cd ..
-        if [ -d "ledger/out" ]; then
-          echo "✅ Ledger build successful - ledger/out/ exists"
-          echo "Contents of ledger/out/:"
-          ls -la ledger/out/ | head -10
-          if [ -f "ledger/out/index.html" ]; then
-            echo "✅ index.html exists"
-          else
-            echo "❌ WARNING: index.html not found in ledger/out/"
-          fi
-        else
-          echo "❌ ERROR: ledger/out/ directory not created after build"
-          echo "Current directory contents:"
-          ls -la ledger/ | head -10
+        
+        # Verify build output
+        if [ ! -d "ledger/out" ] || [ ! -f "ledger/out/index.html" ]; then
+          echo "❌ ERROR: Build completed but ledger/out/index.html not found"
           exit 1
         fi
+        echo "✅ Ledger build successful"
       else
         echo "❌ ERROR: ledger directory not found"
-        echo "Current directory: $(pwd)"
-        echo "Directory contents:"
-        ls -la | head -10
         exit 1
       fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
