@@ -1104,8 +1104,10 @@ def send_mpp_email():
         if not message:
             return jsonify({"error": "Message is required"}), 400
         
-        # Get Resend API key (use provided key or env var)
-        resend_api_key = os.getenv('RESEND_API_KEY', 're_DTdoBhu3_Ga2Xs2ohiTyLnsDK4YPVWAVF')
+        # Get Resend API key from environment variable (required)
+        resend_api_key = os.getenv('RESEND_API_KEY')
+        if not resend_api_key:
+            return jsonify({"error": "RESEND_API_KEY not configured"}), 500
         from_email = os.getenv('FROM_EMAIL', 'onboarding@resend.dev')
         contact_email = os.getenv('CONTACT_EMAIL', 'aazirmun@gmail.com')
         
