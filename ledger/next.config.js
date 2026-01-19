@@ -15,11 +15,19 @@ const nextConfig = {
   },
   // Ensure webpack doesn't cache broken builds
   webpack: (config, { dev, isServer }) => {
-    // Resolve path aliases for webpack
+    // Resolve path aliases for webpack - use absolute path resolution
+    const path = require('path')
+    const projectRoot = path.resolve(__dirname)
     config.resolve.alias = {
       ...config.resolve.alias,
-      '@': require('path').resolve(__dirname),
+      '@': projectRoot,
     }
+    // Also add modules directory to resolve
+    config.resolve.modules = [
+      ...(config.resolve.modules || []),
+      projectRoot,
+      path.join(projectRoot, 'node_modules'),
+    ]
     
     if (dev) {
       config.watchOptions = {
