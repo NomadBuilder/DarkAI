@@ -3,7 +3,25 @@ services:
     name: darkai-consolidated
     env: python
     buildCommand: |
+      set -e  # Exit on any error
+      set -x  # Print commands as they execute
+      
+      echo "=========================================="
+      echo "🚀 Starting build process"
+      echo "=========================================="
+      echo "Current directory: $(pwd)"
+      echo "Directory contents:"
+      ls -la | head -10
+      
+      echo ""
+      echo "📦 Installing Python dependencies..."
       pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
+      
+      echo ""
+      echo "=========================================="
+      echo "📦 Building Ledger"
+      echo "=========================================="
+      
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
         echo "=========================================="
