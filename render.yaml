@@ -79,8 +79,32 @@ services:
         echo ""
         echo "✅ Build command completed"
         echo "Current directory: $(pwd)"
+        echo "Waiting 2 seconds for file system to sync..."
+        sleep 2
         echo "Checking for out/ directory..."
-        ls -la out/ 2>&1 | head -10 || echo "out/ directory not found in $(pwd)"
+        if [ -d "out" ]; then
+          echo "✅ out/ directory exists"
+          ls -la out/ | head -10
+          echo "Checking for index.html..."
+          if [ -f "out/index.html" ]; then
+            echo "✅ out/index.html exists"
+            echo "File size: $(ls -lh out/index.html | awk '{print $5}')"
+          else
+            echo "❌ out/index.html NOT found"
+            echo "Contents of out/:"
+            ls -la out/ | head -10
+          fi
+        else
+          echo "❌ out/ directory NOT found in $(pwd)"
+          echo "Current directory contents:"
+          ls -la | head -15
+          echo "Checking if build actually ran..."
+          if [ -d ".next" ]; then
+            echo "⚠️  .next/ exists but out/ doesn't - static export may have failed"
+            echo "Checking next.config.js output setting..."
+            node -e "process.env.NODE_ENV='production'; process.env.STATIC_EXPORT='true'; const config = require('./next.config.js'); console.log('output:', config.output || 'NOT SET');"
+          fi
+        fi
         
         cd ..
         
