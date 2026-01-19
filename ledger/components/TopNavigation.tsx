@@ -138,12 +138,14 @@ function MobileMenu({ navItems, scrollToSection }: { navItems: NavItem[], scroll
     <>
       <button
         onClick={(e) => {
+          e.preventDefault()
           e.stopPropagation()
-          setIsOpen(!isOpen)
+          setIsOpen(prev => !prev)
         }}
-        className="p-2 text-gray-600 hover:text-gray-900 transition-colors relative z-50"
+        className="p-2 text-gray-600 hover:text-gray-900 transition-colors relative z-[80]"
         aria-label="Toggle menu"
         aria-expanded={isOpen}
+        type="button"
       >
         <svg
           className="w-6 h-6"
@@ -165,6 +167,7 @@ function MobileMenu({ navItems, scrollToSection }: { navItems: NavItem[], scroll
       <AnimatePresence>
         {isOpen && (
           <>
+            {/* Backdrop overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -173,6 +176,7 @@ function MobileMenu({ navItems, scrollToSection }: { navItems: NavItem[], scroll
               className="fixed inset-0 bg-black/20 z-[60] md:hidden"
               style={{ top: '56px' }}
             />
+            {/* Slide-out menu */}
             <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
