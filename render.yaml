@@ -69,18 +69,31 @@ services:
         export NODE_ENV=production
         export BASE_PATH=/ledger
         export STATIC_EXPORT=true
-        npm run build || {
+        
+        # Run build and capture output
+        if ! npm run build; then
           echo ""
           echo "❌ Build failed with exit code $?"
+          echo "Current directory: $(pwd)"
+          echo "Checking for errors..."
           exit 1
-        }
+        fi
+        
+        echo ""
+        echo "✅ Build command completed"
+        echo "Current directory: $(pwd)"
+        echo "Checking for out/ directory..."
+        ls -la out/ 2>&1 | head -10 || echo "out/ directory not found in $(pwd)"
         
         cd ..
         
         echo ""
-        echo "✅ Verifying build output..."
+        echo "✅ Verifying build output from parent directory..."
+        echo "Current directory: $(pwd)"
         if [ ! -d "ledger/out" ]; then
           echo "❌ ERROR: ledger/out/ directory not created"
+          echo "Contents of ledger/:"
+          ls -la ledger/ | head -15
           exit 1
         fi
         if [ ! -f "ledger/out/index.html" ]; then
