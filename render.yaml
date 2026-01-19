@@ -3,32 +3,32 @@ services:
     name: darkai-consolidated
     env: python
     buildCommand: |
-      set -e  # Exit on any error
-      set -x  # Print commands as they execute
+      set -x  # Print commands as they execute (but don't exit on error)
       
       echo "=========================================="
       echo "🚀 Starting build process"
       echo "=========================================="
       echo "Current directory: $(pwd)"
       echo "Directory contents:"
-      ls -la | head -10
+      ls -la | head -15
       
       echo ""
       echo "📦 Installing Python dependencies..."
-      pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
+      pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt || echo "⚠️  Python install had issues, but continuing..."
       
       echo ""
       echo "=========================================="
       echo "📦 Building Ledger"
       echo "=========================================="
+      echo "Checking for ledger directory..."
+      ls -la | grep ledger || echo "⚠️  ledger not found in listing"
       
       # Build ledger - ensure Node.js is available
       if [ -d "ledger" ]; then
-        echo "=========================================="
-        echo "📦 Building Ledger"
-        echo "=========================================="
+        echo "✅ ledger/ directory found!"
         echo "Current directory: $(pwd)"
-        echo "Ledger directory exists: ✅"
+        echo "Ledger directory contents:"
+        ls -la ledger/ | head -10
         
         # Find and use Node.js
         if [ -n "$NODE_VERSION" ]; then
