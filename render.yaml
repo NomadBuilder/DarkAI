@@ -5,7 +5,23 @@ services:
     buildCommand: |
       pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt
       # Build ledger
-      cd ledger && npm install && BASE_PATH=/ledger STATIC_EXPORT=true npm run build && cd ..
+      if [ -d "ledger" ]; then
+        echo "📦 Building ledger..."
+        cd ledger
+        npm install || { echo "❌ npm install failed"; exit 1; }
+        BASE_PATH=/ledger STATIC_EXPORT=true npm run build || { echo "❌ npm run build failed"; exit 1; }
+        cd ..
+        if [ -d "ledger/out" ]; then
+          echo "✅ Ledger build successful - ledger/out/ exists"
+          ls -la ledger/out/ | head -5
+        else
+          echo "❌ ERROR: ledger/out/ directory not created after build"
+          exit 1
+        fi
+      else
+        echo "❌ ERROR: ledger directory not found"
+        exit 1
+      fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
