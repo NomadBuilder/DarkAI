@@ -1060,6 +1060,65 @@ def serve_ledger(path='index.html'):
     return send_from_directory(ledger_dir, path)
 
 
+# Send MPP contact email via Resend for tracking
+@app.route('/api/ledger/send-mpp-email', methods=['POST'])
+def send_mpp_email():
+    """Send MPP contact email via Resend for tracking"""
+    try:
+        data = request.get_json()
+        mpp_name = data.get('mppName', '').strip()
+        user_name = data.get('userName', 'A concerned constituent').strip()
+        message = data.get('message', '').strip()
+        
+        if not mpp_name:
+            return jsonify({"error": "MPP name is required"}), 400
+        
+        if not message:
+            return jsonify({"error": "Message is required"}), 400
+        
+        # Get Resend API key (use provided key or env var)
+        resend_api_key = os.getenv('RESEND_API_KEY', 're_DTdoBhu3_Ga2Xs2ohiTyLnsDK4YPVWAVF')
+        from_email = os.getenv('FROM_EMAIL', 'onboarding@resend.dev')
+        contact_email = os.getenv('CONTACT_EMAIL', 'aazirmun@gmail.com')
+        
+        # Send to your email for tracking (you can see usage in Resend dashboard)
+        # Users can still use "Open email client" to send directly to their MPP
+        import requests
+        response = requests.post(
+            'https://api.resend.com/emails',
+            headers={
+                'Authorization': f'Bearer {resend_api_key}',
+                'Content-Type': 'application/json',
+            },
+            json={
+                'from': from_email,
+                'to': [contact_email],
+                'subject': f'Ledger: MPP Contact - {mpp_name}',
+                'text': f'MPP Name: {mpp_name}\nUser Name: {user_name}\n\nMessage:\n{message}',
+                'tags': [
+                    {'name': 'source', 'value': 'ledger'},
+                    {'name': 'mpp_name', 'value': mpp_name.replace(' ', '_')}
+                ]
+            },
+            timeout=10
+        )
+        
+        if response.status_code == 200:
+            email_data = response.json()
+            return jsonify({
+                "success": True,
+                "id": email_data.get('id'),
+                "message": "Message recorded! You can also send directly to your MPP using 'Open email client'."
+            }), 200
+        else:
+            return jsonify({"error": f"Failed to send: {response.text}"}), 500
+            
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+
 # Health check endpoint for Render
 @app.route('/healthz')
 @app.route('/health')

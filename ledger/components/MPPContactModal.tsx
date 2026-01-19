@@ -48,6 +48,39 @@ ${userName || '[Your Name]'}`
     window.location.href = `mailto:?subject=${subject}&body=${body}`
   }
 
+  const handleSendEmail = async () => {
+    if (!mppName.trim()) {
+      alert('Please enter your MPP\'s name')
+      return
+    }
+
+    try {
+      const response = await fetch('/api/ledger/send-mpp-email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mppName,
+          userName: userName || 'A concerned constituent',
+          message: getFullMessage(),
+        }),
+      })
+
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert(data.message || 'Message sent successfully!')
+        onClose()
+      } else {
+        alert(`Failed to send: ${data.error || 'Unknown error'}`)
+      }
+    } catch (error) {
+      console.error('Error sending email:', error)
+      alert('Failed to send message. Please try using the "Open email client" option instead.')
+    }
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -185,9 +218,15 @@ ${userName || '[Your Name]'}`
                   </button>
                   <button
                     onClick={handleOpenEmail}
-                    className="flex-1 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors text-sm md:text-base font-light"
+                    className="flex-1 px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-900 rounded-lg transition-colors text-sm md:text-base font-light"
                   >
                     Open email client
+                  </button>
+                  <button
+                    onClick={handleSendEmail}
+                    className="flex-1 px-4 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition-colors text-sm md:text-base font-light"
+                  >
+                    Send & Track
                   </button>
                 </div>
               </div>
