@@ -1057,18 +1057,35 @@ def serve_ledger(path='index.html'):
     """Serve the Ledger static files at /ledger path"""
     ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
     
+    # Check if directory exists
+    if not os.path.exists(ledger_dir):
+        return jsonify({
+            "error": "Ledger not built yet",
+            "message": "The ledger build may still be in progress. Please check Render build logs.",
+            "ledger_dir": ledger_dir
+        }), 503
+    
     # Handle root path
     if path == 'index.html' or not path or path == '':
+        index_path = os.path.join(ledger_dir, 'index.html')
+        if not os.path.exists(index_path):
+            return jsonify({
+                "error": "Ledger index.html not found",
+                "message": "The ledger build may not have completed. Please check Render build logs.",
+                "index_path": index_path
+            }), 503
         return send_from_directory(ledger_dir, 'index.html')
     
     # Handle static assets (_next, data, etc.)
-    try:
-        return send_from_directory(ledger_dir, path)
-    except Exception as e:
-        # If file not found, try index.html (for client-side routing)
-        if path != 'index.html':
+    file_path = os.path.join(ledger_dir, path)
+    if not os.path.exists(file_path):
+        # For client-side routing, return index.html
+        index_path = os.path.join(ledger_dir, 'index.html')
+        if os.path.exists(index_path):
             return send_from_directory(ledger_dir, 'index.html')
-        raise
+        return jsonify({"error": "File not found", "path": path}), 404
+    
+    return send_from_directory(ledger_dir, path)
 
 
 # Send MPP contact email via Resend for tracking
