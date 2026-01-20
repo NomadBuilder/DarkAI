@@ -4,32 +4,34 @@ import { motion } from 'framer-motion'
 
 export default function SectionFordTracker() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-16 md:py-0">
-      <div className="max-w-6xl w-full space-y-12 md:space-y-16">
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-32">
+      <div className="max-w-6xl w-full space-y-16 md:space-y-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            The Full Picture
-          </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-            Privatization is just one part of a broader pattern
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-8 md:mb-12">
+              The Full Picture
+            </h2>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
+              Privatization (Americanization) is just one part of a broader pattern
+            </p>
+          </div>
         </motion.div>
 
         {/* Key Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-stretch">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12"
+            className="h-full"
           >
+            <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12 h-full flex flex-col">
             <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
               Cuts to Public Services
             </h3>
@@ -50,6 +52,7 @@ export default function SectionFordTracker() {
                 </div>
               ))}
             </div>
+            </div>
           </motion.div>
 
           <motion.div
@@ -57,10 +60,11 @@ export default function SectionFordTracker() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12"
+            className="h-full"
           >
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12 h-full flex flex-col">
             <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
-              Expansion of Privatization
+              Expansion of Privatization (Americanization)
             </h3>
             <p className="text-sm md:text-base text-gray-600 font-light mb-6">
               While cutting public services, private spending has grown
@@ -79,6 +83,7 @@ export default function SectionFordTracker() {
                 </div>
               ))}
             </div>
+            </div>
           </motion.div>
         </div>
 
@@ -88,8 +93,8 @@ export default function SectionFordTracker() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="bg-slate-900 text-white rounded-2xl p-8 md:p-12"
         >
+          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12">
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-light text-center mb-8">
             The Pattern
           </h3>
@@ -113,7 +118,7 @@ export default function SectionFordTracker() {
                   Introduce private alternatives
                 </p>
                 <p className="text-sm md:text-base text-gray-300 font-light">
-                  Frame privatization as the solution to the crisis you created
+                  Frame privatization (Americanization) as the solution to the crisis you created
                 </p>
               </div>
             </div>
@@ -130,6 +135,7 @@ export default function SectionFordTracker() {
               </div>
             </div>
           </div>
+          </div>
         </motion.div>
 
         {/* Source Link */}
@@ -138,16 +144,17 @@ export default function SectionFordTracker() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center"
         >
+          <div className="text-center">
           <a
             href="https://ofl.ca/ford-tracker/"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors"
+            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors mb-16 md:mb-20"
           >
             Explore the Full OFL Ford Tracker →
           </a>
+          </div>
         </motion.div>
       </div>
     </section>

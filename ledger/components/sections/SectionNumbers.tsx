@@ -75,7 +75,7 @@ export default function SectionNumbers() {
 
   if (loading || data.length === 0) {
     return (
-      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-16 md:py-0">
+      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-0">
         <div className="text-center">
           <p className="text-gray-500 font-light">Loading data...</p>
         </div>
@@ -118,18 +118,19 @@ export default function SectionNumbers() {
   }
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-16 md:py-0">
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-0">
       <div className="max-w-6xl w-full space-y-12 md:space-y-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-red-600 mb-8 md:mb-12 leading-tight">
-            Then Doug Ford showed up.
-          </p>
+          <div className="text-center">
+            <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-red-600 mb-8 md:mb-12 leading-tight">
+              Then Doug Ford showed up.
+            </p>
+          </div>
         </motion.div>
 
         <motion.div
@@ -137,11 +138,12 @@ export default function SectionNumbers() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            The Numbers
-          </h2>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
+              The Numbers
+            </h2>
+          </div>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
@@ -151,8 +153,8 @@ export default function SectionNumbers() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200"
           >
+            <div className="bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-200">
             <div className="text-3xl md:text-4xl font-light text-gray-400 mb-4">2018</div>
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
@@ -164,6 +166,7 @@ export default function SectionNumbers() {
                 <span className="text-xl md:text-2xl font-light text-red-600">{formatCurrency(first.for_profit_total)}</span>
               </div>
             </div>
+            </div>
           </motion.div>
 
           {/* 2024 */}
@@ -172,8 +175,8 @@ export default function SectionNumbers() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-slate-50 rounded-2xl p-6 md:p-8 border border-slate-200"
           >
+            <div className="bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-200">
             <div className="text-3xl md:text-4xl font-light text-gray-400 mb-4">2024</div>
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
@@ -185,6 +188,7 @@ export default function SectionNumbers() {
                 <span className="text-xl md:text-2xl font-light text-red-600">{formatCurrency(last.for_profit_total)}</span>
               </div>
             </div>
+            </div>
           </motion.div>
         </div>
 
@@ -194,8 +198,8 @@ export default function SectionNumbers() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="text-center bg-red-50 border border-red-200 rounded-2xl p-8 md:p-12"
         >
+          <div className="text-center bg-red-50 border border-red-200 rounded-2xl p-8 md:p-12">
           <p className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-light text-red-600 mb-4">
             +{forProfitGrowth.toFixed(1)}%
           </p>
@@ -205,6 +209,7 @@ export default function SectionNumbers() {
           <p className="text-xs sm:text-sm text-gray-500 font-light mt-4 italic">
             Based on corrected data (payment processors and misclassified public institutions excluded)
           </p>
+          </div>
         </motion.div>
 
         {/* Simple comparison */}
@@ -213,14 +218,28 @@ export default function SectionNumbers() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center space-y-4"
         >
+          <div className="text-center space-y-4">
           <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light">
             From <span className="text-gray-900">{formatCurrency(first.for_profit_total)}</span> to <span className="text-red-600">{formatCurrency(last.for_profit_total)}</span>
           </p>
-          <p className="text-base sm:text-lg md:text-xl text-gray-500 font-light">
+          <p className="text-base sm:text-lg md:text-xl text-gray-500 font-light mb-20 sm:mb-24 md:mb-32">
             In six years, for-profit vendor payments increased by <strong className="font-normal text-gray-700">{formatCurrency(last.for_profit_total - first.for_profit_total)}</strong>
           </p>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-100px' }}
+            transition={{ duration: 0.8, delay: 1.0 }}
+            className="text-center mb-20 sm:mb-24 md:mb-32"
+          >
+            <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 font-semibold">
+              Sovereignty in words.<br />
+              <span className="text-red-600 font-bold">Americanization</span> in practice.
+            </p>
+          </motion.div>
         </motion.div>
       </div>
     </section>

@@ -1,0 +1,6 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Text logo with accent -->
+  <text x="10" y="40" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="300" fill="#1F2937">The Ledger</text>
+  <!-- Red underline accent -->
+  <line x1="10" y1="45" x2="140" y2="45" stroke="#DC2626" stroke-width="2"/>
+</svg>

@@ -14,14 +14,14 @@ interface SystemComposition {
 }
 
 export default function SectionLedger() {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLElement>(null)
   const { currentYear, setCurrentYear } = useLedgerStore()
   const [isInView, setIsInView] = useState(false)
   const [data, setData] = useState<SystemComposition[]>([])
   const [loading, setLoading] = useState(true)
-  
+
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: containerRef as React.RefObject<HTMLElement>,
     offset: ['start end', 'end start']
   })
 
@@ -170,15 +170,15 @@ export default function SectionLedger() {
     >
       <motion.div 
         style={{ opacity }}
-        className="max-w-6xl w-full space-y-12 md:space-y-16 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 z-10"
       >
+        <div className="max-w-6xl w-full space-y-12 md:space-y-16 fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-4 z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center space-y-8 bg-white/95 backdrop-blur-md rounded-2xl p-8 md:p-12 shadow-xl border border-gray-200/50"
         >
+          <div className="text-center space-y-8 bg-white/95 backdrop-blur-md rounded-2xl p-8 md:p-12 shadow-xl border border-gray-200/50">
           <h2 className="text-4xl sm:text-5xl md:text-6xl font-light text-gray-900">
             The Shift Over Time
           </h2>
@@ -206,8 +206,9 @@ export default function SectionLedger() {
                   whileInView={{ width: `${publicPercent}%` }}
                   viewport={{ once: true }}
                   transition={{ duration: 1, ease: 'easeOut' }}
-                  className="h-full bg-blue-500 rounded-full"
-                />
+                >
+                  <div className="h-full bg-blue-500 rounded-full" />
+                </motion.div>
               </div>
               <p className="text-xs md:text-sm text-gray-500 mt-1 text-right">{publicPercent.toFixed(1)}%</p>
             </div>
@@ -224,8 +225,9 @@ export default function SectionLedger() {
                   whileInView={{ width: `${forProfitPercent}%` }}
                   viewport={{ once: true }}
                   transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
-                  className="h-full bg-red-500 rounded-full"
-                />
+                >
+                  <div className="h-full bg-red-500 rounded-full" />
+                </motion.div>
               </div>
               <p className="text-xs md:text-sm text-gray-500 mt-1 text-right">{forProfitPercent.toFixed(1)}%</p>
             </div>
@@ -235,7 +237,9 @@ export default function SectionLedger() {
           <p className="text-sm md:text-base text-gray-500 font-light italic pt-4">
             Scroll to see how the mix changed from 2018 to 2024
           </p>
+          </div>
         </motion.div>
+        </div>
       </motion.div>
     </section>
   )

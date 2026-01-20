@@ -69,8 +69,8 @@ export default function VisualizationLegend() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 20 }}
-      className="fixed bottom-4 left-4 md:bottom-8 md:left-8 z-30 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-xl shadow-lg p-4 md:p-6 max-w-sm"
     >
+      <div className="fixed bottom-4 left-4 md:bottom-8 md:left-8 z-30 bg-white/95 backdrop-blur-md border border-gray-200/50 rounded-xl shadow-lg p-4 md:p-6 max-w-sm">
       <div className="space-y-4">
         <div>
           <h3 className="text-sm md:text-base font-light text-gray-900 mb-3">
@@ -124,6 +124,7 @@ export default function VisualizationLegend() {
             </div>
           </div>
         </div>
+      </div>
       </div>
     </motion.div>
   )

@@ -2,12 +2,12 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { useLedgerStore } from '../../store/ledgerStore'
+import { useLedgerStore } from '@/store/ledgerStore'
 
 export default function SectionDrift() {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLElement>(null)
   const { scrollYProgress } = useScroll({
-    target: containerRef,
+    target: containerRef as React.RefObject<HTMLElement>,
     offset: ['start end', 'end start']
   })
   const { currentYear } = useLedgerStore()
@@ -23,8 +23,8 @@ export default function SectionDrift() {
     >
       <motion.div 
         style={{ opacity, scale }}
-        className="max-w-5xl w-full text-center space-y-8 md:space-y-12"
       >
+        <div className="max-w-5xl w-full text-center space-y-8 md:space-y-12">
         <motion.div
           key={currentYear}
           initial={{ opacity: 0, scale: 0.9 }}
@@ -36,6 +36,7 @@ export default function SectionDrift() {
             {currentYear}
           </p>
         </motion.div>
+        </div>
       </motion.div>
     </section>
   )

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useLedgerStore } from '../../store/ledgerStore'
+import { useLedgerStore } from '@/store/ledgerStore'
 
 export default function SectionReceipts() {
   const { setReceiptsMode } = useLedgerStore()
@@ -25,8 +25,8 @@ export default function SectionReceipts() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="space-y-4"
         >
+          <div className="space-y-4">
           <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-3xl mx-auto leading-relaxed px-4">
             Vendor names. Exact dollar amounts. Ministry and year. All sourced from Ontario&apos;s Public Accounts.
           </p>
@@ -36,6 +36,7 @@ export default function SectionReceipts() {
           >
             Explore the Data
           </button>
+          </div>
         </motion.div>
       </div>
     </section>

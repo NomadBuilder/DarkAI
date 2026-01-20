@@ -65,14 +65,15 @@ export default function SectionBeforeAfter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
+          <div className="text-center">
           <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
             Before & After
           </h2>
           <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
             What changed when Doug Ford took office
           </p>
+          </div>
         </motion.div>
 
         {/* Comparison Cards */}
@@ -83,8 +84,8 @@ export default function SectionBeforeAfter() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12"
           >
+            <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <p className="text-3xl md:text-4xl font-light text-blue-600 mb-2">
                 {baselineYear.year}
@@ -109,6 +110,7 @@ export default function SectionBeforeAfter() {
                 </p>
               </div>
             </div>
+            </div>
           </motion.div>
 
           {/* After */}
@@ -117,8 +119,8 @@ export default function SectionBeforeAfter() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12"
           >
+            <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12">
             <div className="text-center mb-6">
               <p className="text-3xl md:text-4xl font-light text-red-600 mb-2">
                 {currentYear.year}
@@ -153,6 +155,7 @@ export default function SectionBeforeAfter() {
                 </div>
               </div>
             </div>
+            </div>
           </motion.div>
         </div>
 
@@ -162,8 +165,8 @@ export default function SectionBeforeAfter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="bg-slate-900 text-white rounded-2xl p-8 md:p-12"
         >
+          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12">
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-light text-center mb-8">
             The Change
           </h3>
@@ -196,6 +199,7 @@ export default function SectionBeforeAfter() {
               </p>
             </div>
           </div>
+          </div>
         </motion.div>
 
         {/* Key Insight */}
@@ -204,14 +208,15 @@ export default function SectionBeforeAfter() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="bg-red-50 border-2 border-red-400 rounded-2xl p-8 md:p-12 text-center"
         >
+          <div className="bg-red-50 border-2 border-red-400 rounded-2xl p-8 md:p-12 text-center">
           <p className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-4">
             This shift wasn&apos;t gradual.
           </p>
           <p className="text-xl sm:text-2xl md:text-3xl font-light text-red-900">
             It accelerated the moment Ford took office.
           </p>
+          </div>
         </motion.div>
       </div>
     </section>

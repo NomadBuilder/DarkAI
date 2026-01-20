@@ -54,7 +54,7 @@ def find_resource_urls(dataset_url: str) -> list:
 def create_sample_data():
     """
     Create realistic sample data based on known patterns
-    This simulates the privatization drift pattern
+    This simulates the privatization (Americanization) drift pattern
     """
     print("\n📊 Creating sample data based on known patterns...")
     

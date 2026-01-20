@@ -32,14 +32,15 @@ export default function DataSources() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl font-light text-gray-900 mb-4">
-            Raw Data Sources
-          </h2>
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-3xl mx-auto">
-            Every number comes from publicly available government data. Verify it yourself.
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-light text-gray-900 mb-4">
+              Raw Data Sources
+            </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-3xl mx-auto">
+              Every number comes from publicly available government data. Verify it yourself.
+            </p>
+          </div>
         </motion.div>
 
         <div className="space-y-6 md:space-y-8">
@@ -50,8 +51,8 @@ export default function DataSources() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, delay: idx * 0.1 }}
-              className="bg-gray-50 rounded-xl p-6 md:p-8 border border-gray-200 hover:border-gray-300 transition-colors"
             >
+              <div className="bg-gray-50 rounded-xl p-6 md:p-8 border border-gray-200 hover:border-gray-300 transition-colors">
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                 <div className="flex-1">
                   <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-2">
@@ -83,8 +84,9 @@ export default function DataSources() {
                   className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-light hover:bg-gray-800 transition-colors whitespace-nowrap flex items-center gap-2"
                 >
                   View Source
-                  <span className="text-xs">→</span>
+                  <span className="text-xs">→                  </span>
                 </a>
+              </div>
               </div>
             </motion.div>
           ))}
@@ -95,11 +97,12 @@ export default function DataSources() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="text-center pt-8 border-t border-gray-200"
         >
+          <div className="text-center pt-8 border-t border-gray-200">
           <p className="text-sm md:text-base text-gray-500 font-light">
             All processing code is available in the project repository
           </p>
+          </div>
         </motion.div>
       </div>
     </section>

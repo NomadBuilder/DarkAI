@@ -30,7 +30,7 @@ export default function LedgerVisualization() {
   const { currentYear, receiptsMode, activeLens, setSelectedVendor } = useLedgerStore()
   const dataRef = useRef<LedgerData | null>(null)
   const nodesRef = useRef<Node[]>([])
-  const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null)
+  const simulationRef = useRef<any>(null)
   const [isReady, setIsReady] = useState(false)
 
   // Load data
@@ -193,12 +193,12 @@ export default function LedgerVisualization() {
     }
 
     // Create force simulation
-    const simulation = d3.forceSimulation<Node>(nodes)
-      .force('charge', d3.forceManyBody<Node>().strength((d: Node) => {
+    const simulation = d3.forceSimulation(nodes)
+      .force('charge', d3.forceManyBody().strength((d: Node) => {
         return -Math.sqrt(d.value / 1000000) * 2
       }))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<Node>().radius((d) => d.radius + 2))
+      .force('collision', d3.forceCollide().radius((d: Node) => d.radius + 2))
       .force('x', d3.forceX(width / 2).strength(0.1))
       .force('y', d3.forceY(height / 2).strength(0.1))
       .alpha(1)
@@ -207,22 +207,22 @@ export default function LedgerVisualization() {
     simulationRef.current = simulation
 
     // Create circles
-    const circles = svg.selectAll<SVGCircleElement, Node>('circle')
-      .data(nodes, d => d.id)
+    const circles = svg.selectAll('circle')
+      .data(nodes, (d: Node) => d.id)
 
     // Enter: new circles
     const circlesEnter = circles.enter()
       .append('circle')
       .attr('r', 0)
       .attr('opacity', 0)
-      .attr('fill', d => colorMap[d.type] || colorMap.unknown)
-      .attr('stroke', d => {
+      .attr('fill', (d: Node) => colorMap[d.type] || colorMap.unknown)
+      .attr('stroke', (d: Node) => {
         const color = d3.color(colorMap[d.type] || colorMap.unknown)
         return color ? color.darker(0.3).toString() : colorMap.unknown
       })
       .attr('stroke-width', 1)
       .style('cursor', receiptsMode ? 'pointer' : 'default')
-      .on('click', (event, d) => {
+      .on('click', (event: any, d: Node) => {
         if (receiptsMode) {
           setSelectedVendor(d.id)
         }
@@ -232,7 +232,7 @@ export default function LedgerVisualization() {
     circlesEnter.merge(circles as any)
       .transition()
       .duration(300)
-      .attr('r', d => d.radius)
+      .attr('r', (d: Node) => d.radius)
       .attr('opacity', receiptsMode ? 0.9 : 0.7)
 
     // Exit: remove old circles
@@ -246,8 +246,8 @@ export default function LedgerVisualization() {
     // Update positions on simulation tick
     simulation.on('tick', () => {
       circlesEnter.merge(circles as any)
-        .attr('cx', d => d.x!)
-        .attr('cy', d => d.y!)
+        .attr('cx', (d: Node) => d.x!)
+        .attr('cy', (d: Node) => d.y!)
     })
 
     // Store nodes for reference

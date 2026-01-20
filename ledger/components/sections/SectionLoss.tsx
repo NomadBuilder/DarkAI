@@ -16,8 +16,8 @@ export default function SectionLoss() {
 
   return (
     <>
-      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-slate-900 text-white py-12 md:py-16 pb-24 md:pb-32">
-        <div className="max-w-5xl w-full space-y-16 md:space-y-24">
+      <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-slate-900 text-white py-24 md:py-0">
+        <div className="max-w-5xl w-full space-y-12 md:space-y-16">
         {statements.map((statement, idx) => (
           <motion.div
             key={idx}
@@ -29,11 +29,12 @@ export default function SectionLoss() {
               delay: idx * 0.3,
               ease: [0.22, 1, 0.36, 1]
             }}
-            className="text-center"
           >
-            <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight px-4">
-              {statement}
-            </p>
+            <div className="text-center">
+              <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light leading-tight px-4">
+                {statement}
+              </p>
+            </div>
           </motion.div>
         ))}
         
@@ -43,8 +44,8 @@ export default function SectionLoss() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 1.0 }}
-          className="text-center space-y-6"
         >
+          <div className="text-center space-y-6">
           <h3 className="text-xl sm:text-2xl md:text-3xl font-light text-gray-300">
             Contact your provincial representative
           </h3>
@@ -54,6 +55,7 @@ export default function SectionLoss() {
           >
             Contact Your MPP
           </button>
+          </div>
         </motion.div>
       </div>
     </section>

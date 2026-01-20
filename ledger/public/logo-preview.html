@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Logo Concepts - The Ledger</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #f9fafb;
+      padding: 40px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-weight: 300;
+      color: #1f2937;
+      margin-bottom: 40px;
+    }
+    .logo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-bottom: 60px;
+    }
+    .logo-card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .logo-card h3 {
+      font-weight: 300;
+      color: #374151;
+      margin: 20px 0 10px;
+      font-size: 18px;
+    }
+    .logo-card p {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0;
+    }
+    .logo-preview {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 120px;
+    }
+    .logo-preview.dark {
+      background: #1f2937;
+    }
+  </style>
+</head>
+<body>
+  <h1>Logo Concepts for "The Ledger"</h1>
+  
+  <div class="logo-grid">
+    <div class="logo-card">
+      <div class="logo-preview">
+        <img src="/logo-ledger-book.svg" alt="Ledger Book Logo" style="max-width: 100%; height: auto;">
+      </div>
+      <h3>Ledger Book</h3>
+      <p>Classic open book with ledger lines</p>
+    </div>
+    
+    <div class="logo-card">
+      <div class="logo-preview">
+        <img src="/logo-document.svg" alt="Document Logo" style="max-width: 100%; height: auto;">
+      </div>
+      <h3>Document/Receipt</h3>
+      <p>Financial document with data rows</p>
+    </div>
+    
+    <div class="logo-card">
+      <div class="logo-preview">
+        <img src="/logo-data-viz.svg" alt="Data Visualization Logo" style="max-width: 100%; height: auto;">
+      </div>
+      <h3>Data Visualization</h3>
+      <p>Chart bars with document overlay</p>
+    </div>
+    
+    <div class="logo-card">
+      <div class="logo-preview">
+        <img src="/logo-minimal.svg" alt="Minimal Logo" style="max-width: 100%; height: auto;">
+      </div>
+      <h3>Minimal Stacked</h3>
+      <p>Stacked documents, clean and simple</p>
+    </div>
+    
+    <div class="logo-card">
+      <div class="logo-preview">
+        <img src="/logo-text-only.svg" alt="Text Only Logo" style="max-width: 100%; height: auto;">
+      </div>
+      <h3>Text Only</h3>
+      <p>Typography-focused with red accent</p>
+    </div>
+    
+    <div class="logo-card">
+      <div class="logo-preview">
+        <img src="/logo-icon-text.svg" alt="Icon + Text Logo" style="max-width: 100%; height: auto;">
+      </div>
+      <h3>Icon + Text</h3>
+      <p>Small document icon with text</p>
+    </div>
+  </div>
+  
+  <div style="margin-top: 60px; padding: 30px; background: white; border-radius: 12px;">
+    <h2 style="font-weight: 300; color: #1f2937; margin-bottom: 20px;">Usage Notes</h2>
+    <ul style="color: #6b7280; line-height: 1.8;">
+      <li>All logos use the project's red accent color (#DC2626)</li>
+      <li>SVG format ensures crisp display at any size</li>
+      <li>Logos work on both light and dark backgrounds</li>
+      <li>To use: Replace the current logo in <code>TopNavigation.tsx</code> with one of these</li>
+    </ul>
+  </div>
+</body>
+</html>

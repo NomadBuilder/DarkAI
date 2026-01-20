@@ -11,14 +11,15 @@ export default function SectionDataIntegrity() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            Data Integrity
-          </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-            Every number is verified and sourced
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
+              Data Integrity
+            </h2>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
+              Every number is verified and sourced
+            </p>
+          </div>
         </motion.div>
 
         {/* Integrity Points */}
@@ -51,8 +52,8 @@ export default function SectionDataIntegrity() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="bg-white rounded-xl p-6 md:p-8 border border-gray-200"
             >
+              <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200">
               <div className="flex items-start gap-4">
                 <div className="text-3xl md:text-4xl text-green-600 font-light">
                   {item.icon}
@@ -66,6 +67,7 @@ export default function SectionDataIntegrity() {
                   </p>
                 </div>
               </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -76,8 +78,8 @@ export default function SectionDataIntegrity() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12"
         >
+          <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12">
           <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
             Example: D+H Corporation Correction
           </h3>
@@ -92,8 +94,9 @@ export default function SectionDataIntegrity() {
               <strong className="font-normal">Why it matters:</strong> This was not a $1.7B payment to a for-profit company. It was student financial aid flowing through a payment system. The money went to hundreds of thousands of students, not corporate profits.
             </p>
             <p className="text-xs md:text-sm text-gray-600 italic mt-4">
-              This type of systematic review ensures our data accurately reflects actual privatization, not accounting artifacts.
+              This type of systematic review ensures our data accurately reflects actual privatization (Americanization), not accounting artifacts.
             </p>
+          </div>
           </div>
         </motion.div>
 
@@ -103,14 +106,15 @@ export default function SectionDataIntegrity() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-center"
         >
+          <div className="text-center">
           <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-900 mb-4">
             This data has been audited, corrected, and verified.
           </p>
           <p className="text-base sm:text-lg md:text-xl text-gray-600 font-light">
             Every number is traceable to Ontario Public Accounts.
           </p>
+          </div>
         </motion.div>
       </div>
     </section>

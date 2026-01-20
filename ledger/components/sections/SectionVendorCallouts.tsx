@@ -86,21 +86,22 @@ export default function SectionVendorCallouts() {
   }
 
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-16 md:py-0">
-      <div className="max-w-6xl w-full space-y-12 md:space-y-16">
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-24 md:py-32">
+      <div className="max-w-6xl w-full space-y-16 md:space-y-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            Meet the Beneficiaries
-          </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-            These companies didn&apos;t exist in Ontario&apos;s public accounts before 2018
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-8 md:mb-12">
+              Meet the Beneficiaries
+            </h2>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
+              These companies didn&apos;t exist in Ontario&apos;s public accounts before 2018
+            </p>
+          </div>
         </motion.div>
 
         {vendors.length > 0 ? (
@@ -112,8 +113,8 @@ export default function SectionVendorCallouts() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.8, delay: idx * 0.1 }}
-                className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 hover:border-red-300 transition-colors"
               >
+                <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-red-300 transition-colors">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-2">
@@ -152,6 +153,7 @@ export default function SectionVendorCallouts() {
                 <p className="text-xs md:text-sm text-gray-500 font-light mt-4 pt-4 border-t border-gray-100">
                   {vendor.description}
                 </p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -198,8 +200,8 @@ export default function SectionVendorCallouts() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-50px' }}
                 transition={{ duration: 0.8, delay: idx * 0.1 }}
-                className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 hover:border-red-300 transition-colors"
               >
+                <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-red-300 transition-colors">
                 <div className="flex items-start justify-between gap-4 mb-4">
                   <div className="flex-1">
                     <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-2">
@@ -248,6 +250,7 @@ export default function SectionVendorCallouts() {
                 <p className="text-xs md:text-sm text-gray-500 font-light mt-4 pt-4 border-t border-gray-100">
                   {vendor.description}
                 </p>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -259,14 +262,15 @@ export default function SectionVendorCallouts() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12 text-center"
         >
-          <p className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-4">
-            This wasn&apos;t announced.
-          </p>
-          <p className="text-xl sm:text-2xl md:text-3xl font-light text-red-900">
-            It was invoiced.
-          </p>
+          <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12 text-center">
+            <p className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-4">
+              This wasn&apos;t announced.
+            </p>
+            <p className="text-xl sm:text-2xl md:text-3xl font-light text-red-900">
+              It was invoiced.
+            </p>
+          </div>
         </motion.div>
       </div>
     </section>

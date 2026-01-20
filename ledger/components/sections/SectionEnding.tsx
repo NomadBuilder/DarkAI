@@ -11,19 +11,20 @@ export default function SectionEnding() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <a
-            href="#"
-            onClick={(e) => {
-              e.preventDefault()
-              // Add your petition link here
-              window.open('https://example.com/petition', '_blank')
-            }}
-            className="inline-block px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 bg-gray-900 text-white text-lg sm:text-xl md:text-2xl font-light rounded-lg hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl active:scale-95 touch-manipulation"
-          >
-            Sign a petition to demand change
-          </a>
+          <div className="text-center">
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault()
+                // Add your petition link here
+                window.open('https://example.com/petition', '_blank')
+              }}
+              className="inline-block px-8 sm:px-12 md:px-16 py-4 sm:py-5 md:py-6 bg-gray-900 text-white text-lg sm:text-xl md:text-2xl font-light rounded-lg hover:bg-gray-800 transition-colors shadow-lg hover:shadow-xl active:scale-95 touch-manipulation"
+            >
+              Sign a petition to demand change
+            </a>
+          </div>
         </motion.div>
       </div>
     </section>

@@ -1,23 +1,43 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import Link from 'next/link'
+
+// Get basePath for logo (same logic as dataPath.ts)
+function getLogoPath(): string {
+  if (typeof window === 'undefined') {
+    return process.env.NEXT_PUBLIC_BASE_PATH || process.env.BASE_PATH || ''
+  }
+  const pathname = window.location.pathname
+  if (pathname.startsWith('/ledger')) {
+    return '/ledger'
+  }
+  return ''
+}
 
 interface NavItem {
   id: string
   label: string
-  section: string
+  section?: string
+  href?: string
+  action?: 'dataSources' | 'methodology'
+}
+
+interface TopNavigationProps {
+  onDataSourcesClick?: () => void
+  onMethodologyClick?: () => void
 }
 
 const navItems: NavItem[] = [
-  { id: 'numbers', label: 'The Numbers', section: 'numbers' },
-  { id: 'ledger', label: 'The Ledger', section: 'ledger' },
-  { id: 'staffing', label: 'Staffing Crisis', section: 'staffing' },
-  { id: 'hospitals', label: 'Hospital Crisis', section: 'hospitals' },
-  { id: 'findings', label: 'Findings', section: 'findings' },
+  { id: 'healthcare', label: 'Healthcare & Staffing', href: '/healthcare' },
+  { id: 'receipts', label: 'The Receipts', href: '/receipts' },
+  { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
+  { id: 'methodology', label: 'Methodology', action: 'methodology' },
 ]
 
-export default function TopNavigation() {
+export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }: TopNavigationProps = {}) {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
@@ -71,69 +91,99 @@ export default function TopNavigation() {
     }
   }
 
+  const handleNavClick = (item: NavItem) => {
+    if (item.action === 'dataSources' && onDataSourcesClick) {
+      onDataSourcesClick()
+    } else if (item.action === 'methodology' && onMethodologyClick) {
+      onMethodologyClick()
+    } else if (item.href) {
+      window.location.href = item.href
+    } else if (item.section) {
+      scrollToSection(item.section)
+    }
+  }
+
   return (
-    <AnimatePresence>
-      {(isVisible || isMobileMenuOpen) && (
-        <motion.nav
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: -100, opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-          className={`fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50 transition-all duration-300 ${
-            isScrolling ? 'shadow-sm' : ''
-          }`}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-14 sm:h-16">
-              {/* Logo/Title */}
-              <div className="flex-shrink-0">
-                <button
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-                  className="text-sm sm:text-base font-light text-gray-900 hover:text-gray-700 transition-colors"
-                >
-                  The Ledger
-                </button>
-              </div>
-
-              {/* Navigation Items */}
-              <div className="hidden md:flex items-center space-x-1 lg:space-x-2 flex-1 justify-center max-w-4xl mx-4">
-                {navItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => scrollToSection(item.section)}
-                    className="px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap"
+    <>
+      <AnimatePresence>
+        {(isVisible || isMobileMenuOpen) && (
+          <motion.nav
+            initial={{ y: -100, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: -100, opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            <div className={`fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50 transition-all duration-300 ${
+              isScrolling ? 'shadow-sm' : ''
+            }`}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-14 sm:h-16">
+                {/* Logo/Title */}
+                <div className="flex-shrink-0">
+                  <Link
+                    href="/"
+                    className="flex items-center gap-2 text-sm sm:text-base font-light text-gray-900 hover:text-gray-700 transition-colors"
                   >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+                    <img 
+                      src={`${getLogoPath()}/logo-icon-text.svg`} 
+                      alt="The Ledger" 
+                      className="h-9 sm:h-10 w-auto"
+                    />
+                  </Link>
+                </div>
 
-              {/* Mobile Menu Button */}
-              <div className="md:hidden relative z-50">
-                <MobileMenu 
-                  navItems={navItems} 
-                  scrollToSection={scrollToSection}
-                  onMenuStateChange={setIsMobileMenuOpen}
-                />
+                {/* Navigation Items */}
+                <div className="hidden md:flex items-center space-x-1 lg:space-x-2 xl:space-x-3 flex-1 justify-center max-w-6xl mx-4">
+                  {navItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavClick(item)}
+                      className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap"
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Mobile Menu Button */}
+                <div className="md:hidden relative z-[90]">
+                  <MobileMenu 
+                    navItems={navItems} 
+                    scrollToSection={scrollToSection}
+                    onMenuStateChange={setIsMobileMenuOpen}
+                    onDataSourcesClick={onDataSourcesClick}
+                    onMethodologyClick={onMethodologyClick}
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </motion.nav>
-      )}
-    </AnimatePresence>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
 function MobileMenu({ 
   navItems, 
   scrollToSection,
-  onMenuStateChange 
+  onMenuStateChange,
+  onDataSourcesClick,
+  onMethodologyClick
 }: { 
   navItems: NavItem[]
   scrollToSection: (id: string) => void
   onMenuStateChange?: (isOpen: boolean) => void
+  onDataSourcesClick?: () => void
+  onMethodologyClick?: () => void
 }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Notify parent of menu state changes
   useEffect(() => {
@@ -182,45 +232,68 @@ function MobileMenu({
         </svg>
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop overlay */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/20 z-[60] md:hidden"
-              style={{ top: '56px' }}
-            />
-            {/* Slide-out menu */}
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed top-14 sm:top-16 right-0 bottom-0 w-64 bg-white border-l border-gray-200 shadow-xl z-[70] overflow-y-auto md:hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-4 space-y-1">
-                {navItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => {
-                      scrollToSection(item.section)
-                      setIsOpen(false)
-                    }}
-                    className="w-full text-left px-4 py-3 text-sm font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+      {mounted && (
+        <>
+          {createPortal(
+            <AnimatePresence mode="wait">
+              {isOpen && (
+                <>
+                  {/* Backdrop overlay */}
+                  <motion.div
+                    key="backdrop"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    style={{ position: 'fixed', inset: 0, zIndex: 60, top: '56px' }}
+                    className="md:hidden"
                   >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+                    <div 
+                      className="w-full h-full bg-black/20"
+                      onClick={() => setIsOpen(false)}
+                    />
+                  </motion.div>
+                  {/* Slide-out menu */}
+                  <motion.div
+                    key="menu"
+                    initial={{ x: '100%' }}
+                    animate={{ x: 0 }}
+                    exit={{ x: '100%' }}
+                    transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+                    style={{ position: 'fixed', top: '56px', right: 0, bottom: 0, width: '14rem', zIndex: 70 }}
+                    className="bg-white border-l border-gray-200 shadow-xl overflow-y-auto md:hidden"
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                  >
+                    <div className="p-4 space-y-1">
+                      {navItems.map((item) => (
+                        <button
+                          key={item.id}
+                          onClick={() => {
+                            if (item.action === 'dataSources' && onDataSourcesClick) {
+                              onDataSourcesClick()
+                            } else if (item.action === 'methodology' && onMethodologyClick) {
+                              onMethodologyClick()
+                            } else if (item.href) {
+                              window.location.href = item.href
+                            } else if (item.section) {
+                              scrollToSection(item.section)
+                            }
+                            setIsOpen(false)
+                          }}
+                          className="w-full text-left px-4 py-4 text-lg font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>,
+            document.body
+          )}
+        </>
+      )}
     </>
   )
 }

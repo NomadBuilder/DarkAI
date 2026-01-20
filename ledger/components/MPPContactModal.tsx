@@ -57,9 +57,10 @@ ${userName || '[Your Name]'}`
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/60 z-50 backdrop-blur-sm"
-          />
+            style={{ position: 'fixed', inset: 0, zIndex: 50 }}
+          >
+            <div onClick={onClose} className="w-full h-full bg-black/60 backdrop-blur-sm" />
+          </motion.div>
 
           {/* Modal */}
           <motion.div
@@ -67,12 +68,13 @@ ${userName || '[Your Name]'}`
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
+            style={{ position: 'fixed', inset: 0, zIndex: 50 }}
           >
-            <div
-              className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
+            <div className="flex items-center justify-center p-4 pointer-events-none">
+              <div
+                className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto pointer-events-auto"
+                onClick={(e) => e.stopPropagation()}
+              >
               <div className="p-6 md:p-8">
                 {/* Header */}
                 <div className="flex justify-between items-start mb-6">
@@ -191,6 +193,7 @@ ${userName || '[Your Name]'}`
                   </button>
                 </div>
               </div>
+            </div>
             </div>
           </motion.div>
         </>

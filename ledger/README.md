@@ -1,6 +1,6 @@
 # The Ledger
 
-An interactive, cinematic visualization of Ontario's quiet privatization during the Ford era.
+An interactive, cinematic visualization of Ontario's quiet privatization (Americanization) during the Ford era.
 
 ## Development
 

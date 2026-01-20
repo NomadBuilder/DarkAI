@@ -29,7 +29,7 @@ export default function LedgerCanvas() {
   const { currentYear, receiptsMode, activeLens, setSelectedVendor } = useLedgerStore()
   const dataRef = useRef<LedgerData | null>(null)
   const nodesRef = useRef<Node[]>([])
-  const simulationRef = useRef<d3.Simulation<Node, undefined> | null>(null)
+  const simulationRef = useRef<any>(null)
   const animationFrameRef = useRef<number | null>(null)
   const previousYearRef = useRef<number>(2018)
 
@@ -265,13 +265,13 @@ export default function LedgerCanvas() {
     }
 
     // Create force simulation
-    const simulation = d3.forceSimulation<Node>(nodes)
-      .force('charge', d3.forceManyBody<Node>().strength((d: Node) => {
+    const simulation = d3.forceSimulation(nodes)
+      .force('charge', d3.forceManyBody().strength((d: Node) => {
         // Stronger repulsion for larger nodes
         return -Math.sqrt(d.value / 1000000) * 2
       }))
       .force('center', d3.forceCenter(width / 2, height / 2))
-      .force('collision', d3.forceCollide<Node>().radius((d) => d.radius + 2))
+      .force('collision', d3.forceCollide().radius((d: Node) => d.radius + 2))
       .force('x', d3.forceX(width / 2).strength(0.1))
       .force('y', d3.forceY(height / 2).strength(0.1))
       .alpha(1)

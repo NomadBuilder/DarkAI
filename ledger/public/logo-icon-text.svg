@@ -1,0 +1,11 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon + Text combination -->
+  <!-- Small document icon -->
+  <rect x="5" y="10" width="20" height="28" rx="2" fill="#FFFFFF" stroke="#1F2937" stroke-width="1.5"/>
+  <line x1="8" y1="18" x2="22" y2="18" stroke="#DC2626" stroke-width="1.5"/>
+  <line x1="8" y1="23" x2="20" y2="23" stroke="#6B7280" stroke-width="1"/>
+  <line x1="8" y1="28" x2="18" y2="28" stroke="#6B7280" stroke-width="1"/>
+  
+  <!-- Text -->
+  <text x="32" y="38" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="300" fill="#1F2937">The Ledger</text>
+</svg>

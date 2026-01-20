@@ -89,9 +89,21 @@ export default function SectionLenses() {
   }, [])
 
   return (
-    <section className="flex items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 pt-8 pb-16 md:pb-24">
-      <div className="max-w-6xl w-full">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-2 sm:gap-3 md:gap-4">
+    <section className="flex items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-12 sm:py-16 md:py-20">
+      <div className="max-w-6xl w-full space-y-8 md:space-y-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.8 }}
+        >
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-4 md:mb-6">
+              What are we looking at?
+            </h2>
+          </div>
+        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {lenses.map((lens, idx) => (
             <motion.div
               key={lens.id}
@@ -103,26 +115,28 @@ export default function SectionLenses() {
                 delay: idx * 0.1,
                 ease: [0.22, 1, 0.36, 1]
               }}
-              className="bg-white rounded-xl sm:rounded-2xl p-6 sm:p-8 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all cursor-pointer group"
-              onClick={() => {
-                // Toggle lens: if already active, clear it; otherwise set it
-                const newLens = activeLens === lens.id ? null : lens.id
-                setActiveLens(newLens)
-                lockedLensRef.current = newLens
-              }}
-              onMouseEnter={() => {
-                // Only set on hover if no lens is locked
-                if (lockedLensRef.current === null) {
-                  setActiveLens(lens.id)
-                }
-              }}
-              onMouseLeave={() => {
-                // Only clear on mouse leave if no lens is locked
-                if (lockedLensRef.current === null) {
-                  setActiveLens(null)
-                }
-              }}
             >
+              <div 
+                className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                onClick={() => {
+                  // Toggle lens: if already active, clear it; otherwise set it
+                  const newLens = activeLens === lens.id ? null : lens.id
+                  setActiveLens(newLens)
+                  lockedLensRef.current = newLens
+                }}
+                onMouseEnter={() => {
+                  // Only set on hover if no lens is locked
+                  if (lockedLensRef.current === null) {
+                    setActiveLens(lens.id)
+                  }
+                }}
+                onMouseLeave={() => {
+                  // Only clear on mouse leave if no lens is locked
+                  if (lockedLensRef.current === null) {
+                    setActiveLens(null)
+                  }
+                }}
+              >
               <h3 className={`text-2xl sm:text-3xl md:text-4xl font-light mb-3 sm:mb-4 ${lens.color} ${lens.hoverColor} transition-colors`}>
                 {lens.title}
               </h3>
@@ -136,8 +150,8 @@ export default function SectionLenses() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 }}
-                  className="mt-4 pt-4 border-t border-gray-200"
                 >
+                  <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex items-start gap-2">
                     <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
@@ -154,8 +168,10 @@ export default function SectionLenses() {
                       )}
                     </p>
                   </div>
+                  </div>
                 </motion.div>
               )}
+              </div>
             </motion.div>
           ))}
         </div>

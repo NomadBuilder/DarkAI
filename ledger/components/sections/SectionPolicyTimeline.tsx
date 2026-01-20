@@ -41,7 +41,7 @@ const policyEvents = [
   {
     year: 2024,
     month: 'Present',
-    event: 'Continued privatization',
+    event: 'Continued privatization (Americanization)',
     description: 'Private agency spending continues to grow',
     spendingImpact: 'System remains in crisis',
   },
@@ -49,38 +49,39 @@ const policyEvents = [
 
 export default function SectionPolicyTimeline() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-16 md:py-0">
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-0">
       <div className="max-w-6xl w-full space-y-12 md:space-y-16">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            The Timeline
-          </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-            Policy decisions and their consequences
-          </p>
-          <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
-            Data from <a 
-              href="https://ofl.ca/ford-tracker/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="underline hover:text-gray-700"
-            >
-              OFL Ford Tracker
-            </a> and <a 
-              href="https://www.policyalternatives.ca/news-research/hollowed-out/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="underline hover:text-gray-700"
-            >
-              CCPA Reports
-            </a>
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
+              The Timeline
+            </h2>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
+              Policy decisions and their consequences
+            </p>
+            <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
+              Data from <a 
+                href="https://ofl.ca/ford-tracker/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-700"
+              >
+                OFL Ford Tracker
+              </a> and <a 
+                href="https://www.policyalternatives.ca/news-research/hollowed-out/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-gray-700"
+              >
+                CCPA Reports
+              </a>
+            </p>
+          </div>
         </motion.div>
 
         {/* Timeline */}
@@ -96,10 +97,10 @@ export default function SectionPolicyTimeline() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true, margin: '-100px' }}
                 transition={{ duration: 0.8, delay: idx * 0.15 }}
-                className={`relative flex flex-col md:flex-row items-start gap-6 md:gap-8 ${
-                  idx % 2 === 0 ? 'md:flex-row-reverse' : ''
-                }`}
               >
+                <div className={`relative flex flex-col md:flex-row items-start gap-6 md:gap-8 ${
+                  idx % 2 === 0 ? 'md:flex-row-reverse' : ''
+                }`}>
                 {/* Timeline dot */}
                 <div className="absolute left-8 md:left-1/2 w-4 h-4 bg-red-600 rounded-full border-4 border-white shadow-lg transform md:-translate-x-1/2 z-10"></div>
 
@@ -112,7 +113,7 @@ export default function SectionPolicyTimeline() {
                   }`}
                 >
                   <div
-                    className={`bg-gray-50 rounded-xl p-6 md:p-8 border border-gray-200 hover:border-gray-300 transition-colors ${
+                    className={`bg-gray-50 rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-gray-300 transition-colors ${
                       idx === 0 ? 'bg-red-50 border-red-200' : ''
                     }`}
                   >
@@ -135,6 +136,7 @@ export default function SectionPolicyTimeline() {
                     </div>
                   </div>
                 </div>
+                </div>
               </motion.div>
             ))}
           </div>
@@ -146,14 +148,15 @@ export default function SectionPolicyTimeline() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 1.0 }}
-          className="bg-slate-900 text-white rounded-2xl p-8 md:p-12 text-center"
         >
+          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12 text-center">
           <p className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
             This wasn&apos;t an accident.
           </p>
           <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300">
-            Policy decisions created the conditions for privatization to flourish.
+            Policy decisions created the conditions for privatization (Americanization) to flourish.
           </p>
+          </div>
         </motion.div>
       </div>
     </section>

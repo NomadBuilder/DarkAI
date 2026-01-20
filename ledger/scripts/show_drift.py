@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Show the privatization drift over time
+Show the privatization (Americanization) drift over time
 """
 
 import json
@@ -16,7 +16,7 @@ def main():
     # Sort by year
     composition.sort(key=lambda x: x['year'])
     
-    print("📊 Privatization Drift Analysis\n")
+    print("📊 Privatization (Americanization) Drift Analysis\n")
     print(f"{'Year':<8} {'Public':<20} {'Non-Profit':<20} {'For-Profit':<20} {'Unknown':<20} {'For-Profit %':<15}")
     print("-" * 110)
     

@@ -3,18 +3,17 @@ const nextConfig = {
   // Never use static export in dev mode - only in production builds
   ...(process.env.NODE_ENV === 'production' && process.env.STATIC_EXPORT === 'true' && { output: 'export' }),
   // Base path for deployment at darkai.ca/ledger
-  ...(process.env.BASE_PATH && { basePath: process.env.BASE_PATH }),
+  // Only use basePath in production builds, not in dev mode
+  ...(process.env.NODE_ENV === 'production' && process.env.BASE_PATH && { basePath: process.env.BASE_PATH }),
   images: {
     unoptimized: true,
   },
   reactStrictMode: true,
-  // Disable ESLint during builds (not critical for production)
+  typescript: {
+    ignoreBuildErrors: false,
+  },
   eslint: {
     ignoreDuringBuilds: true,
-  },
-  // Disable TypeScript errors during builds (type checking happens in dev)
-  typescript: {
-    ignoreBuildErrors: false, // Keep type checking, but don't fail on warnings
   },
   // Better error handling and hot reloading
   onDemandEntries: {
@@ -36,12 +35,6 @@ const nextConfig = {
       projectRoot,
       path.join(projectRoot, 'node_modules'),
     ]
-    
-    // Fix PostCSS plugin resolution
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-    }
     
     if (dev) {
       config.watchOptions = {

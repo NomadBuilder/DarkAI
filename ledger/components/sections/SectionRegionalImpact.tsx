@@ -65,21 +65,22 @@ const getSeverityColor = (severity: string) => {
 
 export default function SectionRegionalImpact() {
   return (
-    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-16 md:py-0">
-      <div className="max-w-6xl w-full space-y-12 md:space-y-16">
+    <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-12 md:py-32">
+      <div className="max-w-6xl w-full space-y-16 md:space-y-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            Regional Impact
-          </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-            Some communities are hit harder than others
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
+              Regional Impact
+            </h2>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
+              Some communities are hit harder than others
+            </p>
+          </div>
         </motion.div>
 
         {/* Key Insight */}
@@ -88,8 +89,8 @@ export default function SectionRegionalImpact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-slate-900 text-white rounded-2xl p-8 md:p-12"
         >
+          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12">
           <p className="text-xl sm:text-2xl md:text-3xl font-light text-center mb-4">
             Fastest-growing, most-racialized communities have the lowest per capita hospital spending
           </p>
@@ -107,6 +108,7 @@ export default function SectionRegionalImpact() {
               <p className="text-sm md:text-base text-gray-300">Durham, Peterborough, Scarborough</p>
             </div>
           </div>
+          </div>
         </motion.div>
 
         {/* Regional Cards */}
@@ -118,8 +120,8 @@ export default function SectionRegionalImpact() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.8, delay: 0.4 + idx * 0.1 }}
-              className={`rounded-xl p-6 md:p-8 border-2 ${getSeverityColor(region.severity)}`}
             >
+              <div className={`rounded-2xl p-8 md:p-12 border-2 ${getSeverityColor(region.severity)}`}>
               <div className="flex items-start justify-between gap-4 mb-4">
                 <h3 className="text-xl md:text-2xl font-light flex-1">
                   {region.name}
@@ -155,6 +157,7 @@ export default function SectionRegionalImpact() {
                   ⚠️ {region.note}
                 </p>
               )}
+              </div>
             </motion.div>
           ))}
         </div>
@@ -165,8 +168,8 @@ export default function SectionRegionalImpact() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 1.0 }}
-          className="bg-red-50 border-2 border-red-400 rounded-2xl p-8 md:p-12"
         >
+          <div className="bg-red-50 border-2 border-red-400 rounded-2xl p-8 md:p-12">
           <h3 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6 text-center">
             The Northern Crisis
           </h3>
@@ -187,9 +190,10 @@ export default function SectionRegionalImpact() {
               <p className="text-xs text-gray-600 font-light mt-1">increase in agency costs</p>
             </div>
           </div>
-          <p className="text-center text-lg md:text-xl font-light text-gray-700 mt-8 pt-6 border-t border-red-200">
-            Where shortages are most severe, privatization costs are highest
+          <p className="text-center text-lg md:text-xl font-light text-gray-700 mt-12 md:mt-16 pt-8 md:pt-10 border-t border-red-200 mb-16 md:mb-20">
+            Where shortages are most severe, privatization (Americanization) costs are highest
           </p>
+          </div>
         </motion.div>
       </div>
     </section>

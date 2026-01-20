@@ -29,13 +29,13 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
     },
     {
       title: 'Ford Government LTC Bed Allocations',
-      description: 'Analysis of long-term care bed allocation decisions showing privatization pattern',
+      description: 'Analysis of long-term care bed allocation decisions showing privatization (Americanization) pattern',
       link: 'https://www.ontariohealthcoalition.ca/wp-content/uploads/Final-Ford-government-LTC-bed-allocations-report.pdf',
       organization: 'Ontario Health Coalition',
     },
     {
       title: 'OFL Ford Tracker',
-      description: 'Comprehensive tracking of Ford government cuts, privatization, and policy changes',
+      description: 'Comprehensive tracking of Ford government cuts, privatization (Americanization), and policy changes',
       link: 'https://ofl.ca/ford-tracker/',
       organization: 'Ontario Federation of Labour',
     },
@@ -55,17 +55,19 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-black/50 z-50"
+            style={{ position: 'fixed', inset: 0, zIndex: 50 }}
             aria-hidden="true"
-          />
+          >
+            <div onClick={onClose} className="w-full h-full bg-black/50" />
+          </motion.div>
           <motion.div
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 h-full w-full max-w-2xl bg-white shadow-xl z-50 overflow-y-auto"
+            style={{ position: 'fixed', right: 0, top: 0, height: '100%', width: '100%', maxWidth: '42rem', zIndex: 50 }}
           >
+            <div className="h-full w-full bg-white shadow-xl overflow-y-auto">
             <div className="p-4 md:p-8">
               <div className="flex justify-between items-center mb-6 md:mb-8">
                 <h2 className="text-2xl md:text-3xl font-light text-gray-900">Raw Data Sources</h2>
@@ -132,6 +134,7 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
                   ))}
                 </div>
               </div>
+            </div>
             </div>
           </motion.div>
         </>

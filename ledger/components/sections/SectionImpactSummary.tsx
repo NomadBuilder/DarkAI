@@ -11,14 +11,15 @@ export default function SectionImpactSummary() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8 }}
-          className="text-center"
         >
-          <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-            The Impact
-          </h2>
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-            What this privatization means for Ontario
-          </p>
+          <div className="text-center">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
+              The Impact
+            </h2>
+            <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
+              What this privatization (Americanization) means for Ontario
+            </p>
+          </div>
         </motion.div>
 
         {/* Impact Grid */}
@@ -39,8 +40,8 @@ export default function SectionImpactSummary() {
             {
               icon: '📉',
               title: '33/38 OECD',
-              stat: 'Ranking',
-              description: 'lowest hospital beds per capita',
+              stat: 'Canada\'s ranking',
+              description: 'lowest hospital beds per capita (Ontario reflects this)',
             },
             {
               icon: '👥',
@@ -67,8 +68,8 @@ export default function SectionImpactSummary() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.6, delay: idx * 0.1 }}
-              className="bg-white rounded-xl p-6 md:p-8 border border-gray-200 hover:border-gray-300 transition-colors"
             >
+              <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-gray-300 transition-colors">
               <div className="text-4xl mb-4">{item.icon}</div>
               <h3 className="text-lg md:text-xl font-light text-gray-900 mb-2">
                 {item.title}
@@ -79,6 +80,7 @@ export default function SectionImpactSummary() {
               <p className="text-sm md:text-base text-gray-600 font-light">
                 {item.description}
               </p>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -89,8 +91,8 @@ export default function SectionImpactSummary() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="bg-slate-900 text-white rounded-2xl p-8 md:p-12"
         >
+          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12">
           <div className="max-w-3xl mx-auto space-y-6 text-center">
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
               The Bottom Line
@@ -107,9 +109,10 @@ export default function SectionImpactSummary() {
                 This wasn&apos;t inevitable. It was <strong className="font-normal">policy-driven</strong>.
               </p>
               <p className="text-gray-300">
-                Underfunding created the crisis. Privatization profits from it.
+                Underfunding created the crisis. Privatization (Americanization) profits from it.
               </p>
             </div>
+          </div>
           </div>
         </motion.div>
       </div>

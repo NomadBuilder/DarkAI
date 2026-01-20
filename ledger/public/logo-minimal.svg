@@ -1,0 +1,11 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Minimalist stacked documents -->
+  <rect x="30" y="25" width="60" height="70" rx="2" fill="#FFFFFF" stroke="#1F2937" stroke-width="2"/>
+  <rect x="35" y="30" width="60" height="70" rx="2" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="1.5"/>
+  <rect x="40" y="35" width="60" height="70" rx="2" fill="#E5E7EB" stroke="#6B7280" stroke-width="1"/>
+  
+  <!-- Red accent line on top document -->
+  <line x1="45" y1="50" x2="95" y2="50" stroke="#DC2626" stroke-width="2"/>
+  <line x1="45" y1="60" x2="90" y2="60" stroke="#6B7280" stroke-width="1"/>
+  <line x1="45" y1="70" x2="85" y2="70" stroke="#6B7280" stroke-width="1"/>
+</svg>
