@@ -118,6 +118,7 @@ export default function SectionNumbers() {
   }
 
   return (
+    <>
     <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-0">
       <div className="max-w-6xl w-full space-y-12 md:space-y-16">
         <motion.div
@@ -223,25 +224,31 @@ export default function SectionNumbers() {
           <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light">
             From <span className="text-gray-900">{formatCurrency(first.for_profit_total)}</span> to <span className="text-red-600">{formatCurrency(last.for_profit_total)}</span>
           </p>
-          <p className="text-base sm:text-lg md:text-xl text-gray-500 font-light mb-20 sm:mb-24 md:mb-32">
+          <p className="text-base sm:text-lg md:text-xl text-gray-500 font-light">
             In six years, for-profit vendor payments increased by <strong className="font-normal text-gray-700">{formatCurrency(last.for_profit_total - first.for_profit_total)}</strong>
           </p>
           </div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.8, delay: 1.0 }}
-            className="text-center mb-20 sm:mb-24 md:mb-32"
-          >
-            <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 font-semibold">
-              Sovereignty in words.<br />
-              <span className="text-red-600 font-bold">Americanization</span> in practice.
-            </p>
-          </motion.div>
         </motion.div>
       </div>
     </section>
+
+    {/* Sovereignty Quote Section */}
+    <section className="py-20 sm:py-28 md:py-36 lg:py-44 bg-white">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-center"
+        >
+          <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-gray-900 font-semibold leading-tight">
+            Sovereignty in words.<br />
+            <span className="text-red-600 font-bold">Americanization</span> in practice.
+          </p>
+        </motion.div>
+      </div>
+    </section>
+    </>
   )
 }

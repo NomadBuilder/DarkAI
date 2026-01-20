@@ -101,13 +101,13 @@ export default function ScrollyContainer() {
   }, [setCurrentYear])
 
   return (
-    <div ref={containerRef} className="relative">
+    <div ref={containerRef} className="relative w-full overflow-x-hidden">
       <TopNavigation 
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
       {/* Scrollable content sections */}
-            <div className="relative z-10">
+            <div className="relative z-10 w-full">
         <SectionColdOpen />
         <section id="numbers">
           <SectionNumbers />
