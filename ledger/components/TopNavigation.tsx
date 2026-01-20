@@ -5,8 +5,8 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
-// Get basePath for logo (same logic as dataPath.ts)
-function getLogoPath(): string {
+// Get basePath for logo and links (same logic as dataPath.ts)
+function getBasePath(): string {
   if (typeof window === 'undefined') {
     return process.env.NEXT_PUBLIC_BASE_PATH || process.env.BASE_PATH || ''
   }
@@ -15,6 +15,18 @@ function getLogoPath(): string {
     return '/ledger'
   }
   return ''
+}
+
+function getLogoPath(): string {
+  return getBasePath()
+}
+
+// Helper to prefix hrefs with basePath
+function getNavHref(href: string): string {
+  const basePath = getBasePath()
+  // Remove leading slash if present
+  const cleanHref = href.startsWith('/') ? href.slice(1) : href
+  return basePath ? `${basePath}/${cleanHref}` : `/${cleanHref}`
 }
 
 interface NavItem {
@@ -32,6 +44,7 @@ interface TopNavigationProps {
 
 const navItems: NavItem[] = [
   { id: 'healthcare', label: 'Healthcare & Staffing', href: '/healthcare' },
+  { id: 'alternative-present', label: 'Alternative Present', href: '/alternative-present' },
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', action: 'methodology' },
@@ -97,7 +110,8 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
     } else if (item.action === 'methodology' && onMethodologyClick) {
       onMethodologyClick()
     } else if (item.href) {
-      window.location.href = item.href
+      // Use the basePath-aware href
+      window.location.href = getNavHref(item.href)
     } else if (item.section) {
       scrollToSection(item.section)
     }
@@ -121,7 +135,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                 {/* Logo/Title */}
                 <div className="flex-shrink-0">
                   <Link
-                    href="/"
+                    href={getNavHref('/')}
                     className="flex items-center gap-2 text-sm sm:text-base font-light text-gray-900 hover:text-gray-700 transition-colors"
                   >
                     <img 
@@ -274,7 +288,8 @@ function MobileMenu({
                             } else if (item.action === 'methodology' && onMethodologyClick) {
                               onMethodologyClick()
                             } else if (item.href) {
-                              window.location.href = item.href
+                              // Use the basePath-aware href
+                              window.location.href = getNavHref(item.href)
                             } else if (item.section) {
                               scrollToSection(item.section)
                             }
