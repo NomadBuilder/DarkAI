@@ -51,16 +51,11 @@ export default function SectionWhatCouldFund() {
       try {
         // healthcare_costs.json is in public/data/
         const dataPath = getDataPath('data/healthcare_costs.json')
-        console.log('Fetching healthcare costs from:', dataPath)
         const response = await fetch(dataPath)
-        console.log('Response status:', response.status, response.statusText)
         if (!response.ok) {
-          const errorText = await response.text()
-          console.error('Failed to fetch healthcare costs:', response.status, errorText.substring(0, 200))
-          throw new Error(`HTTP ${response.status}: ${errorText.substring(0, 100)}`)
+          throw new Error(`HTTP ${response.status}`)
         }
         const data = await response.json()
-        console.log('Successfully loaded healthcare costs data:', Object.keys(data))
         setHealthcareCosts(data)
       } catch (error) {
         console.error('Failed to load healthcare costs data:', error)
