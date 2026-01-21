@@ -27,21 +27,27 @@ export default function SectionNumbers() {
       }
     }, 10000) // 10 second timeout
     
-    fetch(getDataFile('system_composition.json'), {
+    const dataUrl = getDataFile('system_composition.json')
+    console.log('Fetching data from:', dataUrl)
+    
+    fetch(dataUrl, {
       cache: 'no-cache',
       headers: {
         'Cache-Control': 'no-cache',
       },
     })
       .then(r => {
+        console.log('Response status:', r.status, r.statusText)
         if (!r.ok) {
-          throw new Error(`HTTP ${r.status}`)
+          throw new Error(`HTTP ${r.status}: ${r.statusText}`)
         }
         return r.json()
       })
       .then(d => {
         clearTimeout(timeoutId)
         if (cancelled) return
+        
+        console.log('Data received:', d ? `${Array.isArray(d) ? d.length : 'not array'} items` : 'null')
         
         if (!d) {
           console.error('No data received')
