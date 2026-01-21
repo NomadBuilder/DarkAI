@@ -1055,6 +1055,9 @@ def export_deepfake_report():
 @app.route('/ledger/<path:path>')
 def serve_ledger(path='index.html'):
     """Serve the Ledger static files at /ledger path"""
+    import os
+    from flask import send_from_directory, jsonify
+    
     ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
     
     # Check if directory exists
@@ -1076,17 +1079,31 @@ def serve_ledger(path='index.html'):
             }), 503
         return send_from_directory(ledger_dir, 'index.html')
     
-    # Handle static assets (_next, data, etc.)
-    file_path = os.path.join(ledger_dir, path)
-    if not os.path.exists(file_path):
-        # For client-side routing, return index.html
-        index_path = os.path.join(ledger_dir, 'index.html')
-        if os.path.exists(index_path):
-            return send_from_directory(ledger_dir, 'index.html')
-        return jsonify({"error": "File not found", "path": path}), 404
+    # Remove leading slash if present
+    path = path.lstrip('/')
     
-    return send_from_directory(ledger_dir, path)
-
+    # Try multiple file patterns for Next.js static export
+    # 1. Exact path (for static assets like _next/, data/, etc.)
+    file_path = os.path.join(ledger_dir, path)
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return send_from_directory(ledger_dir, path)
+    
+    # 2. Path with .html extension (Next.js static pages)
+    html_path = os.path.join(ledger_dir, f"{path}.html")
+    if os.path.exists(html_path):
+        return send_from_directory(ledger_dir, f"{path}.html")
+    
+    # 3. Path as directory with index.html
+    dir_index_path = os.path.join(ledger_dir, path, 'index.html')
+    if os.path.exists(dir_index_path):
+        return send_from_directory(os.path.join(ledger_dir, path), 'index.html')
+    
+    # 4. For client-side routing (SPA), return index.html
+    index_path = os.path.join(ledger_dir, 'index.html')
+    if os.path.exists(index_path):
+        return send_from_directory(ledger_dir, 'index.html')
+    
+    return jsonify({"error": "File not found", "path": path}), 404
 
 # Send MPP contact email via Resend for tracking
 @app.route('/api/ledger/send-mpp-email', methods=['POST'])
