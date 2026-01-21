@@ -1056,54 +1056,42 @@ def export_deepfake_report():
 def serve_ledger(path='index.html'):
     """Serve the Ledger static files at /ledger path"""
     import os
-    from flask import send_from_directory, jsonify
+    from flask import send_from_directory, abort
     
     ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
     
-    # Check if directory exists
-    if not os.path.exists(ledger_dir):
-        return jsonify({
-            "error": "Ledger not built yet",
-            "message": "The ledger build may still be in progress. Please check Render build logs.",
-            "ledger_dir": ledger_dir
-        }), 503
-    
-    # Handle root path
+    # Handle index.html or root path
     if path == 'index.html' or not path or path == '':
-        index_path = os.path.join(ledger_dir, 'index.html')
-        if not os.path.exists(index_path):
-            return jsonify({
-                "error": "Ledger index.html not found",
-                "message": "The ledger build may not have completed. Please check Render build logs.",
-                "index_path": index_path
-            }), 503
+        try:
+            return send_from_directory(ledger_dir, 'index.html')
+        except:
+            abort(404)
+    
+    # Handle .html files (Next.js static export creates .html files)
+    if path.endswith('.html'):
+        try:
+            return send_from_directory(ledger_dir, path)
+        except:
+            abort(404)
+    
+    # For paths without .html, try adding .html extension (Next.js routes)
+    html_path = path + '.html'
+    try:
+        return send_from_directory(ledger_dir, html_path)
+    except:
+        pass  # Continue to SPA fallback
+    
+    # For client-side routing (SPA), return index.html
+    # This handles routes like /ledger/healthcare, /ledger/receipts, /ledger/data/healthcare_costs.json, etc.
+    try:
         return send_from_directory(ledger_dir, 'index.html')
-    
-    # Remove leading slash if present
-    path = path.lstrip('/')
-    
-    # Try multiple file patterns for Next.js static export
-    # 1. Exact path (for static assets like _next/, data/, etc.)
-    file_path = os.path.join(ledger_dir, path)
-    if os.path.exists(file_path) and os.path.isfile(file_path):
-        return send_from_directory(ledger_dir, path)
-    
-    # 2. Path with .html extension (Next.js static pages)
-    html_path = os.path.join(ledger_dir, f"{path}.html")
-    if os.path.exists(html_path):
-        return send_from_directory(ledger_dir, f"{path}.html")
-    
-    # 3. Path as directory with index.html
-    dir_index_path = os.path.join(ledger_dir, path, 'index.html')
-    if os.path.exists(dir_index_path):
-        return send_from_directory(os.path.join(ledger_dir, path), 'index.html')
-    
-    # 4. For client-side routing (SPA), return index.html
-    index_path = os.path.join(ledger_dir, 'index.html')
-    if os.path.exists(index_path):
-        return send_from_directory(ledger_dir, 'index.html')
-    
-    return jsonify({"error": "File not found", "path": path}), 404
+    except:
+        # If index.html doesn't exist, try serving the path directly (for data files, etc.)
+        try:
+            return send_from_directory(ledger_dir, path)
+        except:
+            abort(404)
+
 
 # Send MPP contact email via Resend for tracking
 @app.route('/api/ledger/send-mpp-email', methods=['POST'])
