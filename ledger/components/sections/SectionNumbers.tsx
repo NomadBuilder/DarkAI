@@ -162,16 +162,10 @@ export default function SectionNumbers() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-200">
-            <div className="text-3xl md:text-4xl font-light text-gray-400 mb-4">2018</div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm md:text-base text-gray-600">Public</span>
-                <span className="text-xl md:text-2xl font-light text-gray-900">{formatCurrency(first.public_total)}</span>
-              </div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm md:text-base text-gray-600">For-Profit</span>
-                <span className="text-xl md:text-2xl font-light text-red-600">{formatCurrency(first.for_profit_total)}</span>
-              </div>
+            <div className="text-3xl md:text-4xl font-light text-gray-400 mb-6">2018</div>
+            <div className="flex justify-between items-baseline">
+              <span className="text-sm md:text-base text-gray-600">For-Profit</span>
+              <span className="text-xl md:text-2xl font-light text-red-600">{formatCurrency(first.for_profit_total)}</span>
             </div>
             </div>
           </motion.div>
