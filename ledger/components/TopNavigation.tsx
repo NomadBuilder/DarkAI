@@ -45,6 +45,7 @@ interface TopNavigationProps {
 const navItems: NavItem[] = [
   { id: 'healthcare', label: 'Healthcare & Staffing', href: '/healthcare' },
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
+  { id: 'trade-off', label: 'The Trade-Off', href: '/alternative-present' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', action: 'methodology' },
 ]
