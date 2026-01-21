@@ -1099,6 +1099,7 @@ def serve_ledger(path='index.html'):
     
     # Try multiple file patterns for Next.js static export
     # 1. Exact path (for static assets like _next/, data/, etc.)
+    # This MUST come before SPA fallback to serve data files correctly
     file_path = os.path.join(ledger_dir, path)
     if os.path.exists(file_path) and os.path.isfile(file_path):
         return send_from_directory(ledger_dir, path)
@@ -1114,6 +1115,13 @@ def serve_ledger(path='index.html'):
         return send_from_directory(os.path.join(ledger_dir, path), 'index.html')
     
     # 4. For client-side routing (SPA), return index.html
+    # BUT: Don't do this for data files or API-like paths (they should 404)
+    # Check if path looks like a data file or static asset
+    if path.startswith('data/') or path.startswith('_next/') or '.' in os.path.basename(path):
+        # This looks like a static file that should exist, return 404
+        return jsonify({"error": "File not found", "path": path}), 404
+    
+    # Otherwise, it's probably a client-side route, return index.html for SPA
     index_path = os.path.join(ledger_dir, 'index.html')
     if os.path.exists(index_path):
         return send_from_directory(ledger_dir, 'index.html')
