@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
-import { getDataFile } from '../../utils/dataPath'
+import { getDataFile } from './dataPath'
 
 interface Vendor {
   name: string

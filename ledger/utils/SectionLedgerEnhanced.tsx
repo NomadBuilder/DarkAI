@@ -3,7 +3,7 @@
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef, useState, useEffect, useMemo, useCallback } from 'react'
 import { useLedgerStore } from '../../store/ledgerStore'
-import { getDataFile } from '../../utils/dataPath'
+import { getDataFile } from './dataPath'
 
 interface SystemComposition {
   year: number

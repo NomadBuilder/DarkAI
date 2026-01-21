@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { useRef, useState, useEffect, useMemo } from 'react'
 import { useLedgerStore } from '../../store/ledgerStore'
-import { getDataFile } from '../../utils/dataPath'
+import { getDataFile } from './dataPath'
 
 const lenses = [
   {
