@@ -1062,11 +1062,26 @@ def serve_ledger(path='index.html'):
     
     # Check if directory exists
     if not os.path.exists(ledger_dir):
-        return jsonify({
+        # Diagnostic info
+        base_dir = os.path.dirname(__file__)
+        ledger_base = os.path.join(base_dir, 'ledger')
+        diagnostics = {
             "error": "Ledger not built yet",
             "message": "The ledger build may still be in progress. Please check Render build logs.",
-            "ledger_dir": ledger_dir
-        }), 503
+            "ledger_dir": ledger_dir,
+            "base_dir": base_dir,
+            "ledger_base_exists": os.path.exists(ledger_base) if ledger_base else False,
+            "current_working_dir": os.getcwd(),
+        }
+        if os.path.exists(ledger_base):
+            try:
+                diagnostics["ledger_contents"] = os.listdir(ledger_base)
+                diagnostics["has_out"] = os.path.exists(os.path.join(ledger_base, 'out'))
+                diagnostics["has_node_modules"] = os.path.exists(os.path.join(ledger_base, 'node_modules'))
+                diagnostics["has_package_json"] = os.path.exists(os.path.join(ledger_base, 'package.json'))
+            except:
+                pass
+        return jsonify(diagnostics), 503
     
     # Handle root path
     if path == 'index.html' or not path or path == '':
