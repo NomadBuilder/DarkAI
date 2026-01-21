@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useLedgerStore } from '../store/ledgerStore'
+import { useLedgerStore } from '@/store/ledgerStore'
 import LedgerBubbles from './LedgerBubbles'
 
 export default function LedgerSimple() {
