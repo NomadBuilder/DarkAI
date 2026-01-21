@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { getDataPath } from '@/utils/dataPath'
 
 interface ComparisonItem {
   icon: string
@@ -48,9 +49,9 @@ export default function SectionWhatCouldFund() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // healthcare_costs.json is in public/data/, not data/processed/
-        const basePath = typeof window !== 'undefined' && window.location.pathname.startsWith('/ledger') ? '/ledger' : ''
-        const response = await fetch(`${basePath}/data/healthcare_costs.json`)
+        // healthcare_costs.json is in public/data/
+        const dataPath = getDataPath('data/healthcare_costs.json')
+        const response = await fetch(dataPath)
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`)
         }
