@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import MPPContactModal from '../MPPContactModal'
+import MPPContactModal from '../components/MPPContactModal'
 
 const statements = [
   "Every dollar here is a dollar not strengthening public capacity.",
