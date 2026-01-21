@@ -32,3 +32,8 @@ export function getDataPath(path: string): string {
 export function getDataFile(filename: string): string {
   return getDataPath(`data/processed/${filename}`)
 }
+
+// Convenience function for public data files (like healthcare_costs.json)
+export function getPublicDataFile(filename: string): string {
+  return getDataPath(`data/${filename}`)
+}
