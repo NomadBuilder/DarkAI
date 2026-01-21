@@ -1097,36 +1097,44 @@ def serve_ledger(path='index.html'):
     # Remove leading slash if present
     path = path.lstrip('/')
     
-    # Try multiple file patterns for Next.js static export
-    # 1. Exact path (for static assets like _next/, data/, etc.)
-    # This MUST come before SPA fallback to serve data files correctly
-    file_path = os.path.join(ledger_dir, path)
-    if os.path.exists(file_path) and os.path.isfile(file_path):
+    # CRITICAL: Try to serve the file directly FIRST (before any existence checks)
+    # This handles data files, static assets, etc. Flask's send_from_directory
+    # will return 404 if file doesn't exist, which is what we want.
+    # Only catch the exception for non-file paths (SPA routes)
+    from flask import abort
+    
+    # 1. Try exact path first (for data files, static assets like _next/, etc.)
+    # Use try/except because file might not exist, and we want Flask to handle 404
+    try:
         return send_from_directory(ledger_dir, path)
+    except:
+        pass  # File doesn't exist, continue to other patterns
     
     # 2. Path with .html extension (Next.js static pages)
-    html_path = os.path.join(ledger_dir, f"{path}.html")
-    if os.path.exists(html_path):
-        return send_from_directory(ledger_dir, f"{path}.html")
+    html_path = f"{path}.html"
+    try:
+        return send_from_directory(ledger_dir, html_path)
+    except:
+        pass  # Continue to next pattern
     
     # 3. Path as directory with index.html
-    dir_index_path = os.path.join(ledger_dir, path, 'index.html')
-    if os.path.exists(dir_index_path):
+    try:
         return send_from_directory(os.path.join(ledger_dir, path), 'index.html')
+    except:
+        pass  # Continue to SPA fallback
     
     # 4. For client-side routing (SPA), return index.html
-    # BUT: Don't do this for data files or API-like paths (they should 404)
-    # Check if path looks like a data file or static asset
-    if path.startswith('data/') or path.startswith('_next/') or '.' in os.path.basename(path):
+    # BUT: Don't do this for data files or static assets - they should 404
+    # Check if path looks like a static file (has extension or is in data/_next/)
+    if path.startswith('data/') or path.startswith('_next/') or ('.' in os.path.basename(path) and not path.endswith('.html')):
         # This looks like a static file that should exist, return 404
-        return jsonify({"error": "File not found", "path": path}), 404
+        abort(404)
     
     # Otherwise, it's probably a client-side route, return index.html for SPA
-    index_path = os.path.join(ledger_dir, 'index.html')
-    if os.path.exists(index_path):
+    try:
         return send_from_directory(ledger_dir, 'index.html')
-    
-    return jsonify({"error": "File not found", "path": path}), 404
+    except:
+        abort(404)
 
 
 # Send MPP contact email via Resend for tracking
