@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import './globals.css'
-import ErrorBoundary from '../components/ErrorBoundary'
+import ErrorBoundary from '@/components/ErrorBoundary'
 
 // Get basePath for favicon and OG image paths
 const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''

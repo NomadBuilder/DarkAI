@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { useLedgerStore } from '../store/ledgerStore'
+import { useLedgerStore } from '@/store/ledgerStore'
 import SectionColdOpen from './sections/SectionColdOpen'
 import SectionNumbers from './sections/SectionNumbers'
 import SectionPolicyTimeline from './sections/SectionPolicyTimeline'

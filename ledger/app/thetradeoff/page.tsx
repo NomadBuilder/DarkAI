@@ -1,10 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import TopNavigation from '../components/TopNavigation'
-import MethodologyDrawer from '../components/MethodologyDrawer'
-import DataSourcesDrawer from '../components/DataSourcesDrawer'
-import SectionWhatCouldFund from '../components/sections/SectionWhatCouldFund'
+import TopNavigation from '@/components/TopNavigation'
+import MethodologyDrawer from '@/components/MethodologyDrawer'
+import DataSourcesDrawer from '@/components/DataSourcesDrawer'
+import SectionWhatCouldFund from '@/components/sections/SectionWhatCouldFund'
 
 export default function AlternativePresentPage() {
   const [showMethodology, setShowMethodology] = useState(false)
