@@ -2,7 +2,7 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../../store/ledgerStore'
 
 export default function SectionDrift() {
   const containerRef = useRef<HTMLElement>(null)

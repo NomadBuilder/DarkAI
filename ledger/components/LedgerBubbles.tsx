@@ -3,7 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useLedgerStore } from '../store/ledgerStore'
 import { getDataFile } from '../utils/dataPath'
-import type { VendorYearlyPayments } from '@/types'
+import type { VendorYearlyPayments } from '../types'
 
 interface Bubble {
   id: string

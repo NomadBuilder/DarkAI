@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../../store/ledgerStore'
 
 export default function SectionReceipts() {
   const { setReceiptsMode } = useLedgerStore()

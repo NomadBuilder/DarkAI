@@ -1,6 +1,6 @@
 'use client'
 
-import { useLedgerStore } from '@/store/ledgerStore'
+import { useLedgerStore } from '../store/ledgerStore'
 
 export default function ReceiptsToggle() {
   const { receiptsMode, setReceiptsMode } = useLedgerStore()
