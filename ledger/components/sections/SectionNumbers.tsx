@@ -123,6 +123,15 @@ export default function SectionNumbers() {
     }).format(amount)
   }
 
+  // Calculate percentages for each year
+  const firstTotal = first.public_total + first.for_profit_total + first.non_profit_total + first.unknown_total
+  const lastTotal = last.public_total + last.for_profit_total + last.non_profit_total + last.unknown_total
+  
+  const firstPublicPercent = firstTotal > 0 ? (first.public_total / firstTotal) * 100 : 0
+  const firstForProfitPercent = firstTotal > 0 ? (first.for_profit_total / firstTotal) * 100 : 0
+  const lastPublicPercent = lastTotal > 0 ? (last.public_total / lastTotal) * 100 : 0
+  const lastForProfitPercent = lastTotal > 0 ? (last.for_profit_total / lastTotal) * 100 : 0
+
   return (
     <>
     <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-0">
@@ -166,11 +175,11 @@ export default function SectionNumbers() {
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
                 <span className="text-sm md:text-base text-gray-600">Public</span>
-                <span className="text-xl md:text-2xl font-light text-gray-900">{formatCurrency(first.public_total)}</span>
+                <span className="text-xl md:text-2xl font-light text-gray-900">{firstPublicPercent.toFixed(1)}%</span>
               </div>
               <div className="flex justify-between items-baseline">
                 <span className="text-sm md:text-base text-gray-600">For-Profit</span>
-                <span className="text-xl md:text-2xl font-light text-red-600">{formatCurrency(first.for_profit_total)}</span>
+                <span className="text-xl md:text-2xl font-light text-red-600">{firstForProfitPercent.toFixed(1)}%</span>
               </div>
             </div>
             </div>
@@ -188,11 +197,11 @@ export default function SectionNumbers() {
             <div className="space-y-3">
               <div className="flex justify-between items-baseline">
                 <span className="text-sm md:text-base text-gray-600">Public</span>
-                <span className="text-xl md:text-2xl font-light text-gray-900">{formatCurrency(last.public_total)}</span>
+                <span className="text-xl md:text-2xl font-light text-gray-900">{lastPublicPercent.toFixed(1)}%</span>
               </div>
               <div className="flex justify-between items-baseline">
                 <span className="text-sm md:text-base text-gray-600">For-Profit</span>
-                <span className="text-xl md:text-2xl font-light text-red-600">{formatCurrency(last.for_profit_total)}</span>
+                <span className="text-xl md:text-2xl font-light text-red-600">{lastForProfitPercent.toFixed(1)}%</span>
               </div>
             </div>
             </div>
