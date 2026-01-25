@@ -1,23 +1,23 @@
 'use client'
 
-import SectionStaffingCrisis from '../../components/sections/SectionStaffingCrisis'
-import SectionHospitalCrisis from '../../components/sections/SectionHospitalCrisis'
-import SectionLongTermCare from '../../components/sections/SectionLongTermCare'
-import SectionRegionalImpact from '../../components/sections/SectionRegionalImpact'
+import SectionWaterOverview from '../../components/sections/SectionWaterOverview'
+import SectionWaterControlSlider from '../../components/sections/SectionWaterControlSlider'
+import SectionWaterComparisonToggle from '../../components/sections/SectionWaterComparisonToggle'
+import SectionWaterLegalAnalysis from '../../components/sections/SectionWaterLegalAnalysis'
+import SectionWaterPrivatizationPathway from '../../components/sections/SectionWaterPrivatizationPathway'
+import SectionWaterRisks from '../../components/sections/SectionWaterRisks'
 import TopNavigation from '../../components/TopNavigation'
 import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
-import ReceiptOverlay from '../../components/ReceiptOverlay'
 import MPPContactModal from '../../components/MPPContactModal'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
-export default function HealthcarePage() {
+export default function WaterPage() {
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
-  // Ensure only one drawer is open at a time
   const handleMethodologyToggle = () => {
     if (showMethodology) {
       setShowMethodology(false)
@@ -42,18 +42,22 @@ export default function HealthcarePage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-            <div className="relative z-10 pt-28 sm:pt-32 space-y-0">
-              <section id="staffing">
-                <SectionStaffingCrisis />
-              </section>
-        <section id="hospitals" className="pt-16 md:pt-24">
-          <SectionHospitalCrisis />
-        </section>
-        <section id="ltc" className="pt-16 md:pt-24">
-          <SectionLongTermCare />
-        </section>
+      <div className="relative z-10 pt-28 sm:pt-32 space-y-0">
+        <SectionWaterOverview />
         <div className="pt-16 md:pt-24">
-          <SectionRegionalImpact />
+          <SectionWaterControlSlider />
+        </div>
+        <div className="pt-16 md:pt-24">
+          <SectionWaterComparisonToggle />
+        </div>
+        <div className="pt-16 md:pt-24">
+          <SectionWaterLegalAnalysis />
+        </div>
+        <div className="pt-16 md:pt-24">
+          <SectionWaterPrivatizationPathway />
+        </div>
+        <div className="pt-16 md:pt-24">
+          <SectionWaterRisks />
         </div>
         
         {/* CTA Section */}
@@ -70,6 +74,9 @@ export default function HealthcarePage() {
                   <h3 className="text-xl sm:text-2xl md:text-3xl font-light text-gray-300">
                     Contact your provincial representative
                   </h3>
+                  <p className="text-base sm:text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto">
+                    Tell your MPP that water is a human right, not a corporate commodity
+                  </p>
                   <button
                     onClick={() => setIsModalOpen(true)}
                     className="inline-block px-6 sm:px-8 md:px-12 lg:px-16 py-4 sm:py-5 md:py-6 bg-white text-slate-900 text-base sm:text-lg md:text-xl lg:text-2xl font-light rounded-lg hover:bg-gray-100 transition-colors shadow-lg hover:shadow-xl active:scale-95 touch-manipulation min-h-[48px] sm:min-h-0 text-center"
@@ -83,9 +90,7 @@ export default function HealthcarePage() {
         </section>
       </div>
 
-      <ReceiptOverlay />
-      
-      <MPPContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} variant="healthcare" />
+      <MPPContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} variant="water" />
 
       <MethodologyDrawer 
         isOpen={showMethodology} 
@@ -96,7 +101,6 @@ export default function HealthcarePage() {
         isOpen={showDataSources} 
         onClose={() => setShowDataSources(false)} 
       />
-
     </div>
   )
 }

@@ -1,23 +1,63 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface MPPContactModalProps {
   isOpen: boolean
   onClose: () => void
+  variant?: 'default' | 'water' | 'healthcare'
 }
 
-export default function MPPContactModal({ isOpen, onClose }: MPPContactModalProps) {
-  const [mppName, setMppName] = useState('')
-  const [userName, setUserName] = useState('')
-  const [messageBody, setMessageBody] = useState(`I'm concerned about the long-term impact of relying more heavily on for-profit providers in publicly funded systems.
+const defaultMessage = `I'm concerned about the long-term impact of relying more heavily on for-profit providers in publicly funded systems.
 
 Once public capacity is reduced, it can be difficult and costly to rebuild. I'd like to understand how these risks are being weighed in current policy decisions.
 
 Thank you for considering this perspective.
 
-Best regards,`)
+Best regards,`
+
+const waterMessage = `I'm concerned about Bill 60's Water and Wastewater Public Corporations Act, 2025, and its potential to enable water privatization in Ontario.
+
+This legislation allows corporations structured like private companies to take control of water services, with the power to set rates and operate outside public accountability frameworks. Once water systems are transferred to corporations, returning to public control becomes extremely difficult and costly.
+
+Water is a human right, not a corporate commodity. I'd like to understand how the government plans to ensure water remains affordable and publicly accountable under this legislation.
+
+Thank you for considering this perspective.
+
+Best regards,`
+
+const healthcareMessage = `I'm concerned about the dramatic growth of private spending in Ontario's healthcare system, particularly the $9.2 billion paid to private staffing agencies over 10 years and the expansion of for-profit surgical clinics under Bill 60.
+
+Private agency staff cost 3x more than regular employees, yet account for only 0.4% of hours but 6% of costs. Meanwhile, 66 of 134 hospitals are in deficit, and Ontario ranks 33 out of 38 OECD countries in hospital beds per capita.
+
+Once public capacity is reduced, it can be difficult and costly to rebuild. I'd like to understand how the government plans to stabilize public hospitals and reduce reliance on expensive private providers.
+
+Thank you for considering this perspective.
+
+Best regards,`
+
+export default function MPPContactModal({ isOpen, onClose, variant = 'default' }: MPPContactModalProps) {
+  const [mppName, setMppName] = useState('')
+  const [userName, setUserName] = useState('')
+  const getInitialMessage = () => {
+    if (variant === 'water') return waterMessage
+    if (variant === 'healthcare') return healthcareMessage
+    return defaultMessage
+  }
+  
+  const [messageBody, setMessageBody] = useState(getInitialMessage())
+
+  // Update message when variant changes
+  useEffect(() => {
+    if (variant === 'water') {
+      setMessageBody(waterMessage)
+    } else if (variant === 'healthcare') {
+      setMessageBody(healthcareMessage)
+    } else {
+      setMessageBody(defaultMessage)
+    }
+  }, [variant])
 
   const handleFindMPP = () => {
     window.open('https://www.ola.org/en/members/current', '_blank')
@@ -43,9 +83,14 @@ ${userName || '[Your Name]'}`
   }
 
   const handleOpenEmail = () => {
-    const subject = encodeURIComponent('Concern about public capacity and for-profit providers')
+    let subject = 'Concern about public capacity and for-profit providers'
+    if (variant === 'water') {
+      subject = 'Concern about Bill 60 and water privatization'
+    } else if (variant === 'healthcare') {
+      subject = 'Concern about healthcare privatization and hospital funding'
+    }
     const body = encodeURIComponent(getFullMessage())
-    window.location.href = `mailto:?subject=${subject}&body=${body}`
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`
   }
 
   return (

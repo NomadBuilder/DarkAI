@@ -35,6 +35,8 @@ interface NavItem {
   section?: string
   href?: string
   action?: 'dataSources' | 'methodology'
+  isDropdown?: boolean
+  dropdownItems?: NavItem[]
 }
 
 interface TopNavigationProps {
@@ -42,12 +44,18 @@ interface TopNavigationProps {
   onMethodologyClick?: () => void
 }
 
-const navItems: NavItem[] = [
-  { id: 'healthcare', label: 'Healthcare & Staffing', href: '/healthcare' },
+const dataDropdownItems: NavItem[] = [
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
-  { id: 'trade-off', label: 'The Trade-Off', href: '/thetradeoff' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', action: 'methodology' },
+]
+
+const navItems: NavItem[] = [
+  { id: 'healthcare', label: 'Healthcare & Staffing', href: '/healthcare' },
+  { id: 'water', label: 'Water Privatization', href: '/water' },
+  { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
+  // { id: 'trade-off', label: 'The Trade-Off', href: '/thetradeoff' }, // Hidden for now
+  { id: 'about', label: 'About', href: '/about' },
 ]
 
 export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }: TopNavigationProps = {}) {
@@ -55,6 +63,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
   const [lastScrollY, setLastScrollY] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null)
 
   useEffect(() => {
     let scrollTimeout: ReturnType<typeof setTimeout>
@@ -148,15 +157,57 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
 
                 {/* Navigation Items */}
                 <div className="hidden md:flex items-center space-x-1 lg:space-x-2 xl:space-x-3 flex-1 justify-center max-w-6xl mx-4">
-                  {navItems.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => handleNavClick(item)}
-                      className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap"
-                    >
-                      {item.label}
-                    </button>
-                  ))}
+                  {navItems.map((item) => {
+                    if (item.isDropdown && item.dropdownItems) {
+                      return (
+                        <div
+                          key={item.id}
+                          className="relative"
+                          onMouseEnter={() => setOpenDropdown(item.id)}
+                          onMouseLeave={() => setOpenDropdown(null)}
+                        >
+                          <button
+                            className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap flex items-center gap-1"
+                          >
+                            {item.label}
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                            </svg>
+                          </button>
+                          {openDropdown === item.id && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[180px] z-50"
+                            >
+                              {item.dropdownItems.map((dropdownItem) => (
+                                <button
+                                  key={dropdownItem.id}
+                                  onClick={() => {
+                                    handleNavClick(dropdownItem)
+                                    setOpenDropdown(null)
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                                >
+                                  {dropdownItem.label}
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
+                        </div>
+                      )
+                    }
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavClick(item)}
+                        className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap"
+                      >
+                        {item.label}
+                      </button>
+                    )
+                  })}
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -279,27 +330,58 @@ function MobileMenu({
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   >
                     <div className="p-4 space-y-1">
-                      {navItems.map((item) => (
-                        <button
-                          key={item.id}
-                          onClick={() => {
-                            if (item.action === 'dataSources' && onDataSourcesClick) {
-                              onDataSourcesClick()
-                            } else if (item.action === 'methodology' && onMethodologyClick) {
-                              onMethodologyClick()
-                            } else if (item.href) {
-                              // Use the basePath-aware href
-                              window.location.href = getNavHref(item.href)
-                            } else if (item.section) {
-                              scrollToSection(item.section)
-                            }
-                            setIsOpen(false)
-                          }}
-                          className="w-full text-left px-4 py-4 text-lg font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-                        >
-                          {item.label}
-                        </button>
-                      ))}
+                      {navItems.map((item) => {
+                        if (item.isDropdown && item.dropdownItems) {
+                          return (
+                            <div key={item.id} className="space-y-1">
+                              <div className="px-4 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
+                                {item.label}
+                              </div>
+                              {item.dropdownItems.map((dropdownItem) => (
+                                <button
+                                  key={dropdownItem.id}
+                                  onClick={() => {
+                                    if (dropdownItem.action === 'dataSources' && onDataSourcesClick) {
+                                      onDataSourcesClick()
+                                    } else if (dropdownItem.action === 'methodology' && onMethodologyClick) {
+                                      onMethodologyClick()
+                                    } else if (dropdownItem.href) {
+                                      window.location.href = getNavHref(dropdownItem.href)
+                                    } else if (dropdownItem.section) {
+                                      scrollToSection(dropdownItem.section)
+                                    }
+                                    setIsOpen(false)
+                                  }}
+                                  className="w-full text-left px-6 py-3 text-base font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                                >
+                                  {dropdownItem.label}
+                                </button>
+                              ))}
+                            </div>
+                          )
+                        }
+                        return (
+                          <button
+                            key={item.id}
+                            onClick={() => {
+                              if (item.action === 'dataSources' && onDataSourcesClick) {
+                                onDataSourcesClick()
+                              } else if (item.action === 'methodology' && onMethodologyClick) {
+                                onMethodologyClick()
+                              } else if (item.href) {
+                                // Use the basePath-aware href
+                                window.location.href = getNavHref(item.href)
+                              } else if (item.section) {
+                                scrollToSection(item.section)
+                              }
+                              setIsOpen(false)
+                            }}
+                            className="w-full text-left px-4 py-4 text-lg font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
+                          >
+                            {item.label}
+                          </button>
+                        )
+                      })}
                     </div>
                   </motion.div>
                 </>

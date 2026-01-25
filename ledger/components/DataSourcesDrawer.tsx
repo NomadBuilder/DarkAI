@@ -45,6 +45,18 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
       link: 'https://data.ontario.ca',
       note: 'All data is publicly available and verifiable',
     },
+    {
+      title: 'Bill 60: Your Health Act',
+      description: 'Legislation including the Water and Wastewater Public Corporations Act, 2025',
+      link: 'https://www.ola.org/en/legislative-business/bills/parliament-43/session-1/bill-60',
+      organization: 'Legislative Assembly of Ontario',
+      note: 'Contains the Water and Wastewater Public Corporations Act, 2025',
+    },
+    {
+      title: 'Water Privatization Research',
+      description: 'Global examples and analysis of water privatization impacts on costs and service quality',
+      note: 'Cost calculator based on documented rate increases of 30-50% in privatized water systems (Atlanta, Indianapolis, and other cities)',
+    },
   ]
 
   return (
