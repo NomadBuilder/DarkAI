@@ -32,18 +32,21 @@
       (Americanization)
     </text>
     
-    <!-- Key stat -->
+    <!-- Key message -->
     <g transform="translate(0, 250)">
-      <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="36" font-weight="300" fill="#64748b">
-        From $1.2B to $2.3B
+      <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="300" fill="#0f172a">
+        Public money.
       </text>
-      <text x="0" y="50" font-family="Inter, system-ui, sans-serif" font-size="28" font-weight="300" fill="#94a3b8">
-        For-profit vendor payments increased by $1.1B in six years
+      <text x="0" y="70" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="600" fill="#ef4444">
+        Private delivery.
+      </text>
+      <text x="0" y="140" font-family="Inter, system-ui, sans-serif" font-size="32" font-weight="300" fill="#64748b">
+        See how Ontario's spending shifted
       </text>
     </g>
     
     <!-- Quote -->
-    <g transform="translate(0, 380)">
+    <g transform="translate(0, 420)">
       <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="600" fill="#0f172a">
         Sovereignty in words.
       </text>
