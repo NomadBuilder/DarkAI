@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 
 export default function SectionColdOpen() {
   return (
-    <section className="flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-slate-50 to-white py-12 md:py-16 pt-16 sm:pt-20 md:pt-0 pb-20 md:pb-16 w-full overflow-x-hidden md:min-h-screen">
+    <section className="flex items-start md:items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-slate-50 to-white py-12 md:py-16 pb-20 md:pb-16 w-full overflow-x-hidden md:min-h-screen scroll-mt-16 sm:scroll-mt-20">
       <div className="max-w-5xl w-full text-center space-y-8 md:space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

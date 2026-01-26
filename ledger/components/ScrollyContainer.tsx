@@ -117,7 +117,9 @@ export default function ScrollyContainer() {
       />
       {/* Scrollable content sections */}
             <div className="relative z-10 w-full">
-        <SectionColdOpen />
+        <div className="pt-[136px] sm:pt-[152px] md:pt-0">
+          <SectionColdOpen />
+        </div>
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>
