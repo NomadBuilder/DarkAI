@@ -42,6 +42,17 @@ export default function SectionColdOpen() {
             This is how it&apos;s supposed to work.
           </p>
         </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
+          className="pt-8 md:pt-12"
+        >
+          <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-red-600">
+            Then Doug Ford showed up.
+          </p>
+        </motion.div>
       </div>
     </section>
   )

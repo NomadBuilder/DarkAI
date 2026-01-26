@@ -33,6 +33,13 @@ const policyEvents = [
   },
   {
     year: 2023,
+    month: 'May',
+    event: 'Bill 60 passed (Your Health Act)',
+    description: 'Legislation encourages for-profit facilities for publicly funded surgeries and diagnostics',
+    spendingImpact: 'Private surgical clinics paid 2-3x more than public hospitals',
+  },
+  {
+    year: 2023,
     month: 'Fiscal Year',
     event: '66 of 134 hospitals in deficit',
     description: '49% of Ontario hospitals face budget shortfalls',
@@ -153,9 +160,15 @@ export default function SectionPolicyTimeline() {
           <p className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
             This wasn&apos;t an accident.
           </p>
-          <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300">
+          <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 mb-8">
             Policy decisions created the conditions for privatization (Americanization) to flourish.
           </p>
+          <a
+            href="/healthcare"
+            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-white text-slate-900 rounded-lg text-base md:text-lg font-light hover:bg-gray-100 transition-colors"
+          >
+            See the healthcare impact →
+          </a>
           </div>
         </motion.div>
       </div>

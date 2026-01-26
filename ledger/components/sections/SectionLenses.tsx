@@ -1,9 +1,9 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useRef, useState, useEffect, useMemo } from 'react'
+import { useRef } from 'react'
+import Link from 'next/link'
 import { useLedgerStore } from '../../store/ledgerStore'
-import { getDataFile } from '../../utils/dataPath'
 
 const lenses = [
   {
@@ -35,58 +35,6 @@ const lenses = [
 export default function SectionLenses() {
   const { activeLens, setActiveLens } = useLedgerStore()
   const lockedLensRef = useRef<string | null>(null)
-  const [firstAppearances, setFirstAppearances] = useState<Record<string, number | null>>({})
-
-  // Calculate first appearance year for each lens category
-  useEffect(() => {
-    const calculateFirstAppearances = async () => {
-      try {
-        const response = await fetch(getDataFile('vendors_master.json'))
-        if (!response.ok) return
-        const vendors = await response.json()
-        
-        const appearances: Record<string, number | null> = {}
-        
-        lenses.forEach(lens => {
-          // Filter vendors by category
-          const categoryVendors = vendors.filter((v: any) => {
-            const category = v.category || v.service_category
-            return category === lens.categoryKey
-          })
-          
-          if (categoryVendors.length === 0) {
-            appearances[lens.id] = null
-            return
-          }
-          
-          // Find the earliest year any vendor in this category was paid
-          let firstYear: number | null = null
-          categoryVendors.forEach((vendor: any) => {
-            const payments = vendor.yearly_payments || {}
-            const years = Object.keys(payments)
-              .map(y => parseInt(y))
-              .filter(y => !isNaN(y) && payments[y] > 0)
-              .sort((a, b) => a - b)
-            
-            if (years.length > 0) {
-              const vendorFirstYear = years[0]
-              if (firstYear === null || vendorFirstYear < firstYear) {
-                firstYear = vendorFirstYear
-              }
-            }
-          })
-          
-          appearances[lens.id] = firstYear
-        })
-        
-        setFirstAppearances(appearances)
-      } catch (error) {
-        console.error('Failed to calculate first appearances:', error)
-      }
-    }
-    
-    calculateFirstAppearances()
-  }, [])
 
   return (
     <section className="flex items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-12 sm:py-16 md:py-20">
@@ -99,8 +47,11 @@ export default function SectionLenses() {
         >
           <div className="text-center">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-4 md:mb-6">
-              What are we looking at?
+              Three Forms of Privatization
             </h2>
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-3xl mx-auto">
+              How public dollars flow to private corporations
+            </p>
           </div>
         </motion.div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
@@ -117,7 +68,7 @@ export default function SectionLenses() {
               }}
             >
               <div 
-                className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 hover:border-gray-300 shadow-sm hover:shadow-md transition-all cursor-pointer group h-full flex flex-col"
                 onClick={() => {
                   // Toggle lens: if already active, clear it; otherwise set it
                   const newLens = activeLens === lens.id ? null : lens.id
@@ -140,36 +91,25 @@ export default function SectionLenses() {
               <h3 className={`text-2xl sm:text-3xl md:text-4xl font-light mb-3 sm:mb-4 ${lens.color} ${lens.hoverColor} transition-colors`}>
                 {lens.title}
               </h3>
-              <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light leading-relaxed mb-3">
+              <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light leading-relaxed mb-3 flex-grow">
                 {lens.description}
               </p>
               
-              {/* First appearance indicator */}
-              {firstAppearances[lens.id] && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                  <div className="flex items-start gap-2">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                    </svg>
-                    <p className="text-xs sm:text-sm text-gray-600 font-light leading-relaxed">
-                      {lens.id === 'staffing' && (
-                        <>Private <strong className="font-normal text-gray-900">staffing agencies</strong> first appear in the record in <strong className="font-normal text-gray-900">{firstAppearances[lens.id]}</strong>.</>
-                      )}
-                      {lens.id === 'consulting' && (
-                        <>Payments to <strong className="font-normal text-gray-900">private consulting firms</strong> appear here for the first time in <strong className="font-normal text-gray-900">{firstAppearances[lens.id]}</strong>.</>
-                      )}
-                      {lens.id === 'healthcare' && (
-                        <>Payments to <strong className="font-normal text-gray-900">private healthcare delivery</strong> providers first appear in <strong className="font-normal text-gray-900">{firstAppearances[lens.id]}</strong>.</>
-                      )}
-                    </p>
-                  </div>
-                  </div>
-                </motion.div>
+              {/* Link to healthcare page for staffing and healthcare lenses */}
+              {(lens.id === 'staffing' || lens.id === 'healthcare') ? (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  <Link
+                    href="/healthcare"
+                    className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-light underline transition-colors"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Explore {lens.id === 'staffing' ? 'staffing' : 'healthcare'} impact →
+                  </Link>
+                </div>
+              ) : (
+                <div className="mt-4 pt-4 border-t border-gray-200">
+                  {/* Spacer to maintain consistent height */}
+                </div>
               )}
               </div>
             </motion.div>

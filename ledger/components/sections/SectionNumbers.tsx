@@ -61,8 +61,12 @@ export default function SectionNumbers() {
         
         if (sorted.length === 0) {
           console.warn('Empty data array')
+          setLoading(false)
+          return
         }
         
+        console.log('Setting data, sorted length:', sorted.length, 'years:', sorted.map((x: SystemComposition) => x.year))
+        // Set both states together - React will batch them
         setData(sorted)
         setLoading(false)
       })
@@ -79,7 +83,9 @@ export default function SectionNumbers() {
     }
   }, [])
 
+  // Debug: log current state
   if (loading || data.length === 0) {
+    console.log('Still loading - loading:', loading, 'data.length:', data.length)
     return (
       <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-0">
         <div className="text-center">
@@ -88,6 +94,8 @@ export default function SectionNumbers() {
       </section>
     )
   }
+  
+  console.log('Rendering content - data.length:', data.length, 'loading:', loading)
 
   // Filter to only 2018 and later (when Doug Ford took office)
   const fordEraData = data.filter(d => d.year >= 2018)
@@ -163,7 +171,7 @@ export default function SectionNumbers() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {/* 2018 */}
+          {/* Public Growth */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -171,38 +179,34 @@ export default function SectionNumbers() {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <div className="bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-200">
-            <div className="text-3xl md:text-4xl font-light text-gray-400 mb-4">2018</div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm md:text-base text-gray-600">Public</span>
-                <span className="text-xl md:text-2xl font-light text-gray-900">{firstPublicPercent.toFixed(1)}%</span>
+            <div className="text-3xl md:text-4xl font-light text-gray-400 mb-4">Public Funding</div>
+            <div className="space-y-2">
+              <div className="text-5xl md:text-6xl font-light text-gray-900 mb-2">
+                +{publicGrowth.toFixed(1)}%
               </div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm md:text-base text-gray-600">For-Profit</span>
-                <span className="text-xl md:text-2xl font-light text-red-600">{firstForProfitPercent.toFixed(1)}%</span>
-              </div>
+              <p className="text-sm md:text-base text-gray-600 font-light">
+                Growth from 2018 to 2024
+              </p>
             </div>
             </div>
           </motion.div>
 
-          {/* 2024 */}
+          {/* For-Profit Growth */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <div className="bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-200">
-            <div className="text-3xl md:text-4xl font-light text-gray-400 mb-4">2024</div>
-            <div className="space-y-3">
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm md:text-base text-gray-600">Public</span>
-                <span className="text-xl md:text-2xl font-light text-gray-900">{lastPublicPercent.toFixed(1)}%</span>
+            <div className="bg-red-50 rounded-2xl p-8 md:p-12 border border-red-200">
+            <div className="text-3xl md:text-4xl font-light text-red-400 mb-4">For-Profit Payments</div>
+            <div className="space-y-2">
+              <div className="text-5xl md:text-6xl font-light text-red-600 mb-2">
+                +{forProfitGrowth.toFixed(1)}%
               </div>
-              <div className="flex justify-between items-baseline">
-                <span className="text-sm md:text-base text-gray-600">For-Profit</span>
-                <span className="text-xl md:text-2xl font-light text-red-600">{lastForProfitPercent.toFixed(1)}%</span>
-              </div>
+              <p className="text-sm md:text-base text-gray-600 font-light">
+                Growth from 2018 to 2024
+              </p>
             </div>
             </div>
           </motion.div>
@@ -228,22 +232,6 @@ export default function SectionNumbers() {
           </div>
         </motion.div>
 
-        {/* Simple comparison */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <div className="text-center space-y-4">
-          <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light">
-            From <span className="text-gray-900">{formatCurrency(first.for_profit_total)}</span> to <span className="text-red-600">{formatCurrency(last.for_profit_total)}</span>
-          </p>
-          <p className="text-base sm:text-lg md:text-xl text-gray-500 font-light">
-            In six years, for-profit vendor payments increased by <strong className="font-normal text-gray-700">{formatCurrency(last.for_profit_total - first.for_profit_total)}</strong>
-          </p>
-          </div>
-        </motion.div>
       </div>
     </section>
 
