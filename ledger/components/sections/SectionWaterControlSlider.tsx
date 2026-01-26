@@ -51,7 +51,9 @@ export default function SectionWaterControlSlider() {
 
   const handleSliderTouchEnd = (e: TouchEvent<HTMLInputElement>) => {
     // On touch end, snap to the nearest end
-    const value = parseInt((e.target as HTMLInputElement).value)
+    // Cast to HTMLInputElement to access value property
+    const target = e.target as HTMLInputElement
+    const value = parseInt(target.value)
     setIsPublic(value < 50)
   }
 
