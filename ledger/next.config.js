@@ -15,11 +15,6 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Optimize build performance
-  swcMinify: true,
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production',
-  },
   // Better error handling and hot reloading
   onDemandEntries: {
     maxInactiveAge: 25 * 1000,

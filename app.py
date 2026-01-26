@@ -1106,7 +1106,7 @@ def serve_ledger(path='index.html'):
     # 1. Try exact path first (for data files, static assets like _next/, etc.)
     # Use try/except because file might not exist, and we want Flask to handle 404
     try:
-        return send_from_directory(ledger_dir, path)
+    return send_from_directory(ledger_dir, path)
     except:
         pass  # File doesn't exist, continue to other patterns
     
