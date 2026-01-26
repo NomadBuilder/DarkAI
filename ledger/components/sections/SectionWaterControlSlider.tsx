@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { ChangeEvent, MouseEvent } from 'react'
+import type { ChangeEvent, MouseEvent, TouchEvent } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const publicControl = {
@@ -45,6 +45,12 @@ export default function SectionWaterControlSlider() {
 
   const handleSliderMouseUp = (e: MouseEvent<HTMLInputElement>) => {
     // On mouse up, snap to the nearest end
+    const value = parseInt((e.target as HTMLInputElement).value)
+    setIsPublic(value < 50)
+  }
+
+  const handleSliderTouchEnd = (e: TouchEvent<HTMLInputElement>) => {
+    // On touch end, snap to the nearest end
     const value = parseInt((e.target as HTMLInputElement).value)
     setIsPublic(value < 50)
   }
@@ -99,7 +105,7 @@ export default function SectionWaterControlSlider() {
                     value={isPublic ? 0 : 100}
                     onChange={handleSliderChange}
                     onMouseUp={handleSliderMouseUp}
-                    onTouchEnd={handleSliderMouseUp}
+                    onTouchEnd={handleSliderTouchEnd}
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   />
                   
