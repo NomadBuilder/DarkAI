@@ -23,6 +23,11 @@ app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
+# Make GTM_ID available to all templates
+@app.context_processor
+def inject_gtm_id():
+    return {'GTM_ID': os.getenv('NEXT_PUBLIC_GTM_ID', 'GTM-MZ69VXXL')}
+
 # Register blueprints
 import sys
 import os
@@ -1106,7 +1111,7 @@ def serve_ledger(path='index.html'):
     # 1. Try exact path first (for data files, static assets like _next/, etc.)
     # Use try/except because file might not exist, and we want Flask to handle 404
     try:
-        return send_from_directory(ledger_dir, path)
+    return send_from_directory(ledger_dir, path)
     except:
         pass  # File doesn't exist, continue to other patterns
     
