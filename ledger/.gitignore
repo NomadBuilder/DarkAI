@@ -47,3 +47,4 @@ __pycache__/
 .Python
 venv/
 env/
+tsconfig.tsbuildinfo
