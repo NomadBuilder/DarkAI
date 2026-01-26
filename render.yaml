@@ -71,8 +71,9 @@ services:
         cat postcss.config.js | head -5
         
         echo ""
-        echo "🧹 Clearing build cache..."
-        rm -rf .next out
+        echo "🧹 Clearing build output (keeping .next cache for faster builds)..."
+        rm -rf out
+        # Keep .next cache to speed up builds - only clear if build fails
         
         echo ""
         echo "📦 Running npm install..."
