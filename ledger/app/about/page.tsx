@@ -1,10 +1,10 @@
 'use client'
 
-import TopNavigation from '@/components/TopNavigation'
-import MethodologyDrawer from '@/components/MethodologyDrawer'
-import DataSourcesDrawer from '@/components/DataSourcesDrawer'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import TopNavigation from '../../components/TopNavigation'
+import MethodologyDrawer from '../../components/MethodologyDrawer'
+import DataSourcesDrawer from '../../components/DataSourcesDrawer'
 
 export default function AboutPage() {
   const [showMethodology, setShowMethodology] = useState(false)
