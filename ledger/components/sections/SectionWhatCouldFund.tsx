@@ -48,9 +48,9 @@ export default function SectionWhatCouldFund() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // healthcare_costs.json is in data/processed/, use getDataFile for basePath handling
-        const { getDataFile } = await import('../../utils/dataPath')
-        const dataPath = getDataFile('healthcare_costs.json')
+        // healthcare_costs.json is in public/data/ (not data/processed/), use getDataPath
+        const { getDataPath } = await import('../../utils/dataPath')
+        const dataPath = getDataPath('data/healthcare_costs.json')
         const response = await fetch(dataPath)
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`)
