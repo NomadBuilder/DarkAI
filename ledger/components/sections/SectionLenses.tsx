@@ -101,7 +101,7 @@ export default function SectionLenses() {
                   <Link
                     href="/healthcare"
                     className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-light underline transition-colors"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   >
                     Explore {lens.id === 'staffing' ? 'staffing' : 'healthcare'} impact →
                   </Link>
