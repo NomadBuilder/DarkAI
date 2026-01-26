@@ -178,32 +178,6 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                     <li>Derive: Generate growth rates and first appearance dates</li>
                   </ol>
                 </section>
-
-                <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Water Privatization Analysis</h3>
-                  <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
-                    The water privatization section analyzes Bill 60&apos;s Water and Wastewater Public Corporations Act, 2025:
-                  </p>
-                  <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4 font-light leading-relaxed">
-                    <li><strong className="font-normal">Legal Analysis:</strong> Direct excerpts from the legislation, including sections on corporate structure, municipal control, and financial authority</li>
-                    <li><strong className="font-normal">Government vs. Critics:</strong> Side-by-side comparison of government claims versus critics&apos; interpretation of the law&apos;s implications</li>
-                    <li><strong className="font-normal">Cost Calculator:</strong> Based on documented global examples where privatized water systems saw 30-50% rate increases (Atlanta, Indianapolis, and other cities)</li>
-                    <li><strong className="font-normal">Control Comparison:</strong> Interactive visualization showing how control shifts from public to corporate under the legislation</li>
-                  </ul>
-                  <p className="text-sm md:text-base text-gray-700 mt-3 md:mt-4 font-light leading-relaxed">
-                    <strong className="font-normal">Source:</strong> Bill 60 (Your Health Act) was passed in November 2025 and is publicly available through the Legislative Assembly of Ontario. The legal analysis is based on direct reading of the statute text.
-                  </p>
-                  <div className="mt-3 md:mt-4">
-                    <a
-                      href="https://www.ola.org/en/legislative-business/bills/parliament-43/session-1/bill-60"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-sm text-blue-600 hover:text-blue-800 underline font-light block"
-                    >
-                      View Bill 60 on Legislative Assembly website →
-                    </a>
-                  </div>
-                </section>
               </div>
             </div>
             </div>

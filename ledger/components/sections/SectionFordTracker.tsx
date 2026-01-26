@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 
 export default function SectionFordTracker() {
   return (
@@ -72,9 +71,9 @@ export default function SectionFordTracker() {
             </p>
             <div className="space-y-3">
               {[
-                'Private staffing agencies ($9.2B over 10 years)',
-                'For-profit surgical clinics (Bill 60, 2023)',
+                'Private staffing agencies',
                 'For-profit long-term care',
+                'Private surgical clinics',
                 'Consulting and outsourcing',
                 'Private healthcare delivery',
               ].map((item, idx) => (
@@ -139,30 +138,22 @@ export default function SectionFordTracker() {
           </div>
         </motion.div>
 
-        {/* Source Link and Healthcare Link */}
+        {/* Source Link */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <div className="text-center space-y-4">
-          <Link
-            href="/healthcare"
-            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-red-600 text-white rounded-lg text-base md:text-lg font-light hover:bg-red-700 transition-colors"
+          <div className="text-center">
+          <a
+            href="https://ofl.ca/ford-tracker/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors mb-16 md:mb-20"
           >
-            See the healthcare impact →
-          </Link>
-          <div>
-            <a
-              href="https://ofl.ca/ford-tracker/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors"
-            >
-              Explore the Full OFL Ford Tracker →
-            </a>
-          </div>
+            Explore the Full OFL Ford Tracker →
+          </a>
           </div>
         </motion.div>
       </div>

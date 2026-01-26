@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLedgerStore } from '@/store/ledgerStore'
 import SectionColdOpen from './sections/SectionColdOpen'
+import SectionNumbers from './sections/SectionNumbers'
 import SectionPolicyTimeline from './sections/SectionPolicyTimeline'
 import SectionLedgerEnhanced from './sections/SectionLedgerEnhanced'
 import SectionFordTracker from './sections/SectionFordTracker'
@@ -39,16 +40,6 @@ export default function ScrollyContainer() {
       setShowDataSources(true)
     }
   }
-
-  // Listen for custom event to open data sources drawer
-  useEffect(() => {
-    const handleOpenDataSources = () => {
-      setShowMethodology(false)
-      setShowDataSources(true)
-    }
-    window.addEventListener('openDataSources', handleOpenDataSources)
-    return () => window.removeEventListener('openDataSources', handleOpenDataSources)
-  }, [])
   const [isLedgerVisible, setIsLedgerVisible] = useState(false)
 
   useEffect(() => {
@@ -118,6 +109,9 @@ export default function ScrollyContainer() {
       {/* Scrollable content sections */}
             <div className="relative z-10 w-full">
         <SectionColdOpen />
+        <section id="numbers">
+          <SectionNumbers />
+        </section>
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>

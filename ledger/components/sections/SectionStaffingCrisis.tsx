@@ -39,9 +39,6 @@ export default function SectionStaffingCrisis() {
             <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light mt-4">
               (2013-2023)
             </p>
-            <p className="text-xs sm:text-sm text-gray-500 font-light mt-2">
-              Note: Most of this growth occurred during the Ford era (2018-2023)
-            </p>
             <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
               Source: <a 
                 href="https://www.policyalternatives.ca/news-research/hollowed-out/" 

@@ -27,8 +27,8 @@ export default function SectionKeyFindings() {
           {[
             {
               number: '1',
-              title: 'Private spending grew nearly 2x faster than public funding between 2018 and 2024',
-              description: 'For-profit payments increased 86.7% while public funding grew 46.5%',
+              title: 'For-profit spending grew 86.7% since 2018',
+              description: 'While public funding grew 46.5% in the same period',
               highlight: true,
             },
             {
@@ -58,16 +58,11 @@ export default function SectionKeyFindings() {
             },
             {
               number: '7',
-              title: 'Bill 60 accelerated surgical privatization',
-              description: 'For-profit surgical clinics paid 2-3x more than public hospitals for the same procedures',
-            },
-            {
-              number: '8',
               title: 'Public capacity hollowed out',
               description: 'Once capacity leaves the public system, it doesn\'t return',
             },
             {
-              number: '9',
+              number: '8',
               title: 'System-wide staff shortages',
               description: 'Created by wage suppression and underfunding',
             },
@@ -103,6 +98,23 @@ export default function SectionKeyFindings() {
             </motion.div>
           ))}
         </div>
+
+        {/* The Conclusion */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
+          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12 text-center">
+          <p className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
+            This is not a natural trend.
+          </p>
+          <p className="text-xl sm:text-2xl md:text-3xl font-light text-gray-300">
+            It is the result of deliberate policy choices.
+          </p>
+          </div>
+        </motion.div>
       </div>
     </section>
   )
