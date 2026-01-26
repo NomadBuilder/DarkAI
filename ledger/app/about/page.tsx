@@ -1,11 +1,10 @@
 'use client'
 
-import { useState } from 'react'
-import type { ChangeEvent, FormEvent } from 'react'
-import { motion } from 'framer-motion'
 import TopNavigation from '../../components/TopNavigation'
 import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
+import { useState } from 'react'
+import { motion } from 'framer-motion'
 
 export default function AboutPage() {
   const [showMethodology, setShowMethodology] = useState(false)
@@ -37,12 +36,12 @@ export default function AboutPage() {
     }
   }
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus('idle')

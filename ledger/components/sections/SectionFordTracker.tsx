@@ -154,14 +154,14 @@ export default function SectionFordTracker() {
             See the healthcare impact →
           </Link>
           <div>
-            <a
-              href="https://ofl.ca/ford-tracker/"
-              target="_blank"
-              rel="noopener noreferrer"
+          <a
+            href="https://ofl.ca/ford-tracker/"
+            target="_blank"
+            rel="noopener noreferrer"
               className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors"
-            >
-              Explore the Full OFL Ford Tracker →
-            </a>
+          >
+            Explore the Full OFL Ford Tracker →
+          </a>
           </div>
           </div>
         </motion.div>

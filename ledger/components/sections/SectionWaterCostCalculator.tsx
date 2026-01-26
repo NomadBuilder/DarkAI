@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import type { ChangeEvent } from 'react'
 import { motion } from 'framer-motion'
 
 // Based on global examples: privatized water systems typically see 30-50% rate increases
@@ -62,7 +61,7 @@ export default function SectionWaterCostCalculator() {
     return () => clearInterval(interval)
   }, [projectedBill, monthlyIncrease, annualIncrease])
 
-  const handleBillChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleBillChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentBill(parseFloat(e.target.value) || 0)
   }
 

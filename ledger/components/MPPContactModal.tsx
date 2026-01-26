@@ -48,7 +48,7 @@ export default function MPPContactModal({ isOpen, onClose, variant = 'default' }
   
   const [messageBody, setMessageBody] = useState(getInitialMessage())
 
-  // Reset message when variant changes
+  // Update message when variant changes
   useEffect(() => {
     if (variant === 'water') {
       setMessageBody(waterMessage)
@@ -83,9 +83,14 @@ ${userName || '[Your Name]'}`
   }
 
   const handleOpenEmail = () => {
-    const subject = encodeURIComponent('Concern about public capacity and for-profit providers')
+    let subject = 'Concern about public capacity and for-profit providers'
+    if (variant === 'water') {
+      subject = 'Concern about Bill 60 and water privatization'
+    } else if (variant === 'healthcare') {
+      subject = 'Concern about healthcare privatization and hospital funding'
+    }
     const body = encodeURIComponent(getFullMessage())
-    window.location.href = `mailto:?subject=${subject}&body=${body}`
+    window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`
   }
 
   return (
