@@ -209,6 +209,9 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: NODE_VERSION
+        value: 22.16.0
+        comment: "Node.js version for building the Ledger Next.js app"
       - key: SECRET_KEY
         generateValue: true
       - key: FLASK_ENV
