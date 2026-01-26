@@ -50,7 +50,13 @@ export default function MPPContactModal({ isOpen, onClose, variant = 'default' }
 
   // Reset message when variant changes
   useEffect(() => {
-    setMessageBody(getInitialMessage())
+    if (variant === 'water') {
+      setMessageBody(waterMessage)
+    } else if (variant === 'healthcare') {
+      setMessageBody(healthcareMessage)
+    } else {
+      setMessageBody(defaultMessage)
+    }
   }, [variant])
 
   const handleFindMPP = () => {
