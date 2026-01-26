@@ -1,8 +1,8 @@
 'use client'
 
-import TopNavigation from '../../components/TopNavigation'
-import MethodologyDrawer from '../../components/MethodologyDrawer'
-import DataSourcesDrawer from '../../components/DataSourcesDrawer'
+import TopNavigation from '@/components/TopNavigation'
+import MethodologyDrawer from '@/components/MethodologyDrawer'
+import DataSourcesDrawer from '@/components/DataSourcesDrawer'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 

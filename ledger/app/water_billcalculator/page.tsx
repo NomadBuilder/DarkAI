@@ -1,10 +1,10 @@
 'use client'
 
 import SectionWaterCostCalculator from '../../components/sections/SectionWaterCostCalculator'
-import TopNavigation from '../../components/TopNavigation'
-import MethodologyDrawer from '../../components/MethodologyDrawer'
-import DataSourcesDrawer from '../../components/DataSourcesDrawer'
-import MPPContactModal from '../../components/MPPContactModal'
+import TopNavigation from '@/components/TopNavigation'
+import MethodologyDrawer from '@/components/MethodologyDrawer'
+import DataSourcesDrawer from '@/components/DataSourcesDrawer'
+import MPPContactModal from '@/components/MPPContactModal'
 import { useState } from 'react'
 
 export default function WaterBillCalculatorPage() {
