@@ -85,7 +85,7 @@ export default function HealthcarePage() {
 
       <ReceiptOverlay />
       
-      <MPPContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      <MPPContactModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} variant="healthcare" />
 
       <MethodologyDrawer 
         isOpen={showMethodology} 
