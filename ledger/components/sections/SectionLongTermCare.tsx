@@ -56,30 +56,18 @@ export default function SectionLongTermCare() {
               <h4 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
                 Public & Non-Profit
               </h4>
-              <p className="text-sm md:text-base text-gray-600 font-light mb-4">
+              <p className="text-sm md:text-base text-gray-600 font-light">
                 Municipal and non-profit operators have historically provided the majority of long-term care
               </p>
-              <div className="bg-white rounded-lg p-4 border border-blue-100">
-                <p className="text-xs md:text-sm text-gray-500 font-light mb-2">Before Ford</p>
-                <p className="text-2xl md:text-3xl font-light text-blue-900">
-                  Majority of beds
-                </p>
-              </div>
             </div>
             
             <div className="bg-red-50 rounded-2xl p-8 md:p-12 border border-red-200">
               <h4 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
                 For-Profit Operators
               </h4>
-              <p className="text-sm md:text-base text-gray-600 font-light mb-4">
+              <p className="text-sm md:text-base text-gray-600 font-light">
                 Under Ford, new bed allocations have shifted dramatically toward for-profit operators
               </p>
-              <div className="bg-white rounded-lg p-4 border border-red-100">
-                <p className="text-xs md:text-sm text-gray-500 font-light mb-2">Under Ford</p>
-                <p className="text-2xl md:text-3xl font-light text-red-900">
-                  Disproportionate share
-                </p>
-              </div>
             </div>
           </div>
           </div>
