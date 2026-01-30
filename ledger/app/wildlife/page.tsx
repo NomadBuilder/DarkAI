@@ -14,7 +14,7 @@ const fadeIn = {
   transition: { duration: 0.6 },
 }
 
-export default function Bill5Page() {
+export default function WildlifePage() {
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)

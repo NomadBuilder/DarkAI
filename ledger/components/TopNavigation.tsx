@@ -54,7 +54,7 @@ const navItems: NavItem[] = [
   { id: 'healthcare', label: 'Healthcare', href: '/healthcare' },
   { id: 'water', label: 'Water Privatization', href: '/water' },
   { id: 'greenbelt', label: 'Greenbelt', href: '/greenbelt' },
-  { id: 'bill5', label: 'Wildlife Impact', href: '/bill5' },
+  { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
   { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
   // { id: 'trade-off', label: 'The Trade-Off', href: '/thetradeoff' }, // Hidden for now
   { id: 'about', label: 'About', href: '/about' },
@@ -146,7 +146,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                 {/* Logo/Title */}
                 <div className="flex-shrink-0">
                   <Link
-                    href={getNavHref('/')}
+                    href="/"
                     className="flex items-center gap-2 text-sm sm:text-base font-light text-gray-900 hover:text-gray-700 transition-colors"
                   >
                     <img 
