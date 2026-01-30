@@ -82,7 +82,7 @@ export default function SectionWaterComparisonToggle() {
 
         {/* Content Cards */}
         <div className="space-y-6 md:space-y-8">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             {governmentClaims.map((item, idx) => (
               <motion.div
                 key={idx}

@@ -10,6 +10,7 @@
     "build": "next build",
     "build:validate": "next build && node scripts/validate-build.js",
     "build:static": "STATIC_EXPORT=true next build",
+    "build:protectont": "STATIC_EXPORT=true next build",
     "start": "next start",
     "lint": "next lint",
     "process-data": "python scripts/process_data.py"

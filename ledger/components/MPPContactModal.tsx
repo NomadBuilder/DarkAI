@@ -171,17 +171,19 @@ ${userName || '[Your Name]'}`
 
                 {/* Step 1: MPP Name */}
                 <div className="mb-6">
-                  <label className="block text-sm md:text-base font-light text-gray-700 mb-2">
+                  <label htmlFor="mpp-name" className="block text-sm md:text-base font-light text-gray-700 mb-2">
                     Your MPP&apos;s name
                     <span className="text-gray-400 font-normal"> (optional)</span>
                   </label>
                   <div className="flex gap-2">
                     <input
+                      id="mpp-name"
                       type="text"
                       value={mppName}
                       onChange={(e) => setMppName(e.target.value)}
                       placeholder="Enter your MPP's name"
                       className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      aria-label="Your MPP's name (optional)"
                     />
                     <button
                       onClick={handleFindMPP}
@@ -200,25 +202,28 @@ ${userName || '[Your Name]'}`
 
                 {/* Step 2: Message Template */}
                 <div className="mb-6">
-                  <label className="block text-sm md:text-base font-light text-gray-700 mb-2">
+                  <label htmlFor="contact-user-name" className="block text-sm md:text-base font-light text-gray-700 mb-2">
                     Your name
                     <span className="text-gray-400 font-normal"> (optional)</span>
                   </label>
                   <input
+                    id="contact-user-name"
                     type="text"
                     value={userName}
                     onChange={(e) => setUserName(e.target.value)}
                     placeholder="Your name"
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent mb-4"
+                    aria-label="Your name (optional)"
                   />
 
-                  <label className="block text-sm md:text-base font-light text-gray-700 mb-2">
+                  <label htmlFor="contact-message" className="block text-sm md:text-base font-light text-gray-700 mb-2">
                     Message
                   </label>
                   <p className="text-xs md:text-sm text-gray-500 font-light mb-2">
                     This message is designed to be respectful, factual, and appropriate for a constituent.
                   </p>
                   <textarea
+                    id="contact-message"
                     value={getFullMessage()}
                     onChange={(e) => {
                       const newValue = e.target.value

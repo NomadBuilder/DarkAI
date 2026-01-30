@@ -41,11 +41,10 @@ export default function SectionFordTracker() {
             </p>
             <div className="space-y-3">
               {[
-                'Education funding cuts',
-                'Public health unit reductions',
-                'Social service program cuts',
-                'Environmental protection cuts',
-                'Legal aid reductions',
+                'Education and public health unit cuts',
+                'Social service and legal aid reductions',
+                'Greenbelt land removed (later reversed); environmental oversight weakened',
+                'Species-at-risk protections weakened (Bill 5)',
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-red-600 rounded-full"></div>
@@ -72,11 +71,9 @@ export default function SectionFordTracker() {
             </p>
             <div className="space-y-3">
               {[
-                'Private staffing agencies ($9.2B over 10 years)',
-                'For-profit surgical clinics (Bill 60, 2023)',
-                'For-profit long-term care',
-                'Consulting and outsourcing',
-                'Private healthcare delivery',
+                'Private staffing agencies ($9.2B over 10 years); for-profit surgical clinics (Bill 60)',
+                'For-profit long-term care; consulting and outsourcing',
+                'Water and land opened to private control (Bill 60 water, Bill 5 special economic zones)',
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
@@ -139,7 +136,7 @@ export default function SectionFordTracker() {
           </div>
         </motion.div>
 
-        {/* Source Link and Healthcare Link */}
+        {/* Explore issues + OFL link */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -147,18 +144,19 @@ export default function SectionFordTracker() {
           transition={{ duration: 0.8, delay: 0.8 }}
         >
           <div className="text-center space-y-4">
-          <Link
-            href="/healthcare"
-            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-red-600 text-white rounded-lg text-base md:text-lg font-light hover:bg-red-700 transition-colors"
-          >
-            See the healthcare impact →
-          </Link>
-          <div>
+          <p className="text-sm font-light text-gray-500">Explore the issues</p>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            <Link href="/healthcare" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Healthcare</Link>
+            <Link href="/water" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Water</Link>
+            <Link href="/greenbelt" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Greenbelt</Link>
+            <Link href="/wildlife" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Wildlife</Link>
+          </div>
+          <div className="pt-2">
           <a
             href="https://ofl.ca/ford-tracker/"
             target="_blank"
             rel="noopener noreferrer"
-              className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors"
+            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors"
           >
             Explore the Full OFL Ford Tracker →
           </a>

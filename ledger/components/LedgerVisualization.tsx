@@ -299,6 +299,8 @@ export default function LedgerVisualization() {
         ref={svgRef}
         className="w-full h-full"
         style={{ pointerEvents: receiptsMode ? 'auto' : 'none' }}
+        role="img"
+        aria-label="Interactive visualization of Ontario government spending by vendor type and year. In receipts mode, click a bubble to see vendor details."
       />
     </div>
   )

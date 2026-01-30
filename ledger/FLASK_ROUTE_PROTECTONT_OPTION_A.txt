@@ -1,0 +1,61 @@
+# Option A: ProtectOnt.ca serves Ledger at root; darkai.ca/ledger redirects to ProtectOnt.ca
+# Add this to your darkai-consolidated Flask app (e.g. app.py).
+# Requires: Ledger built with NO base path (use build:protectont in this repo) and output in ledger/out.
+
+import os
+from flask import request, send_from_directory, redirect, abort
+
+LEDGER_DIR = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
+
+
+def is_protect_ontario_domain():
+    host = (request.host or '').lower().split(':')[0]
+    return host in ('protectont.ca', 'www.protectont.ca')
+
+
+def serve_ledger_at_root(path):
+    """Serve Ledger static files from ledger/out at root (for ProtectOnt.ca)."""
+    path = (path or '').strip('/')
+    # Root or empty -> index.html
+    if not path or path == 'index.html':
+        return send_from_directory(LEDGER_DIR, 'index.html')
+    # Explicit .html
+    if path.endswith('.html'):
+        try:
+            return send_from_directory(LEDGER_DIR, path)
+        except Exception:
+            abort(404)
+    # Try path + .html (Next.js static export routes)
+    if not path.startswith(('_next/', 'data/', 'favicon', 'logo', 'og-image')):
+        try:
+            return send_from_directory(LEDGER_DIR, path + '.html')
+        except Exception:
+            pass
+    # Static assets and data
+    try:
+        return send_from_directory(LEDGER_DIR, path)
+    except Exception:
+        pass
+    # SPA fallback: any other path -> index.html
+    return send_from_directory(LEDGER_DIR, 'index.html')
+
+
+@app.before_request
+def protect_ontario_and_ledger_redirect():
+    # 1) ProtectOnt.ca / www.protectont.ca -> serve Ledger at root (all paths)
+    if is_protect_ontario_domain():
+        path = request.path.lstrip('/')
+        return serve_ledger_at_root(path)
+
+    # 2) darkai.ca -> redirect /ledger and /ledger/* to ProtectOnt.ca
+    if request.path == '/ledger' or request.path.startswith('/ledger/'):
+        rest = request.path[7:].strip('/')   # strip '/ledger' -> '' or 'receipts', etc.
+        return redirect('https://protectont.ca/' + (rest or ''), code=302)
+
+    return None
+
+
+# Optional: keep the existing /ledger routes for darkai.ca if you want both to work
+# until DNS is fully switched. If you use the redirect above, you can REMOVE or
+# comment out the old serve_ledger routes (the ones from FLASK_ROUTE_MINIMAL.txt)
+# so that /ledger on darkai.ca only redirects.

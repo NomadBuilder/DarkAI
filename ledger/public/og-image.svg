@@ -1,4 +1,4 @@
-<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
   <!-- Background -->
   <rect width="1200" height="630" fill="#ffffff"/>
   
@@ -14,16 +14,24 @@
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#grad)"/>
-  
+  <!-- Shield icon (your image) -->
+  <image href="shield-icon.png" x="80" y="78" width="56" height="62" preserveAspectRatio="xMidYMid meet"/>
   <!-- Content -->
-  <g transform="translate(80, 120)">
-    <!-- Main Title -->
-    <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="300" fill="#0f172a">
-      The Ledger
+  <g transform="translate(148, 100)">
+    <!-- Brand: ProtectOnt.ca (two-tone, matches logo) -->
+    <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="700">
+      <tspan fill="#2E4A6B">Protect</tspan>
+      <tspan fill="#66A33F">Ont</tspan>
+      <tspan fill="#2E4A6B">.ca</tspan>
+    </text>
+    <!-- Main Title: Protect (blue) + Ontario (green) -->
+    <text x="0" y="72" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="600">
+      <tspan fill="#2E4A6B">Protect </tspan>
+      <tspan fill="#66A33F">Ontario</tspan>
     </text>
     
     <!-- Subtitle -->
-    <text x="0" y="90" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="300" fill="#64748b">
+    <text x="0" y="162" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="300" fill="#64748b">
       Doug Ford wants to sell us out
     </text>
     
@@ -38,7 +46,7 @@
     </g>
     
     <!-- Quote -->
-    <g transform="translate(0, 420)">
+    <g transform="translate(0, 492)">
       <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="600" fill="#0f172a">
         Sovereignty in words.
       </text>

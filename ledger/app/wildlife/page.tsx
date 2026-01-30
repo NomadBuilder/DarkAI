@@ -44,24 +44,16 @@ export default function WildlifePage() {
         onMethodologyClick={handleMethodologyToggle}
       />
       <div className="relative z-10 pt-28 sm:pt-32">
-        {/* Hero */}
-        <section className="min-h-[85vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-16 md:py-24">
+        {/* Hero — same nav-to-content spacing as healthcare */}
+        <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-0 pb-16 md:pb-24 bg-white">
           <div className="max-w-5xl w-full text-center">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-sm sm:text-base uppercase tracking-widest text-amber-700 font-medium mb-4 md:mb-6"
-            >
-              Ontario · 2025
-            </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8 leading-tight"
             >
-              Bill 5: Species, Rights & What We Stand to Lose
+              Species, Rights & What We Stand to Lose
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 24 }}

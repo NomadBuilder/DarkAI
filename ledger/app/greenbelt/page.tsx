@@ -44,19 +44,11 @@ export default function GreenbeltPage() {
         onMethodologyClick={handleMethodologyToggle}
       />
       <div className="relative z-10 pt-28 sm:pt-32">
-        {/* Hero */}
-        <section className="relative min-h-[85vh] flex items-center justify-center px-4 sm:px-6 md:px-8 py-16 md:py-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/80 via-white to-slate-50/80" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.12),transparent)]" />
+        {/* Hero — wrapper extends gradient into top padding; same nav-to-content spacing as healthcare */}
+        <div className="relative -mt-28 sm:-mt-32 pt-28 sm:pt-32 pb-16 md:pb-24 bg-gradient-to-b from-white via-emerald-50/60 to-emerald-50/80">
+          <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-0 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.12),transparent)]" />
           <div className="relative max-w-5xl w-full text-center">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-sm sm:text-base uppercase tracking-widest text-emerald-700 font-medium mb-4 md:mb-6"
-            >
-              Ontario · 2022–2025
-            </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -81,7 +73,7 @@ export default function GreenbeltPage() {
               className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-14"
             >
               <div className="text-center">
-                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-emerald-800 tabular-nums">7,400</span>
+                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-red-600 tabular-nums">7,400</span>
                 <span className="block text-sm sm:text-base text-gray-500 mt-1">acres removed</span>
               </div>
               <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
@@ -92,11 +84,12 @@ export default function GreenbeltPage() {
               <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-emerald-800 tabular-nums">12 of 15</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">sites developer-requested</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">sites developers lobbied to remove</span>
               </div>
             </motion.div>
           </div>
-        </section>
+          </section>
+        </div>
 
         {/* What happened */}
         <section className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden">

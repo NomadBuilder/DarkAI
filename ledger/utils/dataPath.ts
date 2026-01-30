@@ -1,8 +1,7 @@
 /**
  * Get the correct path for data files, respecting basePath
  * 
- * With BASE_PATH=/ledger, this ensures fetch calls use /ledger/data/processed/...
- * instead of /data/processed/...
+ * With BASE_PATH set (e.g. /ledger), fetch calls use that prefix for data paths.
  */
 
 // Detect basePath from current URL

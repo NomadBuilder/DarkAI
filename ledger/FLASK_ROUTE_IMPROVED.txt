@@ -1,0 +1,76 @@
+# Improved Flask route with better error handling and diagnostics
+# Add this to app.py (around line 883, after sitemap.xml route)
+
+# Serve Ledger static files at /ledger path
+@app.route('/ledger')
+@app.route('/ledger/')
+@app.route('/ledger/<path:path>')
+def serve_ledger(path='index.html'):
+    """Serve the Ledger static files at /ledger path"""
+    import os
+    from flask import send_from_directory, jsonify
+    
+    # Try multiple possible paths for ledger/out
+    possible_paths = [
+        os.path.join(os.path.dirname(__file__), 'ledger', 'out'),
+        os.path.join('/opt/render/project/src', 'ledger', 'out'),
+        os.path.join('/opt/render/project/src', 'ledger', 'out'),
+    ]
+    
+    ledger_dir = None
+    for test_path in possible_paths:
+        if os.path.exists(test_path) and os.path.isdir(test_path):
+            ledger_dir = test_path
+            break
+    
+    # If no ledger_dir found, return diagnostic info
+    if not ledger_dir:
+        # Check if ledger directory exists at all
+        ledger_base = os.path.join(os.path.dirname(__file__), 'ledger')
+        ledger_base_alt = '/opt/render/project/src/ledger'
+        
+        diagnostics = {
+            "error": "Ledger not built yet",
+            "message": "The ledger build may still be in progress. Please check Render build logs.",
+            "checked_paths": possible_paths,
+            "ledger_base_exists": os.path.exists(ledger_base) or os.path.exists(ledger_base_alt),
+            "ledger_base_path": ledger_base if os.path.exists(ledger_base) else ledger_base_alt,
+        }
+        
+        # Check if ledger directory exists but out/ doesn't
+        if os.path.exists(ledger_base) or os.path.exists(ledger_base_alt):
+            actual_ledger = ledger_base if os.path.exists(ledger_base) else ledger_base_alt
+            diagnostics["ledger_dir_contents"] = os.listdir(actual_ledger) if os.path.exists(actual_ledger) else []
+            diagnostics["has_node_modules"] = os.path.exists(os.path.join(actual_ledger, 'node_modules'))
+            diagnostics["has_package_json"] = os.path.exists(os.path.join(actual_ledger, 'package.json'))
+            diagnostics["has_out_dir"] = os.path.exists(os.path.join(actual_ledger, 'out'))
+        
+        diagnostics["ledger_dir"] = possible_paths[0]  # Expected path
+        return jsonify(diagnostics), 503
+    
+    # Check if index.html exists
+    index_path = os.path.join(ledger_dir, 'index.html')
+    if not os.path.exists(index_path):
+        return jsonify({
+            "error": "Ledger index.html not found",
+            "ledger_dir": ledger_dir,
+            "contents": os.listdir(ledger_dir) if os.path.exists(ledger_dir) else []
+        }), 503
+    
+    # Serve the file
+    if path == 'index.html' or not path:
+        return send_from_directory(ledger_dir, 'index.html')
+    
+    # For other paths, check if file exists
+    file_path = os.path.join(ledger_dir, path)
+    if not os.path.exists(file_path) or not os.path.isfile(file_path):
+        # Try to serve index.html as fallback for SPA routing
+        if os.path.exists(index_path):
+            return send_from_directory(ledger_dir, 'index.html')
+        return jsonify({
+            "error": "File not found",
+            "requested_path": path,
+            "ledger_dir": ledger_dir
+        }), 404
+    
+    return send_from_directory(ledger_dir, path)

@@ -15,51 +15,57 @@ interface Vendor {
 export default function VendorList() {
   const [vendors, setVendors] = useState<Vendor[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'all' | 'for_profit' | 'non_profit' | 'public'>('all')
   const { setSelectedVendor } = useLedgerStore()
 
-  useEffect(() => {
-    const loadVendors = async () => {
-      try {
-        const response = await fetch(getDataFile('vendors_master.json'))
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-        const data = await response.json()
-        
-        if (Array.isArray(data)) {
-          // Filter for non-public entities (for-profit, non-profit, and optionally public for comparison)
-          // Exclude 'unknown' type as those aren't classified
-          const nonPublic = data.filter((v: any) => {
-            const type = v.type || v.vendor_type
-            return type === 'for_profit' || type === 'non_profit' || type === 'public'
-          })
-          
-          // Calculate totals
-          const withTotals = nonPublic.map((v: any) => {
-            const yearly = v.yearly_payments || {}
-            const total = Object.values(yearly).reduce((sum: number, amt: any) => sum + (amt || 0), 0)
-            return { 
-              ...v, 
-              _total: total,
-              name: v.name || v.vendor_name_normalized || 'Unknown',
-              vendorType: v.type || v.vendor_type || 'unknown'
-            }
-          })
-          
-          // Sort by total
-          withTotals.sort((a: any, b: any) => b._total - a._total)
-          setVendors(withTotals)
-        } else {
-          console.error('Data is not an array:', typeof data)
-        }
-      } catch (error) {
-        console.error('Failed to load vendors:', error)
-      } finally {
-        setLoading(false)
+  const loadVendors = async () => {
+    setError(null)
+    setLoading(true)
+    try {
+      const url = getDataFile('vendors_master.json')
+      const response = await fetch(url)
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`)
       }
+      const data = await response.json()
+      
+      if (Array.isArray(data)) {
+        // Filter for non-public entities (for-profit, non-profit, and optionally public for comparison)
+        // Exclude 'unknown' type as those aren't classified
+        const nonPublic = data.filter((v: any) => {
+          const type = v.type || v.vendor_type
+          return type === 'for_profit' || type === 'non_profit' || type === 'public'
+        })
+        
+        // Calculate totals
+        const withTotals = nonPublic.map((v: any) => {
+          const yearly = v.yearly_payments || {}
+          const total = Object.values(yearly).reduce((sum: number, amt: any) => sum + (amt || 0), 0)
+          return { 
+            ...v, 
+            _total: total,
+            name: v.name || v.vendor_name_normalized || 'Unknown',
+            vendorType: v.type || v.vendor_type || 'unknown'
+          }
+        })
+        
+        // Sort by total
+        withTotals.sort((a: any, b: any) => b._total - a._total)
+        setVendors(withTotals)
+      } else {
+        setError('Vendor data format is invalid.')
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load vendors.'
+      setError(message)
+      console.error('Failed to load vendors:', err)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     loadVendors()
   }, [])
 
@@ -78,6 +84,25 @@ export default function VendorList() {
     return (
       <div className="py-8 text-center">
         <p className="text-gray-500 font-light">Loading vendors...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="py-8 text-center">
+        <p className="text-red-600 font-light mb-2">{error}</p>
+        <p className="text-sm text-gray-500 font-light mb-4">
+          For local dev use <code className="bg-gray-100 px-1 rounded">npm run dev</code> and open <code className="bg-gray-100 px-1 rounded">/receipts</code>.
+        </p>
+        <button
+          type="button"
+          onClick={loadVendors}
+          className="text-sm text-gray-700 underline hover:no-underline"
+          aria-label="Retry loading vendors"
+        >
+          Retry
+        </button>
       </div>
     )
   }

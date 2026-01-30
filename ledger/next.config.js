@@ -1,9 +1,11 @@
 /** @type {import('next').NextConfig} */
+const isDev = process.env.NODE_ENV !== 'production'
 const nextConfig = {
+  // In dev, never use basePath so script/chunk URLs are root-relative (fixes 404 on page.js for /water, /receipts, etc.)
+  ...(isDev ? { basePath: '' } : {}),
   // Never use static export in dev mode - only in production builds
   ...(process.env.NODE_ENV === 'production' && process.env.STATIC_EXPORT === 'true' && { output: 'export' }),
-  // Base path for deployment at darkai.ca/ledger
-  // Only use basePath in production builds, not in dev mode
+  // Base path for deployment at ProtectOnt.ca (production only; set BASE_PATH for subpath)
   ...(process.env.NODE_ENV === 'production' && process.env.BASE_PATH && { basePath: process.env.BASE_PATH }),
   images: {
     unoptimized: true,

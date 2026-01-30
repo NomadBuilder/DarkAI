@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const publicControl = {
@@ -31,6 +31,8 @@ const corporateControl = {
 
 export default function SectionWaterControlSlider() {
   const [isPublic, setIsPublic] = useState(true)
+  const [hasMounted, setHasMounted] = useState(false)
+  useEffect(() => setHasMounted(true), [])
 
   const handleToggle = () => {
     setIsPublic(!isPublic)
@@ -84,37 +86,32 @@ export default function SectionWaterControlSlider() {
           className="relative"
         >
           <div className="bg-white rounded-2xl p-8 md:p-12 border-2 border-gray-200 shadow-xl">
-            {/* Toggle Slider */}
+            {/* Toggle Slider - render only after mount to avoid extension-injected attributes (data-sharkid) breaking hydration */}
             <div className="mb-12">
               <div className="relative px-4 md:px-8">
-                {/* Labels positioned above the track */}
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm md:text-base font-light text-blue-700 whitespace-nowrap">Public Control</span>
                   <span className="text-sm md:text-base font-light text-red-700 whitespace-nowrap">Corporate Control</span>
                 </div>
-                
-                {/* Slider track container */}
                 <div className="relative h-16 md:h-20 bg-gradient-to-r from-blue-100 via-gray-200 to-red-100 rounded-full overflow-visible">
-                  {/* Input range for interaction */}
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    step="100"
-                    value={isPublic ? 0 : 100}
-                    onChange={handleSliderChange}
-                    onMouseUp={handleSliderMouseUp}
-                    onTouchEnd={handleSliderTouchEnd}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  />
-                  
-                  {/* Fill gradient */}
+                  {hasMounted && (
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="100"
+                      value={isPublic ? 0 : 100}
+                      onChange={handleSliderChange}
+                      onMouseUp={handleSliderMouseUp}
+                      onTouchEnd={handleSliderTouchEnd}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                      aria-label="Toggle between Public Control and Corporate Control"
+                    />
+                  )}
                   <div
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-500 to-red-500 transition-all duration-300 ease-out rounded-full"
                     style={{ width: isPublic ? '0%' : '100%' }}
                   />
-                  
-                  {/* Handle */}
                   <div
                     className="absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 w-12 h-12 md:w-16 md:h-16 bg-white rounded-full border-4 border-gray-800 shadow-lg flex items-center justify-center transition-all duration-300 ease-out z-20 cursor-pointer"
                     style={{ left: isPublic ? '0' : '100%' }}
@@ -133,7 +130,7 @@ export default function SectionWaterControlSlider() {
 
             {/* Single Content Box that Transitions */}
             <div className="relative min-h-[400px] md:min-h-[450px]">
-              <AnimatePresence mode="wait">
+              <AnimatePresence mode="sync">
                 <motion.div
                   key={isPublic ? 'public' : 'corporate'}
                   initial={{ opacity: 0, y: 20 }}

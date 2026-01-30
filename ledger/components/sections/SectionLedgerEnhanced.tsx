@@ -220,7 +220,7 @@ export default function SectionLedgerEnhanced() {
                 <h3 className="text-lg sm:text-xl md:text-2xl font-light text-gray-900 mb-2">For-Profit Spending Growth</h3>
                 <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light mb-4 sm:mb-6">Annual spending on private corporations (2018-2024)</p>
                 <div className="relative w-full overflow-x-auto" style={{ height: `${chartHeight + 40}px` }}>
-                  <svg className="w-full h-full block min-w-full" viewBox={`0 0 ${availableData.length * 150 + 20} ${chartHeight + 40}`} preserveAspectRatio="xMidYMid meet">
+                  <svg className="w-full h-full block min-w-full" viewBox={`0 0 ${availableData.length * 150 + 20} ${chartHeight + 40}`} preserveAspectRatio="xMidYMid meet" role="img" aria-label="Chart showing for-profit spending growth by year (2018 to 2024).">
                     
                     {/* Area fill for for-profit only */}
                     {availableData.length > 0 && maxForProfit > 0 && (

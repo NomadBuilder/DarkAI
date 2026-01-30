@@ -3,10 +3,11 @@
 import TopNavigation from '../../components/TopNavigation'
 import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 export default function AboutPage() {
+  const [hasMounted, setHasMounted] = useState(false)
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
   const [formData, setFormData] = useState({
@@ -35,6 +36,10 @@ export default function AboutPage() {
       setShowDataSources(true)
     }
   }
+
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -90,10 +95,10 @@ export default function AboutPage() {
             >
               <div className="text-center">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-                  About Dark AI
+                  About Protect Ontario
                 </h1>
                 <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto">
-                  Making hidden patterns visible for the public good
+                  Ontario&apos;s quiet privatization (Americanization) — and the data that makes it visible
                 </p>
               </div>
             </motion.div>
@@ -106,17 +111,14 @@ export default function AboutPage() {
             >
               <div className="bg-gray-50 rounded-2xl p-8 md:p-12 border border-gray-200">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
-                  Our Philosophy
+                  What Protect Ontario Is
                 </h2>
                 <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
                   <p>
-                    Dark AI believes that information should be accessible, transparent, and actionable. When data is buried in spreadsheets, hidden in complex systems, or obscured by technical barriers, important patterns remain invisible — and accountability becomes impossible.
+                    Protect Ontario is a project that tracks and visualizes what&apos;s happening to public services and accountability in Ontario under the Ford government. When spending shifts from public to private hands, when legislation opens the door to corporate control of water or species protection, when land and accountability are traded for developer access — the patterns are often buried in spreadsheets, legalese, or press releases. Protect Ontario makes those patterns visible.
                   </p>
                   <p>
-                    We build tools and visualizations that reveal what the data actually shows, not what we want it to show. Our methodology prioritizes transparency: we use only publicly available sources, document our process, and clearly distinguish between raw data and our interpretation.
-                  </p>
-                  <p>
-                    The goal is not to tell you what to think, but to give you the tools to see what&apos;s actually happening — so that citizens, journalists, researchers, and policymakers can make informed decisions based on evidence, not assumptions.
+                    We cover healthcare (private staffing agencies, for-profit clinics, hospital deficits), water (Bill 60 and the path to corporate control), the Greenbelt scandal and RCMP investigation, and Bill 5&apos;s impact on species and Indigenous rights. We use only publicly available data and sources, document our methodology, and clearly distinguish between raw data and our interpretation. The goal is not to tell you what to think, but to give you the tools to see what&apos;s actually happening — so you can make informed decisions and hold power to account.
                   </p>
                 </div>
               </div>
@@ -134,17 +136,16 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
                   <p>
-                    Every project we build follows the same core principles:
+                    Protect Ontario follows a few core principles:
                   </p>
                   <ul className="list-disc list-inside space-y-3 ml-4 text-base md:text-lg text-gray-700 font-light">
-                    <li><strong className="font-normal">Public sources only</strong> — We use data that anyone can access and verify themselves</li>
-                    <li><strong className="font-normal">Transparent process</strong> — Our methodology is documented and open to scrutiny</li>
+                    <li><strong className="font-normal">Public sources only</strong> — We use data and reports that anyone can access and verify (Ontario Public Accounts, Auditor General reports, legislation, news)</li>
+                    <li><strong className="font-normal">Transparent process</strong> — Our methodology and data sources are documented and open to scrutiny</li>
                     <li><strong className="font-normal">Clear distinction</strong> — We separate source data from our interpretation, so you can see both</li>
-                    <li><strong className="font-normal">No hidden agendas</strong> — We let the data speak for itself, providing context but not spin</li>
                     <li><strong className="font-normal">Accessibility</strong> — We make complex information understandable without dumbing it down</li>
                   </ul>
                   <p className="pt-4">
-                    This approach applies whether we&apos;re mapping public spending, investigating infrastructure networks, or analyzing policy impacts. The methodology is consistent; the subject matter varies.
+                    You can open <strong className="font-normal">Data Sources</strong> and <strong className="font-normal">Methodology</strong> from the nav to see the full details.
                   </p>
                 </div>
               </div>
@@ -158,20 +159,14 @@ export default function AboutPage() {
             >
               <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
-                  The Public Good
+                  Why It Matters
                 </h2>
                 <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
                   <p>
-                    Information is power — but only when it&apos;s accessible. When data is locked away, difficult to understand, or presented in ways that obscure rather than illuminate, it serves the interests of those who control it, not the public.
+                    Information is power — but only when it&apos;s accessible. When spending shifts, when legislation changes, when accountability is weakened, the details are often buried in spreadsheets and legalese. Protect Ontario makes those details visible so citizens, journalists, and researchers can see what&apos;s actually happening and hold power to account.
                   </p>
                   <p>
-                    We believe that transparency is a public good. When citizens can see how their government spends money, when researchers can trace patterns in complex systems, when journalists can verify claims with accessible data — democracy works better.
-                  </p>
-                  <p>
-                    The Ledger project applies this philosophy to public spending. By visualizing Ontario&apos;s Public Accounts data, we make it possible to see patterns that might otherwise go unnoticed: how spending shifts over time, how policy decisions correlate with changes in allocation, how public dollars flow to different types of institutions.
-                  </p>
-                  <p>
-                    This isn&apos;t about advocacy or agenda — it&apos;s about making information accessible so that informed public discourse can happen. The data is public. The patterns are real. Our role is simply to make them visible.
+                    Transparency is a public good. The data we use is public. The patterns are real. Our role is to make them visible so that informed public discourse — and action — can happen.
                   </p>
                 </div>
               </div>
@@ -185,23 +180,20 @@ export default function AboutPage() {
             >
               <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
-                  Our Work
+                  Behind Protect Ontario
                 </h2>
                 <div className="space-y-4 text-base md:text-lg text-gray-300 font-light leading-relaxed">
                   <p>
-                    Dark AI develops investigative tools and reports across multiple domains — from AI-enabled harms to public spending transparency. What unites our work is not the subject matter, but the approach: making hidden patterns visible through accessible visualization and transparent methodology.
-                  </p>
-                  <p>
-                    Whether we&apos;re mapping infrastructure networks, analyzing policy impacts, or visualizing spending patterns, the goal is the same: give people the tools to see what&apos;s actually happening, so they can make informed decisions and hold power to account.
+                    Protect Ontario is a project from <a href="https://ProtectOnt.ca/" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 underline">ProtectOnt.ca</a>, focused on making hidden patterns visible — from public spending and policy impacts to accountability gaps. Transparent methodology, public sources only, and a focus on what the data actually shows.
                   </p>
                   <p className="pt-4">
                     <a 
-                      href="https://darkai.ca/" 
+                      href="https://ProtectOnt.ca/" 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-red-500 hover:text-red-400 underline font-light"
+                      className="text-blue-300 hover:text-blue-200 underline font-light"
                     >
-                      Learn more about Dark AI&apos;s work →
+                      ProtectOnt.ca →
                     </a>
                   </p>
                 </div>
@@ -221,21 +213,22 @@ export default function AboutPage() {
             >
               <div className="text-center mb-12">
                 <h2 className="text-4xl sm:text-5xl md:text-6xl font-light text-gray-900 mb-6">
-                  Contact Us
+                  Contact
                 </h2>
                 <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-2xl mx-auto">
-                  Have questions, suggestions, or want to report an issue? We&apos;d love to hear from you.
+                  Questions about Protect Ontario, data corrections, or suggestions? Get in touch.
                 </p>
               </div>
             </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-              <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-6">
+            {hasMounted ? (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-6">
                 <div>
                   <label htmlFor="name" className="block text-sm md:text-base font-light text-gray-700 mb-2">
                     Name
@@ -322,6 +315,7 @@ export default function AboutPage() {
                   type="submit"
                   disabled={isSubmitting}
                   className="w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  aria-label={isSubmitting ? 'Sending message' : 'Send message'}
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
@@ -329,8 +323,11 @@ export default function AboutPage() {
                 <p className="text-xs md:text-sm text-gray-500 font-light text-center">
                   We respect your privacy. Your information will only be used to respond to your inquiry.
                 </p>
-              </form>
-            </motion.div>
+                </form>
+              </motion.div>
+            ) : (
+              <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg min-h-[420px]" aria-hidden="true" />
+            )}
           </div>
         </section>
       </div>

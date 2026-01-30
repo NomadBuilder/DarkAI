@@ -89,8 +89,8 @@ services:
         npm list typescript tailwindcss postcss autoprefixer 2>&1 | grep -E "(typescript|tailwindcss|postcss|autoprefixer|missing|extraneous)" || echo "✅ All critical dependencies found"
         
         echo ""
-        echo "🔨 Running build..."
-        echo "Environment: NODE_ENV=production, BASE_PATH=/ledger, STATIC_EXPORT=true"
+        echo "🔨 Running build (build:protectont = root-relative for ProtectOnt.ca)..."
+        echo "Environment: NODE_ENV=production, no BASE_PATH (for protectont.ca at root)"
         
         # Create diagnostic log file
         DIAG_LOG="/tmp/ledger-build-diagnostic.log"
@@ -101,11 +101,11 @@ services:
         echo "npm: $(npm --version 2>&1)" >> "$DIAG_LOG"
         echo "Environment vars:" >> "$DIAG_LOG"
         echo "  NODE_ENV=$NODE_ENV" >> "$DIAG_LOG"
-        echo "  BASE_PATH=$BASE_PATH" >> "$DIAG_LOG"
-        echo "  STATIC_EXPORT=$STATIC_EXPORT" >> "$DIAG_LOG"
+        echo "Build: npm run build:protectont (static export, no base path)" >> "$DIAG_LOG"
+        
         
         # Run build with environment variables inline (more reliable) and capture all output
-        if ! NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build >> "$DIAG_LOG" 2>&1; then
+        if ! NODE_ENV=production npm run build:protectont >> "$DIAG_LOG" 2>&1; then
           echo ""
           echo "❌ Build failed with exit code $?"
           echo "Current directory: $(pwd)"

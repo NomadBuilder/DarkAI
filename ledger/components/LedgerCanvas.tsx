@@ -474,6 +474,7 @@ export default function LedgerCanvas() {
         pointerEvents: receiptsMode ? 'auto' : 'none',
         zIndex: 1,
       }}
+      aria-label="Interactive visualization of Ontario government spending by vendor type and year. In receipts mode, click a bubble to see vendor details."
     />
   )
 }

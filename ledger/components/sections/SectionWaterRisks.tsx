@@ -20,7 +20,7 @@ const risks = [
   },
   {
     title: 'Reduced Accountability',
-    description: 'These corporations are not agents of the Crown, operating outside public accountability frameworks. Governance details left to regulations.',
+    description: 'The law states these corporations are not agents of the Crown — meaning they operate outside the same accountability rules as public institutions. Governance details are left to regulations.',
     icon: '🔒',
   },
   {

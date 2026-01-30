@@ -3,29 +3,32 @@ import Script from 'next/script'
 import './globals.css'
 import ErrorBoundary from '@/components/ErrorBoundary'
 
-// Get basePath for favicon and OG image paths
+// Base URL and paths for meta, OG, and icons (lowercase canonical URL)
 const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://darkai.ca'
-const ogImageUrl = `${siteUrl}${basePath}/og-image.svg`
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://protectont.ca'
+const metadataBase = new URL(siteUrl)
 
 export const metadata: Metadata = {
-  title: 'The Ledger — Ontario\'s Quiet Privatization (Americanization)',
+  metadataBase,
+  title: 'Protect Ontario — Accountability for the Ford Government',
   description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
+  applicationName: 'Protect Ontario',
+  keywords: ['Ontario', 'Ford government', 'public spending', 'accountability', 'ProtectOnt.ca'],
   icons: {
-    icon: `${basePath}/favicon.svg`,
-    apple: `${basePath}/favicon.svg`,
+    icon: `${basePath}/shield-icon.png`,
+    apple: `${basePath}/shield-icon.png`,
   },
   openGraph: {
-    title: 'The Ledger — Ontario\'s Quiet Privatization (Americanization)',
+    title: 'Protect Ontario — Accountability for the Ford Government',
     description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
-    url: `${siteUrl}${basePath}`,
-    siteName: 'The Ledger',
+    url: basePath || '/',
+    siteName: 'Protect Ontario',
     images: [
       {
-        url: ogImageUrl,
+        url: `${basePath}/og-image.svg`,
         width: 1200,
         height: 630,
-        alt: 'The Ledger — Ontario\'s Quiet Privatization (Americanization)',
+        alt: 'Protect Ontario — ProtectOnt.ca — Accountability for the Ford Government',
       },
     ],
     locale: 'en_CA',
@@ -33,9 +36,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'The Ledger — Ontario\'s Quiet Privatization (Americanization)',
+    title: 'Protect Ontario — Accountability for the Ford Government',
     description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
-    images: [ogImageUrl],
+    images: [{ url: `${basePath}/og-image.svg`, alt: 'Protect Ontario — ProtectOnt.ca' }],
   },
 }
 

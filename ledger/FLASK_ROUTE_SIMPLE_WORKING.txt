@@ -1,0 +1,32 @@
+# Simple working Flask route (matches commit 95f8371)
+# This version doesn't check for directory existence - just serves files
+# If directory doesn't exist, Flask will handle the error naturally
+
+# Serve Ledger static files at /ledger path
+@app.route('/ledger')
+@app.route('/ledger/')
+@app.route('/ledger/<path:path>')
+def serve_ledger(path='index.html'):
+    """Serve the Ledger static files at /ledger path"""
+    import os
+    from flask import send_from_directory
+    
+    ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
+    
+    # Handle index.html or root path
+    if path == 'index.html' or not path or path == '':
+        return send_from_directory(ledger_dir, 'index.html')
+    
+    # Handle .html files (Next.js static export creates .html files)
+    if path.endswith('.html'):
+        return send_from_directory(ledger_dir, path)
+    
+    # For paths without .html, try adding .html extension (Next.js routes)
+    html_path = path + '.html'
+    html_file_path = os.path.join(ledger_dir, html_path)
+    if os.path.exists(html_file_path) and os.path.isfile(html_file_path):
+        return send_from_directory(ledger_dir, html_path)
+    
+    # For client-side routing (SPA), return index.html
+    # This handles routes like /ledger/healthcare, /ledger/receipts, etc.
+    return send_from_directory(ledger_dir, 'index.html')

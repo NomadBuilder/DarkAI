@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 const policyEvents = [
   {
@@ -8,49 +9,56 @@ const policyEvents = [
     month: 'June',
     event: 'Doug Ford takes office',
     description: 'Progressive Conservative government elected',
-    spendingImpact: 'Baseline year',
+    impact: 'Baseline year',
   },
   {
     year: 2019,
     month: 'November',
     event: 'Bill 124 passed',
     description: '1% cap on annual wage increases for public sector workers',
-    spendingImpact: 'Wage suppression begins',
+    impact: 'Wage suppression begins',
   },
   {
     year: 2020,
     month: 'March',
     event: 'COVID-19 pandemic begins',
     description: 'Hospitals face unprecedented pressure',
-    spendingImpact: 'Private agency spending explodes',
+    impact: 'Private agency spending explodes',
   },
   {
     year: 2022,
     month: 'November',
     event: 'Bill 124 ruled unconstitutional',
     description: 'Courts find wage suppression law violates Charter rights',
-    spendingImpact: 'Retroactive pay increases, but hospitals not fully funded',
+    impact: 'Hospitals still not fully funded',
+  },
+  {
+    year: 2022,
+    month: 'November',
+    event: 'Greenbelt land removed',
+    description: '7,400 acres taken out of protection for development; process later found biased; RCMP criminal probe launched',
+    impact: 'Land and accountability traded for developer access',
   },
   {
     year: 2023,
     month: 'May',
     event: 'Bill 60 passed (Your Health Act)',
-    description: 'Legislation encourages for-profit facilities for publicly funded surgeries and diagnostics',
-    spendingImpact: 'Private surgical clinics paid 2-3x more than public hospitals',
-  },
-  {
-    year: 2023,
-    month: 'Fiscal Year',
-    event: '66 of 134 hospitals in deficit',
-    description: '49% of Ontario hospitals face budget shortfalls',
-    spendingImpact: 'Crisis deepens',
+    description: 'For-profit facilities encouraged for publicly funded surgeries and diagnostics',
+    impact: 'Private surgical clinics paid 2–3× more than public hospitals',
   },
   {
     year: 2024,
     month: 'Present',
-    event: 'Continued privatization (Americanization)',
-    description: 'Private agency spending continues to grow',
-    spendingImpact: 'System remains in crisis',
+    event: 'Healthcare crisis continues',
+    description: 'Private agency spending grows; majority of hospitals in deficit',
+    impact: 'System remains in crisis',
+  },
+  {
+    year: 2025,
+    month: '—',
+    event: 'Bill 5 passed',
+    description: 'Endangered Species Act weakened; special economic zones can bypass environmental rules; first zone declared in Ring of Fire',
+    impact: 'Species and Indigenous rights at risk',
   },
 ]
 
@@ -69,7 +77,7 @@ export default function SectionPolicyTimeline() {
               The Timeline
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              Policy decisions and their consequences
+              Policy decisions and their consequences — healthcare, environment, accountability
             </p>
             <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
               Data from <a 
@@ -139,7 +147,7 @@ export default function SectionPolicyTimeline() {
                       {event.description}
                     </p>
                     <div className="inline-block px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs md:text-sm font-light">
-                      {event.spendingImpact}
+                      {event.impact}
                     </div>
                   </div>
                 </div>
@@ -161,14 +169,15 @@ export default function SectionPolicyTimeline() {
             This wasn&apos;t an accident.
           </p>
           <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 mb-8">
-            Policy decisions created the conditions for privatization (Americanization) to flourish.
+            Policy decisions created the conditions for privatization (Americanization) — in healthcare, land, water, and species — to flourish.
           </p>
-          <a
-            href="/healthcare"
-            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-white text-slate-900 rounded-lg text-base md:text-lg font-light hover:bg-gray-100 transition-colors"
-          >
-            See the healthcare impact →
-          </a>
+          <p className="text-sm font-light text-gray-400 mb-4">Explore the issues</p>
+          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
+            <Link href="/healthcare" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Healthcare</Link>
+            <Link href="/water" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Water</Link>
+            <Link href="/greenbelt" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Greenbelt</Link>
+            <Link href="/wildlife" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Wildlife</Link>
+          </div>
           </div>
         </motion.div>
       </div>

@@ -9,7 +9,7 @@ Combines three services:
 
 import os
 from datetime import datetime
-from flask import Flask, send_from_directory, jsonify, request, render_template
+from flask import Flask, send_from_directory, jsonify, request, render_template, redirect, abort
 from flask_cors import CORS
 from dotenv import load_dotenv
 import smtplib
@@ -122,6 +122,48 @@ def delayed_dummy_data_seed():
 
 dummy_data_thread = threading.Thread(target=delayed_dummy_data_seed, daemon=True)
 dummy_data_thread.start()
+
+
+# Option A: ProtectOnt.ca serves Ledger at root; darkai.ca/ledger redirects to ProtectOnt.ca
+LEDGER_DIR = os.path.join(os.path.dirname(__file__), "ledger", "out")
+
+
+def is_protect_ontario_domain():
+    host = (request.host or "").lower().split(":")[0]
+    return host in ("protectont.ca", "www.protectont.ca")
+
+
+def serve_ledger_at_root(path):
+    """Serve Ledger static files from ledger/out at root (for ProtectOnt.ca)."""
+    path = (path or "").strip("/")
+    if not path or path == "index.html":
+        return send_from_directory(LEDGER_DIR, "index.html")
+    if path.endswith(".html"):
+        try:
+            return send_from_directory(LEDGER_DIR, path)
+        except Exception:
+            abort(404)
+    if not path.startswith(("_next/", "data/", "favicon", "logo", "og-image")):
+        try:
+            return send_from_directory(LEDGER_DIR, path + ".html")
+        except Exception:
+            pass
+    try:
+        return send_from_directory(LEDGER_DIR, path)
+    except Exception:
+        pass
+    return send_from_directory(LEDGER_DIR, "index.html")
+
+
+@app.before_request
+def protect_ontario_and_ledger_redirect():
+    if is_protect_ontario_domain():
+        path = request.path.lstrip("/")
+        return serve_ledger_at_root(path)
+    if request.path == "/ledger" or request.path.startswith("/ledger/"):
+        rest = request.path[7:].strip("/")
+        return redirect("https://protectont.ca/" + (rest or ""), code=302)
+    return None
 
 
 @app.route('/')
@@ -1053,93 +1095,8 @@ def export_deepfake_report():
         return jsonify({"error": str(e)}), 500
 
 
-# Serve Ledger static files at /ledger path
-# IMPORTANT: This route must come before other catch-all routes
-@app.route('/ledger')
-@app.route('/ledger/')
-@app.route('/ledger/<path:path>')
-def serve_ledger(path='index.html'):
-    """Serve the Ledger static files at /ledger path"""
-    import os
-    from flask import send_from_directory, jsonify
-    
-    ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
-    
-    # Check if directory exists
-    if not os.path.exists(ledger_dir):
-        # Diagnostic info
-        base_dir = os.path.dirname(__file__)
-        ledger_base = os.path.join(base_dir, 'ledger')
-        diagnostics = {
-            "error": "Ledger not built yet",
-            "message": "The ledger build may still be in progress. Please check Render build logs.",
-            "ledger_dir": ledger_dir,
-            "base_dir": base_dir,
-            "ledger_base_exists": os.path.exists(ledger_base) if ledger_base else False,
-            "current_working_dir": os.getcwd(),
-        }
-        if os.path.exists(ledger_base):
-            try:
-                diagnostics["ledger_contents"] = os.listdir(ledger_base)
-                diagnostics["has_out"] = os.path.exists(os.path.join(ledger_base, 'out'))
-                diagnostics["has_node_modules"] = os.path.exists(os.path.join(ledger_base, 'node_modules'))
-                diagnostics["has_package_json"] = os.path.exists(os.path.join(ledger_base, 'package.json'))
-            except:
-                pass
-        return jsonify(diagnostics), 503
-    
-    # Handle root path
-    if path == 'index.html' or not path or path == '':
-        index_path = os.path.join(ledger_dir, 'index.html')
-        if not os.path.exists(index_path):
-            return jsonify({
-                "error": "Ledger index.html not found",
-                "message": "The ledger build may not have completed. Please check Render build logs.",
-                "index_path": index_path
-            }), 503
-        return send_from_directory(ledger_dir, 'index.html')
-    
-    # Remove leading slash if present
-    path = path.lstrip('/')
-    
-    # CRITICAL: Try to serve the file directly FIRST (before any existence checks)
-    # This handles data files, static assets, etc. Flask's send_from_directory
-    # will return 404 if file doesn't exist, which is what we want.
-    # Only catch the exception for non-file paths (SPA routes)
-    from flask import abort
-    
-    # 1. Try exact path first (for data files, static assets like _next/, etc.)
-    # Use try/except because file might not exist, and we want Flask to handle 404
-    try:
-        return send_from_directory(ledger_dir, path)
-    except:
-        pass  # File doesn't exist, continue to other patterns
-    
-    # 2. Path with .html extension (Next.js static pages)
-    html_path = f"{path}.html"
-    try:
-        return send_from_directory(ledger_dir, html_path)
-    except:
-        pass  # Continue to next pattern
-    
-    # 3. Path as directory with index.html
-    try:
-        return send_from_directory(os.path.join(ledger_dir, path), 'index.html')
-    except:
-        pass  # Continue to SPA fallback
-    
-    # 4. For client-side routing (SPA), return index.html
-    # BUT: Don't do this for data files or static assets - they should 404
-    # Check if path looks like a static file (has extension or is in data/_next/)
-    if path.startswith('data/') or path.startswith('_next/') or ('.' in os.path.basename(path) and not path.endswith('.html')):
-        # This looks like a static file that should exist, return 404
-        abort(404)
-    
-    # Otherwise, it's probably a client-side route, return index.html for SPA
-    try:
-        return send_from_directory(ledger_dir, 'index.html')
-    except:
-        abort(404)
+# Ledger at /ledger: Option A before_request redirects darkai.ca/ledger -> protectont.ca
+# (Old serve_ledger route removed; protectont.ca is served at root via serve_ledger_at_root.)
 
 
 # Send MPP contact email via Resend for tracking

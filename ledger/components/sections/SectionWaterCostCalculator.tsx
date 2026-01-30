@@ -102,18 +102,20 @@ export default function SectionWaterCostCalculator() {
           <div className="bg-gradient-to-br from-blue-50 to-red-50 rounded-2xl p-8 md:p-12 border-2 border-gray-200 shadow-xl">
             {/* Input Section */}
             <div className="mb-12">
-              <label className="block text-lg md:text-xl font-light text-gray-900 mb-4">
+              <label htmlFor="water-bill-amount" className="block text-lg md:text-xl font-light text-gray-900 mb-4">
                 Your current monthly water bill:
               </label>
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <div className="flex-1 w-full sm:w-auto">
                   <input
+                    id="water-bill-amount"
                     type="number"
                     min="0"
                     max="500"
                     value={currentBill}
                     onChange={handleBillChange}
                     className="w-full px-6 py-4 text-2xl md:text-3xl font-light text-center border-2 border-gray-300 rounded-lg focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
+                    aria-label="Monthly water bill amount in dollars"
                   />
                 </div>
                 <div className="text-2xl md:text-3xl font-light text-gray-600">

@@ -224,7 +224,7 @@ export default function SectionWhatCouldFund() {
             What $2.3 billion in annual for-profit vendor payments could fund instead
           </p>
           <p className="text-sm text-gray-500 font-light mt-4">
-            Source: The Ledger data analysis (2024 for-profit vendor payments)
+            Source: Protect Ontario data analysis (2024 for-profit vendor payments)
           </p>
         </motion.div>
 

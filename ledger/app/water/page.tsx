@@ -49,19 +49,11 @@ export default function WaterPage() {
         onMethodologyClick={handleMethodologyToggle}
       />
       <div className="relative z-10 pt-28 sm:pt-32 space-y-0">
-        {/* Hero */}
-        <section className="relative min-h-[85vh] flex items-center justify-center px-4 sm:px-6 md:px-8 py-16 md:py-24 overflow-hidden">
+        {/* Hero — same nav-to-content spacing as healthcare */}
+        <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-0 pb-16 md:pb-24 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-white to-slate-50/80" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.12),transparent)]" />
           <div className="relative max-w-5xl w-full text-center">
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-sm sm:text-base uppercase tracking-widest text-blue-700 font-medium mb-4 md:mb-6"
-            >
-              Ontario · 2025
-            </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -76,7 +68,7 @@ export default function WaterPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-10"
             >
-              Bill 60 opens the door to corporate control of Ontario&apos;s water. The &quot;Water and Wastewater Public Corporations Act&quot; lets corporations — structured like private companies — take control of water services, set rates, and operate outside Crown accountability.
+              Bill 60 opens the door to corporate control of Ontario&apos;s water. The &quot;Water and Wastewater Public Corporations Act&quot; lets corporations — structured like private companies — take control of water services, set rates, and operate outside the same accountability rules as public institutions.
             </motion.p>
             {/* Key stats strip */}
             <motion.div
@@ -92,12 +84,7 @@ export default function WaterPage() {
               <div className="w-px h-12 bg-blue-200/80 hidden sm:block self-center" />
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-blue-800 tabular-nums">30–50%</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">rate increases (privatized systems)</span>
-              </div>
-              <div className="w-px h-12 bg-blue-200/80 hidden sm:block self-center" />
-              <div className="text-center">
-                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-blue-800 max-w-[8rem] mx-auto">Not Crown</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">agents — less accountability</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">higher water bills in privatized systems</span>
               </div>
             </motion.div>
           </div>
@@ -132,8 +119,8 @@ export default function WaterPage() {
                   <p className="text-gray-300 text-base font-light leading-relaxed">Once a corporation is designated, municipalities <strong className="text-white">must provide water services exclusively through that corporation</strong>. Elected councils lose direct authority over their own water systems.</p>
                 </div>
                 <div className="border-t border-slate-600 pt-4">
-                  <h4 className="text-base font-medium text-blue-200 mb-1">Financial autonomy · Not Crown agents</h4>
-                  <p className="text-gray-300 text-base font-light leading-relaxed">Corporations can <strong className="text-white">set their own rates and fees</strong>, with only regulatory oversight. The law states they <strong className="text-white">are not agents of the Crown</strong> — so they operate outside the accountability framework of public institutions.</p>
+                  <h4 className="text-base font-medium text-blue-200 mb-1">Financial autonomy — less public accountability</h4>
+                  <p className="text-gray-300 text-base font-light leading-relaxed">Corporations can <strong className="text-white">set their own rates and fees</strong>, with only regulatory oversight. The law states they <strong className="text-white">are not agents of the Crown</strong>, so they operate outside the accountability framework that applies to public institutions.</p>
                 </div>
               </div>
             </motion.div>

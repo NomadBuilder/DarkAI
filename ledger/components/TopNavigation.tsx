@@ -1,30 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 
-// Get basePath for logo and links (same logic as dataPath.ts)
-function getBasePath(): string {
-  if (typeof window === 'undefined') {
-    return process.env.NEXT_PUBLIC_BASE_PATH || process.env.BASE_PATH || ''
-  }
-  const pathname = window.location.pathname
-  if (pathname.startsWith('/ledger')) {
-    return '/ledger'
-  }
-  return ''
-}
-
-function getLogoPath(): string {
-  return getBasePath()
-}
+// Start with empty basePath so server and client first render match (avoids hydration error).
+// NEXT_PUBLIC_* is inlined at build time; BASE_PATH is server-only, so they can differ.
+const INITIAL_BASE_PATH = ''
 
 // Helper to prefix hrefs with basePath
-function getNavHref(href: string): string {
-  const basePath = getBasePath()
-  // Remove leading slash if present
+function getNavHref(href: string, basePath: string): string {
   const cleanHref = href.startsWith('/') ? href.slice(1) : href
   return basePath ? `${basePath}/${cleanHref}` : `/${cleanHref}`
 }
@@ -44,6 +30,13 @@ interface TopNavigationProps {
   onMethodologyClick?: () => void
 }
 
+const issuesDropdownItems: NavItem[] = [
+  { id: 'healthcare', label: 'Healthcare', href: '/healthcare' },
+  { id: 'water', label: 'Water', href: '/water' },
+  { id: 'greenbelt', label: 'Greenbelt', href: '/greenbelt' },
+  { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
+]
+
 const dataDropdownItems: NavItem[] = [
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
@@ -51,14 +44,12 @@ const dataDropdownItems: NavItem[] = [
 ]
 
 const navItems: NavItem[] = [
-  { id: 'healthcare', label: 'Healthcare', href: '/healthcare' },
-  { id: 'water', label: 'Water Privatization', href: '/water' },
-  { id: 'greenbelt', label: 'Greenbelt', href: '/greenbelt' },
-  { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
+  { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
   { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
-  // { id: 'trade-off', label: 'The Trade-Off', href: '/thetradeoff' }, // Hidden for now
   { id: 'about', label: 'About', href: '/about' },
 ]
+
+const DROPDOWN_LEAVE_DELAY_MS = 200
 
 export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }: TopNavigationProps = {}) {
   const [isVisible, setIsVisible] = useState(true)
@@ -66,6 +57,14 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
   const [isScrolling, setIsScrolling] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
+  const dropdownLeaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  // basePath from env on first render (avoids hydration mismatch); sync from window after mount
+  const [basePath, setBasePath] = useState(INITIAL_BASE_PATH)
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/ledger')) {
+      setBasePath('/ledger')
+    }
+  }, [])
 
   useEffect(() => {
     let scrollTimeout: ReturnType<typeof setTimeout>
@@ -101,6 +100,15 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
     }
   }, [lastScrollY])
 
+  // Clear dropdown leave timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (dropdownLeaveTimeoutRef.current) {
+        clearTimeout(dropdownLeaveTimeoutRef.current)
+      }
+    }
+  }, [])
+
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId)
     if (element) {
@@ -122,7 +130,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
       onMethodologyClick()
     } else if (item.href) {
       // Use the basePath-aware href
-      window.location.href = getNavHref(item.href)
+      window.location.href = getNavHref(item.href, basePath)
     } else if (item.section) {
       scrollToSection(item.section)
     }
@@ -138,7 +146,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
             exit={{ y: -100, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
           >
-            <div className={`fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200/50 transition-all duration-300 w-full ${
+            <div className={`fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md transition-all duration-300 w-full ${
               isScrolling ? 'shadow-sm' : ''
             }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -146,33 +154,45 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                 {/* Logo/Title */}
                 <div className="flex-shrink-0">
                   <Link
-                    href="/"
+                    href={basePath || '/'}
                     className="flex items-center gap-2 text-sm sm:text-base font-light text-gray-900 hover:text-gray-700 transition-colors"
+                    aria-label="Protect Ontario – Home"
                   >
                     <img 
-                      src={`${getLogoPath()}/logo-icon-text.svg`} 
-                      alt="The Ledger" 
+                      src={basePath ? `${basePath}/logo-icon-text.svg` : '/logo-icon-text.svg'} 
+                      alt="" 
                       className="h-9 sm:h-10 w-auto"
                     />
                   </Link>
                 </div>
 
-                {/* Navigation Items */}
-                <div className="hidden md:flex items-center space-x-1 lg:space-x-2 xl:space-x-3 flex-1 justify-center max-w-6xl mx-4">
+                {/* Navigation Items + Take Action CTA */}
+                <div className="hidden md:flex items-center flex-1 justify-end gap-1 lg:gap-2 xl:gap-3 max-w-6xl mx-4">
                   {navItems.map((item) => {
                     if (item.isDropdown && item.dropdownItems) {
                       return (
                         <div
                           key={item.id}
                           className="relative"
-                          onMouseEnter={() => setOpenDropdown(item.id)}
-                          onMouseLeave={() => setOpenDropdown(null)}
+                          onMouseEnter={() => {
+                            if (dropdownLeaveTimeoutRef.current) {
+                              clearTimeout(dropdownLeaveTimeoutRef.current)
+                              dropdownLeaveTimeoutRef.current = null
+                            }
+                            setOpenDropdown(item.id)
+                          }}
+                          onMouseLeave={() => {
+                            dropdownLeaveTimeoutRef.current = setTimeout(() => {
+                              setOpenDropdown(null)
+                              dropdownLeaveTimeoutRef.current = null
+                            }, DROPDOWN_LEAVE_DELAY_MS)
+                          }}
                         >
                           <button
                             className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap flex items-center gap-1"
                           >
                             {item.label}
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                             </svg>
                           </button>
@@ -181,20 +201,22 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                               initial={{ opacity: 0, y: -10 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -10 }}
-                              className="absolute top-full left-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[180px] z-50"
+                              className="absolute top-full left-0 pt-1 z-50"
                             >
-                              {item.dropdownItems.map((dropdownItem) => (
-                                <button
-                                  key={dropdownItem.id}
-                                  onClick={() => {
-                                    handleNavClick(dropdownItem)
-                                    setOpenDropdown(null)
-                                  }}
-                                  className="w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                                >
-                                  {dropdownItem.label}
-                                </button>
-                              ))}
+                              <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[180px]">
+                                {item.dropdownItems.map((dropdownItem) => (
+                                  <button
+                                    key={dropdownItem.id}
+                                    onClick={() => {
+                                      handleNavClick(dropdownItem)
+                                      setOpenDropdown(null)
+                                    }}
+                                    className="w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
+                                  >
+                                    {dropdownItem.label}
+                                  </button>
+                                ))}
+                              </div>
                             </motion.div>
                           )}
                         </div>
@@ -210,6 +232,12 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                     </button>
                     )
                   })}
+                  <Link
+                    href={getNavHref('/take-action', basePath)}
+                    className="ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap"
+                  >
+                    Take Action
+                  </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -220,6 +248,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                     onMenuStateChange={setIsMobileMenuOpen}
                     onDataSourcesClick={onDataSourcesClick}
                     onMethodologyClick={onMethodologyClick}
+                    basePath={basePath}
                   />
                 </div>
               </div>
@@ -237,13 +266,15 @@ function MobileMenu({
   scrollToSection,
   onMenuStateChange,
   onDataSourcesClick,
-  onMethodologyClick
+  onMethodologyClick,
+  basePath
 }: { 
   navItems: NavItem[]
   scrollToSection: (id: string) => void
   onMenuStateChange?: (isOpen: boolean) => void
   onDataSourcesClick?: () => void
   onMethodologyClick?: () => void
+  basePath: string
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -290,6 +321,7 @@ function MobileMenu({
           strokeWidth={1.5}
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           {isOpen ? (
             <path d="M6 18L18 6M6 6l12 12" />
@@ -302,7 +334,7 @@ function MobileMenu({
       {mounted && (
         <>
           {createPortal(
-            <AnimatePresence mode="wait">
+            <AnimatePresence mode="sync">
               {isOpen && (
                 <>
                   {/* Backdrop overlay */}
@@ -348,7 +380,7 @@ function MobileMenu({
                                     } else if (dropdownItem.action === 'methodology' && onMethodologyClick) {
                                       onMethodologyClick()
                                     } else if (dropdownItem.href) {
-                                      window.location.href = getNavHref(dropdownItem.href)
+                                      window.location.href = getNavHref(dropdownItem.href, basePath)
                                     } else if (dropdownItem.section) {
                                       scrollToSection(dropdownItem.section)
                                     }
@@ -372,7 +404,7 @@ function MobileMenu({
                               onMethodologyClick()
                             } else if (item.href) {
                               // Use the basePath-aware href
-                              window.location.href = getNavHref(item.href)
+                              window.location.href = getNavHref(item.href, basePath)
                             } else if (item.section) {
                               scrollToSection(item.section)
                             }
@@ -384,6 +416,15 @@ function MobileMenu({
                         </button>
                         )
                       })}
+                      <div className="pt-4 mt-4 border-t border-gray-200">
+                        <a
+                          href={getNavHref('/take-action', basePath)}
+                          onClick={() => setIsOpen(false)}
+                          className="block w-full text-center px-4 py-4 text-lg font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors"
+                        >
+                          Take Action
+                        </a>
+                      </div>
                     </div>
                   </motion.div>
                 </>

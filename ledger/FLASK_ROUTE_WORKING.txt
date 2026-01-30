@@ -1,0 +1,48 @@
+# Working Flask route from commit 95f8371
+# This version handles Next.js .html files correctly
+
+# Serve Ledger static files at /ledger path
+@app.route('/ledger')
+@app.route('/ledger/')
+@app.route('/ledger/<path:path>')
+def serve_ledger(path='index.html'):
+    """Serve the Ledger static files at /ledger path"""
+    import os
+    from flask import send_from_directory
+    
+    ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
+    
+    # Handle index.html or root path
+    if path == 'index.html' or not path:
+        return send_from_directory(ledger_dir, 'index.html')
+    
+    # Handle paths with .html extension (Next.js static export)
+    # If path doesn't have .html, try adding it
+    file_path = os.path.join(ledger_dir, path)
+    
+    # Check if file exists as-is
+    if os.path.exists(file_path) and os.path.isfile(file_path):
+        return send_from_directory(ledger_dir, path)
+    
+    # If not found, try adding .html extension (for Next.js routes)
+    if not path.endswith('.html'):
+        html_path = path + '.html'
+        html_file_path = os.path.join(ledger_dir, html_path)
+        if os.path.exists(html_file_path) and os.path.isfile(html_file_path):
+            return send_from_directory(ledger_dir, html_path)
+    
+    # If still not found, try as directory with index.html (SPA routing)
+    dir_path = os.path.join(ledger_dir, path)
+    if os.path.isdir(dir_path):
+        index_in_dir = os.path.join(dir_path, 'index.html')
+        if os.path.exists(index_in_dir):
+            return send_from_directory(ledger_dir, os.path.join(path, 'index.html'))
+    
+    # Fallback to main index.html for SPA routing
+    index_path = os.path.join(ledger_dir, 'index.html')
+    if os.path.exists(index_path):
+        return send_from_directory(ledger_dir, 'index.html')
+    
+    # If nothing found, Flask will raise 404
+    from flask import abort
+    abort(404)

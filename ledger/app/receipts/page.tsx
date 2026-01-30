@@ -57,13 +57,14 @@ export default function ReceiptsPage() {
                 <button
                   onClick={() => setSelectedVendor(null)}
                   className="text-sm md:text-base text-gray-500 hover:text-gray-700 font-light underline"
+                  aria-label="Back to vendor list"
                 >
                   ← Back to list
                 </button>
               )}
             </div>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 font-light max-w-4xl mx-auto">
-              Every payment is documented. Vendor names, exact dollar amounts, ministry and year—all sourced from Ontario&apos;s Public Accounts.
+              Every payment is documented. Vendor names, exact dollar amounts, ministry, and year — all sourced from Ontario&apos;s Public Accounts.
             </p>
           </div>
 

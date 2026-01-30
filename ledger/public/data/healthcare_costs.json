@@ -64,13 +64,13 @@
       "label": "$1.1B increase",
       "value": 1100000000,
       "description": "Total increase in for-profit spending (2018-2024)",
-      "source": "The Ledger data analysis"
+      "source": "Protect Ontario data analysis"
     },
     {
       "label": "$2.3B annually",
       "value": 2300000000,
       "description": "Current annual for-profit vendor payments (2024)",
-      "source": "The Ledger data analysis"
+      "source": "Protect Ontario data analysis"
     },
     {
       "label": "$100M",

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 export default function SectionKeyFindings() {
   return (
@@ -17,7 +18,10 @@ export default function SectionKeyFindings() {
               Key Findings
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              The data tells a clear story
+              The data tells a clear story — spending since 2018
+            </p>
+            <p className="text-sm font-light text-gray-500 mt-4">
+              For water, Greenbelt, and wildlife: <Link href="/healthcare" className="underline hover:text-gray-700">Healthcare</Link> · <Link href="/water" className="underline hover:text-gray-700">Water</Link> · <Link href="/greenbelt" className="underline hover:text-gray-700">Greenbelt</Link> · <Link href="/wildlife" className="underline hover:text-gray-700">Wildlife</Link>
             </p>
           </div>
         </motion.div>

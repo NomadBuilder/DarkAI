@@ -1,0 +1,45 @@
+# Minimal Flask route - NO error checking, just serves files
+# This matches the working commit 95f8371 behavior
+
+# Serve Ledger static files at /ledger path
+@app.route('/ledger')
+@app.route('/ledger/')
+@app.route('/ledger/<path:path>')
+def serve_ledger(path='index.html'):
+    """Serve the Ledger static files at /ledger path"""
+    import os
+    from flask import send_from_directory, abort
+    
+    ledger_dir = os.path.join(os.path.dirname(__file__), 'ledger', 'out')
+    
+    # Handle index.html or root path
+    if path == 'index.html' or not path or path == '':
+        try:
+            return send_from_directory(ledger_dir, 'index.html')
+        except:
+            abort(404)
+    
+    # Handle .html files (Next.js static export creates .html files)
+    if path.endswith('.html'):
+        try:
+            return send_from_directory(ledger_dir, path)
+        except:
+            abort(404)
+    
+    # For paths without .html, try adding .html extension (Next.js routes)
+    html_path = path + '.html'
+    try:
+        return send_from_directory(ledger_dir, html_path)
+    except:
+        pass  # Continue to SPA fallback
+    
+    # For client-side routing (SPA), return index.html
+    # This handles routes like /ledger/healthcare, /ledger/receipts, /ledger/data/healthcare_costs.json, etc.
+    try:
+        return send_from_directory(ledger_dir, 'index.html')
+    except:
+        # If index.html doesn't exist, try serving the path directly (for data files, etc.)
+        try:
+            return send_from_directory(ledger_dir, path)
+        except:
+            abort(404)
