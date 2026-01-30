@@ -14,7 +14,7 @@ export default function SectionStaffingCrisis() {
         >
           <div className="text-center">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
-              The Staffing Crisis
+              The Healthcare Crisis
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
             How underfunding created a vicious cycle of privatization (Americanization)

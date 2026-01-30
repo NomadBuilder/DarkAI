@@ -57,6 +57,42 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
       description: 'Global examples and analysis of water privatization impacts on costs and service quality',
       note: 'Cost calculator based on documented rate increases of 30-50% in privatized water systems (Atlanta, Indianapolis, and other cities)',
     },
+    {
+      title: 'Ontario Nature: Bill 5 — A moment to mobilize for nature',
+      description: 'Campaign and petition calling on Premier Ford to cancel Bill 5 and end attacks on endangered species',
+      link: 'https://ontarionature.org/bill-5-a-moment-to-mobilize-for-nature-in-ontario-blog/',
+      organization: 'Ontario Nature',
+    },
+    {
+      title: 'David Suzuki Foundation: Repeal Bill 5',
+      description: 'Call to repeal Bill 5 and protect species, Indigenous rights, and accountability',
+      link: 'https://davidsuzuki.org/action/repealbill5/',
+      organization: 'David Suzuki Foundation',
+    },
+    {
+      title: 'Bill 5: Protect Ontario by Unleashing our Economy Act, 2025',
+      description: 'Official bill text, status, and schedules (Species Conservation Act, Special Economic Zones Act, etc.)',
+      link: 'https://www.ola.org/en/legislative-business/bills/parliament-44/session-1/bill-5',
+      organization: 'Legislative Assembly of Ontario',
+    },
+    {
+      title: 'Auditor General: Special Report on Changes to the Greenbelt',
+      description: 'Official report finding the Greenbelt land removal process "biased and lacked transparency"; 12 of 15 sites requested by developers',
+      link: 'https://auditor.on.ca/en/content/specialreports/specialreports/Greenbelt_en.pdf',
+      organization: 'Office of the Auditor General of Ontario',
+    },
+    {
+      title: 'RCMP criminal investigation into Greenbelt land swap',
+      description: 'RCMP launched formal criminal probe into the Ford government\'s 2022 decision to remove 7,400 acres from the Greenbelt',
+      link: 'https://www.thestar.com/politics/provincial/rcmp-launches-criminal-investigation-into-doug-ford-s-greenbelt-land-swap/article_f778e402-1c56-54c8-b6b3-1e212fe4d662.html',
+      organization: 'Toronto Star',
+    },
+    {
+      title: 'Ontario reverses Greenbelt land removal (2023)',
+      description: 'Government restores 7,400 acres to the Greenbelt after public pressure and AG/integrity commissioner findings',
+      link: 'https://www.cbc.ca/news/canada/toronto/ontario-greenbelt-reversal-1.6954872',
+      organization: 'CBC News',
+    },
   ]
 
   return (
@@ -132,15 +168,17 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
                             </p>
                           )}
                         </div>
-                        <a
-                          href={source.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-light hover:bg-gray-800 transition-colors whitespace-nowrap flex items-center gap-2 self-start"
-                        >
-                          View Source
-                          <span className="text-xs">→</span>
-                        </a>
+                        {source.link && (
+                          <a
+                            href={source.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-4 py-2 bg-gray-900 text-white rounded-lg text-sm font-light hover:bg-gray-800 transition-colors whitespace-nowrap flex items-center gap-2 self-start"
+                          >
+                            View Source
+                            <span className="text-xs">→</span>
+                          </a>
+                        )}
                       </div>
                     </div>
                   ))}

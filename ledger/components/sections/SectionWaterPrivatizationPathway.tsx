@@ -72,7 +72,7 @@ export default function SectionWaterPrivatizationPathway() {
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, delay: idx * 0.1 }}
             >
-              <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12">
+              <div className="bg-blue-50 border-2 border-blue-300 rounded-2xl p-8 md:p-12">
                 <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
                   {concern.title}
                 </h3>
@@ -102,7 +102,7 @@ export default function SectionWaterPrivatizationPathway() {
                   className={`rounded-lg p-6 md:p-8 ${
                     item.color === 'blue'
                       ? 'bg-blue-900/50 border border-blue-700'
-                      : 'bg-red-900/50 border border-red-700'
+                      : 'bg-blue-800/50 border border-blue-600'
                   }`}
                 >
                   <h4 className="text-xl md:text-2xl font-light mb-6">
@@ -131,11 +131,11 @@ export default function SectionWaterPrivatizationPathway() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <div className="bg-red-600 text-white rounded-2xl p-8 md:p-12 text-center">
+          <div className="bg-blue-700 text-white rounded-2xl p-8 md:p-12 text-center">
             <p className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
               This Is Privatization (Americanization)
             </p>
-            <p className="text-lg sm:text-xl md:text-2xl font-light text-red-50 leading-relaxed max-w-4xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl font-light text-blue-50 leading-relaxed max-w-4xl mx-auto">
               Bill 60&apos;s Water and Wastewater Public Corporations Act doesn&apos;t explicitly privatize water services, but its language permits delivery through corporations incorporated under the same legal regime as private companies, with financial autonomy and fee-setting powers. This structure — coupled with governance rules left to regulation — opens the door to water privatization in Ontario.
             </p>
           </div>

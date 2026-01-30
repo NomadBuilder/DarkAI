@@ -83,11 +83,11 @@ export default function SectionWaterRisks() {
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, delay: 0.8 }}
         >
-          <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12 text-center">
+          <div className="bg-blue-900 text-white rounded-2xl p-8 md:p-12 text-center">
             <p className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
               Water is a human right, not a corporate commodity.
             </p>
-            <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 leading-relaxed max-w-4xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl font-light text-blue-100 leading-relaxed max-w-4xl mx-auto">
               Once water systems are privatized, communities lose control, costs rise, and service quality often declines. This is a pattern we&apos;ve seen around the world — and it&apos;s a pattern Bill 60 enables in Ontario.
             </p>
           </div>

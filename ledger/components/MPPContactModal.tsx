@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 interface MPPContactModalProps {
   isOpen: boolean
   onClose: () => void
-  variant?: 'default' | 'water' | 'healthcare'
+  variant?: 'default' | 'water' | 'healthcare' | 'bill5' | 'greenbelt'
 }
 
 const defaultMessage = `I'm concerned about the long-term impact of relying more heavily on for-profit providers in publicly funded systems.
@@ -37,12 +37,34 @@ Thank you for considering this perspective.
 
 Best regards,`
 
+const bill5Message = `I'm concerned about Bill 5, the Protect Ontario by Unleashing our Economy Act, 2025.
+
+Bill 5 replaces the Endangered Species Act with a weaker Species Conservation Act and creates "special economic zones" where trusted proponents and designated projects can be exempt from provincial and municipal regulations. The first such zone has been declared in the Ring of Fire, raising serious concerns about Indigenous rights and free, prior and informed consent.
+
+I'm asking you to support repealing Bill 5 and to protect species at risk and Indigenous rights. Healthy ecosystems and respect for treaty rights should not be sacrificed for unchecked development.
+
+Thank you for considering this perspective.
+
+Best regards,`
+
+const greenbeltMessage = `I'm concerned about the Greenbelt land swap scandal and the RCMP criminal investigation into the Ford government's 2022 decision to remove 7,400 acres of protected land for development.
+
+The Auditor General found the process was "biased and lacked transparency," with developers lobbying for 12 of 15 sites before the decision. The government reversed course only after overwhelming public pressure — but the criminal probe continues, and I want to see full accountability and no more favours for developers at the expense of protected land.
+
+I'm asking you to support transparency, accountability, and permanent protection for the Greenbelt and other shared resources.
+
+Thank you for considering this perspective.
+
+Best regards,`
+
 export default function MPPContactModal({ isOpen, onClose, variant = 'default' }: MPPContactModalProps) {
   const [mppName, setMppName] = useState('')
   const [userName, setUserName] = useState('')
   const getInitialMessage = () => {
     if (variant === 'water') return waterMessage
     if (variant === 'healthcare') return healthcareMessage
+    if (variant === 'bill5') return bill5Message
+    if (variant === 'greenbelt') return greenbeltMessage
     return defaultMessage
   }
   
@@ -54,6 +76,8 @@ export default function MPPContactModal({ isOpen, onClose, variant = 'default' }
       setMessageBody(waterMessage)
     } else if (variant === 'healthcare') {
       setMessageBody(healthcareMessage)
+    } else if (variant === 'bill5') {
+      setMessageBody(bill5Message)
     } else {
       setMessageBody(defaultMessage)
     }
@@ -88,6 +112,10 @@ ${userName || '[Your Name]'}`
       subject = 'Concern about Bill 60 and water privatization'
     } else if (variant === 'healthcare') {
       subject = 'Concern about healthcare privatization and hospital funding'
+    } else if (variant === 'bill5') {
+      subject = 'Repeal Bill 5 — protect endangered species and Indigenous rights'
+    } else if (variant === 'greenbelt') {
+      subject = 'Greenbelt scandal — accountability and protection for protected land'
     }
     const body = encodeURIComponent(getFullMessage())
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`

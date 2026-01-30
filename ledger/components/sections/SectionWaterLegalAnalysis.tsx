@@ -64,7 +64,7 @@ export default function SectionWaterLegalAnalysis() {
                     <h3 className="text-xl md:text-2xl font-light text-gray-900 mb-4">
                       {point.title}
                     </h3>
-                    <div className="bg-white rounded-lg p-6 border-l-4 border-red-500">
+                    <div className="bg-white rounded-lg p-6 border-l-4 border-blue-500">
                       <p className="text-sm md:text-base text-gray-700 font-light italic leading-relaxed mb-3">
                         &quot;{point.excerpt}&quot;
                       </p>
@@ -74,8 +74,8 @@ export default function SectionWaterLegalAnalysis() {
                     </div>
                   </div>
                   
-                  <div className="bg-red-50 rounded-lg p-6 border border-red-200">
-                    <p className="text-sm md:text-base text-red-900 font-light leading-relaxed">
+                  <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
+                    <p className="text-sm md:text-base text-blue-900 font-light leading-relaxed">
                       <strong className="font-normal">Why this matters:</strong> {point.concern}
                     </p>
                   </div>
