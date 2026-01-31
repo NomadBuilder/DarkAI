@@ -1,0 +1,62 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#ffffff"/>
+  
+  <!-- Gradient overlay -->
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f1f5f9;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="redGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#grad)"/>
+  <!-- Shield icon (your image) -->
+  <image href="shield-icon.png" x="80" y="78" width="56" height="62" preserveAspectRatio="xMidYMid meet"/>
+  <!-- Content -->
+  <g transform="translate(148, 100)">
+    <!-- Brand: ProtectOnt.ca (two-tone, matches logo) -->
+    <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="700">
+      <tspan fill="#2E4A6B">Protect</tspan>
+      <tspan fill="#66A33F">Ont</tspan>
+      <tspan fill="#2E4A6B">.ca</tspan>
+    </text>
+    <!-- Main Title: Protect (blue) + Ontario (green) -->
+    <text x="0" y="72" font-family="Inter, system-ui, sans-serif" font-size="72" font-weight="600">
+      <tspan fill="#2E4A6B">Protect </tspan>
+      <tspan fill="#66A33F">Ontario</tspan>
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="0" y="162" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="300" fill="#64748b">
+      Doug Ford wants to sell us out
+    </text>
+    
+    <!-- Key message -->
+    <g transform="translate(0, 250)">
+      <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="300" fill="#0f172a">
+        Public money.
+      </text>
+      <text x="0" y="70" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="600" fill="#ef4444">
+        Private delivery.
+      </text>
+    </g>
+    
+    <!-- Quote -->
+    <g transform="translate(0, 492)">
+      <text x="0" y="0" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="600" fill="#0f172a">
+        Sovereignty in words.
+      </text>
+      <text x="0" y="55" font-family="Inter, system-ui, sans-serif" font-size="42" font-weight="600" fill="#0f172a">
+        <tspan fill="#ef4444" font-weight="700">Americanization</tspan> in practice.
+      </text>
+    </g>
+  </g>
+  
+  <!-- Decorative element -->
+  <circle cx="1100" cy="100" r="80" fill="#ef4444" opacity="0.1"/>
+  <circle cx="1080" cy="80" r="40" fill="#ef4444" opacity="0.15"/>
+</svg>

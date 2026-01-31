@@ -1,0 +1,17 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Chart bars representing data -->
+  <rect x="20" y="80" width="12" height="20" fill="#DC2626" rx="1"/>
+  <rect x="36" y="70" width="12" height="30" fill="#DC2626" rx="1"/>
+  <rect x="52" y="60" width="12" height="40" fill="#DC2626" rx="1"/>
+  <rect x="68" y="50" width="12" height="50" fill="#DC2626" rx="1"/>
+  <rect x="84" y="40" width="12" height="60" fill="#DC2626" rx="1"/>
+  
+  <!-- Base line -->
+  <line x1="15" y1="100" x2="100" y2="100" stroke="#1F2937" stroke-width="2"/>
+  
+  <!-- Document icon overlay -->
+  <rect x="30" y="15" width="50" height="35" rx="2" fill="#FFFFFF" stroke="#1F2937" stroke-width="1.5" opacity="0.9"/>
+  <line x1="35" y1="25" x2="75" y2="25" stroke="#DC2626" stroke-width="1.5"/>
+  <line x1="35" y1="32" x2="70" y2="32" stroke="#6B7280" stroke-width="1"/>
+  <line x1="35" y1="39" x2="65" y2="39" stroke="#6B7280" stroke-width="1"/>
+</svg>
