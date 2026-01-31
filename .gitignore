@@ -80,6 +80,9 @@ personaforge/static/data/*
 shadowstack/static/data/*
 !shadowstack/static/data/analysis.html
 
+# ProtectOnt Ledger build copy (created by Render build; do not commit)
+static/protectont/
+
 # Temporary files
 tmp/
 temp/

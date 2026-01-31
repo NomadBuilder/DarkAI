@@ -199,6 +199,12 @@ services:
         echo "   $(pwd)/ledger/out"
         ls -la ledger/out/ | head -10
         echo ""
+        echo "📋 Copying ledger/out to static/protectont (so deploy includes it; ledger/out may be excluded by .gitignore)"
+        mkdir -p static/protectont
+        cp -r ledger/out/* static/protectont/
+        echo "✅ static/protectont populated (app.py will serve from here if present)"
+        ls -la static/protectont/ | head -5
+        echo ""
         echo "=========================================="
         echo "✅ Ledger build successful!"
         echo "=========================================="

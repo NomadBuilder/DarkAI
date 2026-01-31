@@ -129,7 +129,15 @@ dummy_data_thread.start()
 
 
 # Option A: ProtectOnt.ca serves Ledger at root; darkai.ca/ledger redirects to ProtectOnt.ca
-LEDGER_DIR = os.path.join(os.path.dirname(__file__), "ledger", "out")
+# Try static/protectont first (build copies ledger/out there on Render so it's not excluded by .gitignore)
+# then ledger/out (local or if copy step is skipped)
+def _ledger_dir():
+    base = os.path.dirname(__file__)
+    for subpath in ("static", "protectont"), ("ledger", "out"):
+        d = os.path.join(base, *subpath)
+        if os.path.isdir(d) and os.path.isfile(os.path.join(d, "index.html")):
+            return d
+    return os.path.join(base, "ledger", "out")
 
 
 def _get_resolved_host():
@@ -163,7 +171,8 @@ def is_protect_ontario_domain():
 
 
 def serve_ledger_at_root(path):
-    """Serve Ledger static files from ledger/out at root (for ProtectOnt.ca)."""
+    """Serve Ledger static files at root (for ProtectOnt.ca). Uses static/protectont or ledger/out."""
+    LEDGER_DIR = _ledger_dir()
     if not os.path.isdir(LEDGER_DIR):
         return jsonify({
             "error": "Protect Ontario app not built yet",
@@ -176,7 +185,7 @@ def serve_ledger_at_root(path):
     if not os.path.isfile(index_path):
         return jsonify({
             "error": "Protect Ontario index not found",
-            "message": "ledger/out/index.html missing. Check Render build logs for Ledger step.",
+            "message": "ledger/out or static/protectont missing index.html. Check Render build logs.",
             "ledger_dir": LEDGER_DIR,
             "detected_host": _get_resolved_host(),
             "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
@@ -218,6 +227,7 @@ def protect_ontario_and_ledger_redirect():
 def ledger_status():
     """Diagnostic: see what host we see and whether Ledger build is present. Safe to hit from protectont.ca or darkai.ca."""
     host = _get_resolved_host()
+    LEDGER_DIR = _ledger_dir()
     ledger_dir_exists = os.path.isdir(LEDGER_DIR)
     index_exists = os.path.isfile(os.path.join(LEDGER_DIR, "index.html")) if ledger_dir_exists else False
     return jsonify({
