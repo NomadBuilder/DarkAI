@@ -197,6 +197,18 @@ def serve_ledger_at_root(path):
     if path.endswith(".html"):
         try:
             return send_from_directory(LEDGER_DIR, path)
+        except Exception:
+            pass
+    if not path.startswith(("_next/", "data/", "favicon", "logo", "og-image")):
+        try:
+            return send_from_directory(LEDGER_DIR, path + ".html")
+        except Exception:
+            pass
+    try:
+        return send_from_directory(LEDGER_DIR, path)
+    except Exception:
+        pass
+    return send_from_directory(LEDGER_DIR, "index.html")
 
 
 def _load_protectont_context():
@@ -266,18 +278,8 @@ def protectont_chat():
         return jsonify({"answer": answer})
     except requests.RequestException as e:
         return jsonify({"error": "Chat request failed", "details": str(e)}), 502
-        except Exception:
-            abort(404)
-    if not path.startswith(("_next/", "data/", "favicon", "logo", "og-image")):
-        try:
-            return send_from_directory(LEDGER_DIR, path + ".html")
-        except Exception:
-            pass
-    try:
-        return send_from_directory(LEDGER_DIR, path)
-    except Exception:
-        pass
-    return send_from_directory(LEDGER_DIR, "index.html")
+    except Exception as e:
+        return jsonify({"error": "Chat request failed", "details": str(e)}), 500
 
 
 # robots.txt for protectont.ca: allow all crawlers including Facebook (fixes FB Sharing Debugger 403)
