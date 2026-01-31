@@ -129,12 +129,27 @@ LEDGER_DIR = os.path.join(os.path.dirname(__file__), "ledger", "out")
 
 
 def is_protect_ontario_domain():
-    host = (request.host or "").lower().split(":")[0]
+    # Use X-Forwarded-Host when behind a proxy (e.g. Render); fallback to request.host
+    raw = request.headers.get("X-Forwarded-Host") or request.host or ""
+    host = raw.split(",")[0].strip().lower().split(":")[0]
     return host in ("protectont.ca", "www.protectont.ca")
 
 
 def serve_ledger_at_root(path):
     """Serve Ledger static files from ledger/out at root (for ProtectOnt.ca)."""
+    if not os.path.isdir(LEDGER_DIR):
+        return jsonify({
+            "error": "Protect Ontario app not built yet",
+            "message": "Ledger build may still be in progress. Check Render build logs.",
+            "ledger_dir": LEDGER_DIR,
+        }), 503
+    index_path = os.path.join(LEDGER_DIR, "index.html")
+    if not os.path.isfile(index_path):
+        return jsonify({
+            "error": "Protect Ontario index not found",
+            "message": "ledger/out/index.html missing. Check Render build logs for Ledger step.",
+            "ledger_dir": LEDGER_DIR,
+        }), 503
     path = (path or "").strip("/")
     if not path or path == "index.html":
         return send_from_directory(LEDGER_DIR, "index.html")
