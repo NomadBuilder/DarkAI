@@ -71,9 +71,13 @@ def import_blueprint(blueprint_name, url_prefix):
 # Import each blueprint with its path isolated
 # Note: ShadowStack dashboard template renamed to shadowstack_dashboard.html
 # to avoid conflict with PersonaForge's dashboard.html
-import_blueprint('personaforge', '/personaforge')
-import_blueprint('blackwire', '/blackwire')
-import_blueprint('shadowstack', '/shadowstack')
+# Set SKIP_BLUEPRINTS=1 for local ProtectOnt-only testing (no DB/neo4j/tensorflow needed)
+if os.getenv("SKIP_BLUEPRINTS") != "1":
+    import_blueprint('personaforge', '/personaforge')
+    import_blueprint('blackwire', '/blackwire')
+    import_blueprint('shadowstack', '/shadowstack')
+else:
+    print("⚠️  SKIP_BLUEPRINTS=1: Only ProtectOnt/Ledger routes and core routes will work.")
 
 # Run initial discovery for PersonaForge if database is empty
 import threading
@@ -128,11 +132,34 @@ dummy_data_thread.start()
 LEDGER_DIR = os.path.join(os.path.dirname(__file__), "ledger", "out")
 
 
+def _get_resolved_host():
+    """Host we use for ProtectOnt detection. Check all common proxy headers (Render may use any)."""
+    # Order: X-Forwarded-Host (common), then Host (Render may pass original host), then Forwarded
+    raw = (
+        request.headers.get("X-Forwarded-Host")
+        or request.host
+        or _parse_forwarded_host(request.headers.get("Forwarded"))
+        or ""
+    )
+    return raw.split(",")[0].strip().lower().split(":")[0]
+
+
+def _parse_forwarded_host(forwarded):
+    """Extract host from Forwarded: host=\"...\" header if present."""
+    if not forwarded:
+        return None
+    for part in forwarded.split(";"):
+        part = part.strip().lower()
+        if part.startswith("host="):
+            v = part[5:].strip('"')
+            return v
+    return None
+
+
 def is_protect_ontario_domain():
-    # Use X-Forwarded-Host when behind a proxy (e.g. Render); fallback to request.host
-    raw = request.headers.get("X-Forwarded-Host") or request.host or ""
-    host = raw.split(",")[0].strip().lower().split(":")[0]
-    return host in ("protectont.ca", "www.protectont.ca")
+    host = _get_resolved_host()
+    # Exact match; also accept if host ends with .protectont.ca (e.g. www.protectont.ca)
+    return host in ("protectont.ca", "www.protectont.ca") or host.endswith(".protectont.ca")
 
 
 def serve_ledger_at_root(path):
@@ -142,6 +169,8 @@ def serve_ledger_at_root(path):
             "error": "Protect Ontario app not built yet",
             "message": "Ledger build may still be in progress. Check Render build logs.",
             "ledger_dir": LEDGER_DIR,
+            "detected_host": _get_resolved_host(),
+            "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
         }), 503
     index_path = os.path.join(LEDGER_DIR, "index.html")
     if not os.path.isfile(index_path):
@@ -149,6 +178,8 @@ def serve_ledger_at_root(path):
             "error": "Protect Ontario index not found",
             "message": "ledger/out/index.html missing. Check Render build logs for Ledger step.",
             "ledger_dir": LEDGER_DIR,
+            "detected_host": _get_resolved_host(),
+            "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
         }), 503
     path = (path or "").strip("/")
     if not path or path == "index.html":
@@ -174,11 +205,32 @@ def serve_ledger_at_root(path):
 def protect_ontario_and_ledger_redirect():
     if is_protect_ontario_domain():
         path = request.path.lstrip("/")
+        if path == "_ledger-status":
+            return None  # Let the diagnostic route handle it
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")
         return redirect("https://protectont.ca/" + (rest or ""), code=302)
     return None
+
+
+@app.route("/_ledger-status")
+def ledger_status():
+    """Diagnostic: see what host we see and whether Ledger build is present. Safe to hit from protectont.ca or darkai.ca."""
+    host = _get_resolved_host()
+    ledger_dir_exists = os.path.isdir(LEDGER_DIR)
+    index_exists = os.path.isfile(os.path.join(LEDGER_DIR, "index.html")) if ledger_dir_exists else False
+    return jsonify({
+        "request_host": request.host,
+        "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
+        "forwarded_header": request.headers.get("Forwarded"),
+        "resolved_host": host,
+        "is_protect_ontario": is_protect_ontario_domain(),
+        "ledger_dir_exists": ledger_dir_exists,
+        "ledger_index_exists": index_exists,
+        "ledger_dir": LEDGER_DIR,
+        "ok": is_protect_ontario_domain() and ledger_dir_exists and index_exists,
+    }), 200
 
 
 @app.route('/')

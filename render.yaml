@@ -103,6 +103,8 @@ services:
         echo "  NODE_ENV=$NODE_ENV" >> "$DIAG_LOG"
         echo "Build: npm run build:protectont (static export, no base path)" >> "$DIAG_LOG"
         
+        # Give Next.js enough memory on Render (default can be too low)
+        export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=4096"
         
         # Run build with environment variables inline (more reliable) and capture all output
         if ! NODE_ENV=production npm run build:protectont >> "$DIAG_LOG" 2>&1; then
@@ -193,7 +195,8 @@ services:
           exit 1
         fi
         echo "✅ ledger/out/index.html exists and is accessible"
-        echo "✅ Build artifacts:"
+        echo "✅ Absolute path (app.py expects ledger/out under project root):"
+        echo "   $(pwd)/ledger/out"
         ls -la ledger/out/ | head -10
         echo ""
         echo "=========================================="

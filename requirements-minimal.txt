@@ -1,0 +1,6 @@
+# Minimal deps to run app locally for ProtectOnt/Ledger testing (no tensorflow, neo4j, etc.)
+flask==3.0.0
+flask-cors==4.0.0
+python-dotenv==1.0.0
+requests==2.31.0
+psycopg2-binary==2.9.9
