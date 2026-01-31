@@ -302,6 +302,8 @@ def protect_ontario_and_ledger_redirect():
         path = request.path.lstrip("/")
         if path == "_ledger-status":
             return None  # Let the diagnostic route handle it
+        if path.startswith("api/"):
+            return None  # Let ProtectOnt API routes handle this
         if path == "robots.txt":
             return Response(PROTECTONT_ROBOTS_TXT, mimetype="text/plain")
         return serve_ledger_at_root(path)
