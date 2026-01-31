@@ -1,7 +1,6 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Link from 'next/link'
 
 export default function SectionFordTracker() {
   return (
@@ -132,34 +131,6 @@ export default function SectionFordTracker() {
                 </p>
               </div>
             </div>
-          </div>
-          </div>
-        </motion.div>
-
-        {/* Explore issues + OFL link */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, delay: 0.8 }}
-        >
-          <div className="text-center space-y-4">
-          <p className="text-sm font-light text-gray-500">Explore the issues</p>
-          <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            <Link href="/healthcare" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Healthcare</Link>
-            <Link href="/water" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Water</Link>
-            <Link href="/greenbelt" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Greenbelt</Link>
-            <Link href="/wildlife" className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-light hover:bg-red-700 transition-colors">Wildlife</Link>
-          </div>
-          <div className="pt-2">
-          <a
-            href="https://ofl.ca/ford-tracker/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block px-6 md:px-8 py-3 md:py-4 bg-gray-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-gray-800 transition-colors"
-          >
-            Explore the Full OFL Ford Tracker →
-          </a>
           </div>
           </div>
         </motion.div>

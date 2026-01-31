@@ -13,8 +13,8 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#ffffff',
     icons: [
       {
-        src: `${basePath}/shield-icon.png`,
-        sizes: 'any',
+        src: `${basePath}/favicon.png`,
+        sizes: '218x228',
         type: 'image/png',
         purpose: 'any',
       },

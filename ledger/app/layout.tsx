@@ -5,8 +5,9 @@ import ErrorBoundary from '@/components/ErrorBoundary'
 
 // Base URL and paths for meta, OG, and icons (lowercase canonical URL)
 const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://protectont.ca'
-const metadataBase = new URL(siteUrl)
+// Use canonical URL only when set (e.g. in production); otherwise relative so dev/404 doesn't break metadata
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '')
+const metadataBase = siteUrl ? new URL(siteUrl) : undefined
 
 export const metadata: Metadata = {
   metadataBase,
@@ -15,8 +16,8 @@ export const metadata: Metadata = {
   applicationName: 'Protect Ontario',
   keywords: ['Ontario', 'Ford government', 'public spending', 'accountability', 'ProtectOnt.ca'],
   icons: {
-    icon: `${basePath}/shield-icon.png`,
-    apple: `${basePath}/shield-icon.png`,
+    icon: [{ url: `${basePath}/favicon.png`, type: 'image/png' }],
+    apple: `${basePath}/favicon.png`,
   },
   openGraph: {
     title: 'Protect Ontario — Accountability for the Ford Government',

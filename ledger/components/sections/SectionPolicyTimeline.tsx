@@ -77,7 +77,7 @@ export default function SectionPolicyTimeline() {
               The Timeline
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              Policy decisions and their consequences — healthcare, environment, accountability
+              Policy decisions affecting healthcare, the environment, and accountability — and their consequences.
             </p>
             <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
               Data from <a 
@@ -169,7 +169,7 @@ export default function SectionPolicyTimeline() {
             This wasn&apos;t an accident.
           </p>
           <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 mb-8">
-            Policy decisions created the conditions for privatization (Americanization) — in healthcare, land, water, and species — to flourish.
+            Policy decisions created the conditions for privatization (Americanization) — in healthcare, land, and water — to flourish.
           </p>
           <p className="text-sm font-light text-gray-400 mb-4">Explore the issues</p>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">

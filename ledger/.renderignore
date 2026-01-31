@@ -1,7 +1,7 @@
-# Ignore files for Render deployment (keep out/ - it's the built Ledger for protectont.ca)
+# Ignore files for Render deployment
 node_modules/
 .next/
-# out/ - DO NOT ignore: needed at runtime for ProtectOnt.ca
+out/
 .git/
 *.md
 !README.md

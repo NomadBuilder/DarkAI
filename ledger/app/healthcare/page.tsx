@@ -42,8 +42,9 @@ export default function HealthcarePage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-            <div className="relative z-10 pt-28 sm:pt-32 space-y-0">
-              <section id="staffing">
+            <div className="relative z-10">
+              {/* Main body with top padding only; no separate white wrapper */}
+              <section id="staffing" className="pt-28 sm:pt-32">
                 <SectionStaffingCrisis />
               </section>
         <section id="hospitals" className="pt-16 md:pt-24">

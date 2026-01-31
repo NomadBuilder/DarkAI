@@ -52,8 +52,6 @@ const navItems: NavItem[] = [
 const DROPDOWN_LEAVE_DELAY_MS = 200
 
 export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }: TopNavigationProps = {}) {
-  const [isVisible, setIsVisible] = useState(true)
-  const [lastScrollY, setLastScrollY] = useState(0)
   const [isScrolling, setIsScrolling] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -70,24 +68,9 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
     let scrollTimeout: ReturnType<typeof setTimeout>
 
     const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      
-      // Show/hide based on scroll direction
-      if (currentScrollY < 100) {
-        setIsVisible(true)
-      } else if (currentScrollY > lastScrollY && currentScrollY > 200) {
-        setIsVisible(false)
-      } else if (currentScrollY < lastScrollY) {
-        setIsVisible(true)
-      }
-
-      setLastScrollY(currentScrollY)
       setIsScrolling(true)
 
-      // Clear existing timeout
       clearTimeout(scrollTimeout)
-      
-      // Set scrolling to false after scroll stops
       scrollTimeout = setTimeout(() => {
         setIsScrolling(false)
       }, 150)
@@ -98,7 +81,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
       window.removeEventListener('scroll', handleScroll)
       clearTimeout(scrollTimeout)
     }
-  }, [lastScrollY])
+  }, [])
 
   // Clear dropdown leave timeout on unmount
   useEffect(() => {
@@ -138,15 +121,13 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
 
   return (
     <>
-      <AnimatePresence>
-        {(isVisible || isMobileMenuOpen) && (
-          <motion.nav
-            initial={{ y: -100, opacity: 0 }}
+      <motion.nav
+            initial={false}
             animate={{ y: 0, opacity: 1 }}
-            exit={{ y: -100, opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            transition={{ duration: 0.2 }}
+            className="sticky top-0 left-0 right-0 z-50 w-full"
           >
-            <div className={`fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md transition-all duration-300 w-full ${
+            <div className={`bg-white/80 backdrop-blur-md transition-all duration-300 w-full ${
               isScrolling ? 'shadow-sm' : ''
             }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -234,7 +215,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                   })}
                   <Link
                     href={getNavHref('/take-action', basePath)}
-                    className="ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap"
+                    className="ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-white bg-[#2E4A6B] hover:bg-[#243d56] rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap"
                   >
                     Take Action
                   </Link>
@@ -255,8 +236,6 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
             </div>
             </div>
           </motion.nav>
-        )}
-      </AnimatePresence>
     </>
   )
 }
@@ -420,7 +399,7 @@ function MobileMenu({
                         <a
                           href={getNavHref('/take-action', basePath)}
                           onClick={() => setIsOpen(false)}
-                          className="block w-full text-center px-4 py-4 text-lg font-medium text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors"
+                          className="block w-full text-center px-4 py-4 text-lg font-medium text-white bg-[#2E4A6B] hover:bg-[#243d56] rounded-lg transition-colors"
                         >
                           Take Action
                         </a>

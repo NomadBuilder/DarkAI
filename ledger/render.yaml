@@ -1,12 +1,11 @@
+# Render Blueprint: ProtectOnt.ca (static site at root)
+# Connect this repo in Render Dashboard → New → Static Site (or use Blueprint)
+# Add custom domain protectont.ca in the service Settings after first deploy.
+
 services:
-  # Static Site for darkai.ca/ledger (Recommended)
-  # This is configured for path-based deployment
   - type: web
-    name: the-ledger
+    name: protectont
     env: static
-    buildCommand: npm ci && BASE_PATH=/ledger STATIC_EXPORT=true NODE_ENV=production npm run build
+    buildCommand: npm ci && STATIC_EXPORT=true NODE_ENV=production npm run build
     staticPublishPath: ./out
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    # No rewrite rules — Next.js static export serves /, /water, /wildlife, etc. as real files

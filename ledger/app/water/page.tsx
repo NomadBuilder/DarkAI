@@ -48,12 +48,11 @@ export default function WaterPage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-      <div className="relative z-10 pt-28 sm:pt-32 space-y-0">
-        {/* Hero — same nav-to-content spacing as healthcare */}
-        <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-0 pb-16 md:pb-24 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-white to-slate-50/80" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.12),transparent)]" />
-          <div className="relative max-w-5xl w-full text-center">
+      <div className="relative z-10">
+        {/* Hero — no padding-top on gradient; top spacing on inner content so gradient goes to top */}
+        <section className="relative pb-16 md:pb-24 flex items-start justify-center px-4 sm:px-6 md:px-8 overflow-hidden bg-gradient-to-b from-blue-50 via-blue-50/95 to-slate-50">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.1),transparent)]" />
+          <div className="relative pt-28 sm:pt-32 max-w-5xl w-full text-center">
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -70,32 +69,14 @@ export default function WaterPage() {
             >
               Bill 60 opens the door to corporate control of Ontario&apos;s water. The &quot;Water and Wastewater Public Corporations Act&quot; lets corporations — structured like private companies — take control of water services, set rates, and operate outside the same accountability rules as public institutions.
             </motion.p>
-            {/* Key stats strip */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.35 }}
-              className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-14"
-            >
-              <div className="text-center">
-                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-blue-800 tabular-nums">Bill 60</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">2025</span>
-              </div>
-              <div className="w-px h-12 bg-blue-200/80 hidden sm:block self-center" />
-              <div className="text-center">
-                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-blue-800 tabular-nums">30–50%</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">higher water bills in privatized systems</span>
-              </div>
-            </motion.div>
           </div>
         </section>
 
         {/* Section 1: The threat */}
         <section className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 opacity-80" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#3d5a7a] to-[#2E4A6B] opacity-90" />
           <div className="max-w-4xl mx-auto pl-4 sm:pl-6">
-            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12 flex items-center gap-3">
-              <span className="inline-block w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600" aria-hidden>1</span>
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12">
               The threat
             </motion.h2>
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
@@ -111,15 +92,15 @@ export default function WaterPage() {
               <h3 className="text-xl sm:text-2xl font-light text-gray-900">What Bill 60 does</h3>
               <div className="rounded-xl bg-slate-800 text-white p-6 sm:p-8 space-y-6">
                 <div>
-                  <h4 className="text-base font-medium text-blue-200 mb-1">The &quot;public corporation&quot; that isn&apos;t public</h4>
+                  <h4 className="text-base font-medium text-[#9bacc5] mb-1">The &quot;public corporation&quot; that isn&apos;t public</h4>
                   <p className="text-gray-300 text-base font-light leading-relaxed">Water corporations must be <strong className="text-white">incorporated under the Business Corporations Act</strong> — the same structure as private companies. They can issue shares, pay dividends, and operate with profit incentives.</p>
                 </div>
                 <div className="border-t border-slate-600 pt-4">
-                  <h4 className="text-base font-medium text-blue-200 mb-1">Municipal control removed</h4>
+                  <h4 className="text-base font-medium text-[#9bacc5] mb-1">Municipal control removed</h4>
                   <p className="text-gray-300 text-base font-light leading-relaxed">Once a corporation is designated, municipalities <strong className="text-white">must provide water services exclusively through that corporation</strong>. Elected councils lose direct authority over their own water systems.</p>
                 </div>
                 <div className="border-t border-slate-600 pt-4">
-                  <h4 className="text-base font-medium text-blue-200 mb-1">Financial autonomy — less public accountability</h4>
+                  <h4 className="text-base font-medium text-[#9bacc5] mb-1">Financial autonomy — less public accountability</h4>
                   <p className="text-gray-300 text-base font-light leading-relaxed">Corporations can <strong className="text-white">set their own rates and fees</strong>, with only regulatory oversight. The law states they <strong className="text-white">are not agents of the Crown</strong>, so they operate outside the accountability framework that applies to public institutions.</p>
                 </div>
               </div>
@@ -129,52 +110,47 @@ export default function WaterPage() {
 
         {/* Section 2: Public vs. Corporate Control */}
         <section className="relative px-0 pt-16 md:pt-24 overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 opacity-80 z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#3d5a7a] to-[#2E4A6B] opacity-90 z-10" />
           <div className="relative pl-4 sm:pl-6 pt-4">
-            <span className="inline-block w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-light mb-6" aria-hidden>2</span>
             <SectionWaterControlSlider />
           </div>
         </section>
 
         {/* Section 3: Claims vs. Reality */}
         <section className="relative px-0 pt-16 md:pt-24 overflow-hidden bg-slate-50">
-          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-300 to-blue-500 opacity-60 z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#4a6a8a] to-[#2E4A6B] opacity-70 z-10" />
           <div className="relative pr-4 sm:pr-6 pt-4">
-            <span className="inline-block w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-light mb-6 ml-4 sm:ml-6" aria-hidden>3</span>
             <SectionWaterComparisonToggle />
           </div>
         </section>
 
         {/* Section 4: Legal Framework */}
         <section className="relative px-0 pt-16 md:pt-24 overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 opacity-80 z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#3d5a7a] to-[#2E4A6B] opacity-90 z-10" />
           <div className="relative pl-4 sm:pl-6 pt-4">
-            <span className="inline-block w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-light mb-6" aria-hidden>4</span>
             <SectionWaterLegalAnalysis />
           </div>
         </section>
 
         {/* Section 5: Privatization Pathway */}
         <section className="relative px-0 pt-16 md:pt-24 overflow-hidden bg-slate-50">
-          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-300 to-blue-500 opacity-60 z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#4a6a8a] to-[#2E4A6B] opacity-70 z-10" />
           <div className="relative pr-4 sm:pr-6 pt-4">
-            <span className="inline-block w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-light mb-6 ml-4 sm:ml-6" aria-hidden>5</span>
             <SectionWaterPrivatizationPathway />
           </div>
         </section>
 
         {/* Section 6: The Risks */}
         <section className="relative px-0 pt-16 md:pt-24 overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 opacity-80 z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-[#3d5a7a] to-[#2E4A6B] opacity-90 z-10" />
           <div className="relative pl-4 sm:pl-6 pt-4">
-            <span className="inline-block w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-lg font-light mb-6" aria-hidden>6</span>
             <SectionWaterRisks />
           </div>
         </section>
 
         {/* CTA Section */}
         <section className="pt-16 md:pt-24">
-          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-slate-900 text-white py-16 md:py-24">
+          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-[#2E4A6B] text-white py-16 md:py-24">
             <div className="max-w-5xl w-full">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

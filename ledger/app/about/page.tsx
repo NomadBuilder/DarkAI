@@ -184,16 +184,16 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-4 text-base md:text-lg text-gray-300 font-light leading-relaxed">
                   <p>
-                    Protect Ontario is a project from <a href="https://ProtectOnt.ca/" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 underline">ProtectOnt.ca</a>, focused on making hidden patterns visible — from public spending and policy impacts to accountability gaps. Transparent methodology, public sources only, and a focus on what the data actually shows.
+                    Protect Ontario is a project from <a href="https://darkai.ca/" target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 underline">Dark AI</a>, focused on making hidden patterns visible — from public spending and policy impacts to accountability gaps. Transparent methodology, public sources only, and a focus on what the data actually shows.
                   </p>
                   <p className="pt-4">
                     <a 
-                      href="https://ProtectOnt.ca/" 
+                      href="https://darkai.ca/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-blue-300 hover:text-blue-200 underline font-light"
                     >
-                      ProtectOnt.ca →
+                      Dark AI →
                     </a>
                   </p>
                 </div>

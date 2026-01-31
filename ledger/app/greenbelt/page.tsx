@@ -43,11 +43,11 @@ export default function GreenbeltPage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-      <div className="relative z-10 pt-28 sm:pt-32">
-        {/* Hero — wrapper extends gradient into top padding; same nav-to-content spacing as healthcare */}
-        <div className="relative -mt-28 sm:-mt-32 pt-28 sm:pt-32 pb-16 md:pb-24 bg-gradient-to-b from-white via-emerald-50/60 to-emerald-50/80">
-          <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-0 overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.12),transparent)]" />
+      <div className="relative z-10">
+        {/* Hero — no padding-top on gradient div; top spacing only on inner content so gradient goes to top */}
+        <div className="relative pb-16 md:pb-24 bg-gradient-to-b from-emerald-50 via-emerald-50/95 to-emerald-50/90">
+          <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-28 sm:pt-32 overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.18),transparent)]" />
           <div className="relative max-w-5xl w-full text-center">
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
@@ -88,7 +88,7 @@ export default function GreenbeltPage() {
               </div>
             </motion.div>
           </div>
-          </section>
+        </section>
         </div>
 
         {/* What happened */}

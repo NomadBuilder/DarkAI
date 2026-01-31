@@ -1,0 +1,11 @@
+# protectont.ca / Protect Ontario — allow all crawlers including Facebook
+User-agent: *
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+Sitemap: https://protectont.ca/
