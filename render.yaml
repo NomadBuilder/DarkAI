@@ -77,8 +77,8 @@ services:
         
         echo ""
         echo "📦 Running npm install..."
-        # Install all dependencies including devDependencies (needed for TypeScript)
-        npm install --include=dev || { 
+        # Install all dependencies (devDependencies included by default; --include=dev can cause install to fail on some npm versions)
+        npm install || { 
           echo "❌ npm install failed with exit code $?"
           exit 1
         }
