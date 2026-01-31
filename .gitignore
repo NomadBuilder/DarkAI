@@ -66,6 +66,9 @@ htmlcov/
 # Allow Ledger public data files (needed for /ledger/thetradeoff page)
 !ledger/public/data/healthcare_costs.json
 data/
+# Allow ProtectOnt pre-built data (receipts page needs /data/processed/*.json on protectont.ca)
+!static/protectont/data/
+!static/protectont/data/**
 *.csv
 # Allow specific CSV files needed for reports
 !SurveyData.csv
@@ -79,9 +82,6 @@ personaforge/static/data/*
 !shadowstack/static/data/
 shadowstack/static/data/*
 !shadowstack/static/data/analysis.html
-
-# ProtectOnt Ledger build copy (created by Render build; do not commit)
-static/protectont/
 
 # Temporary files
 tmp/

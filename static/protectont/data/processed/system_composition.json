@@ -1,0 +1,44 @@
+[
+  {
+    "year": 2018,
+    "public_total": 68982751806.0,
+    "non_profit_total": 1694164108.0,
+    "for_profit_total": 1220107648.0,
+    "unknown_total": 35059678537.0
+  },
+  {
+    "year": 2019,
+    "public_total": 0,
+    "non_profit_total": 0,
+    "for_profit_total": 0,
+    "unknown_total": 62773.0
+  },
+  {
+    "year": 2020,
+    "public_total": 80895907465.0,
+    "non_profit_total": 2445053421.0,
+    "for_profit_total": 1924121444.0,
+    "unknown_total": 40541437524.0
+  },
+  {
+    "year": 2021,
+    "public_total": 88586607070.0,
+    "non_profit_total": 1934919323.0,
+    "for_profit_total": 1865767095.0,
+    "unknown_total": 43362093528.0
+  },
+  {
+    "year": 2023,
+    "public_total": 96047249713.0,
+    "non_profit_total": 2161416079.0,
+    "for_profit_total": 2212245783.0,
+    "unknown_total": 51582230314.0
+  },
+  {
+    "year": 2024,
+    "public_total": 101065804763.0,
+    "non_profit_total": 2247223384.0,
+    "for_profit_total": 2278189500.0,
+    "unknown_total": 61253239120.0
+  }
+]

@@ -1,0 +1,90 @@
+{
+  "costs": {
+    "registered_nurse": {
+      "annual_salary": 85000,
+      "benefits_percentage": 30,
+      "total_annual_cost": 110500,
+      "source": "Ontario Nurses' Association (ONA) collective agreements and Statistics Canada Labour Force Survey 2023",
+      "source_url": "https://www.ona.org",
+      "notes": "Average RN salary in Ontario hospitals, includes base salary plus benefits (pension, health benefits, etc.)"
+    },
+    "hospital_bed": {
+      "annual_operating_cost": 1450000,
+      "source": "Ontario Hospital Association (OHA) and Canadian Institute for Health Information (CIHI) hospital operating cost data 2023-24",
+      "source_url": "https://www.oha.com",
+      "notes": "Average annual operating cost per hospital bed in Ontario, includes staffing, supplies, utilities, maintenance"
+    },
+    "allied_health_professional": {
+      "annual_salary": 75000,
+      "benefits_percentage": 30,
+      "total_annual_cost": 97500,
+      "source": "Ontario Public Service Employees Union (OPSEU) and Health Sciences Association (HSA) collective agreements 2023",
+      "source_url": "https://www.opseu.org",
+      "notes": "Average for physiotherapists, lab technicians, respiratory therapists, etc. Includes benefits"
+    },
+    "small_hospital": {
+      "annual_operating_budget": 250000000,
+      "source": "Ontario Hospital Association (OHA) - hospitals under $100M revenue category",
+      "source_url": "https://www.oha.com",
+      "notes": "Annual operating budget for small community hospitals (under $100M annual revenue)"
+    },
+    "emergency_department_upgrade": {
+      "cost_per_hospital": 5000000,
+      "source": "Ontario Ministry of Health infrastructure funding announcements 2023-24",
+      "source_url": "https://www.ontario.ca/page/ministry-health",
+      "notes": "Average cost for emergency department modernization/expansion per hospital"
+    },
+    "primary_care_physician": {
+      "annual_cost": 250000,
+      "source": "Ontario Medical Association (OMA) fee-for-service and capitation model data 2023",
+      "source_url": "https://www.oma.org",
+      "notes": "Average annual cost per primary care physician (includes overhead, supports)"
+    },
+    "long_term_care_bed": {
+      "annual_operating_cost": 85000,
+      "source": "Ontario Long-Term Care Association (OLTCA) and Ministry of Long-Term Care data 2023-24",
+      "source_url": "https://www.oltca.com",
+      "notes": "Annual operating cost per LTC bed (staffing, food, supplies, utilities)"
+    },
+    "mental_health_bed": {
+      "annual_operating_cost": 350000,
+      "source": "Ontario Hospital Association (OHA) mental health and addictions services data 2023",
+      "source_url": "https://www.oha.com",
+      "notes": "Annual operating cost per mental health inpatient bed"
+    }
+  },
+  "presets": [
+    {
+      "label": "$725M annually",
+      "value": 725000000,
+      "description": "Annual private agency spending (2022-23)",
+      "source": "CCPA 'Hollowed Out' report 2024"
+    },
+    {
+      "label": "$1.1B increase",
+      "value": 1100000000,
+      "description": "Total increase in for-profit spending (2018-2024)",
+      "source": "Protect Ontario data analysis"
+    },
+    {
+      "label": "$2.3B annually",
+      "value": 2300000000,
+      "description": "Current annual for-profit vendor payments (2024)",
+      "source": "Protect Ontario data analysis"
+    },
+    {
+      "label": "$100M",
+      "value": 100000000,
+      "description": "Example: Large hospital annual deficit",
+      "source": "Ontario Hospital Association"
+    },
+    {
+      "label": "$50M",
+      "value": 50000000,
+      "description": "Example: Regional healthcare investment",
+      "source": "Custom"
+    }
+  ],
+  "last_updated": "2024-12-19",
+  "data_notes": "All costs are in Canadian dollars. Figures are averages based on publicly available data from Ontario healthcare organizations and government sources. Actual costs may vary by region, hospital size, and specific circumstances."
+}

@@ -9,7 +9,7 @@ Combines three services:
 
 import os
 from datetime import datetime
-from flask import Flask, send_from_directory, jsonify, request, render_template, redirect, abort
+from flask import Flask, send_from_directory, jsonify, request, render_template, redirect, abort, Response
 from flask_cors import CORS
 from dotenv import load_dotenv
 import smtplib
@@ -210,12 +210,28 @@ def serve_ledger_at_root(path):
     return send_from_directory(LEDGER_DIR, "index.html")
 
 
+# robots.txt for protectont.ca: allow all crawlers including Facebook (fixes FB Sharing Debugger 403)
+PROTECTONT_ROBOTS_TXT = """User-agent: *
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Facebot
+Allow: /
+
+Sitemap: https://protectont.ca/
+"""
+
+
 @app.before_request
 def protect_ontario_and_ledger_redirect():
     if is_protect_ontario_domain():
         path = request.path.lstrip("/")
         if path == "_ledger-status":
             return None  # Let the diagnostic route handle it
+        if path == "robots.txt":
+            return Response(PROTECTONT_ROBOTS_TXT, mimetype="text/plain")
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")
