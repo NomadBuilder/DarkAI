@@ -1,0 +1,14 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Shield: green top, blue bottom, transparent background -->
+  <path d="M16 2L4 6v10c0 7 5 12 12 14 7-2 12-7 12-14V6L16 2z" fill="url(#favicon-shield)"/>
+  <!-- Maple leaf (stylized) -->
+  <path d="M16 9l-2 3c0 1.2.8 2.2 2 2.6 1.2-.4 2-1.4 2-2.6l-2-3z" fill="white"/>
+  <!-- Wave lines at bottom -->
+  <path d="M10 22h12M8 25h16M10 28h12" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".95"/>
+  <defs>
+    <linearGradient id="favicon-shield" x1="16" y1="2" x2="16" y2="30" gradientUnits="userSpaceOnUse">
+      <stop offset=".48" stop-color="#66A33F"/>
+      <stop offset=".52" stop-color="#2E4A6B"/>
+    </linearGradient>
+  </defs>
+</svg>
