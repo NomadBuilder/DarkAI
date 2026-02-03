@@ -1,0 +1,222 @@
+/**
+ * Manually maintained list of protests and rallies (anti-Ford / provincial accountability).
+ * Add new entries to the array — they will appear on the /protests page in card view.
+ */
+export interface Protest {
+  id: string
+  title: string
+  date: string
+  location: string
+  description?: string
+  link?: string
+}
+
+export const protests: Protest[] = [
+  {
+    id: 'cupe-2026-02-03-stratford',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 3, 2026 · 10:00 AM',
+    location: 'Stratford, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Matthew Rae.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-17-cobourg',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 17, 2026 · 10:00 AM',
+    location: 'Cobourg, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: David Piccini.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-18-ajax',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 18, 2026 · 10:00 AM',
+    location: 'Ajax, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Peter Bethlenfalvy.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-19-hamilton',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 19, 2026 · 10:00 AM',
+    location: 'Hamilton, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Neil Lumsden.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-23-peterborough',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 23, 2026 · 10:00 AM',
+    location: 'Peterborough, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Dave Smith.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-24-kenora',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 24, 2026 · 10:00 AM',
+    location: 'Kenora, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Greg Rickford.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-25-brockville',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 25, 2026 · 10:00 AM',
+    location: 'Brockville, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Steve Clark.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-26-ottawa-carleton',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 26, 2026 · 10:00 AM',
+    location: 'Ottawa/Carleton, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: George Darouze.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-27-north-bay',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 27, 2026 · 10:00 AM',
+    location: 'North Bay, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Vic Fedeli.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-03-02-toronto',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Mar 2, 2026 · 10:00 AM',
+    location: 'Toronto, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Doug Ford.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-03-03-pembroke',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Mar 3, 2026 · 10:00 AM',
+    location: 'Pembroke, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Billy Denault.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'fighting-ford-feb-2026-02-21-provincewide',
+    title: 'Fighting Ford February',
+    date: 'Feb 21, 2026',
+    location: 'Province-wide (Ontario)',
+    description: 'Province-wide protest against Ford government policies.',
+    link: 'https://www.facebook.com/groups/onpcmustgo/posts/2136603803544800/?comment_id=2136824623522718&reply_comment_id=2137324506806063&notif_id=1769705116538518&notif_t=group_comment_mention',
+  },
+]
+/**
+ * Manually maintained list of protests and rallies (anti-Ford / provincial accountability).
+ * Add new entries to the array — they will appear on the /protests page in card view.
+ */
+export interface Protest {
+  id: string
+  title: string
+  date: string
+  location: string
+  description?: string
+  link?: string
+}
+
+export const protests: Protest[] = [
+  {
+    id: 'cupe-2026-02-03-stratford',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 3, 2026 · 10:00 AM',
+    location: 'Stratford, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Matthew Rae.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-17-cobourg',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 17, 2026 · 10:00 AM',
+    location: 'Cobourg, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: David Piccini.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-18-ajax',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 18, 2026 · 10:00 AM',
+    location: 'Ajax, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Peter Bethlenfalvy.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-19-hamilton',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 19, 2026 · 10:00 AM',
+    location: 'Hamilton, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Neil Lumsden.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-23-peterborough',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 23, 2026 · 10:00 AM',
+    location: 'Peterborough, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Dave Smith.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-24-kenora',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 24, 2026 · 10:00 AM',
+    location: 'Kenora, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Greg Rickford.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-25-brockville',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 25, 2026 · 10:00 AM',
+    location: 'Brockville, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Steve Clark.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-26-ottawa-carleton',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 26, 2026 · 10:00 AM',
+    location: 'Ottawa/Carleton, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: George Darouze.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-02-27-north-bay',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Feb 27, 2026 · 10:00 AM',
+    location: 'North Bay, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Vic Fedeli.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-03-02-toronto',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Mar 2, 2026 · 10:00 AM',
+    location: 'Toronto, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Doug Ford.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'cupe-2026-03-03-pembroke',
+    title: 'Rally Against the Health Care Cuts',
+    date: 'Mar 3, 2026 · 10:00 AM',
+    location: 'Pembroke, ON',
+    description: 'CUPE Ontario rally against health care cuts. Target MPP: Billy Denault.',
+    link: 'https://www.facebook.com/CUPEOntario',
+  },
+  {
+    id: 'fighting-ford-feb-2026-02-21-provincewide',
+    title: 'Fighting Ford February',
+    date: 'Feb 21, 2026',
+    location: 'Province-wide (Ontario)',
+    description: 'Province-wide protest against Ford government policies.',
+    link: 'https://www.facebook.com/groups/onpcmustgo/posts/2136603803544800/?comment_id=2136824623522718&reply_comment_id=2137324506806063&notif_id=1769705116538518&notif_t=group_comment_mention',
+  },
+]

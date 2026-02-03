@@ -66,6 +66,10 @@ htmlcov/
 # Allow Ledger public data files (needed for /ledger/thetradeoff page)
 !ledger/public/data/healthcare_costs.json
 data/
+# Allow Ledger data used by admin/protests pages
+ledger/data/*
+!ledger/data/
+!ledger/data/protests.ts
 # Allow ProtectOnt pre-built data (receipts page needs /data/processed/*.json on protectont.ca)
 !static/protectont/data/
 !static/protectont/data/**
