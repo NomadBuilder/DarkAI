@@ -176,7 +176,7 @@ export default function TakeActionPage() {
         </section>
 
         {/* Bottom CTA */}
-        <section className="px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-900 text-white">
+        <section className="px-4 sm:px-6 md:px-8 pt-16 pb-24 md:pt-24 md:pb-32 bg-slate-900 text-white">
           <div className="max-w-3xl mx-auto text-center">
             <motion.p {...fadeIn} className="text-xl sm:text-2xl font-light text-gray-300 mb-8">
               The Greenbelt reversal happened because people showed up, wrote, and refused to accept that protected land was for sale. The same kind of pressure can protect healthcare, water, species, and Indigenous rights.

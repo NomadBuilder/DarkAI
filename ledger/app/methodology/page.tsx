@@ -1,49 +1,56 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import TopNavigation from '../../components/TopNavigation'
+import MethodologyDrawer from '../../components/MethodologyDrawer'
+import DataSourcesDrawer from '../../components/DataSourcesDrawer'
+import { useState } from 'react'
 
-interface MethodologyDrawerProps {
-  isOpen: boolean
-  onClose: () => void
-}
+export default function MethodologyPage() {
+  const [showMethodology, setShowMethodology] = useState(false)
+  const [showDataSources, setShowDataSources] = useState(false)
 
-export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawerProps) {
+  const handleMethodologyToggle = () => {
+    if (showMethodology) {
+      setShowMethodology(false)
+    } else {
+      setShowDataSources(false)
+      setShowMethodology(true)
+    }
+  }
+
+  const handleDataSourcesToggle = () => {
+    if (showDataSources) {
+      setShowDataSources(false)
+    } else {
+      setShowMethodology(false)
+      setShowDataSources(true)
+    }
+  }
+
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            style={{ position: 'fixed', inset: 0, zIndex: 50 }}
-            aria-hidden="true"
-          >
-            <div onClick={onClose} className="w-full h-full bg-black/50" />
-          </motion.div>
-          <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            style={{ position: 'fixed', right: 0, top: 0, height: '100%', width: '100%', maxWidth: '42rem', zIndex: 50 }}
-          >
-            <div className="h-full w-full bg-white shadow-xl overflow-y-auto">
-            <div className="p-4 md:p-8">
-              <div className="flex justify-between items-center mb-6 md:mb-8">
-                <h2 className="text-2xl md:text-3xl font-light text-gray-900">Methodology</h2>
-                <button
-                  onClick={onClose}
-                  className="text-gray-500 hover:text-gray-700 text-2xl md:text-3xl leading-none transition-colors active:scale-95 touch-manipulation"
-                  aria-label="Close Methodology"
-                >
-                  ×
-                </button>
-              </div>
+    <div className="relative">
+      <TopNavigation
+        onDataSourcesClick={handleDataSourcesToggle}
+        onMethodologyClick={handleMethodologyToggle}
+      />
+      <div className="relative z-10 pt-20 sm:pt-24">
+        <section className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-b border-slate-100">
+          <div className="max-w-5xl mx-auto text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-4 leading-tight">
+              Methodology
+            </h1>
+            <p className="text-lg text-gray-600 font-light max-w-3xl mx-auto">
+              A transparent overview of sources, processing, and verification standards.
+            </p>
+          </div>
+        </section>
 
+        <section className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50">
+          <div className="max-w-4xl mx-auto">
+            <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6 sm:p-8 md:p-10">
               <div className="space-y-6 md:space-y-8 prose prose-sm md:prose max-w-none">
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Purpose &amp; Scope</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Purpose &amp; Scope</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
                     Protect Ontario is a public accountability project focused on provincial spending,
                     policy decisions, and their real-world impacts. The platform is non-partisan and
@@ -59,10 +66,10 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Data Sources</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Data Sources</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
-                    This experience visualizes publicly reported spending data from Ontario&apos;s Public Accounts — 
-                    Detailed Schedule of Payments. This is first-party government data published under Ontario&apos;s 
+                    This experience visualizes publicly reported spending data from Ontario&apos;s Public Accounts —
+                    Detailed Schedule of Payments. This is first-party government data published under Ontario&apos;s
                     open data program.
                   </p>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
@@ -89,7 +96,7 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Additional Research Sources</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Additional Research Sources</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
                     This visualization incorporates insights and data from additional research reports:
                   </p>
@@ -122,15 +129,15 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Time Window</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Time Window</h2>
                   <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
-                    Data covers fiscal years 2018-2024, focusing on the period since Doug Ford took office 
+                    Data covers fiscal years 2018-2024, focusing on the period since Doug Ford took office
                     and Ford era (2018-2024).
                   </p>
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Update Cadence</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Update Cadence</h2>
                   <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
                     The platform updates when new Public Accounts releases or major policy changes occur.
                     Event listings and issue pages are updated as new information becomes available.
@@ -138,7 +145,7 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Data Integrity</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Data Integrity</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
                     This data has been systematically audited and corrected:
                   </p>
@@ -149,12 +156,14 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                     <li><strong className="font-normal">Transparent Methodology:</strong> All classification rules, exclusions, and corrections are documented</li>
                   </ul>
                   <p className="text-sm md:text-base text-gray-700 mt-3 md:mt-4 font-light leading-relaxed">
-                    <strong className="font-normal">Example:</strong> D+H Corporation was initially classified as for-profit with a $1.7B payment, but was corrected to a payment processor/pass-through for OSAP loans and grants. This was not a $1.7B payment to a for-profit company—it was student financial aid flowing through a payment system.
+                    <strong className="font-normal">Example:</strong> D+H Corporation was initially classified as for-profit with a $1.7B payment,
+                    but was corrected to a payment processor/pass-through for OSAP loans and grants. This was not a $1.7B
+                    payment to a for-profit company—it was student financial aid flowing through a payment system.
                   </p>
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Vendor Classification</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Vendor Classification</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
                     Vendors are classified into three categories:
                   </p>
@@ -164,13 +173,13 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                     <li><strong className="font-normal">For-profit:</strong> Incorporated companies, staffing agencies, clinics, consultants, IT vendors</li>
                   </ul>
                   <p className="text-sm md:text-base text-gray-700 mt-3 md:mt-4 font-light leading-relaxed">
-                    Only the top ~200 vendors by total spend or growth are classified. Everything else remains 
+                    Only the top ~200 vendors by total spend or growth are classified. Everything else remains
                     &quot;unclassified&quot; and is visually de-emphasized.
                   </p>
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Limitations</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Limitations</h2>
                   <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 ml-2 md:ml-4 font-light leading-relaxed">
                     <li>This visualization shows spending patterns, not intent or legality</li>
                     <li>Classification is based on publicly available information</li>
@@ -181,29 +190,38 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Verification &amp; Corrections</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Verification &amp; Corrections</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
-                    We cross-check large or unusual payments against public records and reputable research
-                    sources before highlighting them. If an error is found, we document the correction and
-                    update the data in the next release.
+                    We cross-check large or unusual payments against public records and reputable research sources before
+                    highlighting them. If an error is found, we document the correction and update the data in the next release.
                   </p>
                   <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
-                    To report an error or submit a verified source, contact us via the Take Action page and
-                    include the source link or document reference.
+                    To report an error or submit a verified source, contact us via the Take Action page and include the
+                    source link or document reference.
                   </p>
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Interpretation vs. Source Material</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Interpretation vs. Source Material</h2>
                   <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
-                    This experience clearly distinguishes interpretation from source material. All payment data 
-                    comes directly from Ontario&apos;s Public Accounts. Visual patterns and classifications are our 
-                    interpretation of that data.
+                    This experience clearly distinguishes interpretation from source material. All payment data comes
+                    directly from Ontario&apos;s Public Accounts. Visual patterns and classifications are our interpretation
+                    of that data.
+                  </p>
+                </section>
+
+                <section id="derived-estimates">
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Derived Estimates</h2>
+                  <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
+                    Some sections translate large totals (like annual private agency costs) into illustrative equivalents
+                    (e.g., staffing or bed capacity). These are not precise budget allocations — they are directional
+                    estimates meant to show scale. We link the base figure to its primary source and document the
+                    assumptions used for the calculation when we publish an estimate.
                   </p>
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Data Processing</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Data Processing</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
                     Raw payment data is processed through the following pipeline:
                   </p>
@@ -217,7 +235,7 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
 
                 <section>
-                  <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Water Privatization Analysis</h3>
+                  <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Water Privatization Analysis</h2>
                   <p className="text-sm md:text-base text-gray-700 mb-3 md:mb-4 font-light leading-relaxed">
                     The water privatization section analyzes Bill 60&apos;s Water and Wastewater Public Corporations Act, 2025:
                   </p>
@@ -228,7 +246,8 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                     <li><strong className="font-normal">Control Comparison:</strong> Interactive visualization showing how control shifts from public to corporate under the legislation</li>
                   </ul>
                   <p className="text-sm md:text-base text-gray-700 mt-3 md:mt-4 font-light leading-relaxed">
-                    <strong className="font-normal">Source:</strong> Bill 60 (Your Health Act) was passed in November 2025 and is publicly available through the Legislative Assembly of Ontario. The legal analysis is based on direct reading of the statute text.
+                    <strong className="font-normal">Source:</strong> Bill 60 (Your Health Act) was passed in November 2025 and is publicly
+                    available through the Legislative Assembly of Ontario. The legal analysis is based on direct reading of the statute text.
                   </p>
                   <div className="mt-3 md:mt-4">
                     <a
@@ -243,10 +262,19 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 </section>
               </div>
             </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+          </div>
+        </section>
+      </div>
+
+      <MethodologyDrawer
+        isOpen={showMethodology}
+        onClose={() => setShowMethodology(false)}
+      />
+
+      <DataSourcesDrawer
+        isOpen={showDataSources}
+        onClose={() => setShowDataSources(false)}
+      />
+    </div>
   )
 }

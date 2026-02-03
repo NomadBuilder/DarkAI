@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionLongTermCare() {
   return (
@@ -18,23 +19,6 @@ export default function SectionLongTermCare() {
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
               The Ford government&apos;s bed allocation decisions reveal a clear privatization (Americanization) agenda
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Key Stat */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          <div className="bg-red-50 border-2 border-red-300 rounded-2xl p-8 md:p-12 text-center">
-            <p className="text-5xl sm:text-6xl md:text-7xl font-light text-red-600 mb-4">
-              The Pattern
-            </p>
-            <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-light">
-              New long-term care beds overwhelmingly allocated to for-profit operators
             </p>
           </div>
         </motion.div>
@@ -67,6 +51,7 @@ export default function SectionLongTermCare() {
               </h4>
               <p className="text-sm md:text-base text-gray-600 font-light">
                 Under Ford, new bed allocations have shifted dramatically toward for-profit operators
+                <InlineCitation href="#source-2" label="2" />
               </p>
             </div>
           </div>

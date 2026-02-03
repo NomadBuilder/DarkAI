@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionCostComparison() {
   return (
@@ -18,6 +19,8 @@ export default function SectionCostComparison() {
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
               What $725 million in annual private agency costs could fund instead
+              <InlineCitation href="#source-2" label="2" />
+              <InlineCitation href="/methodology#derived-estimates" label="M1" />
             </p>
           </div>
         </motion.div>
@@ -33,6 +36,7 @@ export default function SectionCostComparison() {
           <div className="text-center mb-8">
             <p className="text-3xl sm:text-4xl md:text-5xl font-light text-red-900 mb-4">
               Private agencies cost <strong className="font-normal">3x more</strong>
+              <InlineCitation href="#source-2" label="2" />
             </p>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-light">
               For the same work, the same hours, the same care
@@ -139,7 +143,10 @@ export default function SectionCostComparison() {
               <div className="flex items-start gap-4 pb-4 border-b border-gray-700">
                 <span className="text-2xl">→</span>
                 <div>
-                  <p className="mb-1">Private agencies: <strong className="font-normal">0.4% of hours</strong></p>
+                  <p className="mb-1">
+                    Private agencies: <strong className="font-normal">0.4% of hours</strong>
+                    <InlineCitation href="#source-2" label="2" />
+                  </p>
                   <p className="text-gray-300 text-base">But consume 6% of labour costs</p>
                 </div>
               </div>

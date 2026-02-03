@@ -36,7 +36,7 @@ export default function WaterBillCalculatorPage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-      <div className="relative z-10 pt-28 sm:pt-32">
+      <div className="relative z-10 pt-20 sm:pt-24">
         <SectionWaterCostCalculator />
       </div>
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionStaffingCrisis() {
   return (
@@ -35,22 +36,13 @@ export default function SectionStaffingCrisis() {
             </p>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-light">
               Paid to for-profit staffing agencies over 10 years
+              <InlineCitation href="#source-1" label="1" />
             </p>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light mt-4">
               (2013-2023)
             </p>
             <p className="text-xs sm:text-sm text-gray-500 font-light mt-2">
               Note: Most of this growth occurred during the Ford era (2018-2023)
-            </p>
-            <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
-              Source: <a 
-                href="https://www.policyalternatives.ca/news-research/hollowed-out/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="underline hover:text-gray-700"
-              >
-                CCPA &quot;Hollowed Out&quot; Report
-              </a>
             </p>
           </div>
         </motion.div>
@@ -77,7 +69,12 @@ export default function SectionStaffingCrisis() {
               {
                 step: '2',
                 title: 'Bill 124 suppresses wages',
-                description: '1% cap on raises makes health care work less attractive',
+                description: (
+                  <>
+                    1% cap on raises makes health care work less attractive
+                    <InlineCitation href="#source-3" label="3" />
+                  </>
+                ),
               },
               {
                 step: '3',
@@ -112,7 +109,6 @@ export default function SectionStaffingCrisis() {
               </motion.div>
             ))}
           </div>
-
           <div className="text-center pt-8 md:pt-12">
             <div className="inline-flex items-center gap-3 text-gray-400">
               <div className="h-px w-16 bg-gray-300"></div>
@@ -220,6 +216,10 @@ export default function SectionStaffingCrisis() {
           </p>
           </div>
         </motion.div>
+        <p className="text-sm md:text-base text-gray-500 font-light text-center mt-10">
+          Source: CCPA &quot;Hollowed Out&quot; Report
+          <InlineCitation href="#source-1" label="1" />
+        </p>
       </div>
     </section>
   )

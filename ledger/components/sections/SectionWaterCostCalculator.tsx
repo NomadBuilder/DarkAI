@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
-// Based on global examples: privatized water systems typically see 30-50% rate increases
+// Illustrative range based on reported higher private utility rates
 const MIN_INCREASE = 0.30
-const MAX_INCREASE = 0.50
-const AVERAGE_INCREASE = 0.40
+const MAX_INCREASE = 0.60
+const AVERAGE_INCREASE = 0.59
 
 export default function SectionWaterCostCalculator() {
   const [currentBill, setCurrentBill] = useState(75)
@@ -123,7 +124,8 @@ export default function SectionWaterCostCalculator() {
                 </div>
               </div>
               <p className="text-sm md:text-base text-gray-500 font-light mt-2 text-center">
-                Based on global examples, privatized water systems see 30-50% rate increases
+                Studies of U.S. systems found private utilities charged typical households about 59% more on average
+                <InlineCitation href="#source-2" label="2" />
               </p>
             </div>
 

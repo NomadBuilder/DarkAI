@@ -37,7 +37,7 @@ export default function AlternativePresentPage() {
       />
       
       {/* Main content with top padding for fixed nav */}
-      <div className="pt-28 sm:pt-32">
+      <div className="pt-20 sm:pt-24">
         <SectionWhatCouldFund />
       </div>
 

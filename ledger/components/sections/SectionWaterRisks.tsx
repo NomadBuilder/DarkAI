@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 const risks = [
   {
@@ -76,6 +77,11 @@ export default function SectionWaterRisks() {
             </motion.div>
           ))}
         </div>
+        <p className="text-sm md:text-base text-gray-500 font-light text-center">
+          Sources: privatization impacts on costs and service quality
+          <InlineCitation href="#source-2" label="2" />
+          <InlineCitation href="#source-3" label="3" />
+        </p>
 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -86,6 +92,7 @@ export default function SectionWaterRisks() {
           <div className="bg-blue-900 text-white rounded-2xl p-8 md:p-12 text-center">
             <p className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
               Water is a human right, not a corporate commodity.
+              <InlineCitation href="#source-4" label="4" />
             </p>
             <p className="text-lg sm:text-xl md:text-2xl font-light text-blue-100 leading-relaxed max-w-4xl mx-auto">
               Once water systems are privatized, communities lose control, costs rise, and service quality often declines. This is a pattern we&apos;ve seen around the world — and it&apos;s a pattern Bill 60 enables in Ontario.

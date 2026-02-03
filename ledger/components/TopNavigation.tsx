@@ -40,12 +40,13 @@ const issuesDropdownItems: NavItem[] = [
 const dataDropdownItems: NavItem[] = [
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
-  { id: 'methodology', label: 'Methodology', action: 'methodology' },
+  { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
   { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
+  { id: 'events', label: 'Events', href: '/protests' },
   { id: 'about', label: 'About', href: '/about' },
 ]
 
@@ -82,6 +83,14 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
       clearTimeout(scrollTimeout)
     }
   }, [])
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return
+    document.body.classList.toggle('mobile-menu-open', isMobileMenuOpen)
+    return () => {
+      document.body.classList.remove('mobile-menu-open')
+    }
+  }, [isMobileMenuOpen])
 
   // Clear dropdown leave timeout on unmount
   useEffect(() => {

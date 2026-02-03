@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from 'next'
 import Script from 'next/script'
 import './globals.css'
 import ErrorBoundary from '@/components/ErrorBoundary'
+import Footer from '@/components/Footer'
+import ChatWidget from '@/components/ChatWidget'
 
 // Base URL and paths for meta, OG, and icons (lowercase canonical URL)
 const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''
@@ -90,6 +92,8 @@ export default function RootLayout({
         <ErrorBoundary>
           {children}
         </ErrorBoundary>
+        <ChatWidget />
+        <Footer />
       </body>
     </html>
   )

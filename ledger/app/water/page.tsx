@@ -9,6 +9,7 @@ import TopNavigation from '../../components/TopNavigation'
 import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
 import MPPContactModal from '../../components/MPPContactModal'
+import InlineCitation from '../../components/InlineCitation'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -52,7 +53,7 @@ export default function WaterPage() {
         {/* Hero — no padding-top on gradient; top spacing on inner content so gradient goes to top */}
         <section className="relative pb-16 md:pb-24 flex items-start justify-center px-4 sm:px-6 md:px-8 overflow-hidden bg-gradient-to-b from-blue-50 via-blue-50/95 to-slate-50">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.1),transparent)]" />
-          <div className="relative pt-28 sm:pt-32 max-w-5xl w-full text-center">
+          <div className="relative pt-20 sm:pt-24 max-w-5xl w-full text-center">
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -68,6 +69,7 @@ export default function WaterPage() {
               className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-10"
             >
               Bill 60 opens the door to corporate control of Ontario&apos;s water. The &quot;Water and Wastewater Public Corporations Act&quot; lets corporations — structured like private companies — take control of water services, set rates, and operate outside the same accountability rules as public institutions.
+              <InlineCitation href="#source-1" label="1" />
             </motion.p>
           </div>
         </section>
@@ -80,9 +82,6 @@ export default function WaterPage() {
               The threat
             </motion.h2>
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
-              <p>
-                In November 2025, the Ontario government passed <strong className="font-normal text-gray-900">Bill 60</strong>, which includes the <strong className="font-normal text-gray-900">Water and Wastewater Public Corporations Act, 2025</strong>. Despite its name, this legislation creates a legal pathway for corporations — structured like private, for-profit companies — to take control of water and wastewater services across Ontario.
-              </p>
               <motion.div {...fadeIn} className="rounded-xl bg-white/80 border border-blue-100 p-6 sm:p-8 shadow-sm">
                 <p className="text-blue-800 font-medium text-lg sm:text-xl mb-2">This isn&apos;t modernization.</p>
                 <p className="text-gray-700 text-base sm:text-lg">It&apos;s privatization (Americanization) by another name — corporate control, rate-setting power, and governance outside Crown accountability.</p>
@@ -148,9 +147,42 @@ export default function WaterPage() {
           </div>
         </section>
 
+        {/* Sources */}
+        <section id="sources" className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-t border-slate-100">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4">Sources &amp; citations</h3>
+            <ul className="space-y-2 text-sm md:text-base text-gray-700 font-light leading-relaxed">
+              <li id="source-1">
+                <span className="mr-2 text-slate-500">1.</span>
+                <a href="https://www.ola.org/en/legislative-business/bills/parliament-43/session-1/bill-60" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Legislative Assembly of Ontario: Bill 60 — Water and Wastewater Public Corporations Act, 2025
+                </a>
+              </li>
+              <li id="source-2">
+                <span className="mr-2 text-slate-500">2.</span>
+                <a href="https://inthepublicinterest.org/wp-content/uploads/ITPI_Water_Feb2021.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  In the Public Interest (2021): Restoring and Reimagining Investment in Public Water
+                </a>
+              </li>
+              <li id="source-3">
+                <span className="mr-2 text-slate-500">3.</span>
+                <a href="https://inthepublicinterest.org/wp-content/uploads/Selling-out-Consumers.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Food & Water Watch (2011): Selling Out Consumers — Water prices after large system sales
+                </a>
+              </li>
+              <li id="source-4">
+                <span className="mr-2 text-slate-500">4.</span>
+                <a href="https://digitallibrary.un.org/record/687002?ln=en" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  United Nations (2010): The human right to water and sanitation (A/RES/64/292)
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="pt-16 md:pt-24">
-          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-[#2E4A6B] text-white py-16 md:py-24">
+          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-[#2E4A6B] text-white pt-16 pb-24 md:pt-24 md:pb-32">
             <div className="max-w-5xl w-full">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionHospitalCrisis() {
   return (
@@ -17,7 +18,7 @@ export default function SectionHospitalCrisis() {
               The Hospital Crisis
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              Underfunding has left Ontario with one of the most undercapacity hospital systems in the industrialized world
+              Underfunding has left Ontario with one of the lowest-capacity hospital systems in the industrialized world
             </p>
           </div>
         </motion.div>
@@ -54,10 +55,10 @@ export default function SectionHospitalCrisis() {
               33/38
             </p>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-light mb-2">
-              Canada's OECD ranking
+              OECD ranking
             </p>
             <p className="text-sm sm:text-base md:text-lg text-gray-600 font-light">
-              Hospital beds per capita (Ontario reflects this)
+              staff hospital beds per capita
             </p>
             </div>
           </motion.div>
@@ -131,12 +132,13 @@ export default function SectionHospitalCrisis() {
                 description: '63% of hospitals under $100M revenue had deficits',
               },
               {
-                title: 'Hallway medicine',
-                description: 'In Ontario, hallway medicine is the norm',
-              },
-              {
                 title: 'Second-fewest beds',
-                description: 'Ontario has the second-fewest hospital beds per capita in Canada',
+                description: (
+                  <>
+                    Ontario has the second-fewest hospital beds per capita in Canada
+                    <InlineCitation href="#source-4" label="4" />
+                  </>
+                ),
               },
             ].map((item, idx) => (
               <motion.div
@@ -159,6 +161,10 @@ export default function SectionHospitalCrisis() {
           </div>
           </div>
         </motion.div>
+        <p className="text-sm md:text-base text-gray-500 font-light text-center mt-10">
+          Source: CCPA &quot;Hollowed Out&quot; Report
+          <InlineCitation href="#source-1" label="1" />
+        </p>
 
         {/* The Solution */}
         <motion.div

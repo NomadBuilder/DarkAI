@@ -173,10 +173,10 @@ export default function SectionPolicyTimeline() {
           </p>
           <p className="text-sm font-light text-gray-400 mb-4">Explore the issues</p>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            <Link href="/healthcare" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Healthcare</Link>
-            <Link href="/water" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Water</Link>
-            <Link href="/greenbelt" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Greenbelt</Link>
-            <Link href="/wildlife" className="inline-block px-4 py-2 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Wildlife</Link>
+            <Link href="/healthcare" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Healthcare</Link>
+            <Link href="/water" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Water</Link>
+            <Link href="/greenbelt" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Greenbelt</Link>
+            <Link href="/wildlife" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Wildlife</Link>
           </div>
           </div>
         </motion.div>

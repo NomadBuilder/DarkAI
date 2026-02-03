@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionFordTracker() {
   return (
@@ -70,7 +71,10 @@ export default function SectionFordTracker() {
             </p>
             <div className="space-y-3">
               {[
-                'Private staffing agencies ($9.2B over 10 years); for-profit surgical clinics (Bill 60)',
+                <>
+                  Private staffing agencies ($9.2B over 10 years); for-profit surgical clinics (Bill 60)
+                  <InlineCitation href="#source-2" label="2" />
+                </>,
                 'For-profit long-term care; consulting and outsourcing',
                 'Water and land opened to private control (Bill 60 water, Bill 5 special economic zones)',
               ].map((item, idx) => (

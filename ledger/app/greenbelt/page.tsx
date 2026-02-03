@@ -4,6 +4,7 @@ import TopNavigation from '../../components/TopNavigation'
 import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
 import MPPContactModal from '../../components/MPPContactModal'
+import InlineCitation from '../../components/InlineCitation'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -46,7 +47,7 @@ export default function GreenbeltPage() {
       <div className="relative z-10">
         {/* Hero — no padding-top on gradient div; top spacing only on inner content so gradient goes to top */}
         <div className="relative pb-16 md:pb-24 bg-gradient-to-b from-emerald-50 via-emerald-50/95 to-emerald-50/90">
-          <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-28 sm:pt-32 overflow-hidden">
+          <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-20 sm:pt-24 overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(16,185,129,0.18),transparent)]" />
           <div className="relative max-w-5xl w-full text-center">
             <motion.h1
@@ -63,7 +64,10 @@ export default function GreenbeltPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-10"
             >
-              The government removed 7,400 acres of protected land for development. The process was biased, secretive, and is now under RCMP criminal investigation. Public pressure forced a reversal — but the scandal isn&apos;t over.
+              The government moved to remove 7,400 acres of protected Greenbelt land for development. The process was biased, secretive, and is now under RCMP criminal investigation. Public pressure forced a reversal — but the attempt reveals how easily the Greenbelt can be put back on the chopping block.
+              <InlineCitation href="#source-1" label="1" />
+              <InlineCitation href="#source-2" label="2" />
+              <InlineCitation href="#source-3" label="3" />
             </motion.p>
             {/* Key stats strip */}
             <motion.div
@@ -74,17 +78,26 @@ export default function GreenbeltPage() {
             >
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-red-600 tabular-nums">7,400</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">acres removed</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  acres targeted
+                  <InlineCitation href="#source-1" label="1" />
+                </span>
               </div>
               <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-emerald-800 tabular-nums">$8.28B</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">estimated value</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  estimated value
+                  <InlineCitation href="#source-1" label="1" />
+                </span>
               </div>
               <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-emerald-800 tabular-nums">12 of 15</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">sites developers lobbied to remove</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  sites developers lobbied to remove
+                  <InlineCitation href="#source-1" label="1" />
+                </span>
               </div>
             </motion.div>
           </div>
@@ -101,7 +114,9 @@ export default function GreenbeltPage() {
             </motion.h2>
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
-                In late 2022, the Ford government removed 7,400 acres from the Greenbelt — the protected band of farmland, forests, and wetlands that rings the Greater Golden Horseshoe — and opened it for housing development. The move was framed as necessary to build more homes. The Auditor General and integrity commissioner found otherwise: the process was &quot;biased and lacked transparency,&quot; favoured a handful of developers who had lobbied for the removals, and proceeded without evidence that Greenbelt land was needed to meet housing targets. Municipalities and the public were not meaningfully consulted.
+                In late 2022, the Ford government moved to remove 7,400 acres from the Greenbelt — the protected band of farmland, forests, and wetlands that rings the Greater Golden Horseshoe — and open it for housing development. The move was framed as necessary to build more homes. The Auditor General and integrity commissioner found otherwise: the process was &quot;biased and lacked transparency,&quot; favoured a handful of developers who had lobbied for the removals, and proceeded without evidence that Greenbelt land was needed to meet housing targets. Municipalities and the public were not meaningfully consulted.
+                <InlineCitation href="#source-1" label="1" />
+                <InlineCitation href="#source-4" label="4" />
               </p>
               <div className="rounded-xl bg-white/80 border border-emerald-100 p-6 sm:p-8 shadow-sm">
                 <p className="text-emerald-800 font-medium text-lg sm:text-xl mb-1">$8.28 billion</p>
@@ -133,9 +148,11 @@ export default function GreenbeltPage() {
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
                 Of 15 sites removed from the Greenbelt, 12 had been requested by developers in the months before the decision. Senior political staff drove the process; housing need was not the basis for the choices. The government had received advice that there was enough land already designated for development to meet housing goals — so carving up the Greenbelt was not necessary. It did it anyway.
+                <InlineCitation href="#source-1" label="1" />
               </p>
               <p>
                 The integrity commissioner later found that the former housing minister had violated ethics rules in his dealings with developers. The picture that emerged was not of evidence-based policy but of privileged access and a process built to deliver a windfall to a small group of landowners.
+                <InlineCitation href="#source-4" label="4" />
               </p>
             </motion.div>
           </div>
@@ -157,6 +174,7 @@ export default function GreenbeltPage() {
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
                 The RCMP launched a criminal investigation into the Greenbelt land swap. Detectives have been interviewing current and former Progressive Conservative aides as witnesses in connection with the 2022 decision. The premier has said his government will &quot;fully co-operate&quot; and has &quot;nothing to hide.&quot; As of early 2025, the investigation was ongoing. No charges have been laid — but the fact that a provincial land-use decision is the subject of a federal criminal probe underscores how seriously the process has been called into question.
+                <InlineCitation href="#source-2" label="2" />
               </p>
             </motion.div>
           </div>
@@ -168,7 +186,7 @@ export default function GreenbeltPage() {
           <div className="relative max-w-4xl mx-auto">
             <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12 flex items-center gap-3">
               <span className="inline-block w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700" aria-hidden>4</span>
-              We stopped them — this time
+              Reversed — but not resolved
             </motion.h2>
             <motion.div {...fadeIn} className="rounded-xl bg-emerald-50/80 border border-emerald-100 p-6 sm:p-8 mb-8">
               <p className="text-lg sm:text-xl text-emerald-900 font-light italic">
@@ -178,9 +196,11 @@ export default function GreenbeltPage() {
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-600 font-light leading-relaxed">
               <p>
                 Faced with overwhelming public outrage, reporting from journalists, and the findings of the Auditor General and integrity commissioner, the government reversed course. In September 2023 it announced it would restore the 7,400 acres to the Greenbelt and would not remove land in the future.
+                <InlineCitation href="#source-3" label="3" />
+                <InlineCitation href="#source-5" label="5" />
               </p>
               <p>
-                The reversal proved that bad policy can be pushed back when it becomes politically impossible to ignore. It also left a lasting stain: the RCMP investigation continues, and the same government has since pursued other contentious policies — from Bill 5 to Ontario Place — with the same pattern of favouring well-connected proponents and sidestepping accountability. The Greenbelt story is both a warning and a reminder: public pressure works, but it has to be sustained.
+                The reversal proved that bad policy can be pushed back when it becomes politically impossible to ignore. It also left a lasting stain: the RCMP investigation continues, and the same government has since pursued other contentious policies — from Bill 5 to Ontario Place — with the same pattern of favouring well-connected proponents and sidestepping accountability. The Greenbelt story is both a warning and a reminder: public pressure works, but it has to be sustained — because the attempt can return.
               </p>
               <p className="text-blue-600 font-medium text-xl sm:text-2xl mt-8">
                 The question is whether we keep using it.
@@ -190,8 +210,46 @@ export default function GreenbeltPage() {
         </section>
 
         {/* CTA Section */}
+        <section id="sources" className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-t border-slate-100">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4">Sources &amp; citations</h3>
+            <ul className="space-y-2 text-sm md:text-base text-gray-700 font-light leading-relaxed">
+              <li id="source-1">
+                <span className="mr-2 text-slate-500">1.</span>
+                <a href="https://auditor.on.ca/en/content/specialreports/specialreports/Greenbelt_en.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Auditor General of Ontario: Special Report on Changes to the Greenbelt (2023)
+                </a>
+              </li>
+              <li id="source-2">
+                <span className="mr-2 text-slate-500">2.</span>
+                <a href="https://www.thestar.com/politics/provincial/rcmp-launches-criminal-investigation-into-doug-ford-s-greenbelt-land-swap/article_f778e402-1c56-54c8-b6b3-1e212fe4d662.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  RCMP criminal investigation into Greenbelt land swap
+                </a>
+              </li>
+              <li id="source-3">
+                <span className="mr-2 text-slate-500">3.</span>
+                <a href="https://www.cbc.ca/news/canada/toronto/ontario-greenbelt-reversal-1.6954872" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Ontario reverses Greenbelt land removal (2023)
+                </a>
+              </li>
+              <li id="source-4">
+                <span className="mr-2 text-slate-500">4.</span>
+                <a href="https://oico.on.ca/web/default/files/public/Commissioners%20Reports/Report%20Re%20Minister%20Clark%20-%20August%2030%2C%202023.pdf" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Ontario Integrity Commissioner: Report re Minister Clark (Aug 30, 2023)
+                </a>
+              </li>
+              <li id="source-5">
+                <span className="mr-2 text-slate-500">5.</span>
+                <a href="https://ero.ontario.ca/notice/019-7739" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Environmental Registry of Ontario: Proposal to return lands to the Greenbelt (2023)
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+
         <section className="pt-16 md:pt-24">
-          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-slate-900 text-white py-16 md:py-24">
+          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-slate-900 text-white pt-16 pb-24 md:pt-24 md:pb-32">
             <div className="max-w-5xl w-full">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

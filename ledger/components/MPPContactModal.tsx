@@ -29,7 +29,7 @@ Best regards,`
 
 const healthcareMessage = `I'm concerned about the dramatic growth of private spending in Ontario's healthcare system, particularly the $9.2 billion paid to private staffing agencies over 10 years and the expansion of for-profit surgical clinics under Bill 60.
 
-Private agency staff cost 3x more than regular employees, yet account for only 0.4% of hours but 6% of costs. Meanwhile, 66 of 134 hospitals are in deficit, and Ontario ranks 33 out of 38 OECD countries in hospital beds per capita.
+Private agency staff cost 3x more than regular employees, yet account for only 0.4% of hours but 6% of costs. Meanwhile, 66 of 134 hospitals had deficits in 2023-24, and Ontario ranks 33 out of 38 OECD countries in staffed hospital beds per capita.
 
 Once public capacity is reduced, it can be difficult and costly to rebuild. I'd like to understand how the government plans to stabilize public hospitals and reduce reliance on expensive private providers.
 

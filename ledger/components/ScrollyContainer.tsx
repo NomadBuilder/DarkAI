@@ -117,7 +117,7 @@ export default function ScrollyContainer() {
       />
       {/* Scrollable content sections */}
             <div className="relative z-10 w-full">
-        <div className="pt-[136px] sm:pt-[152px] md:pt-0">
+        <div className="pt-0 sm:pt-[152px] md:pt-0">
           <SectionColdOpen />
         </div>
         <section id="timeline">
@@ -132,6 +132,57 @@ export default function ScrollyContainer() {
           <SectionKeyFindings />
         </section>
         <SectionLoss />
+        <section id="sources" className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-t border-slate-100">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4">Sources &amp; citations</h3>
+            <ul className="space-y-2 text-sm md:text-base text-gray-700 font-light leading-relaxed">
+              <li id="source-1">
+                <span className="mr-2 text-slate-500">1.</span>
+                <a
+                  href="https://www.ontario.ca/page/public-accounts"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                >
+                  Ontario Public Accounts (2018–2024)
+                </a>
+              </li>
+              <li id="source-2">
+                <span className="mr-2 text-slate-500">2.</span>
+                <a
+                  href="https://www.policyalternatives.ca/news-research/hollowed-out/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                >
+                  CCPA: “Hollowed Out” — Ontario public hospitals &amp; private staffing agencies
+                </a>
+              </li>
+              <li id="source-3">
+                <span className="mr-2 text-slate-500">3.</span>
+                <a
+                  href="https://www.cbc.ca/news/canada/toronto/ontario-doug-ford-private-clinic-surgeries-fees-hospitals-1.7026926"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                >
+                  CBC: For-profit clinic paid more than public hospitals (Bill 60)
+                </a>
+              </li>
+              <li id="source-4">
+                <span className="mr-2 text-slate-500">4.</span>
+                <a
+                  href="https://data.ontario.ca/dataset/public-accounts-detailed-schedule-of-payments"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                >
+                  Ontario Open Data: Detailed Schedule of Payments
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
       </div>
 
       {/* Receipts overlay */}

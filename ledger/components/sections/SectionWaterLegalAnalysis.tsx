@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 const legalPoints = [
   {
@@ -42,6 +43,7 @@ export default function SectionWaterLegalAnalysis() {
           <div className="text-center">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8">
               The Legal Framework
+              <InlineCitation href="#source-1" label="1" />
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
               What the law actually says — and why it matters

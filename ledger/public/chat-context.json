@@ -1,0 +1,106 @@
+{
+  "site": {
+    "name": "Protect Ontario",
+    "mission": "A public-accountability project tracking provincial spending, legislation, and policy impacts in Ontario using public sources.",
+    "scope": "Ontario Public Accounts (2018–2024), issue pages on healthcare, water, greenbelt, wildlife, protests/events, and methodology/media resources.",
+    "funding": "Currently unfunded and has no paid sponsors."
+  },
+  "pages": [
+    {
+      "path": "/water",
+      "summary": "Explains Bill 60 and how it enables corporate control of water services, with legal analysis, comparison of claims vs reality, and risks.",
+      "sources": [
+        {
+          "title": "Bill 60 — Water and Wastewater Public Corporations Act, 2025",
+          "url": "https://www.ola.org/en/legislative-business/bills/parliament-43/session-1/bill-60"
+        },
+        {
+          "title": "Ontario Public Accounts (2018–2024)",
+          "url": "https://www.ontario.ca/page/public-accounts"
+        },
+        {
+          "title": "Detailed Schedule of Payments",
+          "url": "https://data.ontario.ca/dataset/public-accounts-detailed-schedule-of-payments"
+        }
+      ]
+    },
+    {
+      "path": "/greenbelt",
+      "summary": "Details the Greenbelt land removal scandal, Auditor General findings, and the reversal after public pressure.",
+      "sources": [
+        {
+          "title": "Auditor General: Special Report on Changes to the Greenbelt (2023)",
+          "url": "https://auditor.on.ca/en/content/specialreports/specialreports/Greenbelt_en.pdf"
+        },
+        {
+          "title": "RCMP criminal investigation into Greenbelt land swap",
+          "url": "https://www.thestar.com/politics/provincial/rcmp-launches-criminal-investigation-into-doug-ford-s-greenbelt-land-swap/article_f778e402-1c56-54c8-b6b3-1e212fe4d662.html"
+        },
+        {
+          "title": "Ontario reverses Greenbelt land removal (2023)",
+          "url": "https://www.cbc.ca/news/canada/toronto/ontario-greenbelt-reversal-1.6954872"
+        }
+      ]
+    },
+    {
+      "path": "/healthcare",
+      "summary": "Shows healthcare privatization patterns, staffing agency spending, hospital deficits, and long-term care impacts.",
+      "sources": [
+        {
+          "title": "Ontario Public Accounts (2018–2024)",
+          "url": "https://www.ontario.ca/page/public-accounts"
+        },
+        {
+          "title": "CCPA: Hollowed Out — Private Staffing Agencies",
+          "url": "https://www.policyalternatives.ca/news-research/hollowed-out/"
+        },
+        {
+          "title": "Ontario Health Coalition: LTC Bed Allocations",
+          "url": "https://www.ontariohealthcoalition.ca/wp-content/uploads/Final-Ford-government-LTC-bed-allocations-report.pdf"
+        }
+      ]
+    },
+    {
+      "path": "/wildlife",
+      "summary": "Explains Bill 5 impacts on species protection, Indigenous rights, and special economic zones.",
+      "sources": [
+        {
+          "title": "Bill 5 — Protect Ontario by Unleashing our Economy Act, 2025",
+          "url": "https://www.ola.org/en/legislative-business/bills/parliament-44/session-1/bill-5"
+        },
+        {
+          "title": "Ontario Nature: Bill 5 — A moment to mobilize",
+          "url": "https://ontarionature.org/bill-5-a-moment-to-mobilize-for-nature-in-ontario-blog/"
+        },
+        {
+          "title": "David Suzuki Foundation: Repeal Bill 5",
+          "url": "https://davidsuzuki.org/action/repealbill5/"
+        }
+      ]
+    },
+    {
+      "path": "/protests",
+      "summary": "Lists rallies and protests across Ontario with a calendar view and city filter.",
+      "sources": []
+    },
+    {
+      "path": "/methodology",
+      "summary": "Describes data sources, processing, integrity checks, and limitations.",
+      "sources": [
+        {
+          "title": "Ontario Public Accounts",
+          "url": "https://www.ontario.ca/page/public-accounts"
+        },
+        {
+          "title": "Ontario Open Data: Detailed Schedule of Payments",
+          "url": "https://data.ontario.ca/dataset/public-accounts-detailed-schedule-of-payments"
+        }
+      ]
+    },
+    {
+      "path": "/media",
+      "summary": "Provides media kit with mission, quick facts, and logo assets.",
+      "sources": []
+    }
+  ]
+}

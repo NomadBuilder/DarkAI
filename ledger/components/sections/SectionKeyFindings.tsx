@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Link from 'next/link'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionKeyFindings() {
   return (
@@ -20,9 +20,6 @@ export default function SectionKeyFindings() {
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
               The data tells a clear story — spending since 2018
             </p>
-            <p className="text-sm font-light text-gray-500 mt-4">
-              For water, Greenbelt, and wildlife: <Link href="/healthcare" className="underline hover:text-gray-700">Healthcare</Link> · <Link href="/water" className="underline hover:text-gray-700">Water</Link> · <Link href="/greenbelt" className="underline hover:text-gray-700">Greenbelt</Link> · <Link href="/wildlife" className="underline hover:text-gray-700">Wildlife</Link>
-            </p>
           </div>
         </motion.div>
 
@@ -31,39 +28,98 @@ export default function SectionKeyFindings() {
           {[
             {
               number: '1',
-              title: 'Private spending grew nearly 2x faster than public funding between 2018 and 2024',
-              description: 'For-profit payments increased 86.7% while public funding grew 46.5%',
+              title: (
+                <>
+                  Private spending grew nearly 2x faster than public funding between 2018 and 2024
+                </>
+              ),
+              description: (
+                <>
+                  For-profit payments increased 86.7% while public funding grew 46.5%
+                  <InlineCitation href="#source-1" label="1" />
+                </>
+              ),
               highlight: true,
             },
             {
               number: '2',
-              title: '$9.2 billion to private staffing agencies over 10 years',
-              description: 'Private agency costs grew 98% while public staff spending grew only 6%',
+              title: (
+                <>
+                  $9.2 billion to private staffing agencies over 10 years
+                </>
+              ),
+              description: (
+                <>
+                  Private agency costs grew 98% while public staff spending grew only 6%
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               number: '3',
-              title: 'Private agencies cost 3x more than public staff',
-              description: '0.4% of hours but 6% of costs ($725M annually)',
+              title: (
+                <>
+                  Private agencies cost 3x more than public staff
+                </>
+              ),
+              description: (
+                <>
+                  0.4% of hours but 6% of costs ($725M annually)
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               number: '4',
-              title: '66 of 134 hospitals in deficit',
-              description: '49% of Ontario hospitals face budget shortfalls',
+              title: (
+                <>
+                  66 of 134 hospitals had deficits in 2023-24
+                </>
+              ),
+              description: (
+                <>
+                  49% of Ontario hospitals ended the year in deficit
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               number: '5',
-              title: 'Canada ranks 33/38 OECD countries',
-              description: 'Ontario\'s hospital system reflects one of the most undercapacity systems in the industrialized world',
+              title: (
+                <>
+                  Ontario ranked 33 out of 38 OECD countries
+                </>
+              ),
+              description: (
+                <>
+                  Staffed hospital beds per capita
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               number: '6',
               title: 'New for-profit vendors appeared post-2018',
-              description: 'WCG ($403M), Omni Health Care entities ($732M total), Southbridge ($175M) and others',
+              description: (
+                <>
+                  WCG ($403M), Omni Health Care entities ($732M total), Southbridge ($175M) and others
+                  <InlineCitation href="#source-4" label="4" />
+                </>
+              ),
             },
             {
               number: '7',
-              title: 'Bill 60 accelerated surgical privatization',
-              description: 'For-profit surgical clinics paid 2-3x more than public hospitals for the same procedures',
+              title: (
+                <>
+                  Bill 60 accelerated surgical privatization
+                </>
+              ),
+              description: (
+                <>
+                  For-profit surgical clinics paid 2-3x more than public hospitals for the same procedures
+                  <InlineCitation href="#source-3" label="3" />
+                </>
+              ),
             },
             {
               number: '8',

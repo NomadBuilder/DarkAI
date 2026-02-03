@@ -30,7 +30,6 @@ const regions = [
     shareOfCosts: '9%',
     description: 'Brampton, Etobicoke, northern Peel — fastest-growing, most-racialized communities',
     severity: 'high',
-    note: 'Lowest per capita hospital spending',
   },
   {
     name: 'Central',
@@ -38,7 +37,6 @@ const regions = [
     shareOfCosts: 'Moderate',
     description: 'Markham, Vaughan, North York — fast-growing communities',
     severity: 'moderate',
-    note: 'Lowest per capita hospital spending',
   },
   {
     name: 'Central East',
@@ -46,7 +44,6 @@ const regions = [
     shareOfCosts: 'Moderate',
     description: 'Durham region, Peterborough, Scarborough',
     severity: 'moderate',
-    note: 'Lowest per capita hospital spending',
   },
 ]
 
@@ -111,90 +108,6 @@ export default function SectionRegionalImpact() {
           </div>
         </motion.div>
 
-        {/* Regional Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {regions.map((region, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.8, delay: 0.4 + idx * 0.1 }}
-            >
-              <div className={`rounded-2xl p-8 md:p-12 border-2 ${getSeverityColor(region.severity)}`}>
-              <div className="flex items-start justify-between gap-4 mb-4">
-                <h3 className="text-xl md:text-2xl font-light flex-1">
-                  {region.name}
-                </h3>
-                {region.severity === 'critical' && (
-                  <span className="px-3 py-1 bg-red-600 text-white rounded-full text-xs font-light">
-                    Critical
-                  </span>
-                )}
-              </div>
-              
-              <div className="space-y-3 mb-4">
-                <div className="flex justify-between items-baseline">
-                  <span className="text-sm font-light opacity-80">Agency cost increase:</span>
-                  <span className="text-2xl md:text-3xl font-light">
-                    {region.agencyCostIncrease}
-                  </span>
-                </div>
-                <div className="flex justify-between items-baseline">
-                  <span className="text-sm font-light opacity-80">Share of staffing costs:</span>
-                  <span className="text-xl md:text-2xl font-light">
-                    {region.shareOfCosts}
-                  </span>
-                </div>
-              </div>
-              
-              <p className="text-sm md:text-base font-light opacity-90 mb-2">
-                {region.description}
-              </p>
-              
-              {region.note && (
-                <p className="text-xs md:text-sm font-light opacity-75 mt-3 pt-3 border-t border-current/20">
-                  ⚠️ {region.note}
-                </p>
-              )}
-              </div>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Northern Crisis */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, delay: 1.0 }}
-        >
-          <div className="bg-red-50 border-2 border-red-400 rounded-2xl p-8 md:p-12">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6 text-center">
-            The Northern Crisis
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
-            <div>
-              <p className="text-4xl md:text-5xl font-light text-red-600 mb-2">480%</p>
-              <p className="text-sm md:text-base text-gray-700 font-light">North West</p>
-              <p className="text-xs text-gray-600 font-light mt-1">increase in agency costs</p>
-            </div>
-            <div>
-              <p className="text-4xl md:text-5xl font-light text-red-600 mb-2">372%</p>
-              <p className="text-sm md:text-base text-gray-700 font-light">North Simcoe Muskoka</p>
-              <p className="text-xs text-gray-600 font-light mt-1">increase in agency costs</p>
-            </div>
-            <div>
-              <p className="text-4xl md:text-5xl font-light text-red-600 mb-2">216%</p>
-              <p className="text-sm md:text-base text-gray-700 font-light">North East</p>
-              <p className="text-xs text-gray-600 font-light mt-1">increase in agency costs</p>
-            </div>
-          </div>
-          <p className="text-center text-lg md:text-xl font-light text-gray-700 mt-12 md:mt-16 pt-8 md:pt-10 border-t border-red-200 mb-16 md:mb-20">
-            Where shortages are most severe, privatization (Americanization) costs are highest
-          </p>
-          </div>
-        </motion.div>
       </div>
     </section>
   )

@@ -45,7 +45,7 @@ export default function ReceiptsPage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-            <div className="relative z-10 pt-28 sm:pt-32">
+            <div className="relative z-10 pt-20 sm:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12">
           {/* Header */}
           <div className="mb-8 md:mb-12 text-center">

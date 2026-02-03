@@ -130,6 +130,10 @@ button, a {
   input, textarea, select {
     font-size: 16px;
   }
+
+  body.mobile-menu-open .chat-widget {
+    display: none;
+  }
 }
 
 /* Reduce motion for users who prefer it */

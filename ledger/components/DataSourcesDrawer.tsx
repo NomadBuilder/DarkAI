@@ -55,6 +55,8 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
     {
       title: 'Water Privatization Research',
       description: 'Global examples and analysis of water privatization impacts on costs and service quality',
+      link: 'https://www.foodandwaterwatch.org/wp-content/uploads/2021/01/fs-water-privatization-web.pdf',
+      organization: 'Food & Water Watch',
       note: 'Cost calculator based on documented rate increases of 30-50% in privatized water systems (Atlanta, Indianapolis, and other cities)',
     },
     {

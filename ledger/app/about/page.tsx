@@ -83,10 +83,10 @@ export default function AboutPage() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
-      <div className="relative z-10 pt-28 sm:pt-32">
+      <div className="relative z-10 pt-20 sm:pt-24">
         {/* About Section */}
-        <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-white py-24 md:py-32">
-          <div className="max-w-4xl w-full space-y-12 md:space-y-16">
+        <section className="px-4 sm:px-6 md:px-8 bg-white py-16 md:py-24">
+          <div className="max-w-4xl w-full space-y-12 md:space-y-16 mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -155,7 +155,31 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, delay: 0.6 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+            >
+              <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
+                  Mission, Governance &amp; Funding
+                </h2>
+                <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
+                  <p>
+                    Protect Ontario is maintained by a small team at <a href="https://darkai.ca/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">Dark AI</a>.
+                    Editorial decisions and updates are made internally based on publicly available sources and
+                    documented methodology.
+                  </p>
+                  <p>
+                    <strong className="font-normal">Funding:</strong> Protect Ontario is currently unfunded and has no
+                    paid sponsors. If that changes, we will disclose funding sources and any conflicts of interest.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.8, delay: 0.7 }}
             >
               <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
@@ -176,7 +200,7 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, delay: 0.8 }}
+              transition={{ duration: 0.8, delay: 0.9 }}
             >
               <div className="bg-slate-900 text-white rounded-2xl p-8 md:p-12">
                 <h2 className="text-2xl sm:text-3xl md:text-4xl font-light mb-6">
@@ -203,8 +227,8 @@ export default function AboutPage() {
         </section>
 
         {/* Contact Form Section */}
-        <section className="min-h-screen flex items-center justify-center px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-24 md:py-32">
-          <div className="max-w-2xl w-full">
+        <section className="px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-16 md:py-24">
+          <div className="max-w-2xl w-full mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}

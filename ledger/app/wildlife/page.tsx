@@ -4,6 +4,7 @@ import TopNavigation from '../../components/TopNavigation'
 import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
 import MPPContactModal from '../../components/MPPContactModal'
+import InlineCitation from '../../components/InlineCitation'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -47,7 +48,7 @@ export default function WildlifePage() {
         {/* Hero — no padding-top on gradient; top spacing on inner content so gradient goes to top */}
         <section className="relative pb-16 md:pb-24 flex items-start justify-center px-4 sm:px-6 md:px-8 overflow-hidden bg-gradient-to-b from-amber-50/90 via-amber-50/60 to-white">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(245,158,11,0.08),transparent)]" />
-          <div className="relative pt-28 sm:pt-32 max-w-5xl w-full text-center">
+          <div className="relative pt-20 sm:pt-24 max-w-5xl w-full text-center">
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -79,6 +80,7 @@ export default function WildlifePage() {
               className="text-sm text-gray-500 mt-4"
             >
               — Ontario Nature
+              <InlineCitation href="#source-2" label="2" />
             </motion.p>
             {/* Key context strip — like greenbelt stats */}
             <motion.div
@@ -89,17 +91,26 @@ export default function WildlifePage() {
             >
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-700 tabular-nums">Bill 5</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">now law</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  now law
+                  <InlineCitation href="#source-1" label="1" />
+                </span>
               </div>
               <div className="w-px h-12 bg-amber-200/80 hidden sm:block self-center" />
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-800 tabular-nums">Ring of Fire</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">first special economic zone</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  first special economic zone
+                  <InlineCitation href="#source-4" label="4" />
+                </span>
               </div>
               <div className="w-px h-12 bg-amber-200/80 hidden sm:block self-center" />
               <div className="text-center">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-700 tabular-nums">Species at risk</span>
-                <span className="block text-sm sm:text-base text-gray-500 mt-1">weaker protection</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  weaker protection
+                  <InlineCitation href="#source-1" label="1" />
+                </span>
               </div>
             </motion.div>
           </div>
@@ -115,6 +126,7 @@ export default function WildlifePage() {
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
                 Bill 5 — officially the <em>Protect Ontario by Unleashing our Economy Act, 2025</em> — has received Royal Assent. It is now law. What that means: the Endangered Species Act has been replaced with a weaker regime, &quot;special economic zones&quot; can exempt developers from the rules that protect our environment, and the first of those zones has already been declared in the Ring of Fire — on the doorstep of Indigenous nations who have not given free, prior and informed consent.
+                <InlineCitation href="#source-1" label="1" />
               </p>
               <motion.div {...fadeIn} className="rounded-xl bg-white/80 border border-amber-100 p-6 sm:p-8 shadow-sm">
                 <p className="text-amber-800 font-medium text-lg sm:text-xl mb-2">This isn&apos;t progress. It&apos;s erasure.</p>
@@ -131,28 +143,6 @@ export default function WildlifePage() {
             <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12">
               What Bill 5 actually does
             </motion.h2>
-            <motion.div {...fadeIn} className="mb-10">
-              <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-6">Four ways the law undermines species and rights</h3>
-              <div className="rounded-xl bg-slate-800 text-white p-6 sm:p-8 space-y-6">
-                <div>
-                  <h4 className="text-base font-medium text-amber-200/90 mb-1">Species protection gutted</h4>
-                  <p className="text-gray-300 text-base font-light leading-relaxed">The <strong className="text-white">Endangered Species Act</strong> is replaced by the <strong className="text-white">Species Conservation Act, 2025</strong>. Listing at-risk species is no longer mandatory; recovery plans are stripped; habitat is redefined to leave huge areas outside protection.</p>
-                </div>
-                <div className="border-t border-slate-600 pt-4">
-                  <h4 className="text-base font-medium text-amber-200/90 mb-1">Special economic zones: a blank cheque for developers</h4>
-                  <p className="text-gray-300 text-base font-light leading-relaxed">The <strong className="text-white">Special Economic Zones Act, 2025</strong> lets the province exempt &quot;trusted proponents&quot; and designated projects from environmental rules and municipal by-laws. The first zone has been declared in the Ring of Fire.</p>
-                </div>
-                <div className="border-t border-slate-600 pt-4">
-                  <h4 className="text-base font-medium text-amber-200/90 mb-1">Indigenous rights at risk</h4>
-                  <p className="text-gray-300 text-base font-light leading-relaxed">Free, prior and informed consent is not respected when special economic zones are imposed on territories Indigenous Peoples have stewarded for generations. The Ring of Fire zone is a direct affront to those nations.</p>
-                </div>
-                <div className="border-t border-slate-600 pt-4">
-                  <h4 className="text-base font-medium text-amber-200/90 mb-1">More giveaways: Ontario Place, mining, redress</h4>
-                  <p className="text-gray-300 text-base font-light leading-relaxed">Ontario Place is exempt from Environmental Bill of Rights scrutiny; the Mining Act is changed to fast-track approvals; causes of action are extinguished — limiting your ability to seek redress if you or your community are harmed.</p>
-                </div>
-              </div>
-            </motion.div>
-
             <div className="space-y-14 md:space-y-20">
               {/* Species — callout */}
               <motion.div {...fadeIn}>
@@ -253,7 +243,11 @@ export default function WildlifePage() {
                 When the government tried to carve up the Greenbelt and hand it to connected developers, public pressure forced a reversal. People showed up. They wrote. They refused to accept that protected land was for sale. That reversal proved that bad policy can be pushed back — but only if we make it politically impossible to ignore.
               </p>
               <p>
-                Bill 5 is already law. Reversing it will take the same kind of sustained, loud, and clear demand: from scientists, from First Nations, from municipalities, from ordinary people who believe that endangered species and Indigenous rights are not negotiable. Ontario Nature, the David Suzuki Foundation, and many others are calling for Premier Ford to cancel Bill 5 and end the attacks on species and accountability. They&apos;re inviting you to join.
+                Bill 5 is already law. Reversing it will take the same kind of sustained, loud, and clear demand: from scientists, from First Nations, from municipalities, from ordinary people who believe that endangered species and Indigenous rights are not negotiable. Ontario Nature
+                <InlineCitation href="#source-2" label="2" />
+                , the David Suzuki Foundation
+                <InlineCitation href="#source-3" label="3" />
+                , and many others are calling for Premier Ford to cancel Bill 5 and end the attacks on species and accountability. They&apos;re inviting you to join.
               </p>
               <motion.div {...fadeIn} className="rounded-xl bg-amber-50/80 border border-amber-200 p-6 sm:p-8 shadow-sm">
                 <p className="text-amber-900 font-medium text-lg sm:text-xl mb-1">This is a moment to mobilize.</p>
@@ -263,9 +257,42 @@ export default function WildlifePage() {
           </div>
         </section>
 
+        {/* Sources */}
+        <section id="sources" className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 border-t border-slate-100">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4">Sources &amp; citations</h3>
+            <ul className="space-y-2 text-sm md:text-base text-gray-700 font-light leading-relaxed">
+              <li id="source-1">
+                <span className="mr-2 text-slate-500">1.</span>
+                <a href="https://www.ola.org/en/legislative-business/bills/parliament-44/session-1/bill-5" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Legislative Assembly of Ontario: Bill 5 — Protect Ontario by Unleashing our Economy Act, 2025
+                </a>
+              </li>
+              <li id="source-2">
+                <span className="mr-2 text-slate-500">2.</span>
+                <a href="https://ontarionature.org/bill-5-a-moment-to-mobilize-for-nature-in-ontario-blog/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Ontario Nature: Bill 5 — A moment to mobilize for nature
+                </a>
+              </li>
+              <li id="source-3">
+                <span className="mr-2 text-slate-500">3.</span>
+                <a href="https://davidsuzuki.org/action/repealbill5/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  David Suzuki Foundation: Repeal Bill 5
+                </a>
+              </li>
+              <li id="source-4">
+                <span className="mr-2 text-slate-500">4.</span>
+                <a href="https://www.cbc.ca/news/canada/toronto/ring-of-fire-special-economic-zone-ontario-1.7553352" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  CBC: Ontario to make Ring of Fire a special economic zone
+                </a>
+              </li>
+            </ul>
+          </div>
+        </section>
+
         {/* CTA Section — matches water / greenbelt */}
         <section className="pt-16 md:pt-24">
-          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-[#2E4A6B] text-white py-16 md:py-24">
+          <div className="min-h-[60vh] flex items-center justify-center px-4 sm:px-6 md:px-8 bg-[#2E4A6B] text-white pt-16 pb-24 md:pt-24 md:pb-32">
             <div className="max-w-5xl w-full">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

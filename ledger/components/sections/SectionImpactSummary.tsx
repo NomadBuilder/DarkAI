@@ -1,6 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
+import InlineCitation from '../InlineCitation'
 
 export default function SectionImpactSummary() {
   return (
@@ -28,20 +29,35 @@ export default function SectionImpactSummary() {
             {
               icon: '🏥',
               title: 'Hospital Crisis',
-              stat: '66 of 134 hospitals',
-              description: 'in deficit, unable to meet demand',
+              stat: '66 of 134',
+              description: (
+                <>
+                  hospitals had deficits in 2023-24
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               icon: '💰',
               title: '$725M Wasted',
               stat: 'Annually',
-              description: 'on private agencies that cost 3x more',
+              description: (
+                <>
+                  on private agencies that cost 3x more
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               icon: '📉',
               title: '33/38 OECD',
-              stat: 'Canada\'s ranking',
-              description: 'lowest hospital beds per capita (Ontario reflects this)',
+              stat: 'Beds per capita',
+              description: (
+                <>
+                  Ontario ranked 33 of 38 in staffed hospital beds
+                  <InlineCitation href="#source-2" label="2" />
+                </>
+              ),
             },
             {
               icon: '👥',
@@ -104,6 +120,7 @@ export default function SectionImpactSummary() {
               </p>
               <p className="text-gray-300">
                 Hallway medicine is the norm.
+                <InlineCitation href="#source-2" label="2" />
               </p>
               <p>
                 This wasn&apos;t inevitable. It was <strong className="font-normal">policy-driven</strong>.
