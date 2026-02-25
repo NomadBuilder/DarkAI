@@ -4,7 +4,7 @@ from typing import Dict, List
 from collections import defaultdict, Counter
 
 
-def detect_vendor_clusters(postgres_client) -> List[Dict]:
+def detect_vendor_clusters(postgres_client, domains=None) -> List[Dict]:
     """
     Detect vendor clusters by analyzing shared infrastructure.
     
@@ -16,12 +16,18 @@ def detect_vendor_clusters(postgres_client) -> List[Dict]:
     
     Uses a more flexible approach: domains sharing ANY infrastructure element
     are grouped together, not just exact matches.
+    
+    If domains is provided, uses that list instead of fetching (avoids duplicate
+    get_all_enriched_domains when called from dashboard/vendors route).
     """
     if not postgres_client or not postgres_client.conn:
         return []
+    if domains is not None and not domains:
+        return []
     
     try:
-        domains = postgres_client.get_all_enriched_domains()
+        if domains is None:
+            domains = postgres_client.get_all_enriched_domains()
         
         # Group domains by individual infrastructure elements (not exact combinations)
         # This allows domains sharing just CDN, or just host, etc. to be clustered

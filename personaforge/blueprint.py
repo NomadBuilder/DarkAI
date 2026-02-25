@@ -7,7 +7,7 @@ This blueprint handles all PersonaForge routes under /personaforge prefix.
 import os
 import sys
 from pathlib import Path
-from flask import Blueprint, render_template, jsonify, request, Response
+from flask import Blueprint, render_template, jsonify, request, Response, make_response
 import json
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -274,8 +274,9 @@ def index():
     return render_template('index.html')
 
 
-def _compute_homepage_stats():
-    """Return stats dict for homepage/dashboard. Used by API and by embedding in HTML."""
+def _compute_homepage_stats(domains=None, cluster_count=None):
+    """Return stats dict for homepage/dashboard. Used by API and by embedding in HTML.
+    Optional domains and cluster_count avoid duplicate DB work when called from dashboard route."""
     if not postgres_client or not postgres_client.conn:
         return {
             "total_domains": 0,
@@ -287,7 +288,8 @@ def _compute_homepage_stats():
             "database_available": False
         }
     try:
-        domains = postgres_client.get_all_enriched_domains()
+        if domains is None:
+            domains = postgres_client.get_all_enriched_domains()
         vendor_intel = postgres_client.get_all_vendors_intel()
         import psycopg2.extras
         cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -342,15 +344,16 @@ def _compute_homepage_stats():
                 for v in top_vendors
             ],
             "recent_discoveries": recent_discoveries_data,
-            "infrastructure_clusters": 0,
+            "infrastructure_clusters": cluster_count if cluster_count is not None else 0,
             "database_available": True
         }
-        try:
-            if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
-                clusters = detect_vendor_clusters(postgres_client)
-                stats["infrastructure_clusters"] = len(clusters)
-        except Exception as e:
-            app_logger.debug(f"Could not get cluster count: {e}")
+        if cluster_count is None:
+            try:
+                if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+                    clusters = detect_vendor_clusters(postgres_client)
+                    stats["infrastructure_clusters"] = len(clusters)
+            except Exception as e:
+                app_logger.debug(f"Could not get cluster count: {e}")
         return stats
     except Exception as e:
         app_logger.error(f"Error computing homepage stats: {e}", exc_info=True)
@@ -367,26 +370,68 @@ def _compute_homepage_stats():
 
 @personaforge_bp.route('/dashboard')
 def dashboard():
-    """Render the main visualization dashboard. Stats and graph are embedded in HTML for instant load."""
-    stats = _compute_homepage_stats()
-    graph_data, _ = get_graph_from_postgres()
-    return render_template('dashboard.html', personaforge_stats=stats, personaforge_graph=graph_data)
+    """Render the main visualization dashboard. Stats and graph are embedded in HTML for instant load.
+    Fetches domains once, then clusters from that data (no second domain fetch), then stats and graph."""
+    import time
+    t0 = time.perf_counter()
+    if not postgres_client or not postgres_client.conn:
+        stats = _compute_homepage_stats()
+        graph_data, _ = get_graph_from_postgres()
+        return render_template('dashboard.html', personaforge_stats=stats, personaforge_graph=graph_data)
+    domains = postgres_client.get_all_enriched_domains()
+    t1 = time.perf_counter()
+    clusters = []
+    try:
+        if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+            clusters = detect_vendor_clusters(postgres_client, domains=domains)
+    except Exception as e:
+        app_logger.debug(f"Dashboard: could not get clusters: {e}")
+    t2 = time.perf_counter()
+    stats = _compute_homepage_stats(domains=domains, cluster_count=len(clusters))
+    graph_data, _ = get_graph_from_postgres(domains=domains, clusters=clusters)
+    t3 = time.perf_counter()
+    total_s = t3 - t0
+    app_logger.info(
+        f"Dashboard load: get_all_enriched_domains={t1-t0:.2f}s clusters={t2-t1:.2f}s stats+graph={t3-t2:.2f}s total={total_s:.2f}s"
+    )
+    response = render_template('dashboard.html', personaforge_stats=stats, personaforge_graph=graph_data)
+    # Expose timing in response headers so curl/browser can see it
+    resp = make_response(response)
+    resp.headers["X-Dashboard-Domains-S"] = f"{t1 - t0:.2f}"
+    resp.headers["X-Dashboard-Clusters-S"] = f"{t2 - t1:.2f}"
+    resp.headers["X-Dashboard-StatsGraph-S"] = f"{t3 - t2:.2f}"
+    resp.headers["X-Dashboard-Total-S"] = f"{total_s:.2f}"
+    return resp
 
 
 @personaforge_bp.route('/vendors')
 def vendors():
-    """Render the vendors/clusters page. Data embedded in HTML for instant load."""
-    stats = _compute_homepage_stats()
-    vendors_list = []
-    clusters_list = []
-    if postgres_client and postgres_client.conn:
-        try:
-            vendors_list = postgres_client.get_vendors(min_domains=2)
-            if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
-                clusters_list = detect_vendor_clusters(postgres_client)
-            clusters_list = [c for c in clusters_list if len(c.get('domains', [])) >= 2]
-        except Exception as e:
-            app_logger.error(f"Error loading vendors page data: {e}", exc_info=True)
+    """Render the vendors/clusters page. Data embedded in HTML for instant load.
+    Fetches domains and clusters once and passes to stats to avoid duplicate heavy queries."""
+    if not postgres_client or not postgres_client.conn:
+        stats = _compute_homepage_stats()
+        return render_template(
+            'vendors.html',
+            personaforge_stats=stats,
+            personaforge_vendors=[],
+            personaforge_clusters=[]
+        )
+    try:
+        domains = postgres_client.get_all_enriched_domains()
+        clusters_list = []
+        if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+            try:
+                clusters_list = detect_vendor_clusters(postgres_client, domains=domains)
+            except Exception as e:
+                app_logger.debug(f"Vendors route: could not get clusters: {e}")
+        clusters_list = [c for c in clusters_list if len(c.get('domains', [])) >= 2]
+        stats = _compute_homepage_stats(domains=domains, cluster_count=len(clusters_list))
+        vendors_list = postgres_client.get_vendors(min_domains=2)
+    except Exception as e:
+        app_logger.error(f"Error loading vendors page data: {e}", exc_info=True)
+        stats = _compute_homepage_stats()
+        vendors_list = []
+        clusters_list = []
     return render_template(
         'vendors.html',
         personaforge_stats=stats,
@@ -553,8 +598,9 @@ def get_graph():
         return jsonify({"error": str(e), "nodes": [], "edges": []}), 500
 
 
-def get_graph_from_postgres():
-    """Generate graph data from PostgreSQL. Returns (data_dict, status_code)."""
+def get_graph_from_postgres(domains=None, clusters=None):
+    """Generate graph data from PostgreSQL. Returns (data_dict, status_code).
+    Optional domains and clusters avoid duplicate DB work when called from dashboard route."""
     from collections import Counter
     
     if not postgres_client or not postgres_client.conn:
@@ -569,21 +615,22 @@ def get_graph_from_postgres():
         }), 200
 
     try:
-        domains = postgres_client.get_all_enriched_domains()
+        if domains is None:
+            domains = postgres_client.get_all_enriched_domains()
         
         # Limit to 30 nodes for readability
         if len(domains) > 30:
-            # Prioritize: Clusters > Vendors > Infrastructure > Domains
-            clusters = []
-            try:
-                if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
-                    clusters = detect_vendor_clusters(postgres_client)
-            except:
-                pass
+            if clusters is None:
+                clusters = []
+                try:
+                    if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+                        clusters = detect_vendor_clusters(postgres_client)
+                except Exception:
+                    pass
             
             # Get domains from top clusters first
             cluster_domains = set()
-            for cluster in clusters[:5]:  # Top 5 clusters
+            for cluster in (clusters or [])[:5]:  # Top 5 clusters
                 cluster_domains.update(cluster.get('domains', []))
             
             # Get vendor domains
