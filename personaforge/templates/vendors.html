@@ -140,6 +140,12 @@
     </div>
   </div>
 
+  <!-- Embedded static data: no API round-trip, instant display -->
+  <script>
+    window.__PERSONAFORGE_STATS__ = {{ personaforge_stats|tojson }};
+    window.__PERSONAFORGE_VENDORS__ = {{ personaforge_vendors|tojson }};
+    window.__PERSONAFORGE_CLUSTERS__ = {{ personaforge_clusters|tojson }};
+  </script>
   <script src="{{ url_for('personaforge.static', filename='js/vendors.js') }}"></script>
 <script>
 (function() {

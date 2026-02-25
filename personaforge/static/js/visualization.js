@@ -78,28 +78,38 @@ function initVisualization() {
   loadGraphData();
 }
 
-// Load graph data from API
+// Load graph data: use embedded data from HTML if present (instant), else fetch from API (e.g. Refresh)
 async function loadGraphData() {
+  const embeddedStats = window.__PERSONAFORGE_HOMEPAGE_STATS__;
+  const embeddedGraph = window.__PERSONAFORGE_GRAPH__;
+
+  if (embeddedStats) {
+    updateStatsFromHomepage(embeddedStats);
+  }
+  loadVendorIntelStats();
+
+  if (embeddedGraph && embeddedGraph.nodes && embeddedGraph.edges && embeddedGraph.nodes.length > 0) {
+    graphData = embeddedGraph;
+    renderGraph();
+    return;
+  }
+  if (embeddedGraph && (!embeddedGraph.nodes || embeddedGraph.nodes.length === 0)) {
+    showEmptyState();
+    return;
+  }
+
   try {
-    // Load stats from homepage-stats API (works even without Neo4j)
-    const statsResponse = await fetch('/personaforge/api/homepage-stats');
+    const [statsResponse, graphResponse] = await Promise.all([
+      fetch('/personaforge/api/homepage-stats'),
+      fetch('/personaforge/api/graph')
+    ]);
     const statsData = await statsResponse.json();
-    
-    // Update stats from homepage API
+    const data = await graphResponse.json();
     updateStatsFromHomepage(statsData);
-    
-    // Load vendor intelligence stats
-    loadVendorIntelStats();
-    
-    // Try to load graph data from Neo4j
-    const response = await fetch('/personaforge/api/graph');
-    const data = await response.json();
-    
     if (data.nodes && data.edges && data.nodes.length > 0) {
       graphData = data;
       renderGraph();
     } else {
-      console.warn('No graph data available:', data.message || 'Neo4j not configured');
       showEmptyState();
     }
   } catch (error) {
@@ -563,29 +573,27 @@ function showNodeDetails(node) {
   modal.style.display = 'flex';
 }
 
-// Show empty state
+// Show empty state (stats may already be populated from homepage-stats)
 function showEmptyState() {
   const g = svg.select('g');
   g.selectAll('*').remove();
+  
+  const domainEl = document.getElementById('domain-count');
+  const hasData = domainEl && parseInt(domainEl.textContent, 10) > 0;
+  const message = hasData
+    ? 'Graph could not be loaded. Click "Refresh Data" to retry.'
+    : 'No graph data available. Enrich some domains to see the network.';
   
   g.append('text')
     .attr('x', width / 2)
     .attr('y', height / 2)
     .attr('text-anchor', 'middle')
     .attr('fill', '#9aa0a6')
-    .text('No graph data available. Enrich some domains to see the network.');
+    .text(message);
 }
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Load stats immediately on page load
-  fetch('/personaforge/api/homepage-stats')
-    .then(res => res.json())
-    .then(data => {
-      updateStatsFromHomepage(data);
-    })
-    .catch(err => console.error('Error loading stats:', err));
-  
   initVisualization();
   
   // Refresh button

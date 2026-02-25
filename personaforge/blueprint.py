@@ -274,16 +274,125 @@ def index():
     return render_template('index.html')
 
 
+def _compute_homepage_stats():
+    """Return stats dict for homepage/dashboard. Used by API and by embedding in HTML."""
+    if not postgres_client or not postgres_client.conn:
+        return {
+            "total_domains": 0,
+            "total_vendors": 0,
+            "high_risk_domains": 0,
+            "infrastructure_clusters": 0,
+            "top_vendors": [],
+            "recent_discoveries": [],
+            "database_available": False
+        }
+    try:
+        domains = postgres_client.get_all_enriched_domains()
+        vendor_intel = postgres_client.get_all_vendors_intel()
+        import psycopg2.extras
+        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cursor.execute("""
+            SELECT vi.id, vi.vendor_name, vi.category, COUNT(vid.domain_id) as domain_count
+            FROM personaforge_vendors_intel vi
+            LEFT JOIN personaforge_vendor_intel_domains vid ON vi.id = vid.vendor_intel_id
+            GROUP BY vi.id, vi.vendor_name, vi.category
+            HAVING COUNT(vid.domain_id) > 0
+            ORDER BY domain_count DESC
+        """)
+        vendors_with_domains = [dict(row) for row in cursor.fetchall()]
+        cursor.close()
+        vendor_types = set(d.get('vendor_type') for d in domains if d.get('vendor_type'))
+        vendor_count = len(vendor_intel) if vendor_intel else len(vendor_types)
+        high_risk = 0
+        high_risk_vendor_types = ['fraud-as-a-service', 'synthetic_id_kits', 'synthetic identity kits']
+        for domain in domains:
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    enrichment = json.loads(enrichment)
+                except Exception:
+                    enrichment = {}
+            risk_score = domain.get('vendor_risk_score') or enrichment.get('vendor_risk_score') or 0
+            vendor_type = domain.get('vendor_type') or enrichment.get('vendor_type') or ''
+            if risk_score >= 70 or vendor_type in high_risk_vendor_types:
+                high_risk += 1
+            elif vendor_type in ['fake_docs', 'kyc_tools'] and risk_score >= 50:
+                high_risk += 1
+        top_vendors = sorted(vendors_with_domains, key=lambda v: v.get('domain_count', 0), reverse=True)[:10]
+        recent = sorted(domains, key=lambda x: x.get('updated_at', ''), reverse=True)[:10]
+        recent_discoveries_data = []
+        for domain in recent:
+            enrichment = domain.get('enrichment_data', {})
+            if isinstance(enrichment, str):
+                try:
+                    enrichment = json.loads(enrichment)
+                except Exception:
+                    enrichment = {}
+            recent_discoveries_data.append({
+                "domain": domain.get('domain', 'Unknown'),
+                "vendor_type": domain.get('vendor_type') or enrichment.get('vendor_type') or 'unknown',
+                "risk_score": domain.get('vendor_risk_score') or enrichment.get('vendor_risk_score') or 0
+            })
+        stats = {
+            "total_domains": len(domains),
+            "total_vendors": vendor_count,
+            "high_risk_domains": high_risk,
+            "top_vendors": [
+                {"vendor_name": v.get('vendor_name', v.get('title', 'Unknown')), "domain_count": v.get('domain_count', 0), "vendor_type": v.get('category', 'unknown'), "avg_risk_score": 0}
+                for v in top_vendors
+            ],
+            "recent_discoveries": recent_discoveries_data,
+            "infrastructure_clusters": 0,
+            "database_available": True
+        }
+        try:
+            if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+                clusters = detect_vendor_clusters(postgres_client)
+                stats["infrastructure_clusters"] = len(clusters)
+        except Exception as e:
+            app_logger.debug(f"Could not get cluster count: {e}")
+        return stats
+    except Exception as e:
+        app_logger.error(f"Error computing homepage stats: {e}", exc_info=True)
+        return {
+            "total_domains": 0,
+            "total_vendors": 0,
+            "high_risk_domains": 0,
+            "infrastructure_clusters": 0,
+            "top_vendors": [],
+            "recent_discoveries": [],
+            "database_available": False
+        }
+
+
 @personaforge_bp.route('/dashboard')
 def dashboard():
-    """Render the main visualization dashboard."""
-    return render_template('dashboard.html')
+    """Render the main visualization dashboard. Stats and graph are embedded in HTML for instant load."""
+    stats = _compute_homepage_stats()
+    graph_data, _ = get_graph_from_postgres()
+    return render_template('dashboard.html', personaforge_stats=stats, personaforge_graph=graph_data)
 
 
 @personaforge_bp.route('/vendors')
 def vendors():
-    """Render the vendors/clusters page."""
-    return render_template('vendors.html')
+    """Render the vendors/clusters page. Data embedded in HTML for instant load."""
+    stats = _compute_homepage_stats()
+    vendors_list = []
+    clusters_list = []
+    if postgres_client and postgres_client.conn:
+        try:
+            vendors_list = postgres_client.get_vendors(min_domains=2)
+            if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
+                clusters_list = detect_vendor_clusters(postgres_client)
+            clusters_list = [c for c in clusters_list if len(c.get('domains', [])) >= 2]
+        except Exception as e:
+            app_logger.error(f"Error loading vendors page data: {e}", exc_info=True)
+    return render_template(
+        'vendors.html',
+        personaforge_stats=stats,
+        personaforge_vendors=vendors_list,
+        personaforge_clusters=clusters_list
+    )
 
 @personaforge_bp.route('/vendors-intel')
 def vendors_intel():
@@ -326,143 +435,8 @@ def glossary():
 
 @personaforge_bp.route('/api/homepage-stats', methods=['GET'])
 def get_homepage_stats():
-    """Get statistics for the homepage."""
-    database_available = postgres_client and postgres_client.conn is not None
-    
-    if not database_available:
-        return jsonify({
-            "total_domains": 0,
-            "total_vendors": 0,
-            "high_risk_domains": 0,
-            "infrastructure_clusters": 0,
-            "top_vendors": [],
-            "recent_discoveries": [],
-            "database_available": False
-        }), 200
-    
-    try:
-        # Get basic stats
-        domains = postgres_client.get_all_enriched_domains()
-        
-        # Use vendor intelligence data instead of old vendors table
-        vendor_intel = postgres_client.get_all_vendors_intel()
-        
-        # Get domain counts for each vendor intelligence vendor
-        import psycopg2.extras
-        cursor = postgres_client.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        cursor.execute("""
-            SELECT 
-                vi.id,
-                vi.vendor_name,
-                vi.category,
-                COUNT(vid.domain_id) as domain_count
-            FROM personaforge_vendors_intel vi
-            LEFT JOIN personaforge_vendor_intel_domains vid ON vi.id = vid.vendor_intel_id
-            GROUP BY vi.id, vi.vendor_name, vi.category
-            HAVING COUNT(vid.domain_id) > 0
-            ORDER BY domain_count DESC
-        """)
-        vendors_with_domains_data = cursor.fetchall()
-        cursor.close()
-        vendors_with_domains = [dict(row) for row in vendors_with_domains_data]
-        
-        # Count unique vendor types from domains (more accurate than vendors table)
-        vendor_types = set()
-        for domain in domains:
-            vendor_type = domain.get('vendor_type')
-            if vendor_type:
-                vendor_types.add(vendor_type)
-        
-        # Use vendor intelligence count
-        vendor_count = len(vendor_intel) if vendor_intel else len(vendor_types)
-        
-        # Count high-risk domains based on risk score or high-risk vendor types
-        high_risk = 0
-        high_risk_vendor_types = ['fraud-as-a-service', 'synthetic_id_kits', 'synthetic identity kits']
-        
-        for domain in domains:
-            # Check risk score from enrichment_data
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            risk_score = domain.get('vendor_risk_score') or enrichment.get('vendor_risk_score') or 0
-            vendor_type = domain.get('vendor_type') or enrichment.get('vendor_type') or ''
-            
-            # High risk if:
-            # 1. Risk score >= 70
-            # 2. Vendor type indicates high risk
-            # 3. Domain has strong vendor indicators
-            if risk_score >= 70:
-                high_risk += 1
-            elif vendor_type in high_risk_vendor_types:
-                high_risk += 1
-            elif vendor_type in ['fake_docs', 'kyc_tools'] and risk_score >= 50:
-                # Medium-high risk for these types
-                high_risk += 1
-        
-        # Get top vendors from vendor intelligence (those with domains)
-        top_vendors = sorted(vendors_with_domains, key=lambda v: v.get('domain_count', 0), reverse=True)[:10]
-        
-        # Get recent discoveries (last 10 domains)
-        recent_discoveries = sorted(domains, key=lambda x: x.get('updated_at', ''), reverse=True)[:10]
-        recent_discoveries_data = []
-        for domain in recent_discoveries:
-            enrichment = domain.get('enrichment_data', {})
-            if isinstance(enrichment, str):
-                try:
-                    import json
-                    enrichment = json.loads(enrichment)
-                except:
-                    enrichment = {}
-            
-            recent_discoveries_data.append({
-                "domain": domain.get('domain', 'Unknown'),
-                "vendor_type": domain.get('vendor_type') or enrichment.get('vendor_type') or 'unknown',
-                "risk_score": domain.get('vendor_risk_score') or enrichment.get('vendor_risk_score') or 0
-            })
-        
-        # Get infrastructure clusters count
-        stats = {
-            "total_domains": len(domains),
-            "total_vendors": vendor_count,
-            "high_risk_domains": high_risk,
-            "top_vendors": [
-                {
-                    "vendor_name": v.get('vendor_name', v.get('title', 'Unknown')),
-                    "domain_count": v.get('domain_count', 0),
-                    "vendor_type": v.get('category', 'unknown'),
-                    "avg_risk_score": 0  # Vendor intelligence doesn't have risk scores yet
-                }
-                for v in top_vendors
-            ],
-            "recent_discoveries": recent_discoveries_data,
-            "infrastructure_clusters": 0,  # Will be updated if clustering works
-            "database_available": True
-        }
-        
-        # Try to get cluster count
-        try:
-            if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
-                clusters = detect_vendor_clusters(postgres_client)
-                stats["infrastructure_clusters"] = len(clusters)
-        except Exception as e:
-            app_logger.debug(f"Could not get cluster count: {e}")
-        
-        return jsonify(stats), 200
-    except Exception as e:
-        app_logger.error(f"Error getting homepage stats: {e}", exc_info=True)
-        return jsonify({
-            "total_domains": 0,
-            "total_vendors": 0,
-            "high_risk_domains": 0,
-            "infrastructure_clusters": 0,
-            "top_vendors": []
-        }), 200
+    """Get statistics for the homepage (API for refresh/other callers)."""
+    return jsonify(_compute_homepage_stats()), 200
 
 
 @personaforge_bp.route('/api/vendors', methods=['GET'])
@@ -479,24 +453,15 @@ def get_vendors():
     try:
         min_size = int(request.args.get('min_size', 2))
         min_domains = int(request.args.get('min_domains', 1))
-        
-        # Get vendors
         vendors = postgres_client.get_vendors(min_domains=min_domains)
-        
-        # Get clusters
         clusters = []
         if VENDOR_CLUSTERING_AVAILABLE and detect_vendor_clusters:
             try:
                 clusters = detect_vendor_clusters(postgres_client)
             except Exception as e:
                 app_logger.error(f"Error getting clusters: {e}", exc_info=True)
-        
-        # Filter clusters by min_size
         filtered_clusters = [c for c in clusters if len(c.get('domains', [])) >= min_size]
-        
-        # Get total domains
         domains = postgres_client.get_all_enriched_domains()
-        
         return jsonify({
             "vendors": vendors,
             "clusters": filtered_clusters,
@@ -521,16 +486,12 @@ def get_clusters():
             "clusters": [],
             "message": "PostgreSQL not available"
         }), 200
-    
+
     try:
         if not VENDOR_CLUSTERING_AVAILABLE or not detect_vendor_clusters:
             return jsonify({"clusters": [], "error": "Clustering module not available"}), 500
-        
         clusters = detect_vendor_clusters(postgres_client)
-        return jsonify({
-            "clusters": clusters,
-            "count": len(clusters)
-        }), 200
+        return jsonify({"clusters": clusters, "count": len(clusters)}), 200
     except Exception as e:
         app_logger.error(f"Error getting clusters: {e}", exc_info=True)
         return jsonify({
@@ -583,24 +544,21 @@ def get_content_clusters():
 
 @personaforge_bp.route('/api/graph', methods=['GET'])
 def get_graph():
-    """Get graph data for visualization."""
+    """Get graph data for visualization (API for refresh)."""
     try:
-        return get_graph_from_postgres()
+        data, status = get_graph_from_postgres()
+        return jsonify(data), status
     except Exception as e:
         app_logger.error(f"Error generating graph: {e}", exc_info=True)
-        return jsonify({
-            "error": str(e),
-            "nodes": [],
-            "edges": []
-        }), 500
+        return jsonify({"error": str(e), "nodes": [], "edges": []}), 500
 
 
 def get_graph_from_postgres():
-    """Generate graph data from PostgreSQL."""
+    """Generate graph data from PostgreSQL. Returns (data_dict, status_code)."""
     from collections import Counter
     
     if not postgres_client or not postgres_client.conn:
-        return jsonify({
+        return ({
             "nodes": [],
             "edges": [],
             "stats": {
@@ -609,11 +567,11 @@ def get_graph_from_postgres():
                 "total_edges": 0
             }
         }), 200
-    
+
     try:
         domains = postgres_client.get_all_enriched_domains()
         
-            # Limit to 30 nodes for readability
+        # Limit to 30 nodes for readability
         if len(domains) > 30:
             # Prioritize: Clusters > Vendors > Infrastructure > Domains
             clusters = []
@@ -640,8 +598,8 @@ def get_graph_from_postgres():
         
         nodes = []
         edges = []
-        node_id_map = {}
-        node_counter = 0
+        node_id_map = {}  # (type, name) -> node id (for domain lookups)
+        added_service_ids = set()  # track which infrastructure nodes we've added (avoids duplicates)
         
         # Service frequency counters
         service_counts = Counter()
@@ -668,14 +626,13 @@ def get_graph_from_postgres():
                 }
             })
             
-            # Add service nodes and edges
-            services = []
-            
+            # Add service nodes and edges (use added_service_ids so we don't duplicate nodes)
             # Host
             if domain.get('host_name'):
                 host_name = domain.get('host_name')
                 service_id = f"host_{host_name}"
-                if service_id not in node_id_map:
+                if service_id not in added_service_ids:
+                    added_service_ids.add(service_id)
                     node_id_map[('host', host_name)] = service_id
                     infrastructure_domains[service_id] = []
                     nodes.append({
@@ -693,7 +650,8 @@ def get_graph_from_postgres():
             if domain.get('cdn'):
                 cdn_name = domain.get('cdn')
                 service_id = f"cdn_{cdn_name}"
-                if service_id not in node_id_map:
+                if service_id not in added_service_ids:
+                    added_service_ids.add(service_id)
                     node_id_map[('cdn', cdn_name)] = service_id
                     infrastructure_domains[service_id] = []
                     nodes.append({
@@ -714,7 +672,8 @@ def get_graph_from_postgres():
                 payment_names = [p.strip() for p in payment_name.split(',') if p.strip()]
                 for payment_name in payment_names:
                     service_id = f"payment_{payment_name}"
-                    if service_id not in node_id_map:
+                    if service_id not in added_service_ids:
+                        added_service_ids.add(service_id)
                         node_id_map[('payment', payment_name)] = service_id
                         infrastructure_domains[service_id] = []
                         nodes.append({
@@ -732,7 +691,8 @@ def get_graph_from_postgres():
             if domain.get('cms'):
                 cms_name = domain.get('cms')
                 service_id = f"cms_{cms_name}"
-                if service_id not in node_id_map:
+                if service_id not in added_service_ids:
+                    added_service_ids.add(service_id)
                     node_id_map[('cms', cms_name)] = service_id
                     infrastructure_domains[service_id] = []
                     nodes.append({
@@ -750,7 +710,8 @@ def get_graph_from_postgres():
             if domain.get('registrar'):
                 registrar_name = domain.get('registrar')
                 service_id = f"registrar_{registrar_name}"
-                if service_id not in node_id_map:
+                if service_id not in added_service_ids:
+                    added_service_ids.add(service_id)
                     node_id_map[('registrar', registrar_name)] = service_id
                     infrastructure_domains[service_id] = []
                     nodes.append({
@@ -766,14 +727,14 @@ def get_graph_from_postgres():
         
         # Update infrastructure nodes with domain lists
         for node in nodes:
-            if node.get('node_type') in ['host', 'cdn', 'payment', 'registrar']:
+            if node.get('node_type') in ['host', 'cdn', 'payment', 'registrar', 'cms']:
                 service_id = node.get('id')
                 if service_id in infrastructure_domains:
                     domains_list = infrastructure_domains[service_id]
                     node['properties']['domains'] = domains_list
                     node['properties']['domain_count'] = len(domains_list)
         
-        return jsonify({
+        return ({
             "nodes": nodes,
             "edges": edges,
             "stats": {
@@ -785,7 +746,7 @@ def get_graph_from_postgres():
         
     except Exception as e:
         app_logger.error(f"Error generating graph from PostgreSQL: {e}")
-        return jsonify({
+        return ({
             "error": str(e),
             "nodes": [],
             "edges": []

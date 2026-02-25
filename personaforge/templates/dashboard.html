@@ -191,6 +191,11 @@
     </div>
   </div>
 
+  <!-- Embedded static data: no API round-trip, instant display -->
+  <script>
+    window.__PERSONAFORGE_HOMEPAGE_STATS__ = {{ personaforge_stats|tojson }};
+    window.__PERSONAFORGE_GRAPH__ = {{ personaforge_graph|tojson }};
+  </script>
   <script src="{{ url_for('personaforge.static', filename='js/visualization.js') }}"></script>
 <script>
 (function() {

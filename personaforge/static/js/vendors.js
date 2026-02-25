@@ -9,7 +9,7 @@ let currentClusterType = 'infrastructure'; // 'infrastructure' or 'content'
 async function loadVendors() {
   try {
     const minDomains = document.getElementById('min-domains')?.value || 1;
-    const response = await fetch(`/api/vendors?min_domains=${minDomains}`);
+    const response = await fetch(`/personaforge/api/vendors?min_domains=${minDomains}`);
     const data = await response.json();
     
     if (data.vendors) {
@@ -24,21 +24,29 @@ async function loadVendors() {
   }
 }
 
-// Load clusters data
+// Load clusters data: use embedded data from HTML if present (instant), else fetch
 async function loadClusters() {
+  const embeddedStats = window.__PERSONAFORGE_STATS__;
+  const embeddedClusters = window.__PERSONAFORGE_CLUSTERS__;
+
+  if (embeddedStats && embeddedClusters) {
+    const minDomains = parseInt(document.getElementById('min-domains')?.value || 2);
+    const domainCount = (c) => (c.domain_count != null ? c.domain_count : (c.domains ? c.domains.length : 0));
+    clusters = (embeddedClusters || []).filter(c => domainCount(c) >= minDomains);
+    renderClusters();
+    updateStatsFromHomepage(embeddedStats);
+    return;
+  }
+
   try {
     const minDomains = parseInt(document.getElementById('min-domains')?.value || 2);
-    
-    // Load both clusters and homepage stats for consistency
     const [clustersResponse, statsResponse] = await Promise.all([
       fetch('/personaforge/api/clusters'),
       fetch('/personaforge/api/homepage-stats')
     ]);
-    
     const clustersData = await clustersResponse.json();
     const statsData = await statsResponse.json();
-    
-    // Check for database unavailable errors
+
     if (clustersData.message && clustersData.message.includes("PostgreSQL not available")) {
       const container = document.getElementById('clusters-container');
       container.innerHTML = `
@@ -324,9 +332,12 @@ function renderContentClusters() {
 
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Load infrastructure clusters by default
-  loadClusters();
   currentClusterType = 'infrastructure';
+  if (window.__PERSONAFORGE_VENDORS__) {
+    vendors = window.__PERSONAFORGE_VENDORS__;
+    renderVendors();
+  }
+  loadClusters();
   
   // Toggle buttons
   document.getElementById('show-infrastructure-clusters')?.addEventListener('click', () => {
