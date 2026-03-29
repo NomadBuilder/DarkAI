@@ -1509,6 +1509,11 @@
 </footer>
 
 <script>
+  // Global: inline onclick="exportReport('csv')" must resolve on window
+  function exportReport(format) {
+    window.location.href = '/api/reports/deepfake/export?format=' + encodeURIComponent(format);
+  }
+
   // Professional Chart.js configuration
   const chartColors = {
     primary: '#ff6b6b',
@@ -2086,12 +2091,6 @@
     document.querySelectorAll('.report-section').forEach(section => {
       observer.observe(section);
     });
-    
-    // Export functionality
-    function exportReport(format) {
-      const url = `/api/reports/deepfake/export?format=${format}`;
-      window.location.href = url;
-    }
   });
 </script>
 
