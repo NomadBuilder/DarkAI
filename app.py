@@ -9,7 +9,7 @@ Combines three services:
 
 import os
 from datetime import datetime
-from flask import Flask, send_from_directory, jsonify, request, render_template, redirect, abort, Response
+from flask import Flask, send_from_directory, send_file, jsonify, request, render_template, redirect, abort, Response
 from flask_cors import CORS
 from dotenv import load_dotenv
 import smtplib
@@ -926,6 +926,15 @@ def export_shadowstack_infrastructure():
         return jsonify({"error": str(e)}), 500
 
 
+def _survey_data_csv_path():
+    """Return Path to SurveyData.csv or None if not found (local + Render cwd)."""
+    root = Path(__file__).resolve().parent
+    for path in (root / 'SurveyData.csv', Path.cwd() / 'SurveyData.csv'):
+        if path.is_file():
+            return path
+    return None
+
+
 @app.route('/api/reports/survey-data')
 def get_survey_data():
     """Process and return survey data for visualizations.
@@ -935,20 +944,8 @@ def get_survey_data():
     """
     import csv
     from collections import Counter
-    from pathlib import Path
     
-    # Try multiple possible paths (works in both local and Render environments)
-    possible_paths = [
-        Path(__file__).parent / 'SurveyData.csv',  # Same directory as app.py
-        Path.cwd() / 'SurveyData.csv',  # Current working directory
-    ]
-    
-    csv_path = None
-    for path in possible_paths:
-        if path.exists() and path.is_file():
-            csv_path = path
-            break
-    
+    csv_path = _survey_data_csv_path()
     if not csv_path:
         return jsonify({
             "error": "Survey data file not found",
@@ -1190,71 +1187,41 @@ def export_vendor_intelligence():
 
 @app.route('/api/reports/deepfake/export')
 def export_deepfake_report():
-    """Export deepfake report as CSV or JSON."""
-    from flask import request, Response
-    import json
+    """Export raw survey responses: one row per respondent (same columns as SurveyData.csv)."""
     import csv
-    import io
     
     format_type = request.args.get('format', 'csv').lower()
     
     if format_type not in ['csv', 'json']:
         return jsonify({"error": "Invalid format. Use 'csv' or 'json'"}), 400
     
+    csv_path = _survey_data_csv_path()
+    if not csv_path:
+        return jsonify({
+            "error": "Survey data file not found",
+            "message": "SurveyData.csv is required for this export"
+        }), 404
+    
     try:
-        # Get survey data
-        response = get_survey_data()
-        if response[1] != 200:
-            return jsonify({"error": "Failed to load survey data"}), 500
-        
-        data = response[0].get_json()
-        
         if format_type == 'csv':
-            output = io.StringIO()
-            writer = csv.writer(output)
-            
-            # Write summary
-            writer.writerow(['Metric', 'Value'])
-            writer.writerow(['Total Responses', data.get('total_responses', 0)])
-            writer.writerow([])
-            
-            # Write awareness data
-            writer.writerow(['Awareness Level', 'Count'])
-            if 'awareness' in data:
-                for level, count in data['awareness'].items():
-                    writer.writerow([level, count])
-            writer.writerow([])
-            
-            # Write personal experience
-            writer.writerow(['Experience Type', 'Count'])
-            if 'personal_experience' in data:
-                for exp, count in data['personal_experience'].items():
-                    writer.writerow([exp, count])
-            writer.writerow([])
-            
-            # Write age distribution
-            writer.writerow(['Age Range', 'Count'])
-            if 'age_distribution' in data:
-                for age, count in data['age_distribution'].items():
-                    writer.writerow([age, count])
-            
-            output.seek(0)
-            return Response(
-                output.getvalue(),
-                mimetype='text/csv',
-                headers={
-                    'Content-Disposition': 'attachment; filename=deepfake_report_2025.csv'
-                }
+            return send_file(
+                csv_path,
+                mimetype='text/csv; charset=utf-8',
+                as_attachment=True,
+                download_name='survey_raw_responses_2025.csv',
+                max_age=0,
             )
         
-        elif format_type == 'json':
-            return Response(
-                json.dumps(data, indent=2, default=str),
-                mimetype='application/json',
-                headers={
-                    'Content-Disposition': 'attachment; filename=deepfake_report_2025.json'
-                }
-            )
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            rows = list(reader)
+        return Response(
+            json.dumps(rows, indent=2, ensure_ascii=False, default=str),
+            mimetype='application/json; charset=utf-8',
+            headers={
+                'Content-Disposition': 'attachment; filename=survey_raw_responses_2025.json'
+            }
+        )
     
     except Exception as e:
         import traceback
