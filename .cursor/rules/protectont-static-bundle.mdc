@@ -1,0 +1,32 @@
+---
+description: ProtectOnt.ca is served from static/protectont; rebuild and commit after ledger UI changes.
+globs: ledger/**/*
+alwaysApply: true
+---
+
+# ProtectOnt static bundle (protectont.ca)
+
+The public site is served from the **pre-built** tree **`static/protectont/`** (copied from `ledger/out/`). Edits under **`ledger/`** alone do **not** update the live site until that bundle is regenerated and committed.
+
+## When this applies
+
+Any change that should appear on **https://protectont.ca/**: pages, components, styles, `ledger/public/` assets, protest data, nav, etc.
+
+## Required workflow before considering the task done or pushing
+
+1. From the **repo root**, run:
+
+   ```bash
+   ./scripts/verify-protectont-before-deploy.sh
+   ```
+
+2. **Stage and commit** the resulting changes under **`static/protectont/`** (HTML, `_next/`, new pages, etc.) in the **same push** as the `ledger/` changes (or immediately after, in a follow-up commit on `main`).
+
+3. **Push** so the deploy pipeline (e.g. Render) receives the updated static files.
+
+## Do not
+
+- Push only `ledger/` updates and assume protectont.ca will refresh.
+- Skip the script because “the code is merged”—the hosted bundle must be updated in git.
+
+If the user explicitly says the change is **local-only** and must **not** be published, you may skip committing `static/protectont/`—but default to running the script and committing when the goal is the live site.
