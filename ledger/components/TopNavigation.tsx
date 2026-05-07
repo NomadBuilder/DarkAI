@@ -148,7 +148,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
             <div className="w-full bg-[#9f1239] text-white border-b border-white/20">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <a
-                  href={getNavHref('/protests', basePath)}
+                  href={`${getNavHref('/protests', basePath)}#event-list`}
                   className="flex min-h-[40px] items-center justify-center text-center text-xs sm:text-sm font-medium leading-none tracking-wide hover:underline underline-offset-4"
                 >
                   Province-wide protests on May 30, 2026 - find your city and join in - View events

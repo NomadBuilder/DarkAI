@@ -198,6 +198,16 @@ export default function ProtestsPage() {
       .finally(() => setLoading(false))
   }, [])
 
+  useEffect(() => {
+    if (loading || typeof window === 'undefined') return
+    if (window.location.hash !== '#event-list') return
+    const el = document.getElementById('event-list')
+    if (!el) return
+    requestAnimationFrame(() => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }, [loading])
+
   const handleMethodologyToggle = () => {
     if (showMethodology) {
       setShowMethodology(false)
@@ -377,9 +387,13 @@ export default function ProtestsPage() {
         </section>
 
         {/* Card list */}
-        <section className="relative px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 min-h-[50vh] overflow-hidden">
+        <section
+          id="event-list"
+          className="relative scroll-mt-28 sm:scroll-mt-32 px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 min-h-[50vh] overflow-hidden"
+        >
           <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-300 to-blue-600 opacity-70" />
           <div className="max-w-5xl mx-auto pr-4 sm:pr-6">
+            <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-8 md:mb-10">Event List</h2>
             {loading ? (
               <div className="rounded-xl bg-white border border-slate-200 p-12 text-center">
                 <p className="text-gray-500 font-light">Loading…</p>
