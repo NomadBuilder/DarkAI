@@ -17,6 +17,54 @@ const PRESETS: PrintPreset[] = [
   { id: '8.5x11', label: '8.5 x 11 in (Letter)', widthIn: 8.5, heightIn: 11 },
 ]
 
+type SignLibraryItem = {
+  id: string
+  title: string
+  headline: string
+  subhead: string
+  footer: string
+  bgColor: string
+  textColor: string
+  accentColor: string
+  borderColor: string
+}
+
+const SIGN_LIBRARY: SignLibraryItem[] = [
+  {
+    id: 'protect-services',
+    title: 'Protect Public Services',
+    headline: 'Protect Public Services',
+    subhead: 'Stop Ford privatization',
+    footer: 'protectont.ca',
+    bgColor: '#ffffff',
+    textColor: '#0f172a',
+    accentColor: '#dc2626',
+    borderColor: '#0f172a',
+  },
+  {
+    id: 'healthcare-first',
+    title: 'Healthcare First',
+    headline: 'Fund Public Healthcare',
+    subhead: 'No More Cuts. No More Sell-Offs.',
+    footer: 'join us at protectont.ca',
+    bgColor: '#f8fafc',
+    textColor: '#0b3a5b',
+    accentColor: '#dc2626',
+    borderColor: '#0b3a5b',
+  },
+  {
+    id: 'accountability',
+    title: 'Accountability Now',
+    headline: 'Ford Failed Ontario',
+    subhead: 'Healthcare. Education. Transparency.',
+    footer: 'protectont.ca/protests',
+    bgColor: '#fff7ed',
+    textColor: '#1f2937',
+    accentColor: '#b91c1c',
+    borderColor: '#1f2937',
+  },
+]
+
 function drawWrappedText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -206,6 +254,16 @@ export default function SignsPage() {
       img.src = src
     }
     reader.readAsDataURL(file)
+  }
+
+  const applySignLibraryItem = (item: SignLibraryItem) => {
+    setHeadline(item.headline)
+    setSubhead(item.subhead)
+    setFooter(item.footer)
+    setBgColor(item.bgColor)
+    setTextColor(item.textColor)
+    setAccentColor(item.accentColor)
+    setBorderColor(item.borderColor)
   }
 
   const exportPng = () => {
@@ -413,6 +471,37 @@ export default function SignsPage() {
               />
             </div>
           </section>
+        </section>
+
+        <section className="mt-8 bg-white border border-slate-200 rounded-2xl p-5">
+          <h2 className="text-xl font-light text-slate-900 mb-2">Sign Library</h2>
+          <p className="text-sm text-slate-600 font-light mb-4">
+            Choose a ready-made sign template, then refine copy, image, and colors in the builder.
+          </p>
+          <div className="grid gap-4 md:grid-cols-3">
+            {SIGN_LIBRARY.map((item) => (
+              <article key={item.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3 flex flex-col">
+                <div className="rounded-lg border border-slate-200 p-3 mb-3" style={{ backgroundColor: item.bgColor }}>
+                  <div className="h-2 rounded mb-2" style={{ backgroundColor: item.accentColor }} />
+                  <p className="text-sm font-semibold leading-tight" style={{ color: item.textColor }}>
+                    {item.headline}
+                  </p>
+                  <p className="text-xs mt-1" style={{ color: item.textColor }}>
+                    {item.subhead}
+                  </p>
+                  <div className="h-2 rounded mt-2" style={{ backgroundColor: item.accentColor }} />
+                </div>
+                <h3 className="text-sm font-medium text-slate-900">{item.title}</h3>
+                <button
+                  type="button"
+                  onClick={() => applySignLibraryItem(item)}
+                  className="mt-3 px-3 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-slate-800"
+                >
+                  Use in builder
+                </button>
+              </article>
+            ))}
+          </div>
         </section>
       </main>
     </div>

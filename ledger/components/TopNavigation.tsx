@@ -43,11 +43,16 @@ const dataDropdownItems: NavItem[] = [
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
+const resourcesDropdownItems: NavItem[] = [
+  { id: 'signs', label: 'Signs', href: '/signs' },
+  { id: 'stickers', label: 'Stickers', href: '/stickers' },
+]
+
 const navItems: NavItem[] = [
   { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
   { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
   { id: 'events', label: 'Events', href: '/protests' },
-  { id: 'signs', label: 'Signs', href: '/signs' },
+  { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
   { id: 'about', label: 'About', href: '/about' },
 ]
 
