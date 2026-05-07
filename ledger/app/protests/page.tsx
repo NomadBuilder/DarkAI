@@ -200,13 +200,33 @@ export default function ProtestsPage() {
 
   useEffect(() => {
     if (loading || typeof window === 'undefined') return
-    if (window.location.hash !== '#event-list') return
-    const el = document.getElementById('event-list')
-    if (!el) return
-    requestAnimationFrame(() => {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (monthOptions.length > 0 && !selectedMonth) return
+
+    const scrollToEventList = () => {
+      if (window.location.hash !== '#event-list') return
+      const el = document.getElementById('event-list')
+      if (!el) return
+      const nav = document.querySelector('nav')
+      const stickyH = nav?.getBoundingClientRect().height ?? 0
+      const gap = 12
+      const top = el.getBoundingClientRect().top + window.scrollY - stickyH - gap
+      window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+    }
+
+    scrollToEventList()
+    let nestedRaf = 0
+    const outerRaf = requestAnimationFrame(() => {
+      nestedRaf = requestAnimationFrame(scrollToEventList)
     })
-  }, [loading])
+    const t = window.setTimeout(scrollToEventList, 240)
+    window.addEventListener('hashchange', scrollToEventList)
+    return () => {
+      cancelAnimationFrame(outerRaf)
+      if (nestedRaf) cancelAnimationFrame(nestedRaf)
+      window.clearTimeout(t)
+      window.removeEventListener('hashchange', scrollToEventList)
+    }
+  }, [loading, selectedMonth, monthOptions.length])
 
   const handleMethodologyToggle = () => {
     if (showMethodology) {
