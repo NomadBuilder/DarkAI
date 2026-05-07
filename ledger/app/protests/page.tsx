@@ -78,11 +78,17 @@ export default function ProtestsPage() {
   }
 
   const formattedProtests = useMemo(() => {
+    const now = new Date()
+    const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1)
     return protests
       .map((protest) => ({
         ...protest,
         parsedDate: parseProtestDate(protest.date),
       }))
+      .filter((protest) => {
+        if (!protest.parsedDate) return false
+        return protest.parsedDate >= startOfCurrentMonth
+      })
       .sort((a, b) => {
         if (!a.parsedDate || !b.parsedDate) return 0
         return a.parsedDate.getTime() - b.parsedDate.getTime()
@@ -101,11 +107,14 @@ export default function ProtestsPage() {
 
   const monthOptions = useMemo(() => {
     const months = new Map<string, string>()
+    const now = new Date()
+    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
     formattedProtests.forEach((protest) => {
       if (!protest.parsedDate) return
       const year = protest.parsedDate.getFullYear()
       const month = protest.parsedDate.getMonth()
       const key = `${year}-${String(month + 1).padStart(2, '0')}`
+      if (key < currentMonthKey) return
       const label = protest.parsedDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })
       months.set(key, label)
     })

@@ -1,0 +1,420 @@
+'use client'
+
+import { useEffect, useMemo, useRef, useState } from 'react'
+import TopNavigation from '../../components/TopNavigation'
+
+type PrintPreset = {
+  id: string
+  label: string
+  widthIn: number
+  heightIn: number
+}
+
+const PRESETS: PrintPreset[] = [
+  { id: '18x24', label: '18 x 24 in (Poster)', widthIn: 18, heightIn: 24 },
+  { id: '24x36', label: '24 x 36 in (Large Poster)', widthIn: 24, heightIn: 36 },
+  { id: '11x17', label: '11 x 17 in (Tabloid)', widthIn: 11, heightIn: 17 },
+  { id: '8.5x11', label: '8.5 x 11 in (Letter)', widthIn: 8.5, heightIn: 11 },
+]
+
+function drawWrappedText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+  x: number,
+  y: number,
+  lineHeight: number,
+  align: CanvasTextAlign = 'center'
+) {
+  const words = text.trim().split(/\s+/)
+  const lines: string[] = []
+  let line = ''
+
+  words.forEach((word) => {
+    const testLine = line ? `${line} ${word}` : word
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      lines.push(line)
+      line = word
+    } else {
+      line = testLine
+    }
+  })
+
+  if (line) lines.push(line)
+  ctx.textAlign = align
+  lines.forEach((ln, idx) => {
+    ctx.fillText(ln, x, y + idx * lineHeight)
+  })
+  return lines.length
+}
+
+export default function SignsPage() {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const imageRef = useRef<HTMLImageElement | null>(null)
+
+  const [presetId, setPresetId] = useState('18x24')
+  const [dpi, setDpi] = useState(150)
+  const [headline, setHeadline] = useState('Protect Public Services')
+  const [subhead, setSubhead] = useState('Stop Ford privatization')
+  const [footer, setFooter] = useState('protectont.ca')
+  const [bgColor, setBgColor] = useState('#ffffff')
+  const [textColor, setTextColor] = useState('#0f172a')
+  const [accentColor, setAccentColor] = useState('#dc2626')
+  const [borderColor, setBorderColor] = useState('#0f172a')
+  const [borderWidth, setBorderWidth] = useState(14)
+  const [imageScale, setImageScale] = useState(45)
+  const [imageOpacity, setImageOpacity] = useState(100)
+  const [imagePosition, setImagePosition] = useState<'none' | 'top' | 'center' | 'bottom'>('center')
+  const [imageName, setImageName] = useState('')
+  const [imageRenderKey, setImageRenderKey] = useState(0)
+
+  const preset = useMemo(
+    () => PRESETS.find((p) => p.id === presetId) ?? PRESETS[0],
+    [presetId]
+  )
+
+  const dimensions = useMemo(() => {
+    return {
+      width: Math.max(1, Math.round(preset.widthIn * dpi)),
+      height: Math.max(1, Math.round(preset.heightIn * dpi)),
+    }
+  }, [preset, dpi])
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    canvas.width = dimensions.width
+    canvas.height = dimensions.height
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+
+    const { width, height } = dimensions
+    const padX = Math.round(width * 0.08)
+    const topY = Math.round(height * 0.12)
+
+    ctx.clearRect(0, 0, width, height)
+    ctx.fillStyle = bgColor
+    ctx.fillRect(0, 0, width, height)
+
+    const stripeH = Math.round(height * 0.065)
+    ctx.fillStyle = accentColor
+    ctx.fillRect(0, 0, width, stripeH)
+    ctx.fillRect(0, height - stripeH, width, stripeH)
+
+    ctx.fillStyle = textColor
+    const headlineLineHeight = Math.round(height * 0.102)
+    const subheadLineHeight = Math.round(height * 0.068)
+    ctx.font = `700 ${Math.round(height * 0.09)}px Inter, Arial, sans-serif`
+    const headLines = drawWrappedText(
+      ctx,
+      headline,
+      width - padX * 2,
+      width / 2,
+      topY + stripeH,
+      headlineLineHeight
+    )
+
+    ctx.font = `600 ${Math.round(height * 0.055)}px Inter, Arial, sans-serif`
+    const subheadY = topY + stripeH + Math.round(headLines * height * 0.11)
+    const subheadLines = drawWrappedText(
+      ctx,
+      subhead,
+      width - padX * 2,
+      width / 2,
+      subheadY,
+      subheadLineHeight
+    )
+
+    if (imageRef.current && imagePosition !== 'none') {
+      const img = imageRef.current
+      const ratio = img.naturalHeight / img.naturalWidth
+      const desiredW = Math.round(width * (imageScale / 100))
+      const desiredH = Math.round(desiredW * ratio)
+      const safeGap = Math.round(height * 0.02)
+      const maxDrawW = width - padX * 2
+
+      // Keep image in dedicated zones that avoid text and footer.
+      const topZoneTop = stripeH + safeGap
+      const topZoneBottom = topY + stripeH - safeGap
+      const textBottom = subheadY + subheadLines * subheadLineHeight
+      const lowerZoneTop = textBottom + safeGap
+      const lowerZoneBottom = height - stripeH - safeGap
+
+      const zoneTop = imagePosition === 'top' ? topZoneTop : lowerZoneTop
+      const zoneBottom = imagePosition === 'top' ? topZoneBottom : lowerZoneBottom
+      const zoneHeight = Math.max(0, zoneBottom - zoneTop)
+
+      if (zoneHeight > 8) {
+        const scale = Math.min(1, maxDrawW / desiredW, zoneHeight / desiredH)
+        const drawW = Math.max(1, Math.round(desiredW * scale))
+        const drawH = Math.max(1, Math.round(desiredH * scale))
+        const x = Math.round((width - drawW) / 2)
+        let y = zoneTop
+        if (imagePosition === 'center') {
+          y = zoneTop + Math.round((zoneHeight - drawH) / 2)
+        } else if (imagePosition === 'bottom') {
+          y = zoneBottom - drawH
+        }
+
+        ctx.save()
+        ctx.globalAlpha = Math.max(0, Math.min(1, imageOpacity / 100))
+        ctx.drawImage(img, x, y, drawW, drawH)
+        ctx.restore()
+      }
+    }
+
+    ctx.fillStyle = '#ffffff'
+    ctx.font = `700 ${Math.round(height * 0.045)}px Inter, Arial, sans-serif`
+    ctx.textAlign = 'center'
+    ctx.fillText(footer.toUpperCase(), width / 2, height - Math.round(stripeH * 0.32))
+
+    if (borderWidth > 0) {
+      ctx.strokeStyle = borderColor
+      ctx.lineWidth = borderWidth
+      ctx.strokeRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth)
+    }
+  }, [
+    dimensions,
+    bgColor,
+    textColor,
+    accentColor,
+    borderColor,
+    borderWidth,
+    headline,
+    subhead,
+    footer,
+    imageScale,
+    imageOpacity,
+    imagePosition,
+    imageRenderKey,
+  ])
+
+  const handleImageUpload = (file: File | null) => {
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      const src = String(reader.result || '')
+      if (!src) return
+      const img = new Image()
+      img.onload = () => {
+        imageRef.current = img
+        setImageName(file.name)
+        setImagePosition((prev) => (prev === 'none' ? 'center' : prev))
+        setImageRenderKey((prev) => prev + 1)
+      }
+      img.src = src
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const exportPng = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const a = document.createElement('a')
+    a.href = canvas.toDataURL('image/png')
+    a.download = `protectont-sign-${preset.widthIn}x${preset.heightIn}-${dpi}dpi.png`
+    a.click()
+  }
+
+  const printSign = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const dataUrl = canvas.toDataURL('image/png')
+    const win = window.open('', '_blank', 'noopener,noreferrer')
+    if (!win) return
+    win.document.write(`
+      <html>
+        <head>
+          <title>Print Sign</title>
+          <style>
+            body { margin: 0; display: grid; place-items: center; background: white; }
+            img { width: ${preset.widthIn}in; height: ${preset.heightIn}in; object-fit: contain; }
+            @page { size: ${preset.widthIn}in ${preset.heightIn}in; margin: 0; }
+          </style>
+        </head>
+        <body>
+          <img src="${dataUrl}" alt="Generated protest sign" />
+          <script>window.onload = () => window.print();</script>
+        </body>
+      </html>
+    `)
+    win.document.close()
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <TopNavigation />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12">
+        <section className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-light text-slate-900">Sign Generator</h1>
+          <p className="mt-2 text-slate-600 font-light max-w-3xl">
+            Build printable protest signs with your own message, image, and colors. Export as PNG or print directly.
+          </p>
+        </section>
+
+        <section className="grid gap-6 lg:grid-cols-[360px_1fr]">
+          <aside className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5">
+            <div>
+              <label className="block text-sm text-slate-600 mb-1">Print size</label>
+              <select
+                value={presetId}
+                onChange={(e) => setPresetId(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              >
+                {PRESETS.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm text-slate-600 mb-1">Resolution (DPI)</label>
+              <select
+                value={dpi}
+                onChange={(e) => setDpi(parseInt(e.target.value, 10))}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              >
+                <option value={150}>150 DPI (fast)</option>
+                <option value={200}>200 DPI (balanced)</option>
+                <option value={300}>300 DPI (print quality)</option>
+              </select>
+              <p className="mt-1 text-xs text-slate-500">
+                Output: {dimensions.width} x {dimensions.height} px
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-sm text-slate-600">Headline</label>
+              <textarea
+                value={headline}
+                onChange={(e) => setHeadline(e.target.value)}
+                rows={2}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+              <label className="block text-sm text-slate-600">Subhead</label>
+              <textarea
+                value={subhead}
+                onChange={(e) => setSubhead(e.target.value)}
+                rows={2}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+              <label className="block text-sm text-slate-600">Footer / URL</label>
+              <input
+                value={footer}
+                onChange={(e) => setFooter(e.target.value)}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              />
+            </div>
+
+            <div className="space-y-3">
+              <label className="block text-sm text-slate-600">Upload image/logo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(e.target.files?.[0] ?? null)}
+                className="block w-full text-sm"
+              />
+              {imageName ? <p className="text-xs text-slate-500">Loaded: {imageName}</p> : null}
+              <select
+                value={imagePosition}
+                onChange={(e) => setImagePosition(e.target.value as 'none' | 'top' | 'center' | 'bottom')}
+                className="w-full rounded-lg border border-slate-300 px-3 py-2"
+              >
+                <option value="none">No image</option>
+                <option value="top">Image near top</option>
+                <option value="center">Image centered</option>
+                <option value="bottom">Image near bottom</option>
+              </select>
+              <label className="block text-xs text-slate-500">
+                Image size ({imageScale}%)
+                <input
+                  type="range"
+                  min={20}
+                  max={85}
+                  value={imageScale}
+                  onChange={(e) => setImageScale(parseInt(e.target.value, 10))}
+                  className="w-full"
+                />
+              </label>
+              <label className="block text-xs text-slate-500">
+                Image opacity ({imageOpacity}%)
+                <input
+                  type="range"
+                  min={20}
+                  max={100}
+                  value={imageOpacity}
+                  onChange={(e) => setImageOpacity(parseInt(e.target.value, 10))}
+                  className="w-full"
+                />
+              </label>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="text-sm text-slate-600">
+                Background
+                <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className="mt-1 h-10 w-full" />
+              </label>
+              <label className="text-sm text-slate-600">
+                Text
+                <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} className="mt-1 h-10 w-full" />
+              </label>
+              <label className="text-sm text-slate-600">
+                Accent
+                <input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="mt-1 h-10 w-full" />
+              </label>
+              <label className="text-sm text-slate-600">
+                Border
+                <input type="color" value={borderColor} onChange={(e) => setBorderColor(e.target.value)} className="mt-1 h-10 w-full" />
+              </label>
+            </div>
+
+            <label className="block text-xs text-slate-500">
+              Border width ({borderWidth}px)
+              <input
+                type="range"
+                min={0}
+                max={36}
+                value={borderWidth}
+                onChange={(e) => setBorderWidth(parseInt(e.target.value, 10))}
+                className="w-full"
+              />
+            </label>
+          </aside>
+
+          <section className="bg-white border border-slate-200 rounded-2xl p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <h2 className="text-xl font-light text-slate-900">Live Preview</h2>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={exportPng}
+                  className="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm hover:bg-slate-800"
+                >
+                  Download PNG
+                </button>
+                <button
+                  type="button"
+                  onClick={printSign}
+                  className="px-4 py-2 rounded-lg bg-[#2E4A6B] text-white text-sm hover:bg-[#243d56]"
+                >
+                  Print
+                </button>
+              </div>
+            </div>
+
+            <div className="w-full overflow-auto rounded-xl border border-slate-200 bg-slate-100 p-4">
+              <canvas
+                ref={canvasRef}
+                className="block mx-auto max-w-full h-auto shadow-sm bg-white"
+                style={{ maxHeight: '70vh' }}
+              />
+            </div>
+          </section>
+        </section>
+      </main>
+    </div>
+  )
+}

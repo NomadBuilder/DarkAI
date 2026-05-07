@@ -47,6 +47,7 @@ const navItems: NavItem[] = [
   { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
   { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
   { id: 'events', label: 'Events', href: '/protests' },
+  { id: 'signs', label: 'Signs', href: '/signs' },
   { id: 'about', label: 'About', href: '/about' },
 ]
 
@@ -136,6 +137,16 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
             transition={{ duration: 0.2 }}
             className="sticky top-0 left-0 right-0 z-50 w-full"
           >
+            <div className="w-full bg-[#9f1239] text-white border-b border-white/20">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <a
+                  href={getNavHref('/protests', basePath)}
+                  className="flex min-h-[40px] items-center justify-center text-center text-xs sm:text-sm font-medium leading-none tracking-wide hover:underline underline-offset-4"
+                >
+                  Province-wide protests on May 30, 2026 - find your city and join in - View events
+                </a>
+              </div>
+            </div>
             <div className={`bg-white/80 backdrop-blur-md transition-all duration-300 w-full ${
               isScrolling ? 'shadow-sm' : ''
             }`}>
@@ -332,7 +343,7 @@ function MobileMenu({
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    style={{ position: 'fixed', inset: 0, zIndex: 60, top: '56px' }}
+                    style={{ position: 'fixed', inset: 0, zIndex: 60, top: '92px' }}
                     className="md:hidden"
                   >
                     <div 
@@ -347,7 +358,7 @@ function MobileMenu({
                     animate={{ x: 0 }}
                     exit={{ x: '100%' }}
                     transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-                    style={{ position: 'fixed', top: '56px', right: 0, bottom: 0, width: '14rem', zIndex: 70 }}
+                    style={{ position: 'fixed', top: '92px', right: 0, bottom: 0, width: '14rem', zIndex: 70 }}
                     className="bg-white border-l border-gray-200 shadow-xl overflow-y-auto md:hidden"
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   >
