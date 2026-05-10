@@ -1,6 +1,10 @@
 """
 Poster checkout: Stripe Checkout + Printful draft orders (never exposed to customers).
-Configure variant IDs via PRINTFUL_POSTER_VARIANTS_JSON or PRINTFUL_VARIANT_POSTER_* env vars.
+
+Env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, PRINTFUL_API_KEY, SITE_URL,
+  PRINTFUL_POSTER_VARIANTS_JSON (or PRINTFUL_VARIANT_POSTER_18x24 / _24x36),
+  optional PRINTFUL_STORE_ID, RESEND_API_KEY, POSTER_ALERT_EMAIL (or CONTACT_EMAIL),
+  POSTER_ADMIN_TOKEN (for GET /api/admin/poster-orders).
 """
 
 from __future__ import annotations
@@ -10,6 +14,7 @@ import json
 import logging
 import os
 import uuid
+from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
@@ -21,9 +26,6 @@ POSTER_SIZES = frozenset({"18x24", "24x36"})
 PRICES_CENTS_CAD = {"18x24": 4500, "24x36": 6500}
 
 ARTWORK_SUBDIR = "uploads/print-artwork"
-
-TARGET_RATIO = 2 / 3  # width / height for vertical 2:3 posters
-RATIO_TOLERANCE = 0.02
 
 
 def _repo_root() -> Path:
@@ -66,10 +68,125 @@ def mark_session_processed(session_id: str) -> None:
     )
 
 
-def write_pending_order(session_id: str, payload: dict) -> None:
+def _fulfillment_log_path() -> Path:
+    return instance_dir() / "poster_fulfillment_log.jsonl"
+
+
+def append_fulfillment_log(entry: dict) -> None:
+    line = json.dumps(entry, default=str, ensure_ascii=False)
+    with open(_fulfillment_log_path(), "a", encoding="utf-8") as f:
+        f.write(line + "\n")
+
+
+def send_poster_fulfillment_alert(
+    *,
+    subject: str,
+    body_text: str,
+    body_html: str | None = None,
+) -> None:
+    """Notify ops when fulfillment needs attention (Resend)."""
+    api_key = os.getenv("RESEND_API_KEY", "").strip()
+    if not api_key:
+        logger.warning("Poster alert skipped: RESEND_API_KEY not set (%s)", subject)
+        return
+    to = (
+        os.getenv("POSTER_ALERT_EMAIL", "").strip()
+        or os.getenv("CONTACT_EMAIL", "").strip()
+        or os.getenv("FROM_EMAIL", "").strip()
+    )
+    if not to:
+        logger.warning("Poster alert skipped: no POSTER_ALERT_EMAIL or CONTACT_EMAIL (%s)", subject)
+        return
+    from_email = os.getenv("FROM_EMAIL", "onboarding@resend.dev").strip()
+    try:
+        r = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": from_email,
+                "to": [to],
+                "subject": subject[:998],
+                "text": body_text[:50000],
+                "html": (body_html or f"<pre>{body_text[:50000]}</pre>")[:50000],
+            },
+            timeout=20,
+        )
+        if r.status_code >= 400:
+            logger.error("Poster alert email failed: %s %s", r.status_code, r.text[:500])
+    except requests.RequestException:
+        logger.exception("Poster alert email request failed")
+
+
+def write_pending_order(session_id: str, payload: dict, *, send_alert: bool = True) -> None:
     p = instance_dir() / f"pending_print_order_{session_id}.json"
     p.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     logger.warning("Wrote pending print order for manual fulfillment: %s", p)
+    if send_alert and (
+        os.getenv("POSTER_ALERT_EMAIL", "").strip()
+        or os.getenv("CONTACT_EMAIL", "").strip()
+    ):
+        reason = str(payload.get("reason", "unknown"))
+        subject = f"[ProtectOnt posters] Action needed: {reason} ({session_id[:12]}…)"
+        body = json.dumps(payload, indent=2, default=str)
+        send_poster_fulfillment_alert(subject=subject, body_text=body)
+
+
+def _poster_admin_authorized() -> bool:
+    from flask import request
+
+    token = os.getenv("POSTER_ADMIN_TOKEN", "").strip()
+    if not token:
+        return False
+    auth = (request.headers.get("Authorization") or "").strip()
+    if auth.lower().startswith("bearer ") and auth[7:].strip() == token:
+        return True
+    if (request.headers.get("X-Poster-Admin-Token") or "").strip() == token:
+        return True
+    return False
+
+
+def list_pending_poster_orders() -> list[dict]:
+    out: list[dict] = []
+    inst = instance_dir()
+    for p in sorted(
+        inst.glob("pending_print_order_*.json"),
+        key=lambda x: x.stat().st_mtime,
+        reverse=True,
+    ):
+        try:
+            data = json.loads(p.read_text(encoding="utf-8"))
+            out.append(
+                {
+                    "file": p.name,
+                    "session_id": p.stem.replace("pending_print_order_", ""),
+                    "mtime_iso": datetime.fromtimestamp(p.stat().st_mtime).isoformat(),
+                    "payload": data,
+                }
+            )
+        except Exception as e:
+            out.append({"file": p.name, "error": str(e)})
+    return out
+
+
+def read_recent_fulfillment_log(max_lines: int = 80) -> list[dict]:
+    p = _fulfillment_log_path()
+    if not p.exists():
+        return []
+    lines = p.read_text(encoding="utf-8").splitlines()
+    tail = lines[-max_lines:]
+    rows: list[dict] = []
+    for line in tail:
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            rows.append(json.loads(line))
+        except Exception:
+            rows.append({"raw": line[:200]})
+    return rows
 
 
 def allowed_image_hosts() -> set[str]:
@@ -480,6 +597,122 @@ def register_poster_routes(app):
                     "variant_id": variant_id,
                 },
             )
+        else:
+            order_id = None
+            if isinstance(result, dict):
+                res = result.get("result")
+                if isinstance(res, dict):
+                    order_id = res.get("id")
+            append_fulfillment_log(
+                {
+                    "ts": datetime.now(timezone.utc).isoformat(),
+                    "event": "printful_draft_created",
+                    "stripe_session_id": session_id,
+                    "printful_order_id": order_id,
+                    "size": size,
+                    "imageUrl": image_url,
+                }
+            )
 
         mark_session_processed(session_id)
         return "", 200
+
+    @app.route("/api/admin/poster-orders", methods=["GET"])
+    def admin_poster_orders():
+        """List pending JSON files + recent fulfillment log. Set POSTER_ADMIN_TOKEN; send Authorization: Bearer <token>."""
+        import html
+
+        from flask import Response, jsonify, request
+
+        if not os.getenv("POSTER_ADMIN_TOKEN", "").strip():
+            return jsonify({"error": "POSTER_ADMIN_TOKEN not configured on server"}), 503
+        if not _poster_admin_authorized():
+            return jsonify({"error": "Unauthorized"}), 401
+
+        pending = list_pending_poster_orders()
+        processed = len(load_processed_sessions())
+        recent = read_recent_fulfillment_log(120)
+        payload = {
+            "pending": pending,
+            "processed_webhook_sessions_count": processed,
+            "recent_fulfillment_log": recent,
+        }
+
+        if request.args.get("format") == "html":
+            rows = []
+            for x in pending:
+                sid = html.escape(str(x.get("session_id", "")))
+                mtime = html.escape(str(x.get("mtime_iso", "")))
+                reason = html.escape(str((x.get("payload") or {}).get("reason", "")))
+                rows.append(f"<tr><td>{sid}</td><td>{mtime}</td><td>{reason}</td></tr>")
+            rows_html = "".join(rows) if rows else '<tr><td colspan="3">No pending files</td></tr>'
+            body = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Poster orders — admin</title>
+<style>
+body{{font-family:system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#111}}
+table{{border-collapse:collapse;width:100%;margin:1rem 0}} th,td{{border:1px solid #ccc;padding:8px;text-align:left;font-size:14px}}
+pre{{background:#f4f4f5;padding:1rem;overflow:auto;font-size:12px;border-radius:8px}}
+code{{background:#eee;padding:2px 6px;border-radius:4px}}
+</style></head><body>
+<h1>Poster fulfillment</h1>
+<p>Stripe webhook idempotency set size: <strong>{processed}</strong></p>
+<h2>Pending manual / failed fulfillment</h2>
+<table><thead><tr><th>Session</th><th>Updated (server)</th><th>Reason</th></tr></thead><tbody>{rows_html}</tbody></table>
+<h2>Recent log (drafts created)</h2>
+<pre>{html.escape(json.dumps(recent[-40:], indent=2, default=str))}</pre>
+<p><small>JSON: <code>/api/admin/poster-orders</code> with same Bearer token.</small></p>
+</body></html>"""
+            return Response(body, mimetype="text/html; charset=utf-8")
+
+        return jsonify(payload)
+
+    @app.route("/api/admin/poster-orders", methods=["GET"])
+    def admin_poster_orders():
+        """List pending JSON files + recent fulfillment log. Set POSTER_ADMIN_TOKEN; send Authorization: Bearer <token>."""
+        import html
+
+        from flask import Response, jsonify, request
+
+        if not os.getenv("POSTER_ADMIN_TOKEN", "").strip():
+            return jsonify({"error": "POSTER_ADMIN_TOKEN not configured on server"}), 503
+        if not _poster_admin_authorized():
+            return jsonify({"error": "Unauthorized"}), 401
+
+        pending = list_pending_poster_orders()
+        processed = len(load_processed_sessions())
+        recent = read_recent_fulfillment_log(120)
+        payload = {
+            "pending": pending,
+            "processed_webhook_sessions_count": processed,
+            "recent_fulfillment_log": recent,
+        }
+
+        if request.args.get("format") == "html":
+            rows = []
+            for x in pending:
+                sid = html.escape(str(x.get("session_id", "")))
+                mtime = html.escape(str(x.get("mtime_iso", "")))
+                reason = html.escape(str((x.get("payload") or {}).get("reason", "")))
+                rows.append(f"<tr><td>{sid}</td><td>{mtime}</td><td>{reason}</td></tr>")
+            rows_html = "".join(rows) if rows else '<tr><td colspan="3">No pending files</td></tr>'
+            body = f"""<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Poster orders — admin</title>
+<style>
+body{{font-family:system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#111}}
+table{{border-collapse:collapse;width:100%;margin:1rem 0}} th,td{{border:1px solid #ccc;padding:8px;text-align:left;font-size:14px}}
+pre{{background:#f4f4f5;padding:1rem;overflow:auto;font-size:12px;border-radius:8px}}
+code{{background:#eee;padding:2px 6px;border-radius:4px}}
+</style></head><body>
+<h1>Poster fulfillment</h1>
+<p>Stripe webhook idempotency set size: <strong>{processed}</strong></p>
+<h2>Pending manual / failed fulfillment</h2>
+<table><thead><tr><th>Session</th><th>Updated (server)</th><th>Reason</th></tr></thead><tbody>{rows_html}</tbody></table>
+<h2>Recent log (drafts created)</h2>
+<pre>{html.escape(json.dumps(recent[-40:], indent=2, default=str))}</pre>
+<p><small>JSON: <code>/api/admin/poster-orders</code> with same Bearer token.</small></p>
+</body></html>"""
+            return Response(body, mimetype="text/html; charset=utf-8")
+
+        return jsonify(payload)
