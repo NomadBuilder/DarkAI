@@ -121,6 +121,7 @@ export default function SignsPage() {
   const [posterOrderSize, setPosterOrderSize] = useState<'18x24' | '24x36'>('18x24')
   const [uploadBusy, setUploadBusy] = useState(false)
   const [checkoutError, setCheckoutError] = useState('')
+  const [checkoutPreviewUrl, setCheckoutPreviewUrl] = useState('')
 
   const preset = useMemo(
     () => PRESETS.find((p) => p.id === presetId) ?? PRESETS[0],
@@ -229,6 +230,38 @@ export default function SignsPage() {
       ctx.strokeRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth)
     }
   }, [
+    dimensions,
+    bgColor,
+    textColor,
+    accentColor,
+    borderColor,
+    borderWidth,
+    headline,
+    subhead,
+    footer,
+    imageScale,
+    imageOpacity,
+    imagePosition,
+    imageRenderKey,
+  ])
+
+  useEffect(() => {
+    if (flowStep !== 'checkout') {
+      setCheckoutPreviewUrl('')
+      return
+    }
+    const id = requestAnimationFrame(() => {
+      const canvas = canvasRef.current
+      if (!canvas || canvas.width < 2 || canvas.height < 2) return
+      try {
+        setCheckoutPreviewUrl(canvas.toDataURL('image/png'))
+      } catch {
+        setCheckoutPreviewUrl('')
+      }
+    })
+    return () => cancelAnimationFrame(id)
+  }, [
+    flowStep,
     dimensions,
     bgColor,
     textColor,
@@ -544,8 +577,8 @@ export default function SignsPage() {
         <section className="mt-8 bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
           <h2 className="text-xl font-light text-slate-900 mb-2">Order printed poster</h2>
           <p className="text-sm text-slate-600 font-light mb-6 max-w-2xl">
-            Matte poster prints fulfilled in Canada. You pay securely with Stripe; we never show Printful to customers.
-            Available sizes: 18×24 in and 24×36 in (vertical), shipping address in Canada only.
+            Matte poster prints fulfilled in Canada. Available sizes: 18×24 in and 24×36 in (vertical). Shipping
+            address must be in Canada.
           </p>
 
           {flowStep === 'design' ? (
@@ -559,8 +592,22 @@ export default function SignsPage() {
           ) : (
             <div className="space-y-6 max-w-xl">
               <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">Final artwork preview</p>
-                <p className="text-xs text-slate-500 mb-3">Uses your live preview above at the current export dimensions.</p>
+                <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">What you are ordering</p>
+                <p className="text-xs text-slate-500 mb-3">
+                  This is the exact PNG file that will be sent to print ({dimensions.width} × {dimensions.height} px at
+                  your chosen DPI).
+                </p>
+                {checkoutPreviewUrl ? (
+                  <div className="rounded-lg border border-slate-200 bg-white overflow-hidden flex justify-center items-center max-h-[min(70vh,520px)]">
+                    <img
+                      src={checkoutPreviewUrl}
+                      alt="Poster artwork exactly as submitted for print"
+                      className="max-w-full max-h-[min(70vh,520px)] w-auto h-auto object-contain"
+                    />
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-500 py-8 text-center">Preparing preview…</p>
+                )}
               </div>
 
               <div>
