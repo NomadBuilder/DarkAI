@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import TopNavigation from '../../components/TopNavigation'
+import { getApiBaseUrl } from '../../utils/apiOrigin'
 
 type PrintPreset = {
   id: string
@@ -115,6 +116,11 @@ export default function SignsPage() {
   const [imagePosition, setImagePosition] = useState<'none' | 'top' | 'center' | 'bottom'>('center')
   const [imageName, setImageName] = useState('')
   const [imageRenderKey, setImageRenderKey] = useState(0)
+
+  const [flowStep, setFlowStep] = useState<'design' | 'checkout'>('design')
+  const [posterOrderSize, setPosterOrderSize] = useState<'18x24' | '24x36'>('18x24')
+  const [uploadBusy, setUploadBusy] = useState(false)
+  const [checkoutError, setCheckoutError] = useState('')
 
   const preset = useMemo(
     () => PRESETS.find((p) => p.id === presetId) ?? PRESETS[0],
@@ -273,6 +279,68 @@ export default function SignsPage() {
     a.href = canvas.toDataURL('image/png')
     a.download = `protectont-sign-${preset.widthIn}x${preset.heightIn}-${dpi}dpi.png`
     a.click()
+  }
+
+  const goPosterCheckout = () => {
+    setCheckoutError('')
+    if (presetId === '18x24' || presetId === '24x36') {
+      setPosterOrderSize(presetId)
+    } else {
+      setPosterOrderSize('18x24')
+    }
+    setFlowStep('checkout')
+  }
+
+  const getCheckoutWarnings = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return { aspect: '', resolution: '' }
+    const w = canvas.width
+    const h = canvas.height
+    const ratio = w / h
+    const [pw, ph] = posterOrderSize.split('x').map(Number)
+    const expected = pw / ph
+    let aspect = ''
+    if (Math.abs(ratio - expected) > 0.02) {
+      aspect = `Canvas aspect (${ratio.toFixed(3)}) should match the poster you are ordering (${expected.toFixed(3)} for ${posterOrderSize.replace('x', '×')} in). Change print size in the builder or pick a matching order size.`
+    }
+    const longIn = Math.max(pw, ph)
+    const minPx = longIn * 150
+    const longPx = Math.max(w, h)
+    let resolution = ''
+    if (longPx < minPx) {
+      resolution = `Long edge is ${longPx}px. For acceptable quality on a ${longIn}" poster, aim for about ${Math.ceil(minPx)}px or more (~150 DPI). Increase DPI above.`
+    }
+    return { aspect, resolution }
+  }
+
+  const startPosterCheckout = async () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const apiBase = getApiBaseUrl()
+    setUploadBusy(true)
+    setCheckoutError('')
+    try {
+      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
+      if (!blob) throw new Error('Could not export image')
+      const fd = new FormData()
+      fd.append('file', blob, 'poster.png')
+      const up = await fetch(`${apiBase}/api/upload-print-artwork`, { method: 'POST', body: fd })
+      const upJson = await up.json()
+      if (!up.ok) throw new Error(upJson.error || 'Upload failed')
+      const imageUrl = upJson.url as string
+      const res = await fetch(`${apiBase}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl, size: posterOrderSize }),
+      })
+      const j = await res.json()
+      if (!res.ok) throw new Error(j.error || 'Could not start checkout')
+      if (j.url) window.location.href = j.url as string
+    } catch (e) {
+      setCheckoutError(e instanceof Error ? e.message : 'Checkout failed')
+    } finally {
+      setUploadBusy(false)
+    }
   }
 
   const printSign = () => {
@@ -471,6 +539,99 @@ export default function SignsPage() {
               />
             </div>
           </section>
+        </section>
+
+        <section className="mt-8 bg-white border border-slate-200 rounded-2xl p-5 md:p-8">
+          <h2 className="text-xl font-light text-slate-900 mb-2">Order printed poster</h2>
+          <p className="text-sm text-slate-600 font-light mb-6 max-w-2xl">
+            Matte poster prints fulfilled in Canada. You pay securely with Stripe; we never show Printful to customers.
+            Available sizes: 18×24 in and 24×36 in (vertical), shipping address in Canada only.
+          </p>
+
+          {flowStep === 'design' ? (
+            <button
+              type="button"
+              onClick={goPosterCheckout}
+              className="px-5 py-2.5 rounded-lg bg-[#9f1239] text-white text-sm font-medium hover:bg-[#831036] transition-colors"
+            >
+              Continue to poster order
+            </button>
+          ) : (
+            <div className="space-y-6 max-w-xl">
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p className="text-xs uppercase tracking-widest text-slate-400 mb-2">Final artwork preview</p>
+                <p className="text-xs text-slate-500 mb-3">Uses your live preview above at the current export dimensions.</p>
+              </div>
+
+              <div>
+                <label className="block text-sm text-slate-600 mb-2">Poster size</label>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  {(
+                    [
+                      { id: '18x24' as const, label: '18 × 24 in', price: '$45 CAD' },
+                      { id: '24x36' as const, label: '24 × 36 in', price: '$65 CAD' },
+                    ] as const
+                  ).map((opt) => (
+                    <label
+                      key={opt.id}
+                      className={`flex-1 cursor-pointer rounded-xl border px-4 py-3 text-sm ${
+                        posterOrderSize === opt.id
+                          ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-200'
+                          : 'border-slate-200 bg-white hover:border-slate-300'
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="poster-size"
+                        className="sr-only"
+                        checked={posterOrderSize === opt.id}
+                        onChange={() => setPosterOrderSize(opt.id)}
+                      />
+                      <span className="block font-medium text-slate-900">{opt.label}</span>
+                      <span className="block text-slate-600 mt-1">{opt.price}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              {(() => {
+                const { aspect, resolution } = getCheckoutWarnings()
+                return (
+                  <div className="space-y-2">
+                    {aspect ? (
+                      <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">{aspect}</p>
+                    ) : null}
+                    {resolution ? (
+                      <p className="text-sm text-amber-800 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2">{resolution}</p>
+                    ) : null}
+                  </div>
+                )
+              })()}
+
+              {checkoutError ? (
+                <p className="text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{checkoutError}</p>
+              ) : null}
+
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  disabled={uploadBusy}
+                  onClick={startPosterCheckout}
+                  className="px-5 py-2.5 rounded-lg bg-slate-900 text-white text-sm hover:bg-slate-800 disabled:opacity-60"
+                >
+                  {uploadBusy ? 'Preparing…' : 'Proceed to checkout'}
+                </button>
+                <button
+                  type="button"
+                  disabled={uploadBusy}
+                  onClick={() => setFlowStep('design')}
+                  className="px-5 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-700 hover:bg-slate-50"
+                >
+                  Back to editing
+                </button>
+              </div>
+            </div>
+          )}
         </section>
 
         <section className="mt-8 bg-white border border-slate-200 rounded-2xl p-5">

@@ -24,6 +24,9 @@ app = Flask(__name__)
 CORS(app)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
 
+from poster_fulfillment import register_poster_routes  # noqa: E402
+register_poster_routes(app)
+
 # Make GTM_ID available to all templates
 @app.context_processor
 def inject_gtm_id():

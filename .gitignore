@@ -94,3 +94,10 @@ temp/
 
 # ShadowStack IP history data (local, not committed)
 shadowstack_ip_history.json
+
+# Flask instance / poster webhook idempotency
+instance/
+
+# Customer-uploaded poster artwork (keep folder via .gitkeep)
+static/uploads/print-artwork/*
+!static/uploads/print-artwork/.gitkeep
