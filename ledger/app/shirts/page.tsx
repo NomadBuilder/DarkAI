@@ -289,7 +289,8 @@ export default function ShirtsPage() {
         <section className="mb-8">
           <h1 className="text-3xl md:text-4xl font-light text-slate-900">Shirt Transfers</h1>
           <p className="mt-2 text-slate-600 font-light max-w-3xl">
-            Create iron-on shirt graphics people can buy, print at home, and apply with a household iron or heat press.
+            Create iron-on graphics for light fabrics—print the transfer sheet at home or at a copy shop, then press with
+            a household iron or heat press. For posters shipped to you, use the shop flow on Signs.
           </p>
         </section>
 

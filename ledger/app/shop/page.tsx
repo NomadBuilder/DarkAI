@@ -14,15 +14,15 @@ const fade = {
 const pillars = [
   {
     title: 'Community-first',
-    body: 'Every purchase is a small act of solidarity. Revenue from prints and transfers helps keep this project online, improves outreach tools, and backs real-world organizing—posters for rallies, shirts and stickers for visibility, and materials people can actually use.',
+    body: 'Every purchase is a small act of solidarity. Revenue from poster orders and the tools here funds outreach, printing where we can help, and real-world organizing—posters for rallies, shirt transfers and stickers for visibility, materials meant for demonstrations and tabling.',
   },
   {
     title: 'Transparent by design',
-    body: 'We are not a faceless storefront. Protect Ontario exists to make accountability data public and usable. When you buy here, you know what movement you are supporting—and you get a tangible product you can wear or hold up in public.',
+    body: 'We are not a faceless storefront. Protect Ontario exists to make accountability data public and usable. When you order here, you know which movement you are supporting—and you get something you can wear or hold up in public.',
   },
   {
     title: 'Made for Ontario streets',
-    body: 'Sizes and formats are chosen for protests, town halls, and neighbourhood conversations: bold posters for walls and windows, iron-on transfers and sticker sheets you can produce locally. Quality that holds up when it matters.',
+    body: 'Sizes and formats are chosen for protests, town halls, and neighbourhood conversations: bold posters for walls and windows, iron-on transfers and sticker sheets you print locally. Made to hold up when it matters.',
   },
 ]
 
@@ -52,9 +52,9 @@ const diyProducts = [
     priceFrom: 'Print at home',
     sizes: 'Letter sheets · mirrored for iron-on',
     description:
-      'Build iron-on artwork for light fabrics, download templates, or use the library. Print locally and press with a household iron or heat press—no third-party merch shop required.',
+      'Build iron-on artwork for light fabrics, download templates, or use the library. Print the sheet locally and press with a household iron or heat press—the wearable option here is transfers you produce yourself, not a shipped tee.',
     href: '/shirts',
-    cta: 'Open shirt transfer tool',
+    cta: 'Build shirt transfers',
     accent: 'from-[#9f1239] to-[#7f1230]',
     border: 'border-rose-200/80',
   },
@@ -62,12 +62,12 @@ const diyProducts = [
     id: 'stickers',
     eyebrow: 'Laptops & clipboards',
     title: 'Sticker sheets',
-    priceFrom: 'Free library · build your own',
+    priceFrom: 'Library + custom layouts',
     sizes: 'PNG export · cut guides · collage bases',
     description:
       'Create sticker-ready art with custom text and images, or grab ready-made designs from the sticker library. Perfect for tabling, canvassing, and handing out at events.',
     href: '/stickers',
-    cta: 'Open sticker builder',
+    cta: 'Create stickers',
     accent: 'from-emerald-800 to-teal-700',
     border: 'border-emerald-200/80',
   },
@@ -75,12 +75,12 @@ const diyProducts = [
     id: 'signs',
     eyebrow: 'Copy room & copy shop',
     title: 'Print-at-home signs',
-    priceFrom: 'Free download',
+    priceFrom: 'Print locally',
     sizes: 'Multiple sizes · PNG or print dialog',
     description:
-      'Use the full sign generator for rally boards and lawn signs you print yourself or at a copy shop. Paid poster printing is optional when you want pro paper shipped to you.',
+      'Use the full sign generator for rally boards and lawn signs you print yourself or at a copy shop. Order a printed poster separately when you want pro paper delivered.',
     href: '/signs',
-    cta: 'Open sign generator',
+    cta: 'Build printable signs',
     accent: 'from-slate-700 to-slate-600',
     border: 'border-slate-200/90',
   },
@@ -121,14 +121,14 @@ export default function ShopPage() {
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-20 sm:pt-28 sm:pb-24">
           <p className="text-xs sm:text-sm uppercase tracking-[0.35em] text-blue-200/90 mb-5 font-medium">Shop in solidarity</p>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-light tracking-tight leading-[1.08] mb-6">
-            Gear that backs
-            <span className="block sm:inline sm:ml-3 text-white/95">the work on the ground</span>
+            Materials for
+            <span className="block sm:inline sm:ml-3 text-white/95">the street and the room</span>
           </h1>
           <p className="text-lg sm:text-xl text-slate-200/95 font-light max-w-2xl leading-relaxed mb-10">
-            Posters, shirt transfers, stickers, and printable signs—built for accountability organizing in Ontario. When
-            you purchase through Protect Ontario, you help keep independent research, protest listings, and civic tools
-            available to everyone, while funding community actions: printing, outreach, and materials for volunteers and
-            local groups.
+            Posters you can order for delivery, plus shirt transfers, stickers, and printable signs—built for
+            accountability work and demonstrations in Ontario. Buying a poster or using the builders helps fund
+            independent research, protest listings, and civic tools for organizers, along with printing and outreach
+            for volunteers and local groups.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -174,10 +174,26 @@ export default function ShopPage() {
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-10 relative z-10 pb-16">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { stat: 'Open', label: 'Core site stays free to read', sub: 'Shop revenue helps cover hosting and updates' },
-            { stat: 'CA', label: 'Poster shipping in Canada', sub: 'Checkout collects a Canadian delivery address' },
-            { stat: 'DIY', label: 'Stickers & shirts at home', sub: 'Download, print, and cut on your schedule' },
-            { stat: 'Free', label: 'Signs & organizing tools', sub: 'Generators, chants, and message guides—no paywall' },
+            {
+              stat: 'Solidarity',
+              label: 'Purchases fund organizing',
+              sub: 'Poster orders help cover fulfilment, hosting, and outreach',
+            },
+            {
+              stat: 'Canada',
+              label: 'Posters ship domestically',
+              sub: 'Checkout collects a Canadian delivery address',
+            },
+            {
+              stat: 'Local',
+              label: 'Press shirts & print signs yourself',
+              sub: 'Transfers, stickers, and signs on your paper and your timeline',
+            },
+            {
+              stat: 'Collective',
+              label: 'Messaging & turnout tools',
+              sub: 'Guides, chants, and province-wide listings for coordinated action',
+            },
           ].map((item) => (
             <div
               key={item.label}
@@ -193,12 +209,12 @@ export default function ShopPage() {
 
       <section className="border-y border-slate-200 bg-white py-16 sm:py-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
-          <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4">Why a shop lives on this site</h2>
+          <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4">Why sell materials here</h2>
           <p className="text-slate-600 font-light leading-relaxed">
-            Protect Ontario is volunteer-led and reader-supported. Purchases are not a distraction from the mission—they
-            are part of it. Income from posters helps pay for hosting, data updates, design tooling, and printing support
-            when we can offer it. We keep margins modest so more dollars flow back into actions you can see: protest
-            listings, printable resources, and education that does not depend on ad networks or paywalls.
+            Protect Ontario is volunteer-led. Selling posters and offering transfers is part of the mission—not an add-on.
+            Income helps pay for hosting, data updates, design tooling, and printing support when we can offer it. Margins
+            stay modest so more of each dollar goes toward what you can see on the ground: rallies, printable resources,
+            and civic education that is not driven by advertisers.
           </p>
         </div>
         <div className="max-w-6xl mx-auto px-4 sm:px-6 grid gap-10 md:grid-cols-3">
@@ -224,7 +240,8 @@ export default function ShopPage() {
             <p className="text-xs uppercase tracking-[0.25em] text-[#2E4A6B] font-medium mb-2">Shipped to you</p>
             <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-3">Professional posters</h2>
             <p className="text-slate-600 font-light leading-relaxed">
-              When you want museum-grade matte paper and reliable fulfilment—without running to the print shop yourself.
+              Order printed posters for delivery in Canada. Shirt graphics use the transfer builder—you bring the blank
+              shirt and press at home; we do not ship apparel from this shop yet.
             </p>
           </div>
           <div className="grid gap-8 lg:grid-cols-1 max-w-2xl">
@@ -264,8 +281,8 @@ export default function ShopPage() {
             <p className="text-xs uppercase tracking-[0.25em] text-[#9f1239] font-medium mb-2">Print & cut at home</p>
             <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-3">Shirts, stickers & signs</h2>
             <p className="text-slate-600 font-light leading-relaxed">
-              Same energy as the shipped poster—different logistics. You control paper stock, ink, and timing; we give
-              you the files and builders tuned for Ontario organizing.
+              Protest visuals you produce locally: iron-on sheets, sticker runs, and signs from the generators—same spirit
+              as the shipped posters, with you handling paper, ink, and presses.
             </p>
           </div>
           <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
@@ -300,10 +317,10 @@ export default function ShopPage() {
       <section className="py-14 sm:py-16 bg-gradient-to-b from-slate-100 to-slate-50 border-y border-slate-200">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="text-center max-w-2xl mx-auto mb-10">
-            <h2 className="text-xl sm:text-2xl font-light text-slate-900 mb-2">Included with the movement</h2>
+            <h2 className="text-xl sm:text-2xl font-light text-slate-900 mb-2">Organizing tools</h2>
             <p className="text-sm text-slate-600 font-light">
-              No purchase required—these tools stay free so anyone can organize with clear messaging and up-to-date event
-              info.
+              Messaging, chants, and events—use them with whatever materials you carry. They are not tied to checkout;
+              they are for coordinated turnout and clear talking points.
             </p>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
@@ -317,7 +334,7 @@ export default function ShopPage() {
                 <h3 className="text-base font-medium text-slate-900 mb-2">{t.title}</h3>
                 <p className="text-xs text-slate-600 font-light leading-relaxed mb-4">{t.desc}</p>
                 <Link href={t.href} className="text-sm text-blue-700 hover:text-blue-800 font-medium underline underline-offset-4">
-                  Open →
+                  Go →
                 </Link>
               </motion.div>
             ))}
@@ -329,9 +346,9 @@ export default function ShopPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-xl font-light text-slate-900 mb-6">Questions</h2>
           <p className="text-sm text-slate-600 font-light leading-relaxed mb-6">
-            Poster checkout uses secure payment and collects a Canadian shipping address. Shirt transfers, stickers, and
-            sign downloads are files you handle locally—nothing is shipped from this site except poster orders. For
-            issues with a poster order, use the contact email on your receipt or visit the About page.
+            You can buy printed posters through checkout (secure payment, Canadian shipping address). Shirt transfers,
+            stickers, and signs are files you print yourself—we do not ship tees, sticker stock, or rally boards from this
+            shop. For poster order issues, use the contact email on your receipt or visit About.
           </p>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             <Link href="/about" className="text-blue-700 hover:text-blue-800 underline underline-offset-4 font-light">
