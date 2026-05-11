@@ -27,7 +27,7 @@ export default function SectionColdOpen() {
           <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-600 leading-relaxed">
             Land and water.
             <br />
-            Schools and services.
+            Healthcare, schools, and services.
             <br />
             Accountability.
           </p>
