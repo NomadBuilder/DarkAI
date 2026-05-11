@@ -1,8 +1,15 @@
 """
-Poster checkout: Stripe Checkout + Printful draft orders (never exposed to customers).
+Printful checkout: Stripe Checkout + Printful draft orders (never exposed to customers).
+
+Posters + white DTG tees share upload + webhook; Printful item file type differs.
 
 Env: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, PRINTFUL_API_KEY, SITE_URL,
   PRINTFUL_POSTER_VARIANTS_JSON (or PRINTFUL_VARIANT_POSTER_18x24 / _24x36),
+  PRINTFUL_SHIRT_VARIANTS_JSON — JSON map sizes S,M,L,XL,2XL → Printful variant_id
+    (run scripts/lookup_printful_shirt_variants.py with PRINTFUL_API_KEY set),
+  PRINTFUL_SHIRT_FILE_TYPE — front placement for DTG (default: front; try front_large if Printful rejects),
+  SHIRT_PRICE_CENTS_CAD — default unit price for all sizes if SHIRT_PRICES_CENTS_JSON unset,
+  SHIRT_PRICES_CENTS_JSON — optional per-size cents, e.g. {"S":3500,"M":3500,"L":3500,"XL":3600,"2XL":3800},
   optional PRINTFUL_STORE_ID, RESEND_API_KEY, POSTER_ALERT_EMAIL (or CONTACT_EMAIL),
   POSTER_ADMIN_TOKEN (for GET /api/admin/poster-orders).
 """
@@ -24,6 +31,10 @@ logger = logging.getLogger(__name__)
 
 POSTER_SIZES = frozenset({"18x24", "24x36"})
 PRICES_CENTS_CAD = {"18x24": 4500, "24x36": 6500}
+
+PRODUCT_POSTER = "poster"
+PRODUCT_SHIRT = "shirt"
+SHIRT_SIZES = frozenset({"S", "M", "L", "XL", "2XL"})
 
 ARTWORK_SUBDIR = "uploads/print-artwork"
 
@@ -259,6 +270,46 @@ def get_poster_variant_ids() -> dict[str, int]:
     return out
 
 
+def normalize_shirt_size(raw: str) -> str:
+    k = (raw or "").strip().upper()
+    if k == "XXL":
+        return "2XL"
+    return k
+
+
+def get_shirt_variant_ids() -> dict[str, int]:
+    raw = os.getenv("PRINTFUL_SHIRT_VARIANTS_JSON", "").strip()
+    if not raw:
+        return {}
+    try:
+        data = json.loads(raw)
+        out: dict[str, int] = {}
+        for k, v in data.items():
+            sk = normalize_shirt_size(str(k))
+            if sk in SHIRT_SIZES:
+                out[sk] = int(v)
+        return out
+    except Exception:
+        return {}
+
+
+def get_shirt_prices_cents() -> dict[str, int]:
+    single = int(os.getenv("SHIRT_PRICE_CENTS_CAD", "3800"))
+    base = {s: single for s in SHIRT_SIZES}
+    raw = os.getenv("SHIRT_PRICES_CENTS_JSON", "").strip()
+    if not raw:
+        return base
+    try:
+        data = json.loads(raw)
+        for k, v in data.items():
+            sk = normalize_shirt_size(str(k))
+            if sk in SHIRT_SIZES:
+                base[sk] = int(v)
+    except Exception:
+        pass
+    return base
+
+
 def printful_headers() -> dict[str, str]:
     """Printful private tokens use Basic auth (key as username, empty password)."""
     key = os.getenv("PRINTFUL_API_KEY", "").strip()
@@ -282,8 +333,12 @@ def create_printful_draft_order_v1(
     variant_id: int,
     artwork_url: str,
     recipient: dict,
+    file_type: str = "default",
 ):
-    """POST /orders with confirm=false → draft (manual confirmation in Printful dashboard)."""
+    """POST /orders with confirm=false → draft (manual confirmation in Printful dashboard).
+
+    Posters use file_type \"default\"; DTG shirts typically \"front\" or \"front_large\".
+    """
     key = os.getenv("PRINTFUL_API_KEY", "").strip()
     if not key:
         return False, "PRINTFUL_API_KEY not configured"
@@ -298,7 +353,7 @@ def create_printful_draft_order_v1(
             {
                 "variant_id": variant_id,
                 "quantity": 1,
-                "files": [{"type": "default", "url": artwork_url}],
+                "files": [{"type": file_type, "url": artwork_url}],
             }
         ],
     }
@@ -400,18 +455,12 @@ def register_poster_routes(app):
         stripe.api_key = secret
 
         payload = request.get_json(silent=True) or {}
+        product = (payload.get("product") or PRODUCT_POSTER).strip().lower()
         image_url = (payload.get("imageUrl") or "").strip()
-        size = (payload.get("size") or "").strip()
 
         ok, err = validate_public_image_url(image_url)
         if not ok:
             return jsonify({"error": err}), 400
-        if size not in POSTER_SIZES:
-            return jsonify({"error": "size must be 18x24 or 24x36"}), 400
-
-        amount = PRICES_CENTS_CAD.get(size)
-        if amount is None:
-            return jsonify({"error": "Invalid pricing"}), 400
 
         site = os.getenv("SITE_URL", "https://protectont.ca/").strip().rstrip("/") + "/"
         success_url = os.getenv(
@@ -423,6 +472,40 @@ def register_poster_routes(app):
             f"{site.rstrip('/')}/checkout-cancelled",
         )
 
+        meta: dict[str, str] = {
+            "product": product,
+            "imageUrl": image_url if len(image_url) <= 490 else "",
+            "imagePath": (urlparse(image_url).path or "")[:490],
+        }
+
+        if product == PRODUCT_POSTER:
+            size = (payload.get("size") or "").strip()
+            if size not in POSTER_SIZES:
+                return jsonify({"error": "size must be 18x24 or 24x36"}), 400
+            amount = PRICES_CENTS_CAD.get(size)
+            if amount is None:
+                return jsonify({"error": "Invalid pricing"}), 400
+            meta["size"] = size
+            line_name = f"Matte poster print ({size} in, vertical)"
+            line_desc = "Protect Ontario — custom poster fulfillment"
+        elif product == PRODUCT_SHIRT:
+            shirt_size = normalize_shirt_size(payload.get("shirtSize") or "")
+            if shirt_size not in SHIRT_SIZES:
+                return jsonify({"error": "shirtSize must be S, M, L, XL, or 2XL"}), 400
+            prices = get_shirt_prices_cents()
+            amount = prices.get(shirt_size)
+            if amount is None:
+                return jsonify({"error": "Invalid shirt pricing"}), 400
+            if not get_shirt_variant_ids().get(shirt_size):
+                return jsonify(
+                    {"error": "Shirt fulfilment not configured (set PRINTFUL_SHIRT_VARIANTS_JSON)"}
+                ), 503
+            meta["shirtSize"] = shirt_size
+            line_name = f"White unisex tee — front print (size {shirt_size})"
+            line_desc = "Protect Ontario — Bella Canvas 3001 (white), DTG front"
+        else:
+            return jsonify({"error": "product must be poster or shirt"}), 400
+
         try:
             session = stripe.checkout.Session.create(
                 mode="payment",
@@ -432,8 +515,8 @@ def register_poster_routes(app):
                         "price_data": {
                             "currency": "cad",
                             "product_data": {
-                                "name": f"Matte poster print ({size} in, vertical)",
-                                "description": "Protect Ontario — custom poster fulfillment",
+                                "name": line_name,
+                                "description": line_desc,
                             },
                             "unit_amount": amount,
                         },
@@ -442,11 +525,7 @@ def register_poster_routes(app):
                 ],
                 shipping_address_collection={"allowed_countries": ["CA"]},
                 phone_number_collection={"enabled": True},
-                metadata={
-                    "imageUrl": image_url if len(image_url) <= 490 else "",
-                    "imagePath": (urlparse(image_url).path or "")[:490],
-                    "size": size,
-                },
+                metadata=meta,
                 success_url=success_url,
                 cancel_url=cancel_url,
             )
@@ -510,7 +589,10 @@ def register_poster_routes(app):
             if path.startswith("/"):
                 base = os.getenv("SITE_URL", "https://protectont.ca").strip().rstrip("/")
                 image_url = f"{base}{path}"
-        size = (meta.get("size") or "").strip()
+
+        product = (meta.get("product") or PRODUCT_POSTER).strip().lower()
+        if product not in (PRODUCT_POSTER, PRODUCT_SHIRT):
+            product = PRODUCT_POSTER
 
         ok, err = validate_public_image_url(image_url)
         if not ok:
@@ -527,13 +609,25 @@ def register_poster_routes(app):
             mark_session_processed(session_id)
             return "", 200
 
-        if size not in POSTER_SIZES:
-            write_pending_order(
-                session_id,
-                {"reason": "bad_size", "metadata": meta},
-            )
-            mark_session_processed(session_id)
-            return "", 200
+        poster_size = (meta.get("size") or "").strip()
+        shirt_sz = normalize_shirt_size(meta.get("shirtSize") or "")
+
+        if product == PRODUCT_SHIRT:
+            if shirt_sz not in SHIRT_SIZES:
+                write_pending_order(
+                    session_id,
+                    {"reason": "bad_shirt_size", "metadata": meta, "session_id": session_id},
+                )
+                mark_session_processed(session_id)
+                return "", 200
+        else:
+            if poster_size not in POSTER_SIZES:
+                write_pending_order(
+                    session_id,
+                    {"reason": "bad_size", "metadata": meta, "session_id": session_id},
+                )
+                mark_session_processed(session_id)
+                return "", 200
 
         shipping = sd.get("shipping_details") or sd.get("shipping")
 
@@ -555,23 +649,35 @@ def register_poster_routes(app):
                 {
                     "reason": "shipping",
                     "session_id": session_id,
+                    "product": product,
                     "imageUrl": image_url,
-                    "size": size,
+                    "poster_size": poster_size,
+                    "shirtSize": shirt_sz,
                     "stripe_email": email,
                 },
             )
             mark_session_processed(session_id)
             return "", 200
 
-        variants = get_poster_variant_ids()
-        variant_id = variants.get(size)
+        if product == PRODUCT_SHIRT:
+            variants = get_shirt_variant_ids()
+            variant_id = variants.get(shirt_sz)
+            file_type = os.getenv("PRINTFUL_SHIRT_FILE_TYPE", "front").strip() or "front"
+            log_label = shirt_sz
+        else:
+            variants = get_poster_variant_ids()
+            variant_id = variants.get(poster_size)
+            file_type = "default"
+            log_label = poster_size
+
         if not variant_id:
-            logger.error("No Printful variant ID for size %s", size)
+            logger.error("No Printful variant ID for %s size %s", product, log_label)
             write_pending_order(
                 session_id,
                 {
                     "reason": "missing_variant_id",
-                    "size": size,
+                    "product": product,
+                    "size": log_label,
                     "recipient": recipient,
                     "imageUrl": image_url,
                 },
@@ -584,6 +690,7 @@ def register_poster_routes(app):
             variant_id=int(variant_id),
             artwork_url=image_url,
             recipient=recipient,
+            file_type=file_type,
         )
         if not ok_pf:
             write_pending_order(
@@ -593,7 +700,8 @@ def register_poster_routes(app):
                     "printful": result,
                     "recipient": recipient,
                     "imageUrl": image_url,
-                    "size": size,
+                    "product": product,
+                    "size": log_label,
                     "variant_id": variant_id,
                 },
             )
@@ -609,7 +717,8 @@ def register_poster_routes(app):
                     "event": "printful_draft_created",
                     "stripe_session_id": session_id,
                     "printful_order_id": order_id,
-                    "size": size,
+                    "product": product,
+                    "size": log_label,
                     "imageUrl": image_url,
                 }
             )
@@ -648,14 +757,14 @@ def register_poster_routes(app):
             rows_html = "".join(rows) if rows else '<tr><td colspan="3">No pending files</td></tr>'
             body = f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Poster orders — admin</title>
+<title>Print orders — admin</title>
 <style>
 body{{font-family:system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#111}}
 table{{border-collapse:collapse;width:100%;margin:1rem 0}} th,td{{border:1px solid #ccc;padding:8px;text-align:left;font-size:14px}}
 pre{{background:#f4f4f5;padding:1rem;overflow:auto;font-size:12px;border-radius:8px}}
 code{{background:#eee;padding:2px 6px;border-radius:4px}}
 </style></head><body>
-<h1>Poster fulfillment</h1>
+<h1>Printful fulfilment</h1>
 <p>Stripe webhook idempotency set size: <strong>{processed}</strong></p>
 <h2>Pending manual / failed fulfillment</h2>
 <table><thead><tr><th>Session</th><th>Updated (server)</th><th>Reason</th></tr></thead><tbody>{rows_html}</tbody></table>

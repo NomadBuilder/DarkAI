@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import TopNavigation from '../../components/TopNavigation'
+import { getApiBaseUrl } from '../../utils/apiOrigin'
 
 type TransferPreset = {
   id: string
@@ -95,6 +96,96 @@ function drawWrappedText(
   lines.forEach((line, idx) => ctx.fillText(line, x, y + idx * lineHeight))
 }
 
+const SHIRT_ORDER_SIZES = ['S', 'M', 'L', 'XL', '2XL'] as const
+
+type ShirtPaintParams = {
+  dimensions: { width: number; height: number }
+  dpi: number
+  bgColor: string
+  accentColor: string
+  textColor: string
+  headline: string
+  subhead: string
+  image: HTMLImageElement | null
+  imageScale: number
+  imageOpacity: number
+  mirrorForTransfer: boolean
+  showCutGuide: boolean
+}
+
+/** Shared by live preview and Printful export (export uses mirrorForTransfer: false). */
+function paintShirtDesign(canvas: HTMLCanvasElement, p: ShirtPaintParams) {
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+  const { width, height } = p.dimensions
+  canvas.width = width
+  canvas.height = height
+  const pad = Math.round(width * 0.08)
+  ctx.clearRect(0, 0, width, height)
+  ctx.fillStyle = p.bgColor
+  ctx.fillRect(0, 0, width, height)
+
+  if (p.mirrorForTransfer) {
+    ctx.save()
+    ctx.translate(width, 0)
+    ctx.scale(-1, 1)
+  }
+
+  if (p.image && p.imageScale > 0) {
+    const img = p.image
+    const drawW = Math.round(width * (p.imageScale / 100))
+    const drawH = Math.round((drawW * img.naturalHeight) / img.naturalWidth)
+    const x = Math.round((width - drawW) / 2)
+    const y = Math.round((height - drawH) / 2)
+    ctx.save()
+    ctx.globalAlpha = Math.max(0, Math.min(1, p.imageOpacity / 100))
+    ctx.drawImage(img, x, y, drawW, drawH)
+    ctx.restore()
+  }
+
+  ctx.fillStyle = p.accentColor
+  ctx.fillRect(0, Math.round(height * 0.06), width, Math.round(height * 0.07))
+
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+  const headlineSize = Math.round(height * 0.1)
+  ctx.font = `900 ${headlineSize}px "Arial Black", Inter, sans-serif`
+  ctx.fillStyle = p.textColor
+  drawWrappedText(
+    ctx,
+    p.headline,
+    width / 2,
+    Math.round(height * 0.2),
+    width - pad * 2,
+    Math.round(headlineSize * 0.95)
+  )
+
+  const subheadSize = Math.round(height * 0.05)
+  ctx.font = `700 ${subheadSize}px Inter, Arial, sans-serif`
+  ctx.fillStyle = p.textColor
+  drawWrappedText(
+    ctx,
+    p.subhead,
+    width / 2,
+    Math.round(height * 0.78),
+    width - pad * 2,
+    Math.round(subheadSize * 1.1)
+  )
+
+  if (p.mirrorForTransfer) {
+    ctx.restore()
+  }
+
+  if (p.showCutGuide) {
+    const bleed = Math.round(0.25 * p.dpi)
+    ctx.strokeStyle = '#94a3b8'
+    ctx.setLineDash([14, 10])
+    ctx.lineWidth = Math.max(2, Math.round(p.dpi / 100))
+    ctx.strokeRect(bleed, bleed, width - bleed * 2, height - bleed * 2)
+    ctx.setLineDash([])
+  }
+}
+
 export default function ShirtsPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const imageRef = useRef<HTMLImageElement | null>(null)
@@ -112,6 +203,9 @@ export default function ShirtsPage() {
   const [imageOpacity, setImageOpacity] = useState(100)
   const [imageName, setImageName] = useState('none')
   const [renderKey, setRenderKey] = useState(0)
+  const [shirtOrderSize, setShirtOrderSize] = useState<(typeof SHIRT_ORDER_SIZES)[number]>('M')
+  const [shirtCheckoutBusy, setShirtCheckoutBusy] = useState(false)
+  const [shirtCheckoutError, setShirtCheckoutError] = useState('')
 
   const preset = useMemo(() => PRESETS.find((p) => p.id === presetId) ?? PRESETS[0], [presetId])
   const dimensions = useMemo(
@@ -125,63 +219,20 @@ export default function ShirtsPage() {
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
-    canvas.width = dimensions.width
-    canvas.height = dimensions.height
-
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    const { width, height } = dimensions
-    const pad = Math.round(width * 0.08)
-    ctx.clearRect(0, 0, width, height)
-    ctx.fillStyle = bgColor
-    ctx.fillRect(0, 0, width, height)
-
-    if (mirrorForTransfer) {
-      ctx.save()
-      ctx.translate(width, 0)
-      ctx.scale(-1, 1)
-    }
-
-    if (imageRef.current && imageScale > 0) {
-      const img = imageRef.current
-      const drawW = Math.round(width * (imageScale / 100))
-      const drawH = Math.round((drawW * img.naturalHeight) / img.naturalWidth)
-      const x = Math.round((width - drawW) / 2)
-      const y = Math.round((height - drawH) / 2)
-      ctx.save()
-      ctx.globalAlpha = Math.max(0, Math.min(1, imageOpacity / 100))
-      ctx.drawImage(img, x, y, drawW, drawH)
-      ctx.restore()
-    }
-
-    ctx.fillStyle = accentColor
-    ctx.fillRect(0, Math.round(height * 0.06), width, Math.round(height * 0.07))
-
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'top'
-    const headlineSize = Math.round(height * 0.1)
-    ctx.font = `900 ${headlineSize}px "Arial Black", Inter, sans-serif`
-    ctx.fillStyle = textColor
-    drawWrappedText(ctx, headline, width / 2, Math.round(height * 0.2), width - pad * 2, Math.round(headlineSize * 0.95))
-
-    const subheadSize = Math.round(height * 0.05)
-    ctx.font = `700 ${subheadSize}px Inter, Arial, sans-serif`
-    ctx.fillStyle = textColor
-    drawWrappedText(ctx, subhead, width / 2, Math.round(height * 0.78), width - pad * 2, Math.round(subheadSize * 1.1))
-
-    if (mirrorForTransfer) {
-      ctx.restore()
-    }
-
-    if (showCutGuide) {
-      const bleed = Math.round(0.25 * dpi)
-      ctx.strokeStyle = '#94a3b8'
-      ctx.setLineDash([14, 10])
-      ctx.lineWidth = Math.max(2, Math.round(dpi / 100))
-      ctx.strokeRect(bleed, bleed, width - bleed * 2, height - bleed * 2)
-      ctx.setLineDash([])
-    }
+    paintShirtDesign(canvas, {
+      dimensions,
+      dpi,
+      bgColor,
+      accentColor,
+      textColor,
+      headline,
+      subhead,
+      image: imageRef.current,
+      imageScale,
+      imageOpacity,
+      mirrorForTransfer,
+      showCutGuide,
+    })
   }, [
     dimensions,
     headline,
@@ -221,6 +272,53 @@ export default function ShirtsPage() {
     a.href = canvas.toDataURL('image/png')
     a.download = `protectont-shirt-transfer-${preset.widthIn}x${preset.heightIn}-${dpi}dpi.png`
     a.click()
+  }
+
+  const startShirtCheckout = async () => {
+    const exportCanvas = document.createElement('canvas')
+    paintShirtDesign(exportCanvas, {
+      dimensions,
+      dpi,
+      bgColor,
+      accentColor,
+      textColor,
+      headline,
+      subhead,
+      image: imageRef.current,
+      imageScale,
+      imageOpacity,
+      mirrorForTransfer: false,
+      showCutGuide: false,
+    })
+    const apiBase = getApiBaseUrl()
+    setShirtCheckoutBusy(true)
+    setShirtCheckoutError('')
+    try {
+      const blob = await new Promise<Blob | null>((resolve) => exportCanvas.toBlob(resolve, 'image/png'))
+      if (!blob) throw new Error('Could not export image')
+      const fd = new FormData()
+      fd.append('file', blob, 'shirt-front.png')
+      const up = await fetch(`${apiBase}/api/upload-print-artwork`, { method: 'POST', body: fd })
+      const upJson = await up.json()
+      if (!up.ok) throw new Error(upJson.error || 'Upload failed')
+      const imageUrl = upJson.url as string
+      const res = await fetch(`${apiBase}/api/create-checkout-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: 'shirt',
+          imageUrl,
+          shirtSize: shirtOrderSize,
+        }),
+      })
+      const j = await res.json()
+      if (!res.ok) throw new Error(j.error || 'Could not start checkout')
+      if (j.url) window.location.href = j.url as string
+    } catch (e) {
+      setShirtCheckoutError(e instanceof Error ? e.message : 'Checkout failed')
+    } finally {
+      setShirtCheckoutBusy(false)
+    }
   }
 
   const printTransfer = () => {
@@ -289,8 +387,9 @@ export default function ShirtsPage() {
         <section className="mb-8">
           <h1 className="text-3xl md:text-4xl font-light text-slate-900">Shirt Transfers</h1>
           <p className="mt-2 text-slate-600 font-light max-w-3xl">
-            Create iron-on graphics for light fabrics—print the transfer sheet at home or at a copy shop, then press with
-            a household iron or heat press. For posters shipped to you, use the shop flow on Signs.
+            Build graphics for iron-on transfers (mirror as needed) or order a{' '}
+            <strong className="font-medium text-slate-800">printed white tee</strong> fulfilled in Canada—front DTG print
+            from this design. For large posters, use the Signs page.
           </p>
         </section>
 
@@ -396,6 +495,45 @@ export default function ShirtsPage() {
               <canvas ref={canvasRef} className="block mx-auto max-w-full h-auto shadow-sm bg-white" style={{ maxHeight: '70vh' }} />
             </div>
           </section>
+        </section>
+
+        <section
+          id="shirt-print"
+          className="mt-10 bg-white border border-slate-200 rounded-2xl p-6 md:p-8 scroll-mt-28"
+        >
+          <p className="text-xs uppercase tracking-[0.25em] text-[#2E4A6B] font-medium mb-2">Shipped to you</p>
+          <h2 className="text-2xl font-light text-slate-900 mb-2">Order a printed white tee</h2>
+          <p className="text-sm text-slate-600 font-light leading-relaxed max-w-3xl mb-6">
+            Bella + Canvas 3001 unisex shirt in <strong className="font-medium text-slate-800">white</strong>, direct‑to‑garment print on the chest from the artwork above. Checkout sends the{' '}
+            <strong className="font-medium text-slate-800">normal</strong> orientation (no mirror)—even if your preview is mirrored for iron‑on. Shipping in Canada only; price at checkout (about $38 CAD unless your host sets otherwise).
+          </p>
+          <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
+            <label className="block text-sm text-slate-600">
+              Size
+              <select
+                value={shirtOrderSize}
+                onChange={(e) => setShirtOrderSize(e.target.value as (typeof SHIRT_ORDER_SIZES)[number])}
+                className="mt-1 block w-full sm:w-48 rounded-lg border border-slate-300 px-3 py-2 bg-white"
+              >
+                {SHIRT_ORDER_SIZES.map((sz) => (
+                  <option key={sz} value={sz}>
+                    {sz}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <button
+              type="button"
+              onClick={() => void startShirtCheckout()}
+              disabled={shirtCheckoutBusy}
+              className="inline-flex justify-center rounded-xl bg-gradient-to-r from-[#9f1239] to-[#7f1230] px-6 py-3 text-sm font-medium text-white shadow-md hover:opacity-95 disabled:opacity-60"
+            >
+              {shirtCheckoutBusy ? 'Preparing…' : 'Proceed to checkout'}
+            </button>
+          </div>
+          {shirtCheckoutError ? (
+            <p className="mt-4 text-sm text-red-700 bg-red-50 border border-red-100 rounded-lg px-3 py-2">{shirtCheckoutError}</p>
+          ) : null}
         </section>
 
         <section className="mt-10 bg-white border border-slate-200 rounded-2xl p-5">

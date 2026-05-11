@@ -14,7 +14,7 @@ const fade = {
 const pillars = [
   {
     title: 'Community-first',
-    body: 'Every purchase is a small act of solidarity. Revenue from poster orders and the tools here funds outreach, printing where we can help, and real-world organizing—posters for rallies, shirt transfers and stickers for visibility, materials meant for demonstrations and tabling.',
+    body: 'Every purchase is a small act of solidarity. Revenue from poster and tee orders and the tools here funds outreach, printing where we can help, and real-world organizing—posters for rallies, shirt transfers and stickers for visibility, materials meant for demonstrations and tabling.',
   },
   {
     title: 'Transparent by design',
@@ -41,9 +41,22 @@ const shippedProducts = [
     accent: 'from-[#1e3a5f] to-[#2E4A6B]',
     border: 'border-blue-200/80',
   },
+  {
+    id: 'shirt-print',
+    eyebrow: 'Wear it',
+    title: 'Printed white tee',
+    priceFrom: 'From ~$38 CAD',
+    sizes: 'S–2XL · white Bella + Canvas 3001 · DTG front · Canada shipping',
+    description:
+      'Build your artwork on the shirt builder, then order a white unisex tee with direct‑to‑garment print on the chest—the same design you can also export as an iron‑on transfer.',
+    href: '/shirts#shirt-print',
+    cta: 'Design & order a tee',
+    accent: 'from-[#9f1239] to-[#7f1230]',
+    border: 'border-rose-200/80',
+  },
 ]
 
-/** Download / DIY — no shipped merch from us */
+/** Download / DIY — plus iron-ons alongside shipped tees */
 const diyProducts = [
   {
     id: 'shirts',
@@ -52,7 +65,7 @@ const diyProducts = [
     priceFrom: 'Print at home',
     sizes: 'Letter sheets · mirrored for iron-on',
     description:
-      'Build iron-on artwork for light fabrics, download templates, or use the library. Print the sheet locally and press with a household iron or heat press—the wearable option here is transfers you produce yourself, not a shipped tee.',
+      'Build iron-on artwork for light fabrics, download templates, or use the library—print the sheet and press at home. Prefer a finished tee? Use shipped white shirts above with DTG on the chest.',
     href: '/shirts',
     cta: 'Build shirt transfers',
     accent: 'from-[#9f1239] to-[#7f1230]',
@@ -125,10 +138,10 @@ export default function ShopPage() {
             <span className="block sm:inline sm:ml-3 text-white/95">the street and the room</span>
           </h1>
           <p className="text-lg sm:text-xl text-slate-200/95 font-light max-w-2xl leading-relaxed mb-10">
-            Posters you can order for delivery, plus shirt transfers, stickers, and printable signs—built for
-            accountability work and demonstrations in Ontario. Buying a poster or using the builders helps fund
-            independent research, protest listings, and civic tools for organizers, along with printing and outreach
-            for volunteers and local groups.
+            Posters and white tees you can order for delivery, plus shirt transfers, stickers, and printable signs—built for
+            accountability work and demonstrations in Ontario. Purchases and builders help fund independent research,
+            protest listings, and civic tools for organizers, along with printing and outreach for volunteers and local
+            groups.
           </p>
           <div className="flex flex-wrap gap-3">
             <Link
@@ -181,13 +194,13 @@ export default function ShopPage() {
             },
             {
               stat: 'Canada',
-              label: 'Posters ship domestically',
+              label: 'Posters & tees ship domestically',
               sub: 'Checkout collects a Canadian delivery address',
             },
             {
               stat: 'Local',
-              label: 'Press shirts & print signs yourself',
-              sub: 'Transfers, stickers, and signs on your paper and your timeline',
+              label: 'Transfers & stickers at home',
+              sub: 'Iron-on sheets and sticker runs alongside shipped posters and tees',
             },
             {
               stat: 'Collective',
@@ -211,7 +224,7 @@ export default function ShopPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-14">
           <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-4">Why sell materials here</h2>
           <p className="text-slate-600 font-light leading-relaxed">
-            Protect Ontario is volunteer-led. Selling posters and offering transfers is part of the mission—not an add-on.
+            Protect Ontario is volunteer-led. Selling posters and tees and offering transfers is part of the mission—not an add-on.
             Income helps pay for hosting, data updates, design tooling, and printing support when we can offer it. Margins
             stay modest so more of each dollar goes toward what you can see on the ground: rallies, printable resources,
             and civic education that is not driven by advertisers.
@@ -238,13 +251,13 @@ export default function ShopPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="max-w-2xl mb-12">
             <p className="text-xs uppercase tracking-[0.25em] text-[#2E4A6B] font-medium mb-2">Shipped to you</p>
-            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-3">Professional posters</h2>
+            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-3">Posters & printed tees</h2>
             <p className="text-slate-600 font-light leading-relaxed">
-              Order printed posters for delivery in Canada. Shirt graphics use the transfer builder—you bring the blank
-              shirt and press at home; we do not ship apparel from this shop yet.
+              Matte posters from the sign builder and white tees from the shirt builder—both fulfilled via Printful with a
+              Canadian shipping address at checkout.
             </p>
           </div>
-          <div className="grid gap-8 lg:grid-cols-1 max-w-2xl">
+          <div className="grid gap-8 lg:grid-cols-2">
             {shippedProducts.map((card, i) => (
               <motion.div
                 key={card.id}
@@ -346,9 +359,9 @@ export default function ShopPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-xl font-light text-slate-900 mb-6">Questions</h2>
           <p className="text-sm text-slate-600 font-light leading-relaxed mb-6">
-            You can buy printed posters through checkout (secure payment, Canadian shipping address). Shirt transfers,
-            stickers, and signs are files you print yourself—we do not ship tees, sticker stock, or rally boards from this
-            shop. For poster order issues, use the contact email on your receipt or visit About.
+            Printed posters and white tees ship from checkout (secure payment, Canadian address). Stickers and rally-board
+            signs stay as files you print locally; iron-on transfers use the shirt builder export—nothing extra ships except
+            poster and tee orders. For fulfilment issues, use the contact email on your receipt or About.
           </p>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             <Link href="/about" className="text-blue-700 hover:text-blue-800 underline underline-offset-4 font-light">
