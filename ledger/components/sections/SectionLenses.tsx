@@ -24,8 +24,8 @@ const lenses = [
   },
   {
     id: 'healthcare' as const,
-    title: 'Healthcare Delivery',
-    description: 'Delivery shifted, even when access stayed public on paper.',
+    title: 'Service delivery',
+    description: 'Work that used to happen inside public institutions increasingly happens through outside contracts.',
     color: 'text-purple-600',
     hoverColor: 'hover:text-purple-700',
     categoryKey: 'healthcare_delivery',
@@ -47,10 +47,10 @@ export default function SectionLenses() {
         >
           <div className="text-center">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-4 md:mb-6">
-              Three Forms of Privatization
+              Three ways public money leaks outward
             </h2>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-3xl mx-auto">
-              How public dollars flow to private corporations
+              Patterns we see across provincial spending—not one sector in isolation
             </p>
           </div>
         </motion.div>
@@ -103,7 +103,7 @@ export default function SectionLenses() {
                     className="text-xs sm:text-sm text-gray-600 hover:text-gray-900 font-light underline transition-colors"
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   >
-                    Explore {lens.id === 'staffing' ? 'staffing' : 'healthcare'} impact →
+                    Explore {lens.id === 'staffing' ? 'staffing' : 'service delivery'} data →
                   </Link>
                 </div>
               ) : (

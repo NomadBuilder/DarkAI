@@ -22,7 +22,7 @@ const policyEvents = [
     year: 2020,
     month: 'March',
     event: 'COVID-19 pandemic begins',
-    description: 'Hospitals face unprecedented pressure',
+    description: 'Critical public services under extraordinary demand',
     impact: 'Private agency spending explodes',
   },
   {
@@ -30,7 +30,7 @@ const policyEvents = [
     month: 'November',
     event: 'Bill 124 ruled unconstitutional',
     description: 'Courts find wage suppression law violates Charter rights',
-    impact: 'Hospitals still not fully funded',
+    impact: 'Public budgets stay tight across sectors',
   },
   {
     year: 2022,
@@ -49,9 +49,9 @@ const policyEvents = [
   {
     year: 2024,
     month: 'Present',
-    event: 'Healthcare crisis continues',
-    description: 'Private agency spending grows; majority of hospitals in deficit',
-    impact: 'System remains in crisis',
+    event: 'Strain on public services continues',
+    description: 'Private agency spending grows; many hospitals and related institutions in deficit',
+    impact: 'Capacity stretched where Ontarians rely on the public system',
   },
   {
     year: 2025,
@@ -77,7 +77,8 @@ export default function SectionPolicyTimeline() {
               The Timeline
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              Policy decisions affecting healthcare, the environment, and accountability — and their consequences.
+              Policy choices since 2018 that shaped public services, Ontario&apos;s environment, and who gets held
+              accountable—and what happened next.
             </p>
             <p className="text-sm sm:text-base text-gray-500 font-light mt-4 italic">
               Data from <a 
@@ -169,14 +170,15 @@ export default function SectionPolicyTimeline() {
             This wasn&apos;t an accident.
           </p>
           <p className="text-lg sm:text-xl md:text-2xl font-light text-gray-300 mb-8">
-            Policy decisions created the conditions for privatization (Americanization) — in healthcare, land, and water — to flourish.
+            Those choices made room for privatization—of services people rely on, of land, and of water—while oversight
+            weakened.
           </p>
           <p className="text-sm font-light text-gray-400 mb-4">Explore the issues</p>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            <Link href="/healthcare" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Healthcare</Link>
-            <Link href="/water" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Water</Link>
             <Link href="/greenbelt" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Greenbelt</Link>
+            <Link href="/water" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Water</Link>
             <Link href="/wildlife" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Wildlife</Link>
+            <Link href="/healthcare" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Healthcare</Link>
           </div>
           </div>
         </motion.div>

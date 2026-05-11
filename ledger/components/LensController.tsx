@@ -12,6 +12,11 @@ export default function LensController({ onClear }: LensControllerProps) {
 
   if (!activeLens) return null
 
+  const lensLabel =
+    activeLens === 'healthcare'
+      ? 'Service delivery'
+      : activeLens.replace('_', ' ')
+
   const handleClear = () => {
     setActiveLens(null)
     if (onClear) onClear()
@@ -42,7 +47,7 @@ export default function LensController({ onClear }: LensControllerProps) {
           >
             <div className="flex items-center gap-2 md:gap-3">
               <span className="text-sm md:text-lg font-light text-gray-900 capitalize">
-                {activeLens.replace('_', ' ')} Lens
+                {lensLabel} lens
               </span>
               <span className="text-gray-400 group-hover:text-gray-600 text-lg md:text-xl leading-none transition-colors">
                 ×

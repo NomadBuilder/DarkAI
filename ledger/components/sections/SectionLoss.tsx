@@ -5,8 +5,8 @@ import { motion } from 'framer-motion'
 import MPPContactModal from '../MPPContactModal'
 
 const statements = [
-  "Every dollar here is a dollar not strengthening public capacity.",
-  "Once capacity leaves the public system, it doesn't quietly return.",
+  "Every dollar here is a dollar not strengthening the things we share.",
+  "Once public capacity leaves, it doesn't quietly return.",
   "This wasn't announced.",
   "It was invoiced.",
 ]

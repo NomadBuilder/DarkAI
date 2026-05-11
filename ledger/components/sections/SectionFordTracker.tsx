@@ -18,7 +18,7 @@ export default function SectionFordTracker() {
               The Full Picture
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              Privatization (Americanization) is just one part of a broader pattern
+              Underfunding public goods and expanding private control—across sectors, not one headline issue
             </p>
           </div>
         </motion.div>
@@ -41,10 +41,10 @@ export default function SectionFordTracker() {
             </p>
             <div className="space-y-3">
               {[
-                'Education and public health unit cuts',
-                'Social service and legal aid reductions',
-                'Greenbelt land removed (later reversed); environmental oversight weakened',
+                'Greenbelt land removed (later reversed); planning and oversight under pressure',
                 'Species-at-risk protections weakened (Bill 5)',
+                'Education, social services, and legal aid squeezed',
+                'Environmental and public-health unit capacity reduced',
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-red-600 rounded-full"></div>

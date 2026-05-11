@@ -12,10 +12,10 @@ export default function SectionColdOpen() {
           transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-light text-gray-900 leading-tight tracking-tight">
-            Ontario funds public services
+            Protecting Ontario means investing
             <br className="hidden sm:block" />
             <span className="sm:inline"> </span>
-            <span className="font-normal">through public institutions.</span>
+            <span className="font-normal">in what we hold in common.</span>
           </p>
         </motion.div>
 
@@ -25,11 +25,11 @@ export default function SectionColdOpen() {
           transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-gray-600 leading-relaxed">
-            Hospitals.
+            Land and water.
             <br />
-            Infrastructure.
+            Schools and services.
             <br />
-            Care.
+            Accountability.
           </p>
         </motion.div>
 

@@ -329,12 +329,18 @@ export default function SectionLedgerEnhanced() {
                       receipts
                     </Link>
                   </p>
-                  <div>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
                     <Link
-                      href="/healthcare"
+                      href="/take-action"
                       className="inline-block px-6 md:px-8 py-3 md:py-4 bg-red-600 text-white rounded-lg text-base md:text-lg font-light hover:bg-red-700 transition-colors"
                     >
-                      Explore Healthcare & Staffing →
+                      Ways to protect Ontario →
+                    </Link>
+                    <Link
+                      href="/healthcare"
+                      className="text-sm md:text-base text-gray-600 hover:text-gray-900 font-light underline underline-offset-4"
+                    >
+                      Healthcare & staffing (detail) →
                     </Link>
                   </div>
                 </motion.div>

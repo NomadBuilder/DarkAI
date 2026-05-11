@@ -15,10 +15,10 @@ export default function SectionKeyFindings() {
         >
           <div className="text-center">
             <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-8 md:mb-12">
-              Key Findings
+              Protect Ontario — what the data shows
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              The data tells a clear story — spending since 2018
+              Where provincial dollars went after 2018: public capacity, private vendors, and who benefited.
             </p>
           </div>
         </motion.div>
@@ -43,6 +43,16 @@ export default function SectionKeyFindings() {
             },
             {
               number: '2',
+              title: 'New for-profit vendors appeared post-2018',
+              description: (
+                <>
+                  WCG ($403M), Omni Health Care entities ($732M total), Southbridge ($175M) and others
+                  <InlineCitation href="#source-4" label="4" />
+                </>
+              ),
+            },
+            {
+              number: '3',
               title: (
                 <>
                   $9.2 billion to private staffing agencies over 10 years
@@ -56,7 +66,7 @@ export default function SectionKeyFindings() {
               ),
             },
             {
-              number: '3',
+              number: '4',
               title: (
                 <>
                   Private agencies cost 3x more than public staff
@@ -70,7 +80,12 @@ export default function SectionKeyFindings() {
               ),
             },
             {
-              number: '4',
+              number: '5',
+              title: 'Public capacity hollowed out',
+              description: 'Once capacity leaves the public system, it doesn\'t return',
+            },
+            {
+              number: '6',
               title: (
                 <>
                   66 of 134 hospitals had deficits in 2023-24
@@ -84,7 +99,7 @@ export default function SectionKeyFindings() {
               ),
             },
             {
-              number: '5',
+              number: '7',
               title: (
                 <>
                   Ontario ranked 33 out of 38 OECD countries
@@ -98,17 +113,7 @@ export default function SectionKeyFindings() {
               ),
             },
             {
-              number: '6',
-              title: 'New for-profit vendors appeared post-2018',
-              description: (
-                <>
-                  WCG ($403M), Omni Health Care entities ($732M total), Southbridge ($175M) and others
-                  <InlineCitation href="#source-4" label="4" />
-                </>
-              ),
-            },
-            {
-              number: '7',
+              number: '8',
               title: (
                 <>
                   Bill 60 accelerated surgical privatization
@@ -120,11 +125,6 @@ export default function SectionKeyFindings() {
                   <InlineCitation href="#source-3" label="3" />
                 </>
               ),
-            },
-            {
-              number: '8',
-              title: 'Public capacity hollowed out',
-              description: 'Once capacity leaves the public system, it doesn\'t return',
             },
             {
               number: '9',
