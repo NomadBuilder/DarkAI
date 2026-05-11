@@ -44,7 +44,7 @@ const dataDropdownItems: NavItem[] = [
 ]
 
 const resourcesDropdownItems: NavItem[] = [
-  { id: 'shop', label: 'Shop & support', href: '/shop' },
+  { id: 'support', label: 'Support', href: '/support' },
   { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
   { id: 'chants', label: 'Chant Bank', href: '/chants' },
   { id: 'shirts', label: 'Shirts', href: '/shirts' },
