@@ -387,9 +387,9 @@ export default function ShirtsPage() {
         <section className="mb-8">
           <h1 className="text-3xl md:text-4xl font-light text-slate-900">Shirt Transfers</h1>
           <p className="mt-2 text-slate-600 font-light max-w-3xl">
-            Build graphics for iron-on transfers (mirror as needed) or order a{' '}
-            <strong className="font-medium text-slate-800">printed white tee</strong> mailed within Canada with your design
-            on the chest. For large posters, use the Signs page.
+            Build graphics for iron-on transfers (mirror as needed) or, if you want to help through a purchase, order a{' '}
+            <strong className="font-medium text-slate-800">printed white tee</strong> with your design on the chest—optional;
+            exporting and pressing yourself is always welcome. For large posters, use the Signs page.
           </p>
         </section>
 
@@ -506,7 +506,8 @@ export default function ShirtsPage() {
           <p className="text-sm text-slate-600 font-light leading-relaxed max-w-3xl mb-6">
             White unisex cotton tee with your artwork printed on the chest. The file we send to production uses the{' '}
             <strong className="font-medium text-slate-800">normal</strong> orientation (not mirrored)—even if your preview
-            is mirrored for iron-on. We only ship within Canada. The amount due is shown at checkout before you pay.
+            is mirrored for iron-on. The amount due is shown at checkout before you pay. Buying a tee is optional; use the
+            downloads if you prefer to print or press yourself.
           </p>
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
             <label className="block text-sm text-slate-600">

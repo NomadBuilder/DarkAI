@@ -577,8 +577,8 @@ export default function SignsPage() {
         <section id="poster-print" className="mt-8 bg-white border border-slate-200 rounded-2xl p-5 md:p-8 scroll-mt-28">
           <h2 className="text-xl font-light text-slate-900 mb-2">Order printed poster</h2>
           <p className="text-sm text-slate-600 font-light mb-6 max-w-2xl">
-            Matte poster prints, produced on demand and mailed within Canada. Sizes: 18×24 in and 24×36 in (vertical).
-            Delivery address must be in Canada.
+            Matte poster prints, produced on demand and mailed when you order. Sizes: 18×24 in and 24×36 in (vertical). You
+            can also export and print this design yourself—ordering here is optional and helps fund the project.
           </p>
 
           {flowStep === 'design' ? (
