@@ -10,7 +10,7 @@ function CheckoutSuccessInner() {
   const sessionId = searchParams.get('session_id')
   const summary = useMemo(() => {
     if (!sessionId) return 'Your payment was received.'
-    return 'Your payment was received. Stripe will email your receipt; we will prepare your Printful order for fulfilment.'
+    return 'Your payment went through. You should receive a confirmation by email shortly, and we will send your order into production for delivery.'
   }, [sessionId])
 
   return (

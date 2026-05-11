@@ -764,8 +764,8 @@ table{{border-collapse:collapse;width:100%;margin:1rem 0}} th,td{{border:1px sol
 pre{{background:#f4f4f5;padding:1rem;overflow:auto;font-size:12px;border-radius:8px}}
 code{{background:#eee;padding:2px 6px;border-radius:4px}}
 </style></head><body>
-<h1>Printful fulfilment</h1>
-<p>Stripe webhook idempotency set size: <strong>{processed}</strong></p>
+<h1>Mailed print orders</h1>
+<p>Processed checkout sessions (deduplicated): <strong>{processed}</strong></p>
 <h2>Pending manual / failed fulfillment</h2>
 <table><thead><tr><th>Session</th><th>Updated (server)</th><th>Reason</th></tr></thead><tbody>{rows_html}</tbody></table>
 <h2>Recent log (drafts created)</h2>

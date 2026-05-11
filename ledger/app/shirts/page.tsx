@@ -113,7 +113,7 @@ type ShirtPaintParams = {
   showCutGuide: boolean
 }
 
-/** Shared by live preview and Printful export (export uses mirrorForTransfer: false). */
+/** Shared by live preview and shipped-tee export (export uses mirrorForTransfer: false). */
 function paintShirtDesign(canvas: HTMLCanvasElement, p: ShirtPaintParams) {
   const ctx = canvas.getContext('2d')
   if (!ctx) return
@@ -388,8 +388,8 @@ export default function ShirtsPage() {
           <h1 className="text-3xl md:text-4xl font-light text-slate-900">Shirt Transfers</h1>
           <p className="mt-2 text-slate-600 font-light max-w-3xl">
             Build graphics for iron-on transfers (mirror as needed) or order a{' '}
-            <strong className="font-medium text-slate-800">printed white tee</strong> fulfilled in Canada—front DTG print
-            from this design. For large posters, use the Signs page.
+            <strong className="font-medium text-slate-800">printed white tee</strong> mailed within Canada with your design
+            on the chest. For large posters, use the Signs page.
           </p>
         </section>
 
@@ -504,8 +504,9 @@ export default function ShirtsPage() {
           <p className="text-xs uppercase tracking-[0.25em] text-[#2E4A6B] font-medium mb-2">Shipped to you</p>
           <h2 className="text-2xl font-light text-slate-900 mb-2">Order a printed white tee</h2>
           <p className="text-sm text-slate-600 font-light leading-relaxed max-w-3xl mb-6">
-            Bella + Canvas 3001 unisex shirt in <strong className="font-medium text-slate-800">white</strong>, direct‑to‑garment print on the chest from the artwork above. Checkout sends the{' '}
-            <strong className="font-medium text-slate-800">normal</strong> orientation (no mirror)—even if your preview is mirrored for iron‑on. Shipping in Canada only; price at checkout (about $38 CAD unless your host sets otherwise).
+            White unisex cotton tee with your artwork printed on the chest. The file we send to production uses the{' '}
+            <strong className="font-medium text-slate-800">normal</strong> orientation (not mirrored)—even if your preview
+            is mirrored for iron-on. We only ship within Canada. The amount due is shown at checkout before you pay.
           </p>
           <div className="flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4">
             <label className="block text-sm text-slate-600">

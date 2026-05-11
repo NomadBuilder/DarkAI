@@ -18,7 +18,7 @@ const pillars = [
   },
   {
     title: 'Transparent by design',
-    body: 'We are not a faceless storefront. Protect Ontario exists to make accountability data public and usable. When you order here, you know which movement you are supporting—and you get something you can wear or hold up in public.',
+    body: 'Protect Ontario exists to make accountability data public and usable. When you order materials here, you know which movement you are supporting—and you receive something you can wear or hold up in public.',
   },
   {
     title: 'Made for Ontario streets',
@@ -46,9 +46,9 @@ const shippedProducts = [
     eyebrow: 'Wear it',
     title: 'Printed white tee',
     priceFrom: 'From ~$38 CAD',
-    sizes: 'S–2XL · white Bella + Canvas 3001 · DTG front · Canada only',
+    sizes: 'S–2XL · white unisex cotton tee · chest print · Canada only',
     description:
-      'Build your artwork on the shirt builder, then order a white unisex tee with direct‑to‑garment print on the chest—the same design you can also export as an iron‑on transfer.',
+      'Build your artwork on the shirt builder, then order a white unisex tee with the design printed on the chest—the same layout you can export as an iron‑on transfer.',
     href: '/shirts#shirt-print',
     cta: 'Design & order a tee',
     accent: 'from-[#9f1239] to-[#7f1230]',
@@ -65,7 +65,7 @@ const diyProducts = [
     priceFrom: 'Print at home',
     sizes: 'Letter sheets · mirrored for iron-on',
     description:
-      'Build iron-on artwork for light fabrics, download templates, or use the library—print the sheet and press at home. Prefer a finished tee? Use shipped white shirts above with DTG on the chest.',
+      'Build iron-on artwork for light fabrics, download templates, or use the library—print the sheet and press at home. Prefer a finished tee? Order a printed white shirt above.',
     href: '/shirts',
     cta: 'Build shirt transfers',
     accent: 'from-[#9f1239] to-[#7f1230]',
@@ -246,30 +246,27 @@ export default function SupportPage() {
         </div>
       </section>
 
-      {/* Pricing clarity — Canada only; what “raw” Printful list means */}
+      {/* Pricing & delivery — customer-facing only */}
       <section className="py-12 sm:py-14 bg-slate-100 border-y border-slate-200">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <h2 className="text-xl sm:text-2xl font-light text-slate-900 mb-4">Prices & shipping</h2>
           <div className="space-y-4 text-sm text-slate-600 font-light leading-relaxed">
             <p>
-              <strong className="font-medium text-slate-800">What you pay at checkout</strong> is one total in Canadian
-              dollars for that poster or tee (no separate shipping line). We only ship those items to addresses in{' '}
-              <strong className="font-medium text-slate-800">Canada</strong>—checkout is set up for a Canadian delivery
-              address only.
+              <strong className="font-medium text-slate-800">What you pay</strong> is a single total in Canadian dollars
+              for that poster or tee. There is no separate shipping line at the end of checkout.
             </p>
             <p>
-              <strong className="font-medium text-slate-800">Does that include shipping to you?</strong> Yes: the amount
-              you authorize covers getting the finished item to your Canadian address. We do not add a second shipping fee
-              at checkout.
+              We only mail these items within <strong className="font-medium text-slate-800">Canada</strong>. You will be
+              asked for a Canadian delivery address before payment.
             </p>
             <p>
-              <strong className="font-medium text-slate-800">“Raw” Printful list prices</strong> (for example the small
-              “from” figures on Printful’s Canadian catalog pages) are <em>wholesale-style product costs</em> before their
-              outbound postage to your door. On Printful’s side, fulfilment is usually billed as{' '}
-              <strong className="font-medium text-slate-800">print + item + shipping to you</strong>—so that public “from”
-              number is <strong className="font-medium text-slate-800">not</strong> the full landed cost to the project on
-              its own. Stripe also charges us a card-processing fee on what you pay. Exact numbers change by size, product,
-              and carrier—your Printful dashboard is the source of truth.
+              <strong className="font-medium text-slate-800">Does the total include delivery?</strong> Yes. The price you
+              confirm covers standard delivery of the finished poster or shirt to the address you provide—no second delivery
+              charge is added after the fact.
+            </p>
+            <p>
+              Listed amounts are set so the project can cover printing, packaging, and tracked postage. Those internal costs
+              vary by size and destination; your checkout total stays the all-in number you see up front.
             </p>
           </div>
         </div>
@@ -282,8 +279,8 @@ export default function SupportPage() {
             <p className="text-xs uppercase tracking-[0.25em] text-[#2E4A6B] font-medium mb-2">Shipped to you (Canada)</p>
             <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-3">Posters & printed tees</h2>
             <p className="text-slate-600 font-light leading-relaxed">
-              Matte posters from the sign builder and white tees from the shirt builder—both fulfilled via Printful to a
-              Canadian address at checkout.
+              Matte posters from the sign builder and white tees from the shirt builder—both produced on demand and mailed
+              to the Canadian address you enter at checkout.
             </p>
           </div>
           <div className="grid gap-8 lg:grid-cols-2">
@@ -388,9 +385,10 @@ export default function SupportPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center">
           <h2 className="text-xl font-light text-slate-900 mb-6">Questions</h2>
           <p className="text-sm text-slate-600 font-light leading-relaxed mb-6">
-            Printed posters and white tees ship from checkout (secure payment, Canadian address only). Stickers and
-            rally-board signs stay as files you print locally; iron-on transfers use the shirt builder export—nothing extra
-            ships except poster and tee orders. For fulfilment issues, use the contact email on your receipt or About.
+            Posters and white tees are ordered through checkout with payment in Canadian dollars; we only ship to Canadian
+            addresses. Stickers and rally signs stay as files you print yourself; iron-on transfers use the shirt builder
+            export. If something goes wrong with a mailed order, use the contact email on your order confirmation or visit
+            About.
           </p>
           <div className="flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
             <Link href="/about" className="text-blue-700 hover:text-blue-800 underline underline-offset-4 font-light">
