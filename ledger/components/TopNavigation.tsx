@@ -37,7 +37,9 @@ const issuesDropdownItems: NavItem[] = [
   { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
 ]
 
-const dataDropdownItems: NavItem[] = [
+/** About page + former "The Data" links */
+const aboutDropdownItems: NavItem[] = [
+  { id: 'about-overview', label: 'About us', href: '/about' },
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
@@ -54,10 +56,9 @@ const resourcesDropdownItems: NavItem[] = [
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
-  { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
+  { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
   { id: 'events', label: 'Events', href: '/protests' },
   { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
-  { id: 'about', label: 'About', href: '/about' },
 ]
 
 const DROPDOWN_LEAVE_DELAY_MS = 200
@@ -213,7 +214,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                               exit={{ opacity: 0, y: -10 }}
                               className="absolute top-full left-0 pt-1 z-50"
                             >
-                              <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[180px]">
+                              <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
                                 {item.dropdownItems.map((dropdownItem) => (
                                   <button
                                     key={dropdownItem.id}
