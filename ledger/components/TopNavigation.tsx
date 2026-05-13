@@ -37,16 +37,13 @@ const issuesDropdownItems: NavItem[] = [
   { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
 ]
 
-/** About page + former "The Data" links */
-const aboutDropdownItems: NavItem[] = [
-  { id: 'about-overview', label: 'About us', href: '/about' },
+const dataDropdownItems: NavItem[] = [
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
 const resourcesDropdownItems: NavItem[] = [
-  { id: 'support', label: 'Support', href: '/support' },
   { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
   { id: 'chants', label: 'Chant Bank', href: '/chants' },
   { id: 'shirts', label: 'Shirts', href: '/shirts' },
@@ -56,10 +53,13 @@ const resourcesDropdownItems: NavItem[] = [
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
-  { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
+  { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
   { id: 'events', label: 'Events', href: '/protests' },
   { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
+  { id: 'about', label: 'About', href: '/about' },
 ]
+
+const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
 
 const DROPDOWN_LEAVE_DELAY_MS = 200
 
@@ -214,7 +214,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                               exit={{ opacity: 0, y: -10 }}
                               className="absolute top-full left-0 pt-1 z-50"
                             >
-                              <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
+                              <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[180px]">
                                 {item.dropdownItems.map((dropdownItem) => (
                                   <button
                                     key={dropdownItem.id}
@@ -243,9 +243,17 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                     </button>
                     )
                   })}
+                  <a
+                    href={DONATE_STRIPE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 lg:ml-3 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-[#2E4A6B] border-2 border-[#2E4A6B] hover:bg-[#2E4A6B] hover:text-white rounded-lg transition-colors whitespace-nowrap"
+                  >
+                    Donate
+                  </a>
                   <Link
                     href={getNavHref('/take-action', basePath)}
-                    className="ml-2 lg:ml-4 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-white bg-[#2E4A6B] hover:bg-[#243d56] rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap"
+                    className="ml-2 lg:ml-2 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-white bg-[#2E4A6B] hover:bg-[#243d56] rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap"
                   >
                     Take Action
                   </Link>
@@ -425,7 +433,16 @@ function MobileMenu({
                         </button>
                         )
                       })}
-                      <div className="pt-4 mt-4 border-t border-gray-200">
+                      <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
+                        <a
+                          href={DONATE_STRIPE_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setIsOpen(false)}
+                          className="block w-full text-center px-4 py-4 text-lg font-medium text-[#2E4A6B] border-2 border-[#2E4A6B] rounded-lg hover:bg-[#2E4A6B] hover:text-white transition-colors"
+                        >
+                          Donate
+                        </a>
                         <a
                           href={getNavHref('/take-action', basePath)}
                           onClick={() => setIsOpen(false)}
