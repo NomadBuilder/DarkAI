@@ -43,12 +43,12 @@ export default function ProductDetail({ product }: Props) {
           className="grid gap-10 lg:grid-cols-2 lg:gap-14 items-start"
         >
           <div className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-md shadow-slate-900/5">
-            <div className="relative aspect-[3/4] bg-slate-100">
+            <div className="relative aspect-[4/3] bg-slate-100">
               <Image
                 src={product.image}
                 alt={product.name}
                 fill
-                className="object-contain p-6"
+                className="object-contain p-2 sm:p-3"
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 priority
               />

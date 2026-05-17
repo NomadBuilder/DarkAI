@@ -24,17 +24,17 @@ export default function ProductCard({ product, index = 0 }: Props) {
       transition={{ duration: 0.5, delay: index * 0.08 }}
       className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-md shadow-slate-900/5 flex flex-col"
     >
-      <div className="relative aspect-[3/4] bg-slate-100">
+      <div className="relative aspect-[4/3] bg-slate-100">
         <Image
           src={product.image}
           alt={product.name}
           fill
-          className="object-contain p-4"
+          className="object-contain p-2 sm:p-3"
           sizes="(max-width: 768px) 100vw, 50vw"
           priority={index === 0}
         />
       </div>
-      <div className="p-6 md:p-8 flex flex-col flex-grow">
+      <div className="p-5 md:p-6 flex flex-col flex-grow">
         <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">{product.categoryLabel}</p>
         <h3 className="text-2xl font-light text-slate-900 mb-2">{product.name}</h3>
         <p className="text-sm text-[#2E4A6B] font-medium mb-3">From ${product.minPriceCad} CAD</p>
