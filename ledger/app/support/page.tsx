@@ -42,6 +42,19 @@ const shippedProducts = [
     border: 'border-blue-200/80',
   },
   {
+    id: 'yard-signs',
+    eyebrow: 'Lawn & driveway',
+    title: 'Protest yard signs',
+    priceFrom: 'From $8 CAD',
+    sizes: '18 × 24 in · stand included · organizer delivery',
+    description:
+      'Two ready-made Ford accountability designs—printed with a stand, delivered by volunteers in your area. Pay what you can above the minimum.',
+    href: '/products#yard-signs',
+    cta: 'Browse yard signs',
+    accent: 'from-amber-900/90 to-[#2E4A6B]',
+    border: 'border-amber-200/80',
+  },
+  {
     id: 'shirt-print',
     eyebrow: 'Wear it',
     title: 'Printed white tee',

@@ -48,6 +48,7 @@ const resourcesDropdownItems: NavItem[] = [
   { id: 'chants', label: 'Chant Bank', href: '/chants' },
   { id: 'shirts', label: 'Shirts', href: '/shirts' },
   { id: 'signs', label: 'Signs', href: '/signs' },
+  { id: 'products', label: 'Products', href: '/products' },
   { id: 'stickers', label: 'Stickers', href: '/stickers' },
 ]
 
