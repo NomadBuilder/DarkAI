@@ -70,39 +70,60 @@ export default function PublicLandPage() {
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-10"
+                className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-8"
               >
-                From the Greenbelt swap under criminal investigation to a 95-year private spa lease on Ontario
-                Place—the same pattern: public land, connected proponents, and accountability sidelined.
+                Ontario Place is moving ahead now—a 95-year private spa lease on public waterfront—while the
+                Greenbelt swap remains under RCMP investigation. Same playbook: public land, connected proponents,
+                accountability sidelined.
+                <InlineCitation href="#source-op-2" label="7" />
                 <InlineCitation href="#source-gb-1" label="1" />
-                <InlineCitation href="#source-op-1" label="6" />
               </motion.p>
+              <motion.nav
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.28 }}
+                className="flex flex-wrap justify-center gap-3 mb-10"
+                aria-label="On this page"
+              >
+                <a
+                  href="#ontario-place"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-sm font-light bg-teal-800/10 text-teal-900 border border-teal-200/80 hover:bg-teal-800/15 transition-colors"
+                >
+                  Ontario Place &amp; Therme
+                </a>
+                <a
+                  href="#greenbelt"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-sm font-light bg-white/80 text-gray-700 border border-emerald-200/80 hover:bg-white transition-colors"
+                >
+                  Greenbelt scandal
+                </a>
+              </motion.nav>
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.35 }}
-                className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-14"
+                className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-12"
               >
-                <div className="text-center">
-                  <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-red-600 tabular-nums">7,400</span>
+                <div className="text-center min-w-[7rem]">
+                  <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-teal-800 tabular-nums">95 years</span>
                   <span className="block text-sm sm:text-base text-gray-500 mt-1">
-                    Greenbelt acres targeted
-                    <InlineCitation href="#source-gb-1" label="1" />
-                  </span>
-                </div>
-                <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
-                <div className="text-center">
-                  <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-emerald-800 tabular-nums">95 years</span>
-                  <span className="block text-sm sm:text-base text-gray-500 mt-1">
-                    Therme lease at Ontario Place
+                    Therme lease on public waterfront
                     <InlineCitation href="#source-op-2" label="7" />
                   </span>
                 </div>
                 <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
-                <div className="text-center">
-                  <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-emerald-800 tabular-nums">12 of 15</span>
+                <div className="text-center min-w-[7rem]">
+                  <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-teal-800 tabular-nums">~50%</span>
                   <span className="block text-sm sm:text-base text-gray-500 mt-1">
-                    Greenbelt sites developers lobbied for
+                    Footprint vs original spa plan
+                    <InlineCitation href="#source-op-3" label="8" />
+                  </span>
+                </div>
+                <div className="w-px h-12 bg-emerald-200/80 hidden sm:block self-center" />
+                <div className="text-center min-w-[7rem]">
+                  <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-red-600 tabular-nums">7,400</span>
+                  <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                    Greenbelt acres (reversed)
                     <InlineCitation href="#source-gb-1" label="1" />
                   </span>
                 </div>
@@ -111,40 +132,253 @@ export default function PublicLandPage() {
           </section>
         </div>
 
-        <section className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden">
+        <section className="relative px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 overflow-hidden">
           <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-emerald-400 to-emerald-600 opacity-80" />
           <div className="max-w-4xl mx-auto pl-4 sm:pl-6">
-            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12">
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6 md:mb-8">
               The pattern
             </motion.h2>
-            <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
+            <motion.div {...fadeIn} className="space-y-5 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
-                Ontario&apos;s farmland, forests, wetlands, and waterfront are not empty space waiting for a deal—they
-                are shared assets that filter water, grow food, hold carbon, and belong to the public. Under the Ford
-                government, major decisions about that land have repeatedly favoured well-connected proponents:
-                opaque processes, weak consultation, and outcomes that are hard to unwind once the lease is signed or
-                the bulldozers are booked.
-              </p>
-              <p>
-                Public pressure can push back—the Greenbelt reversal proved that. But the same government has kept
-                pursuing high-stakes land deals, including a private thermal spa and waterpark on public waterfront at
-                Ontario Place, often shielded from the scrutiny Ontarians expect under the{' '}
-                <Link href="/wildlife" className="text-emerald-800 underline underline-offset-2 hover:text-emerald-900">
-                  Environmental Bill of Rights
-                </Link>
-                .
+                Farmland, forests, wetlands, and waterfront are shared public assets—not parcels waiting for a private
+                operator. Under the Ford government, major land decisions have repeatedly favoured well-connected
+                proponents: opaque processes, weak consultation, and deals that are nearly impossible to unwind once
+                signed.
               </p>
             </motion.div>
           </div>
         </section>
 
-        <section id="greenbelt" className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-white scroll-mt-24">
-          <div className="max-w-4xl mx-auto">
+        <section id="ontario-place" className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-white overflow-hidden scroll-mt-24">
+          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-teal-400 to-emerald-600 opacity-80" />
+          <div className="max-w-5xl mx-auto px-4 sm:px-6">
+            <motion.div
+              {...fadeIn}
+              className="inline-flex items-center gap-2 rounded-full bg-teal-50 border border-teal-200/80 px-4 py-1.5 text-sm text-teal-900 font-light mb-6"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-500 opacity-60" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-600" />
+              </span>
+              Active fight — not reversed
+            </motion.div>
+
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-gray-900 mb-3">
+              Ontario Place &amp; the Therme spa
+            </motion.h2>
+            <motion.p {...fadeIn} className="text-lg sm:text-xl text-teal-800 font-light mb-10 max-w-3xl">
+              Public waterfront, private operator, 95-year lease—and less Environmental Bill of Rights scrutiny than
+              comparably large projects elsewhere
+            </motion.p>
+
+            <motion.div
+              {...fadeIn}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12"
+            >
+              {[
+                { value: '95 years', label: 'Private lease term', cite: '7', href: '#source-op-2' },
+                { value: 'Publicly owned', label: 'Waterfront land (province)', cite: '6', href: '#source-op-1' },
+                { value: '~50% smaller', label: '2025 spa footprint vs original', cite: '8', href: '#source-op-3' },
+                { value: 'Bill 5 carve-out', label: 'Reduced EBR participation', cite: '9', href: '#source-op-4' },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="rounded-xl border border-teal-100 bg-gradient-to-br from-teal-50/90 to-white p-5 sm:p-6 shadow-sm"
+                >
+                  <p className="text-2xl sm:text-3xl font-light text-teal-900 tabular-nums">{stat.value}</p>
+                  <p className="text-sm text-gray-600 mt-2 font-light leading-snug">
+                    {stat.label}
+                    <InlineCitation href={stat.href} label={stat.cite} />
+                  </p>
+                </div>
+              ))}
+            </motion.div>
+
+            <motion.div {...fadeIn} className="rounded-xl bg-slate-800 text-white p-6 sm:p-8 lg:p-10 mb-12 shadow-lg">
+              <p className="text-xs sm:text-sm uppercase tracking-[0.2em] text-slate-400 mb-6">The deal at a glance</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+                <div className="space-y-5">
+                  <div>
+                    <h4 className="text-sm font-medium text-teal-300/90 mb-1.5">Who owns the land</h4>
+                    <p className="text-gray-300 font-light leading-relaxed">
+                      Ontario Place remains{' '}
+                      <strong className="text-white font-normal">provincially owned waterfront</strong> on Lake
+                      Ontario—not a private parcel sold off, but public commons handed to a private operator for
+                      generations.
+                      <InlineCitation href="#source-op-1" label="6" />
+                    </p>
+                  </div>
+                  <div className="border-t border-slate-600 pt-5">
+                    <h4 className="text-sm font-medium text-teal-300/90 mb-1.5">Who runs the spa</h4>
+                    <p className="text-gray-300 font-light leading-relaxed">
+                      <strong className="text-white font-normal">Therme Canada</strong> would operate a large thermal
+                      spa and waterpark under a <strong className="text-white font-normal">95-year lease</strong>—pools,
+                      slides, saunas, and paid day passes on a site many Torontonians treat as public waterfront.
+                      <InlineCitation href="#source-op-2" label="7" />
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-5">
+                  <div>
+                    <h4 className="text-sm font-medium text-teal-300/90 mb-1.5">What stays public</h4>
+                    <p className="text-gray-300 font-light leading-relaxed">
+                      The province promotes rebuilt <strong className="text-white font-normal">free parkland</strong> on
+                      the West Island—beaches, trails, and open space—alongside the commercial spa complex.
+                      <InlineCitation href="#source-op-1" label="6" />
+                    </p>
+                  </div>
+                  <div className="border-t border-slate-600 pt-5">
+                    <h4 className="text-sm font-medium text-teal-300/90 mb-1.5">Why it still matters</h4>
+                    <p className="text-gray-300 font-light leading-relaxed">
+                      A generation-long private hold is hard to take back. Critics argue the public gets less waterfront
+                      control and less recourse than the scale of the project deserves—especially with Bill 5 limiting
+                      normal EBR scrutiny.
+                      <InlineCitation href="#source-op-4" label="9" />
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.h3 {...fadeIn} className="text-xl sm:text-2xl font-light text-gray-900 mb-6">
+              2025 redesign — smaller, still moving ahead
+            </motion.h3>
+            <motion.div
+              {...fadeIn}
+              className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12"
+            >
+              <div className="rounded-xl border border-teal-100 bg-teal-50/50 p-6 sm:p-8">
+                <p className="text-teal-900 font-medium text-lg mb-3">What changed in Therme&apos;s proposal</p>
+                <ul className="space-y-3 text-base text-gray-700 font-light">
+                  <li className="flex gap-3">
+                    <span className="text-teal-700 shrink-0">→</span>
+                    <span>
+                      Roughly <strong className="font-normal text-gray-900">half the footprint</strong> of the original
+                      plan, with lower building heights
+                      <InlineCitation href="#source-op-3" label="8" />
+                    </span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-teal-700 shrink-0">→</span>
+                    <span>Thermal pools, slides, saunas—commercial attraction with paid day passes</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-teal-700 shrink-0">→</span>
+                    <span>Province and Therme frame it as a compromise; opponents say the core lease structure is unchanged</span>
+                  </li>
+                </ul>
+              </div>
+              <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 sm:p-8">
+                <p className="text-gray-900 font-medium text-lg mb-3">What the government emphasizes</p>
+                <ul className="space-y-3 text-base text-gray-700 font-light">
+                  <li className="flex gap-3">
+                    <span className="text-emerald-700 shrink-0">→</span>
+                    <span>Final designs and &quot;world-class&quot; waterfront renewal</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-emerald-700 shrink-0">→</span>
+                    <span>Free public beaches, trails, and park areas alongside the spa</span>
+                  </li>
+                  <li className="flex gap-3">
+                    <span className="text-emerald-700 shrink-0">→</span>
+                    <span>Jobs and tourism investment on underused public land</span>
+                  </li>
+                </ul>
+                <p className="text-sm text-gray-500 mt-4 font-light">
+                  <a
+                    href="https://www.ontario.ca/page/final-designs-ontario-place"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-teal-800 underline underline-offset-2 hover:text-teal-900"
+                  >
+                    Ontario.ca: final designs
+                  </a>
+                  <InlineCitation href="#source-op-1" label="6" />
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.h3 {...fadeIn} className="text-xl sm:text-2xl font-light text-gray-900 mb-6 pb-2 border-b border-teal-200">
+              Why opponents are fighting it
+            </motion.h3>
+            <motion.div
+              {...fadeIn}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-12"
+            >
+              {[
+                {
+                  title: 'Hard to unwind',
+                  body: 'A 95-year lease locks in private control of waterfront for generations—far longer than most political cycles or council terms.',
+                },
+                {
+                  title: 'Less public scrutiny',
+                  body: 'Bill 5 exempts Ontario Place from the usual Environmental Bill of Rights participation requirements for comparably large projects.',
+                },
+                {
+                  title: 'Same playbook',
+                  body: 'Streamline first, consult later—the approach critics tie to the Greenbelt scandal, now applied to public waterfront.',
+                },
+              ].map((card) => (
+                <div
+                  key={card.title}
+                  className="rounded-xl bg-white border border-slate-200 p-6 shadow-sm hover:border-teal-200/80 transition-colors"
+                >
+                  <p className="text-teal-900 font-medium text-lg mb-2">{card.title}</p>
+                  <p className="text-gray-600 font-light text-base leading-relaxed">{card.body}</p>
+                </div>
+              ))}
+            </motion.div>
+
+            <motion.div
+              {...fadeIn}
+              className="rounded-xl border border-amber-200/80 bg-amber-50/60 p-6 sm:p-8 mb-10"
+            >
+              <p className="text-amber-950 font-medium text-lg sm:text-xl mb-2">Bill 5 and the Environmental Bill of Rights</p>
+              <p className="text-gray-700 font-light text-base sm:text-lg leading-relaxed">
+                Ontario Place redevelopment is carved out from the normal public environmental participation Ontarians
+                expect under the Environmental Bill of Rights—less notice, less recourse than for similar-scale projects
+                elsewhere.
+                <InlineCitation href="#source-op-4" label="9" />
+                {' '}For species protection, special economic zones, and Ring of Fire impacts, see{' '}
+                <Link href="/wildlife" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
+                  wildlife &amp; Bill 5
+                </Link>
+                ; for treaty rights and consent on northern development, see{' '}
+                <Link href="/indigenous-rights" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
+                  Indigenous rights
+                </Link>
+                .
+              </p>
+            </motion.div>
+
+            <motion.blockquote
+              {...fadeIn}
+              className="border-l-4 border-teal-500 pl-6 py-2 text-xl sm:text-2xl text-gray-800 font-light italic mb-6"
+            >
+              Unlike the Greenbelt, this deal has not been reversed—it is still moving forward.
+            </motion.blockquote>
+            <motion.p {...fadeIn} className="text-lg sm:text-xl text-gray-600 font-light leading-relaxed">
+              That makes Ontario Place one of the most consequential live fights over public land in Ontario right now.
+              Public pressure reversed the Greenbelt carve-out; whether the same happens here depends on whether
+              Ontarians treat waterfront the way they treated protected countryside.
+            </motion.p>
+          </div>
+        </section>
+
+        <section id="greenbelt" className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 scroll-mt-24">
+          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-amber-400 to-emerald-600 opacity-70" />
+          <div className="max-w-4xl mx-auto pl-4 sm:pl-6">
+            <motion.div
+              {...fadeIn}
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200/80 px-4 py-1.5 text-sm text-emerald-900 font-light mb-6"
+            >
+              Reversed Sept. 2023 — RCMP probe continues
+            </motion.div>
             <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-4">
               The Greenbelt land swap
             </motion.h2>
             <motion.p {...fadeIn} className="text-lg text-emerald-800 font-light mb-10">
-              Biased process, developer windfall, RCMP probe—and a rare reversal
+              Biased process, developer windfall, criminal investigation—and proof that public pressure can win
             </motion.p>
 
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed mb-14">
@@ -219,63 +453,6 @@ export default function PublicLandPage() {
                 That retreat mattered. It showed bad land policy can be beaten when it becomes politically impossible to
                 ignore. It did not end the fight over who controls Ontario&apos;s land—only proved the public still has
                 leverage when it uses it.
-              </p>
-            </motion.div>
-          </div>
-        </section>
-
-        <section id="ontario-place" className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden scroll-mt-24">
-          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-teal-400 to-emerald-600 opacity-70" />
-          <div className="max-w-4xl mx-auto px-4 sm:px-6">
-            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-4">
-              Ontario Place &amp; the Therme spa
-            </motion.h2>
-            <motion.p {...fadeIn} className="text-lg text-teal-800 font-light mb-10">
-              Public waterfront, private operator, long lease—and less public scrutiny
-            </motion.p>
-
-            <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
-              <p>
-                Ontario Place is publicly owned waterfront on Lake Ontario—a landmark many Ontarians treat as part of
-                the city&apos;s commons, not a development parcel. The province is advancing a redevelopment centred on a
-                large private thermal spa and waterpark operated by Therme Canada under a{' '}
-                <strong className="font-normal text-gray-900">95-year lease</strong>, alongside rebuilt public parkland on
-                the West Island.
-                <InlineCitation href="#source-op-2" label="7" />
-                <InlineCitation href="#source-op-1" label="6" />
-              </p>
-              <p>
-                In 2025, Therme unveiled scaled-back designs—roughly half the footprint of the original proposal—with
-                lower building heights, pools, slides, saunas, and paid day passes, while the province promotes free
-                public park areas, beaches, and trails on surrounding land.
-                <InlineCitation href="#source-op-3" label="8" />
-              </p>
-              <div className="rounded-xl bg-white border border-teal-100 p-6 sm:p-8 shadow-sm">
-                <p className="text-teal-900 font-medium text-lg mb-2">Why opponents are fighting it</p>
-                <ul className="space-y-2 text-base text-gray-700 list-disc pl-5">
-                  <li>A generation-long private hold on waterfront that is hard to take back</li>
-                  <li>Bill 5 carved out Ontario Place from normal Environmental Bill of Rights scrutiny</li>
-                  <li>The same &quot;streamline first, consult later&quot; approach seen in the Greenbelt scandal</li>
-                </ul>
-              </div>
-              <p>
-                Bill 5 exempts the Ontario Place redevelopment from the usual public environmental participation
-                requirements under the Environmental Bill of Rights—so Ontarians get less notice and less recourse than
-                they would for comparably large projects elsewhere.
-                <InlineCitation href="#source-op-4" label="9" />
-                {' '}For species, special economic zones, and Ring of Fire impacts, see our{' '}
-                <Link href="/wildlife" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
-                  wildlife &amp; Bill 5 page
-                </Link>
-                ; for treaty rights and consent on northern development, see{' '}
-                <Link href="/indigenous-rights" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
-                  Indigenous rights
-                </Link>
-                .
-              </p>
-              <p>
-                Unlike the Greenbelt, this deal has not been reversed—it is moving forward. That makes it one of the most
-                consequential live fights over public land in the province right now.
               </p>
             </motion.div>
           </div>
@@ -402,8 +579,8 @@ export default function PublicLandPage() {
                     Contact your provincial representative
                   </h3>
                   <p className="text-base sm:text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto">
-                    Demand transparency, no favours for developers, protection for the Greenbelt, and full public
-                    scrutiny for Ontario Place
+                    Demand full public scrutiny for Ontario Place, no more developer favours on protected land, and
+                    accountability while the Greenbelt probe continues
                   </p>
                   <button
                     type="button"
