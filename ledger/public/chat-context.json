@@ -2,7 +2,7 @@
   "site": {
     "name": "Protect Ontario",
     "mission": "A public-accountability project tracking provincial spending, legislation, and policy impacts in Ontario using public sources.",
-    "scope": "Ontario Public Accounts (2018–2024), issue pages on healthcare, water, greenbelt, wildlife, protests/events, and methodology/media resources.",
+    "scope": "Ontario Public Accounts (2018–2024), issue pages on healthcare, water, public land, wildlife, protests/events, and methodology/media resources.",
     "funding": "Currently unfunded and has no paid sponsors."
   },
   "pages": [
@@ -25,8 +25,8 @@
       ]
     },
     {
-      "path": "/greenbelt",
-      "summary": "Details the Greenbelt land removal scandal, Auditor General findings, and the reversal after public pressure.",
+      "path": "/public-land",
+      "summary": "Covers public land in Ontario: the Greenbelt land swap scandal (Auditor General, RCMP probe, reversal) and Ontario Place (95-year Therme spa lease, Bill 5 EBR limits, public waterfront).",
       "sources": [
         {
           "title": "Auditor General: Special Report on Changes to the Greenbelt (2023)",
@@ -39,6 +39,14 @@
         {
           "title": "Ontario reverses Greenbelt land removal (2023)",
           "url": "https://www.cbc.ca/news/canada/toronto/ontario-greenbelt-reversal-1.6954872"
+        },
+        {
+          "title": "Ontario Place redevelopment and Therme spa lease",
+          "url": "https://www.cbc.ca/news/canada/toronto/ontario-place-therme-spa-1.7144567"
+        },
+        {
+          "title": "Bill 5 — Better for People, Smarter for Business Act, 2023",
+          "url": "https://www.ola.org/en/legislative-business/bills/parliament-43/session-1/bill-5"
         }
       ]
     },

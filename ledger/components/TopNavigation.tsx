@@ -33,8 +33,9 @@ interface TopNavigationProps {
 const issuesDropdownItems: NavItem[] = [
   { id: 'healthcare', label: 'Healthcare', href: '/healthcare' },
   { id: 'water', label: 'Water', href: '/water' },
-  { id: 'greenbelt', label: 'Greenbelt', href: '/greenbelt' },
+  { id: 'public-land', label: 'Public land', href: '/public-land' },
   { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
+  { id: 'indigenous-rights', label: 'Indigenous rights', href: '/indigenous-rights' },
 ]
 
 const dataDropdownItems: NavItem[] = [

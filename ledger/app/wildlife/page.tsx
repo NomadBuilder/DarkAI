@@ -5,6 +5,7 @@ import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
 import MPPContactModal from '../../components/MPPContactModal'
 import InlineCitation from '../../components/InlineCitation'
+import Link from 'next/link'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
@@ -240,7 +241,11 @@ export default function WildlifePage() {
             </motion.h2>
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
-                When the government tried to carve up the Greenbelt and hand it to connected developers, public pressure forced a reversal. People showed up. They wrote. They refused to accept that protected land was for sale. That reversal proved that bad policy can be pushed back — but only if we make it politically impossible to ignore.
+                When the government tried to carve up the{' '}
+                <Link href="/public-land#greenbelt" className="text-amber-800 underline underline-offset-2 hover:text-amber-900">
+                  Greenbelt
+                </Link>{' '}
+                and hand it to connected developers, public pressure forced a reversal. People showed up. They wrote. They refused to accept that protected land was for sale. That reversal proved that bad policy can be pushed back — but only if we make it politically impossible to ignore.
               </p>
               <p>
                 Bill 5 is already law. Reversing it will take the same kind of sustained, loud, and clear demand: from scientists, from First Nations, from municipalities, from ordinary people who believe that endangered species and Indigenous rights are not negotiable. Ontario Nature

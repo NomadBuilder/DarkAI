@@ -175,9 +175,10 @@ export default function SectionPolicyTimeline() {
           </p>
           <p className="text-sm font-light text-gray-400 mb-4">Explore the issues</p>
           <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-            <Link href="/greenbelt" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Greenbelt</Link>
+            <Link href="/public-land" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Public land</Link>
             <Link href="/water" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Water</Link>
             <Link href="/wildlife" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Wildlife</Link>
+            <Link href="/indigenous-rights" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Indigenous rights</Link>
             <Link href="/healthcare" className="inline-flex h-12 items-center justify-center px-4 bg-white text-slate-900 rounded-lg text-sm font-light hover:bg-gray-100 transition-colors">Healthcare</Link>
           </div>
           </div>

@@ -20,7 +20,7 @@ export default function ChatWidget() {
   const suggestedQuestions = [
     'What is Bill 60 and why does it matter?',
     'What does Bill 5 change for species protection?',
-    'Where can I find the sources for the Greenbelt issue?',
+    'Where can I find the sources for public land and Ontario Place?',
     'What protests are listed right now?',
   ]
   const hasUserMessage = messages.some((msg) => msg.role === 'user')

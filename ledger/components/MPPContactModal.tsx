@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 interface MPPContactModalProps {
   isOpen: boolean
   onClose: () => void
-  variant?: 'default' | 'water' | 'healthcare' | 'bill5' | 'greenbelt'
+  variant?: 'default' | 'water' | 'healthcare' | 'bill5' | 'greenbelt' | 'publicLand' | 'indigenous'
 }
 
 const defaultMessage = `I'm concerned about the long-term impact of relying more heavily on for-profit providers in publicly funded systems.
@@ -47,11 +47,21 @@ Thank you for considering this perspective.
 
 Best regards,`
 
-const greenbeltMessage = `I'm concerned about the Greenbelt land swap scandal and the RCMP criminal investigation into the Ford government's 2022 decision to remove 7,400 acres of protected land for development.
+const publicLandMessage = `I'm concerned about how the Ford government treats public land in Ontario—from the Greenbelt land swap (now under RCMP criminal investigation) to the 95-year private lease for a thermal spa at publicly owned Ontario Place.
 
-The Auditor General found the process was "biased and lacked transparency," with developers lobbying for 12 of 15 sites before the decision. The government reversed course only after overwhelming public pressure — but the criminal probe continues, and I want to see full accountability and no more favours for developers at the expense of protected land.
+The Auditor General found the Greenbelt removal process was "biased and lacked transparency," with developers lobbying for 12 of 15 sites before the decision. Public pressure forced a reversal, but the probe continues—and Ontario Place is moving ahead with less Environmental Bill of Rights scrutiny under Bill 5.
 
-I'm asking you to support transparency, accountability, and permanent protection for the Greenbelt and other shared resources.
+I'm asking you to support transparency, accountability, permanent protection for the Greenbelt, and full public participation before locking in long-term deals on our waterfront and protected lands.
+
+Thank you for considering this perspective.
+
+Best regards,`
+
+const indigenousMessage = `I'm concerned about provincial policies that undermine Indigenous and First Nations rights in Ontario.
+
+Bill 5 creates "special economic zones" where projects can be exempt from normal environmental and municipal rules. The first zone was declared in the Ring of Fire—on Treaty 9 territory—without free, prior and informed consent from affected First Nations. The bill also weakens accountability and speeds mining approvals while limiting remedies for communities harmed by these decisions.
+
+Ontario has committed to implementing the UN Declaration on the Rights of Indigenous Peoples. I'm asking you to honour that commitment: repeal Bill 5, halt special economic zones imposed without consent, and ensure Indigenous nations are equal partners—not afterthoughts—in decisions about land, water, and development.
 
 Thank you for considering this perspective.
 
@@ -64,7 +74,8 @@ export default function MPPContactModal({ isOpen, onClose, variant = 'default' }
     if (variant === 'water') return waterMessage
     if (variant === 'healthcare') return healthcareMessage
     if (variant === 'bill5') return bill5Message
-    if (variant === 'greenbelt') return greenbeltMessage
+    if (variant === 'greenbelt' || variant === 'publicLand') return publicLandMessage
+    if (variant === 'indigenous') return indigenousMessage
     return defaultMessage
   }
   
@@ -78,6 +89,10 @@ export default function MPPContactModal({ isOpen, onClose, variant = 'default' }
       setMessageBody(healthcareMessage)
     } else if (variant === 'bill5') {
       setMessageBody(bill5Message)
+    } else if (variant === 'greenbelt' || variant === 'publicLand') {
+      setMessageBody(publicLandMessage)
+    } else if (variant === 'indigenous') {
+      setMessageBody(indigenousMessage)
     } else {
       setMessageBody(defaultMessage)
     }
@@ -114,8 +129,10 @@ ${userName || '[Your Name]'}`
       subject = 'Concern about healthcare privatization and hospital funding'
     } else if (variant === 'bill5') {
       subject = 'Repeal Bill 5 — protect endangered species and Indigenous rights'
-    } else if (variant === 'greenbelt') {
-      subject = 'Greenbelt scandal — accountability and protection for protected land'
+    } else if (variant === 'greenbelt' || variant === 'publicLand') {
+      subject = 'Public land — Greenbelt accountability and Ontario Place scrutiny'
+    } else if (variant === 'indigenous') {
+      subject = 'Indigenous rights — repeal Bill 5 and respect free, prior and informed consent'
     }
     const body = encodeURIComponent(getFullMessage())
     window.location.href = `mailto:?subject=${encodeURIComponent(subject)}&body=${body}`

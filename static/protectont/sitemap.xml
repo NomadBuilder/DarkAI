@@ -37,6 +37,9 @@
     <loc>https://protectont.ca/water_billcalculator</loc>
   </url>
   <url>
+    <loc>https://protectont.ca/public-land</loc>
+  </url>
+  <url>
     <loc>https://protectont.ca/greenbelt</loc>
   </url>
   <url>
@@ -44,5 +47,8 @@
   </url>
   <url>
     <loc>https://protectont.ca/wildlife</loc>
+  </url>
+  <url>
+    <loc>https://protectont.ca/indigenous-rights</loc>
   </url>
 </urlset>

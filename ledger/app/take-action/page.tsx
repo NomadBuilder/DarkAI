@@ -35,7 +35,7 @@ const actions = [
     description: 'Anti-Ford and provincial accountability protests happen across Ontario — in Toronto, Ottawa, and other cities. Showing up in person makes the demand visible and harder to ignore.',
     links: [
       { label: 'View listed protests & rallies', href: '/protests', internal: true },
-      { label: 'Search for Ontario protests and rallies (e.g. healthcare, Greenbelt, Bill 5)', href: 'https://www.google.com/search?q=Ontario+protest+Ford+2025' },
+      { label: 'Search for Ontario protests and rallies (e.g. healthcare, public land, Bill 5)', href: 'https://www.google.com/search?q=Ontario+protest+Ford+2026' },
       { label: 'OFL Ford Tracker — campaigns and actions', href: 'https://ofl.ca/ford-tracker/' },
     ],
   },
@@ -102,7 +102,7 @@ export default function TakeActionPage() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="text-xl sm:text-2xl text-gray-600 font-light max-w-2xl mx-auto"
             >
-              Contact your MPP, sign petitions, join protests, and stay informed. Public pressure works — the Greenbelt reversal proved it.
+              Contact your MPP, sign petitions, join protests, and stay informed. Public pressure works — the Greenbelt reversal proved it on land, and the fight continues at Ontario Place.
             </motion.p>
           </div>
         </section>
@@ -179,7 +179,7 @@ export default function TakeActionPage() {
         <section className="px-4 sm:px-6 md:px-8 pt-16 pb-24 md:pt-24 md:pb-32 bg-slate-900 text-white">
           <div className="max-w-3xl mx-auto text-center">
             <motion.p {...fadeIn} className="text-xl sm:text-2xl font-light text-gray-300 mb-8">
-              The Greenbelt reversal happened because people showed up, wrote, and refused to accept that protected land was for sale. The same kind of pressure can protect healthcare, water, species, and Indigenous rights.
+              The Greenbelt reversal happened because people showed up, wrote, and refused to accept that protected land was for sale. The same kind of pressure can protect healthcare, water, public waterfront, species, and Indigenous rights.
             </motion.p>
             <motion.div {...fadeIn}>
               <button

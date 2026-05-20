@@ -69,7 +69,7 @@ export default function MediaKitPage() {
             <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6 sm:p-8">
               <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-4">Quick Facts</h2>
               <ul className="list-disc list-inside space-y-2 text-sm md:text-base text-gray-700 font-light leading-relaxed">
-                <li><strong className="font-normal">Focus:</strong> Public spending, healthcare privatization, Greenbelt, water, wildlife &amp; Indigenous rights</li>
+                <li><strong className="font-normal">Focus:</strong> Public spending, healthcare privatization, public land, water, wildlife &amp; Indigenous rights</li>
                 <li><strong className="font-normal">Sources:</strong> Ontario Public Accounts, legislation, Auditor General, public research</li>
                 <li><strong className="font-normal">Coverage:</strong> Ontario (2018–2024 fiscal years)</li>
                 <li><strong className="font-normal">Website:</strong> ProtectOnt.ca</li>
