@@ -16,6 +16,41 @@ const fadeIn = {
   transition: { duration: 0.5 },
 }
 
+const rallyTopics = [
+  {
+    title: 'Public healthcare',
+    description: 'Rallies against cuts, staffing agency spending, and for-profit clinics taking publicly funded capacity.',
+    href: '/healthcare',
+  },
+  {
+    title: 'Water & public services',
+    description: 'Bill 60 and the push toward corporate control of water and wastewater—municipal accountability at stake.',
+    href: '/water',
+  },
+  {
+    title: 'Public land',
+    description: 'Greenbelt accountability, Ontario Place, and who benefits when protected land and waterfront are opened up.',
+    href: '/public-land',
+  },
+  {
+    title: 'Wildlife & Bill 5',
+    description: 'Species protection, special economic zones, and weakened environmental participation.',
+    href: '/wildlife',
+  },
+  {
+    title: 'Indigenous rights',
+    description: 'Free, prior, and informed consent, Ring of Fire development, and treaty obligations.',
+    href: '/indigenous-rights',
+  },
+]
+
+const getReadyLinks = [
+  { label: 'What you can do', href: '/take-action', description: 'Contact your MPP, petitions, and more' },
+  { label: 'Protest chants', href: '/chants', description: 'Call-and-response lines for the crowd' },
+  { label: 'Print a sign', href: '/signs', description: 'Make a yard sign or poster before you head out' },
+  { label: 'Yard signs (order)', href: '/products', description: 'Ready-made designs from local organizers' },
+]
+
 export default function ProtestsPage() {
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
@@ -254,24 +289,141 @@ export default function ProtestsPage() {
       />
       <div className="relative z-10 pt-20 sm:pt-24">
         {/* Hero */}
-        <section className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-b border-slate-100">
-          <div className="max-w-4xl mx-auto text-center">
+        <section className="relative px-4 sm:px-6 md:px-8 py-12 md:py-20 bg-gradient-to-b from-blue-50/80 via-white to-white border-b border-slate-100 overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(59,130,246,0.12),transparent)]" />
+          <div className="relative max-w-4xl mx-auto text-center">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+              className="text-xs sm:text-sm uppercase tracking-[0.3em] text-blue-800/70 mb-4 font-medium"
+            >
+              Events
+            </motion.p>
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="text-3xl sm:text-4xl md:text-5xl font-light text-gray-900 mb-4 leading-tight"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light text-gray-900 mb-6 leading-tight"
             >
-              Protests &amp; rallies
+              Protests &amp; rallies across Ontario
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="text-lg text-gray-600 font-light max-w-2xl mx-auto"
+              className="text-lg sm:text-xl text-gray-600 font-light max-w-3xl mx-auto mb-8 leading-relaxed"
             >
-              Rallies and protests for public services, land, and accountability across Ontario. Listings are curated and updated by the site maintainers.
+              A single calendar for province-wide and local actions—healthcare, land, water, schools, and
+              accountability. Showing up in person still shifts what politicians can ignore.
             </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="flex flex-wrap justify-center gap-3"
+            >
+              <a
+                href="#event-list"
+                className="inline-flex items-center px-6 py-3 rounded-lg bg-slate-900 text-white text-sm font-light hover:bg-slate-800 transition-colors"
+              >
+                Browse upcoming events
+              </a>
+              <Link
+                href="/take-action"
+                className="inline-flex items-center px-6 py-3 rounded-lg border border-slate-300 bg-white text-slate-800 text-sm font-light hover:bg-slate-50 transition-colors"
+              >
+                More ways to take action
+              </Link>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="px-4 sm:px-6 md:px-8 py-14 md:py-20 bg-white">
+          <div className="max-w-4xl mx-auto">
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
+              Why this page exists
+            </motion.h2>
+            <motion.div {...fadeIn} className="space-y-5 text-lg text-gray-700 font-light leading-relaxed">
+              <p>
+                Ontario has no one official protest calendar. Actions are announced by unions, community groups,
+                health coalitions, and local organizers—often on social media, email lists, or separate websites.
+                Protect Ontario gathers upcoming dates here so you can see what&apos;s happening near you without
+                hunting across platforms.
+              </p>
+              <p>
+                Listings focus on actions tied to{' '}
+                <strong className="font-normal text-gray-900">public services, environmental protection, land use, and provincial accountability</strong>
+                —the same themes covered elsewhere on this site. We verify links when we can; always confirm time and
+                location with the organizer before you travel.
+              </p>
+            </motion.div>
+          </div>
+        </section>
+
+        <section className="px-4 sm:px-6 md:px-8 py-14 md:py-20 bg-slate-50 border-y border-slate-100">
+          <div className="max-w-5xl mx-auto">
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-3 text-center">
+              What people are rallying for
+            </motion.h2>
+            <motion.p {...fadeIn} className="text-center text-gray-600 font-light max-w-2xl mx-auto mb-10">
+              Most events connect to one or more of these issues. Each link goes to background and sources on Protect Ontario.
+            </motion.p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+              {rallyTopics.map((topic, idx) => (
+                <motion.div
+                  key={topic.href}
+                  {...fadeIn}
+                  transition={{ delay: idx * 0.05 }}
+                >
+                  <Link
+                    href={topic.href}
+                    className="block h-full rounded-xl bg-white border border-slate-200 p-6 shadow-sm hover:border-blue-200 hover:shadow-md transition-all"
+                  >
+                    <h3 className="text-lg font-light text-gray-900 mb-2">{topic.title}</h3>
+                    <p className="text-sm text-gray-600 font-light leading-relaxed">{topic.description}</p>
+                    <span className="inline-block mt-4 text-sm text-blue-600 font-light">Learn more →</span>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="px-4 sm:px-6 md:px-8 py-14 md:py-20 bg-white">
+          <div className="max-w-5xl mx-auto">
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-3 text-center">
+              Before you go
+            </motion.h2>
+            <motion.p {...fadeIn} className="text-center text-gray-600 font-light max-w-2xl mx-auto mb-10">
+              Practical resources on this site—not legal advice. Follow organizer instructions at the event.
+            </motion.p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {getReadyLinks.map((item, idx) => (
+                <motion.div key={item.href} {...fadeIn} transition={{ delay: idx * 0.05 }}>
+                  <Link
+                    href={item.href}
+                    className="flex flex-col h-full rounded-xl border border-slate-200 bg-slate-50/50 p-6 hover:bg-blue-50/40 hover:border-blue-100 transition-colors"
+                  >
+                    <span className="text-lg font-light text-gray-900">{item.label}</span>
+                    <span className="text-sm text-gray-600 font-light mt-1">{item.description}</span>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+            <motion.div
+              {...fadeIn}
+              className="mt-10 rounded-xl bg-blue-50/60 border border-blue-100 p-6 sm:p-8 text-center"
+            >
+              <p className="text-gray-700 font-light text-base sm:text-lg leading-relaxed">
+                <strong className="font-normal text-gray-900">Have a rally to list?</strong> Send the title, date, city,
+                and event link through the{' '}
+                <Link href="/about#contact" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+                  contact form on About
+                </Link>
+                . We add events when we publish updates—we don&apos;t hand out site logins to organizers.
+              </p>
+            </motion.div>
           </div>
         </section>
 
@@ -474,18 +626,6 @@ export default function ProtestsPage() {
                 ))}
               </div>
             )}
-          </div>
-        </section>
-
-        <section className="px-4 sm:px-6 md:px-8 py-10 bg-slate-50 border-t border-slate-100">
-          <div className="max-w-3xl mx-auto text-center space-y-3">
-            <p className="text-base text-gray-600 font-light leading-relaxed">
-              Have a rally to add? We list events in one place—no site passwords for organizers.{' '}
-              <Link href="/about" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
-                Contact us on About
-              </Link>{' '}
-              with the date, location, and link.
-            </p>
           </div>
         </section>
 

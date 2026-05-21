@@ -109,61 +109,10 @@ export default function AdminEventsPage() {
           </Link>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8">
-          <h2 className="text-lg font-light text-amber-950 mb-3">Who can update this site?</h2>
-          <p className="text-gray-700 font-light text-base leading-relaxed mb-3">
-            Protect Ontario does <strong className="font-normal">not</strong> use logins, passwords, or
-            &quot;editor&quot; accounts for volunteers. That would mean training many people, different comfort levels
-            with tech, and ongoing permission management—this project is maintained centrally instead.
-          </p>
-          <p className="text-gray-700 font-light text-base leading-relaxed">
-            Events on <Link href="/protests" className="text-blue-600 underline underline-offset-2">/protests</Link>{' '}
-            are curated in one place. Organizers can suggest a rally via the contact form at{' '}
-            <Link href="/about#contact" className="text-blue-600 underline underline-offset-2">/about</Link> (scroll to
-            Contact)—maintainers add it when they publish the next update.
-          </p>
-        </div>
-
-        <div className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 mb-8 shadow-sm">
-          <h2 className="text-xl font-light text-gray-900 mb-4">For site maintainers — how to publish changes</h2>
-          <p className="text-gray-600 font-light text-sm mb-6">
-            This page is a helper only. Nothing saves to the live site until you commit files and deploy.
-          </p>
-          <ol className="list-decimal list-inside space-y-4 text-gray-700 font-light text-base leading-relaxed">
-            <li>
-              <span className="ml-1">
-                Open this page locally or on a preview build: <code className="bg-slate-100 px-1 rounded text-sm">/admin-events</code>
-              </span>
-            </li>
-            <li>
-              <span className="ml-1">
-                The list below loads from <code className="bg-slate-100 px-1 rounded text-sm">ledger/public/data/protests.json</code>{' '}
-                (or use <strong className="font-normal">Load from file</strong> to edit an existing export).
-              </span>
-            </li>
-            <li>
-              <span className="ml-1">Add or remove events in the form. Use dates like <code className="bg-slate-100 px-1 rounded text-sm">May 30, 2026 · 2:00 PM</code> so the calendar parses correctly.</span>
-            </li>
-            <li>
-              <span className="ml-1">
-                Click <strong className="font-normal">Download protests.json</strong> and replace{' '}
-                <code className="bg-slate-100 px-1 rounded text-sm">ledger/public/data/protests.json</code> in the repo.
-              </span>
-            </li>
-            <li>
-              <span className="ml-1">
-                From the repo root, run:{' '}
-                <code className="block mt-2 bg-slate-900 text-slate-100 px-3 py-2 rounded-lg text-sm whitespace-pre-wrap">
-                  ./scripts/verify-protectont-before-deploy.sh
-                </code>
-                <span className="block mt-2">That rebuilds the site and refreshes <code className="bg-slate-100 px-1 rounded text-sm">static/protectont/</code>.</span>
-              </span>
-            </li>
-            <li>
-              <span className="ml-1">Commit both <code className="bg-slate-100 px-1 rounded text-sm">ledger/</code> and <code className="bg-slate-100 px-1 rounded text-sm">static/protectont/</code> changes, then push to deploy protectont.ca.</span>
-            </li>
-          </ol>
-        </div>
+        <p className="text-gray-500 text-sm font-light mb-8">
+          Edit the event list, download JSON, then follow <code className="bg-slate-200 px-1 rounded text-xs">ledger/UPDATING_EVENTS.md</code> to publish.
+          Dates: <code className="bg-slate-200 px-1 rounded text-xs">May 30, 2026 · 2:00 PM</code>
+        </p>
 
         {loadStatus === 'loading' && (
           <p className="text-gray-500 text-sm font-light mb-6">Loading current events from /data/protests.json…</p>
