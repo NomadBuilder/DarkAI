@@ -118,9 +118,9 @@ export default function AdminEventsPage() {
           </p>
           <p className="text-gray-700 font-light text-base leading-relaxed">
             Events on <Link href="/protests" className="text-blue-600 underline underline-offset-2">/protests</Link>{' '}
-            are curated in one place. If you have a rally to list, use the{' '}
-            <Link href="/about" className="text-blue-600 underline underline-offset-2">contact form on About</Link> and
-            the maintainers will add it when they publish the next update.
+            are curated in one place. Organizers can suggest a rally via the contact form at{' '}
+            <Link href="/about#contact" className="text-blue-600 underline underline-offset-2">/about</Link> (scroll to
+            Contact)—maintainers add it when they publish the next update.
           </p>
         </div>
 

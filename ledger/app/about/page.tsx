@@ -180,34 +180,6 @@ export default function AboutPage() {
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, delay: 0.65 }}
-            >
-              <div className="bg-teal-50/80 rounded-2xl p-8 md:p-12 border border-teal-100">
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
-                  Events &amp; rallies on this site
-                </h2>
-                <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
-                  <p>
-                    The <a href="/protests" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">Events</a> page
-                    lists protests and rallies from a single data file. If you want something added, use the contact form
-                    below—we collect details, verify links, and publish updates ourselves rather than handing out site
-                    passwords to many groups.
-                  </p>
-                  <p>
-                    People who deploy the site use{' '}
-                    <a href="/admin-events" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
-                      /admin-events
-                    </a>{' '}
-                    as a step-by-step helper to edit that file and redeploy. It is not a public signup or permission system.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, delay: 0.7 }}
             >
               <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200">
@@ -256,7 +228,7 @@ export default function AboutPage() {
         </section>
 
         {/* Contact Form Section */}
-        <section className="px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-16 md:py-24">
+        <section id="contact" className="px-4 sm:px-6 md:px-8 bg-gradient-to-b from-white to-slate-50 py-16 md:py-24 scroll-mt-24">
           <div className="max-w-2xl w-full mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -269,7 +241,11 @@ export default function AboutPage() {
                   Contact
                 </h2>
                 <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light max-w-2xl mx-auto">
-                  Questions about Protect Ontario, data corrections, or suggestions? Get in touch.
+                  Questions, data corrections, or a rally to list on{' '}
+                  <a href="/protests" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+                    Events
+                  </a>
+                  ? Send the date, location, and link—we add listings ourselves (no site logins for organizers).
                 </p>
               </div>
             </motion.div>
