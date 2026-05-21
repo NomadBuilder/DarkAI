@@ -1,5 +1,5 @@
 /**
- * Manually maintained list of protests and rallies (anti-Ford / provincial accountability).
+ * Type definitions for protests.json — live data is in public/data/protests.json.
  * Add new entries to the array — they will appear on the /protests page in card view.
  */
 export interface Protest {

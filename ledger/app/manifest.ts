@@ -4,9 +4,9 @@ const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || '
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Protect Ontario — Accountability for the Ford Government',
+    name: 'Protect Ontario — Public accountability in Ontario',
     short_name: 'ProtectOnt',
-    description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
+    description: 'Track public spending, policy impacts, protests, and public land in Ontario using open sources.',
     start_url: basePath || '/',
     display: 'standalone',
     background_color: '#ffffff',

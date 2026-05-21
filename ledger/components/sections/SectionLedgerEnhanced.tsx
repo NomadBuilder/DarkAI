@@ -109,7 +109,7 @@ export default function SectionLedgerEnhanced() {
     }
   }, [])
 
-  // Filter to only 2018 and later (when Doug Ford took office) and years with classified data
+  // Filter to only 2018 and later (current policy era) and years with classified data
   const availableData = useMemo(() => {
     return data
       .filter(d => {

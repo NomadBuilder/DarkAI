@@ -21,7 +21,7 @@ const CHANTS: Chant[] = [
   { id: 'c8', tone: 'satirical', call: 'More spin, less care?', response: 'We see through it, we are here!' },
   { id: 'c9', tone: 'family-friendly', call: 'Healthy kids, healthy schools!', response: 'That is how democracy rules!' },
   { id: 'c10', tone: 'loud', call: 'No cuts, no sell-off!', response: 'Public services for all!' },
-  { id: 'c11', tone: 'loud', call: 'Ford, Ford, hear us say:', response: 'Public services are here to stay!' },
+  { id: 'c11', tone: 'loud', call: 'Public land, public care:', response: 'Hands off — we’re staying here!' },
   { id: 'c12', tone: 'family-friendly', call: 'Care and classrooms, land and water?', response: 'Protect Ontario - now, not later!' },
   { id: 'c13', tone: 'serious', call: 'Policy choices, real harm.', response: 'Fund the public, keep us warm.' },
   { id: 'c14', tone: 'satirical', call: 'Photo op one, photo op two...', response: 'Where is the funding? We are asking you.' },

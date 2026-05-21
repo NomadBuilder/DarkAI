@@ -50,7 +50,7 @@ export default function SectionColdOpen() {
           className="pt-8 md:pt-12"
         >
           <p className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-light text-red-600">
-            Then Doug Ford showed up.
+            Then the cuts and sell-offs accelerated.
           </p>
         </motion.div>
       </div>

@@ -47,7 +47,7 @@ Thank you for considering this perspective.
 
 Best regards,`
 
-const publicLandMessage = `I'm concerned about how the Ford government treats public land in Ontario—from the Greenbelt land swap (now under RCMP criminal investigation) to the 95-year private lease for a thermal spa at publicly owned Ontario Place.
+const publicLandMessage = `I'm concerned about how the provincial government treats public land in Ontario—from the Greenbelt land swap (now under RCMP criminal investigation) to the 95-year private lease for a thermal spa at publicly owned Ontario Place.
 
 The Auditor General found the Greenbelt removal process was "biased and lacked transparency," with developers lobbying for 12 of 15 sites before the decision. Public pressure forced a reversal, but the probe continues—and Ontario Place is moving ahead with less Environmental Bill of Rights scrutiny under Bill 5.
 

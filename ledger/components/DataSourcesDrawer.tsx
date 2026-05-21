@@ -28,14 +28,14 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
       organization: 'Canadian Centre for Policy Alternatives',
     },
     {
-      title: 'Ford Government LTC Bed Allocations',
+      title: 'Ontario LTC bed allocations (Health Coalition report)',
       description: 'Analysis of long-term care bed allocation decisions showing privatization (Americanization) pattern',
       link: 'https://www.ontariohealthcoalition.ca/wp-content/uploads/Final-Ford-government-LTC-bed-allocations-report.pdf',
       organization: 'Ontario Health Coalition',
     },
     {
-      title: 'OFL Ford Tracker',
-      description: 'Comprehensive tracking of Ford government cuts, privatization (Americanization), and policy changes',
+      title: 'OFL campaigns tracker',
+      description: 'External tracker of provincial cuts, privatization (Americanization), and policy changes',
       link: 'https://ofl.ca/ford-tracker/',
       organization: 'Ontario Federation of Labour',
     },
@@ -61,7 +61,7 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
     },
     {
       title: 'Ontario Nature: Bill 5 — A moment to mobilize for nature',
-      description: 'Campaign and petition calling on Premier Ford to cancel Bill 5 and end attacks on endangered species',
+      description: 'Campaign and petition to cancel Bill 5 and end attacks on endangered species',
       link: 'https://ontarionature.org/bill-5-a-moment-to-mobilize-for-nature-in-ontario-blog/',
       organization: 'Ontario Nature',
     },
@@ -85,7 +85,7 @@ export default function DataSourcesDrawer({ isOpen, onClose }: DataSourcesDrawer
     },
     {
       title: 'RCMP criminal investigation into Greenbelt land swap',
-      description: 'RCMP launched formal criminal probe into the Ford government\'s 2022 decision to remove 7,400 acres from the Greenbelt',
+      description: 'RCMP launched formal criminal probe into the 2022 decision to remove 7,400 acres from the Greenbelt',
       link: 'https://www.thestar.com/politics/provincial/rcmp-launches-criminal-investigation-into-doug-ford-s-greenbelt-land-swap/article_f778e402-1c56-54c8-b6b3-1e212fe4d662.html',
       organization: 'Toronto Star',
     },

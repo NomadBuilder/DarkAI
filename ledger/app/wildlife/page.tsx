@@ -252,7 +252,7 @@ export default function WildlifePage() {
                 <InlineCitation href="#source-2" label="2" />
                 , the David Suzuki Foundation
                 <InlineCitation href="#source-3" label="3" />
-                , and many others are calling for Premier Ford to cancel Bill 5 and end the attacks on species and accountability. They&apos;re inviting you to join.
+                , and many others are calling for Bill 5 to be cancelled and for attacks on species and accountability to end. They&apos;re inviting you to join.
               </p>
               <motion.div {...fadeIn} className="rounded-xl bg-amber-50/80 border border-amber-200 p-6 sm:p-8 shadow-sm">
                 <p className="text-amber-900 font-medium text-lg sm:text-xl mb-1">This is a moment to mobilize.</p>

@@ -48,7 +48,7 @@ const shippedProducts = [
     priceFrom: 'From $8 CAD',
     sizes: '18 × 24 in · stand included · organizer delivery',
     description:
-      'Two ready-made Ford accountability designs—printed with a stand, delivered by volunteers in your area. Pay what you can above the minimum.',
+      'Two ready-made protest yard sign designs—printed with a stand, delivered by volunteers in your area. Pay what you can above the minimum.',
     href: '/products#yard-signs',
     cta: 'Browse yard signs',
     accent: 'from-amber-900/90 to-[#2E4A6B]',

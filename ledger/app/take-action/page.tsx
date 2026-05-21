@@ -24,7 +24,7 @@ const actions = [
   },
   {
     title: 'Sign petitions',
-    description: 'Ontario Nature and the David Suzuki Foundation are calling on Premier Ford to cancel Bill 5 and protect species and Indigenous rights. Add your name.',
+    description: 'Ontario Nature and the David Suzuki Foundation are calling for Bill 5 to be cancelled and for species and Indigenous rights to be protected. Add your name.',
     links: [
       { label: 'Ontario Nature: Bill 5 — A moment to mobilize', href: 'https://ontarionature.org/bill-5-a-moment-to-mobilize-for-nature-in-ontario-blog/' },
       { label: 'David Suzuki Foundation: Repeal Bill 5', href: 'https://davidsuzuki.org/action/repealbill5/' },
@@ -32,11 +32,12 @@ const actions = [
   },
   {
     title: 'Join protests and rallies',
-    description: 'Anti-Ford and provincial accountability protests happen across Ontario — in Toronto, Ottawa, and other cities. Showing up in person makes the demand visible and harder to ignore.',
+    description: 'Provincial accountability protests happen across Ontario—in Toronto, Ottawa, and other cities. Showing up in person makes the demand visible and harder to ignore.',
     links: [
       { label: 'View listed protests & rallies', href: '/protests', internal: true },
-      { label: 'Search for Ontario protests and rallies (e.g. healthcare, public land, Bill 5)', href: 'https://www.google.com/search?q=Ontario+protest+Ford+2026' },
-      { label: 'OFL Ford Tracker — campaigns and actions', href: 'https://ofl.ca/ford-tracker/' },
+      { label: 'Suggest an event (About contact form)', href: '/about', internal: true },
+      { label: 'Search for Ontario protests and rallies', href: 'https://www.google.com/search?q=Ontario+protest+healthcare+2026' },
+      { label: 'OFL campaigns tracker (external)', href: 'https://ofl.ca/ford-tracker/' },
     ],
   },
   {

@@ -37,7 +37,7 @@ export default function SectionFordTracker() {
               Cuts to Public Services
             </h3>
             <p className="text-sm md:text-base text-gray-600 font-light mb-6">
-              The Ford government has systematically cut funding across multiple sectors
+              The provincial government has systematically cut funding across multiple sectors since 2018
             </p>
             <div className="space-y-3">
               {[

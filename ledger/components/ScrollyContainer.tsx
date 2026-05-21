@@ -94,7 +94,7 @@ export default function ScrollyContainer() {
           setIsLedgerVisible(entry.isIntersecting)
           // Also set initial year when section becomes visible
           if (entry.isIntersecting && entry.intersectionRatio > 0) {
-            setCurrentYear(2018) // Start at first year (when Doug Ford took office)
+            setCurrentYear(2018) // Start at first year of current policy era
           }
         })
       },

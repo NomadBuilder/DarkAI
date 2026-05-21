@@ -13,17 +13,17 @@ const metadataBase = siteUrl ? new URL(siteUrl) : undefined
 
 export const metadata: Metadata = {
   metadataBase,
-  title: 'Protect Ontario — Accountability for the Ford Government',
-  description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
+  title: 'Protect Ontario — Public accountability in Ontario',
+  description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
   applicationName: 'Protect Ontario',
-  keywords: ['Ontario', 'Ford government', 'public spending', 'accountability', 'ProtectOnt.ca'],
+  keywords: ['Ontario', 'provincial government', 'public spending', 'accountability', 'ProtectOnt.ca'],
   icons: {
     icon: [{ url: `${basePath}/favicon.png`, type: 'image/png' }],
     apple: `${basePath}/favicon.png`,
   },
   openGraph: {
-    title: 'Protect Ontario — Accountability for the Ford Government',
-    description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
+    title: 'Protect Ontario — Public accountability in Ontario',
+    description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
     url: basePath || '/',
     siteName: 'Protect Ontario',
     images: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
         url: `${basePath}/og-image.svg`,
         width: 1200,
         height: 630,
-        alt: 'Protect Ontario — ProtectOnt.ca — Accountability for the Ford Government',
+        alt: 'Protect Ontario — ProtectOnt.ca — Public accountability in Ontario',
       },
     ],
     locale: 'en_CA',
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Protect Ontario — Accountability for the Ford Government',
-    description: 'An interactive visualization of how public money in Ontario shifted toward private, for-profit delivery during the Ford era.',
+    title: 'Protect Ontario — Public accountability in Ontario',
+    description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
     images: [{ url: `${basePath}/og-image.svg`, alt: 'Protect Ontario — ProtectOnt.ca' }],
   },
 }

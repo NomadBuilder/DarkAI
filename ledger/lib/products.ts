@@ -42,7 +42,7 @@ export const productCategories: ProductCategory[] = [
 export const catalogProducts: CatalogProduct[] = [
   {
     slug: 'ford-yard-sign-1',
-    name: 'Ford Sign Design #1',
+    name: 'Yard Sign Design #1',
     categoryId: 'yard-signs',
     categoryLabel: 'Yard sign',
     image: '/products/yard-signs/ford-design-1.png',
@@ -62,7 +62,7 @@ export const catalogProducts: CatalogProduct[] = [
   },
   {
     slug: 'ford-yard-sign-2',
-    name: 'Ford Sign Design #2',
+    name: 'Yard Sign Design #2',
     categoryId: 'yard-signs',
     categoryLabel: 'Yard sign',
     image: '/products/yard-signs/ford-design-2.png',

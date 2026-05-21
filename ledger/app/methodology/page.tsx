@@ -131,8 +131,8 @@ export default function MethodologyPage() {
                 <section>
                   <h2 className="text-xl md:text-2xl font-light text-gray-900 mb-3 md:mb-4">Time Window</h2>
                   <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
-                    Data covers fiscal years 2018-2024, focusing on the period since Doug Ford took office
-                    and Ford era (2018-2024).
+                    Data covers fiscal years 2018–2024, focusing on the period since the current provincial
+                    government took office (2018 onward).
                   </p>
                 </section>
 

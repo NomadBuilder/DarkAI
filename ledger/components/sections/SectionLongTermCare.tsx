@@ -18,7 +18,7 @@ export default function SectionLongTermCare() {
               Long-Term Care
             </h2>
             <p className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-4xl mx-auto">
-              The Ford government&apos;s bed allocation decisions reveal a clear privatization (Americanization) agenda
+              Recent provincial bed allocation decisions reveal a clear privatization (Americanization) agenda
             </p>
           </div>
         </motion.div>
@@ -50,7 +50,7 @@ export default function SectionLongTermCare() {
                 For-Profit Operators
               </h4>
               <p className="text-sm md:text-base text-gray-600 font-light">
-                Under Ford, new bed allocations have shifted dramatically toward for-profit operators
+                Since 2018, new bed allocations have shifted dramatically toward for-profit operators
                 <InlineCitation href="#source-2" label="2" />
               </p>
             </div>

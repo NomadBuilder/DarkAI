@@ -124,8 +124,7 @@ export default function MethodologyDrawer({ isOpen, onClose }: MethodologyDrawer
                 <section>
                   <h3 className="text-lg md:text-xl font-light text-gray-900 mb-3 md:mb-4">Time Window</h3>
                   <p className="text-sm md:text-base text-gray-700 font-light leading-relaxed">
-                    Data covers fiscal years 2018-2024, focusing on the period since Doug Ford took office 
-                    and Ford era (2018-2024).
+                    Data covers fiscal years 2018–2024, focusing on the period since 2018 (current provincial policy era).
                   </p>
                 </section>
 

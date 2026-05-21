@@ -51,10 +51,10 @@ export default function SectionLedger() {
           setIsInView(entry.isIntersecting)
           if (entry.isIntersecting && data.length > 0) {
             // Set initial year when section becomes visible
-            // Set to 2018 (when Doug Ford took office) or first available year >= 2018
-            const fordEraYear = data.find(d => d.year >= 2018)?.year || data[0]?.year
-            if (fordEraYear) {
-              setCurrentYear(fordEraYear)
+            // Set to 2018 (start of current policy era) or first available year >= 2018
+            const eraStartYear = data.find(d => d.year >= 2018)?.year || data[0]?.year
+            if (eraStartYear) {
+              setCurrentYear(eraStartYear)
             }
           }
         })

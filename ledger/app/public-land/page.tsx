@@ -141,7 +141,7 @@ export default function PublicLandPage() {
             <motion.div {...fadeIn} className="space-y-5 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
                 Farmland, forests, wetlands, and waterfront are shared public assets—not parcels waiting for a private
-                operator. Under the Ford government, major land decisions have repeatedly favoured well-connected
+                operator. Under the current provincial government, major land decisions have repeatedly favoured well-connected
                 proponents: opaque processes, weak consultation, and deals that are nearly impossible to unwind once
                 signed.
               </p>

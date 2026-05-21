@@ -42,7 +42,7 @@ export default function SectionStaffingCrisis() {
               (2013-2023)
             </p>
             <p className="text-xs sm:text-sm text-gray-500 font-light mt-2">
-              Note: Most of this growth occurred during the Ford era (2018-2023)
+              Note: Most of this growth occurred since 2018 (2018–2023)
             </p>
           </div>
         </motion.div>

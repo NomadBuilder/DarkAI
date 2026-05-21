@@ -270,7 +270,7 @@ export default function ProtestsPage() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-lg text-gray-600 font-light max-w-2xl mx-auto"
             >
-              Rallies and protests calling for accountability from the Ford government, across Ontario. Add your voice in person.
+              Rallies and protests for public services, land, and accountability across Ontario. Listings are curated and updated by the site maintainers.
             </motion.p>
           </div>
         </section>
@@ -474,6 +474,18 @@ export default function ProtestsPage() {
                 ))}
               </div>
             )}
+          </div>
+        </section>
+
+        <section className="px-4 sm:px-6 md:px-8 py-10 bg-slate-50 border-t border-slate-100">
+          <div className="max-w-3xl mx-auto text-center space-y-3">
+            <p className="text-base text-gray-600 font-light leading-relaxed">
+              Have a rally to add? We list events in one place—no site passwords for organizers.{' '}
+              <Link href="/about" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+                Contact us on About
+              </Link>{' '}
+              with the date, location, and link.
+            </p>
           </div>
         </section>
 

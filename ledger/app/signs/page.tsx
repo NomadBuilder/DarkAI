@@ -35,7 +35,7 @@ const SIGN_LIBRARY: SignLibraryItem[] = [
     id: 'protect-services',
     title: 'Protect Public Services',
     headline: 'Protect Public Services',
-    subhead: 'Stop Ford privatization',
+    subhead: 'Stop privatization of public services',
     footer: 'protectont.ca',
     bgColor: '#ffffff',
     textColor: '#0f172a',
@@ -56,7 +56,7 @@ const SIGN_LIBRARY: SignLibraryItem[] = [
   {
     id: 'accountability',
     title: 'Accountability Now',
-    headline: 'Ford Failed Ontario',
+    headline: 'Protect Public Ontario',
     subhead: 'Healthcare. Education. Transparency.',
     footer: 'protectont.ca/protests',
     bgColor: '#fff7ed',
@@ -104,7 +104,7 @@ export default function SignsPage() {
   const [presetId, setPresetId] = useState('18x24')
   const [dpi, setDpi] = useState(150)
   const [headline, setHeadline] = useState('Protect Public Services')
-  const [subhead, setSubhead] = useState('Stop Ford privatization')
+  const [subhead, setSubhead] = useState('Stop privatization of public services')
   const [footer, setFooter] = useState('protectont.ca')
   const [bgColor, setBgColor] = useState('#ffffff')
   const [textColor, setTextColor] = useState('#0f172a')

@@ -115,7 +115,7 @@ export default function AboutPage() {
                 </h2>
                 <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
                   <p>
-                    Protect Ontario is a project that tracks and visualizes what&apos;s happening to public services and accountability in Ontario under the Ford government. When spending shifts from public to private hands, when legislation opens the door to corporate control of water or species protection, when land and accountability are traded for developer access — the patterns are often buried in spreadsheets, legalese, or press releases. Protect Ontario makes those patterns visible.
+                    Protect Ontario is a project that tracks and visualizes what&apos;s happening to public services and accountability in Ontario. When spending shifts from public to private hands, when legislation opens the door to corporate control of water or species protection, when land and accountability are traded for developer access — the patterns are often buried in spreadsheets, legalese, or press releases. Protect Ontario makes those patterns visible in one place.
                   </p>
                   <p>
                     We cover healthcare (private staffing agencies, for-profit clinics, hospital deficits), water (Bill 60 and the path to corporate control), public land (the Greenbelt scandal, Ontario Place, and who benefits), and Bill 5&apos;s impact on species and Indigenous rights. We use only publicly available data and sources, document our methodology, and clearly distinguish between raw data and our interpretation. The goal is not to tell you what to think, but to give you the tools to see what&apos;s actually happening — so you can make informed decisions and hold power to account.
@@ -164,12 +164,41 @@ export default function AboutPage() {
                 <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
                   <p>
                     Protect Ontario is maintained by a small team at <a href="https://darkai.ca/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline">Dark AI</a>.
-                    Editorial decisions and updates are made internally based on publicly available sources and
-                    documented methodology.
+                    Content is researched and published centrally—there are no volunteer logins or per-group editor
+                    accounts. That keeps the site consistent and avoids asking many organizers with different technical
+                    comfort levels to learn an admin system.
                   </p>
                   <p>
                     <strong className="font-normal">Funding:</strong> Protect Ontario is currently unfunded and has no
                     paid sponsors. If that changes, we will disclose funding sources and any conflicts of interest.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.8, delay: 0.65 }}
+            >
+              <div className="bg-teal-50/80 rounded-2xl p-8 md:p-12 border border-teal-100">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-6">
+                  Events &amp; rallies on this site
+                </h2>
+                <div className="space-y-4 text-base md:text-lg text-gray-700 font-light leading-relaxed">
+                  <p>
+                    The <a href="/protests" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">Events</a> page
+                    lists protests and rallies from a single data file. If you want something added, use the contact form
+                    below—we collect details, verify links, and publish updates ourselves rather than handing out site
+                    passwords to many groups.
+                  </p>
+                  <p>
+                    People who deploy the site use{' '}
+                    <a href="/admin-events" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
+                      /admin-events
+                    </a>{' '}
+                    as a step-by-step helper to edit that file and redeploy. It is not a public signup or permission system.
                   </p>
                 </div>
               </div>

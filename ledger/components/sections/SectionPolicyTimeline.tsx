@@ -7,8 +7,8 @@ const policyEvents = [
   {
     year: 2018,
     month: 'June',
-    event: 'Doug Ford takes office',
-    description: 'Progressive Conservative government elected',
+    event: 'Provincial government change',
+    description: 'New government elected (June 2018)',
     impact: 'Baseline year',
   },
   {
@@ -87,7 +87,7 @@ export default function SectionPolicyTimeline() {
                 rel="noopener noreferrer"
                 className="underline hover:text-gray-700"
               >
-                OFL Ford Tracker
+                OFL campaigns tracker
               </a> and <a 
                 href="https://www.policyalternatives.ca/news-research/hollowed-out/" 
                 target="_blank" 

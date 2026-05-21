@@ -97,7 +97,7 @@ export default function SectionNumbers() {
   
   console.log('Rendering content - data.length:', data.length, 'loading:', loading)
 
-  // Filter to only 2018 and later (when Doug Ford took office)
+  // Filter to only 2018 and later (current provincial policy era)
   const fordEraData = data.filter(d => d.year >= 2018)
   
   if (fordEraData.length === 0) {
@@ -152,7 +152,7 @@ export default function SectionNumbers() {
         >
           <div className="text-center">
             <p className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light text-red-600 mb-8 md:mb-12 leading-tight">
-              Then Doug Ford showed up.
+              Then the pattern shifted.
             </p>
           </div>
         </motion.div>
