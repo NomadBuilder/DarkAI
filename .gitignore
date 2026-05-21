@@ -68,6 +68,7 @@ htmlcov/
 !ledger/public/data/processed/
 # Allow Ledger public data files (needed for /ledger/thetradeoff page)
 !ledger/public/data/healthcare_costs.json
+!ledger/public/data/
 !ledger/public/data/protests.json
 data/
 # Allow Ledger data used by admin/protests pages
