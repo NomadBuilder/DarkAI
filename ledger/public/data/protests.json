@@ -1,441 +1,847 @@
-[
-  {
-    "id": "cupe-2026-02-03-stratford",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 3, 2026 · 10:00 AM",
-    "location": "Stratford, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Matthew Rae.",
-    "link": "https://www.facebook.com/CUPEOntario"
+{
+  "lastUpdated": "2026-05-21",
+  "featuredCampaign": {
+    "enabled": true,
+    "label": "Province-wide protests on May 30, 2026 — find your city and join in",
+    "href": "#event-list"
   },
-  {
-    "id": "cupe-2026-02-17-cobourg",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 17, 2026 · 10:00 AM",
-    "location": "Cobourg, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: David Piccini.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-18-ajax",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 18, 2026 · 10:00 AM",
-    "location": "Ajax, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Peter Bethlenfalvy.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-19-hamilton",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 19, 2026 · 10:00 AM",
-    "location": "Hamilton, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Neil Lumsden.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-23-peterborough",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 23, 2026 · 10:00 AM",
-    "location": "Peterborough, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Dave Smith.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-24-kenora",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 24, 2026 · 10:00 AM",
-    "location": "Kenora, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Greg Rickford.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-25-brockville",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 25, 2026 · 10:00 AM",
-    "location": "Brockville, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Steve Clark.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-26-ottawa-carleton",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 26, 2026 · 10:00 AM",
-    "location": "Ottawa/Carleton, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: George Darouze.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-02-27-north-bay",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Feb 27, 2026 · 10:00 AM",
-    "location": "North Bay, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Vic Fedeli.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-03-02-toronto",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Mar 2, 2026 · 10:00 AM",
-    "location": "Toronto, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Doug Ford.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "cupe-2026-03-03-pembroke",
-    "title": "Rally Against the Health Care Cuts",
-    "date": "Mar 3, 2026 · 10:00 AM",
-    "location": "Pembroke, ON",
-    "description": "CUPE Ontario rally against health care cuts. Target MPP: Billy Denault.",
-    "link": "https://www.facebook.com/CUPEOntario"
-  },
-  {
-    "id": "fighting-ford-feb-2026-02-21-provincewide",
-    "title": "Fighting Ford February",
-    "date": "Feb 21, 2026",
-    "location": "Province-wide (Ontario)",
-    "description": "Province-wide protest against Ford government policies.",
-    "link": "https://www.facebook.com/groups/onpcmustgo/posts/2136603803544800/?comment_id=2136824623522718&reply_comment_id=2137324506806063&notif_id=1769705116538518&notif_t=group_comment_mention"
-  },
-  {
-    "id": "fight-ford-2026-05-30-angus",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Angus, ON",
-    "description": "Pacekeepers Park, 12 Commerce Rd. Target: MPP Doug Ford."
-  },
-  {
-    "id": "fight-ford-2026-05-30-barrie",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Barrie, ON",
-    "description": "Sadlon Arena, 55 Bayview Dr."
-  },
-  {
-    "id": "fight-ford-2026-05-30-belleville",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Belleville, ON",
-    "description": "Bell Front Shopping Centre, Bell Blvd & Front St N."
-  },
-  {
-    "id": "fight-ford-2026-05-30-bowmanville",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 2:00 PM",
-    "location": "Bowmanville, ON",
-    "description": "23 King St W. Target: MPP Todd McCarthy's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-bracebridge",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Bracebridge, ON",
-    "description": "230 Manitoba St. Target: MPP Graydon Smith's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-burlington",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Burlington, ON",
-    "description": "3027 Harvester Rd. Target: MPP Natalie Pierre's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-cambridge",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "Cambridge, ON",
-    "description": "73 Water St. Target: MPP Brian Riddell's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-cornwall",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Cornwall, ON",
-    "description": "120 2nd St W. Target: MPP Nolan Quinn's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-elliot-lake",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Elliot Lake, ON",
-    "description": "325 Kings Hwy 108, Miner's Memorial Park."
-  },
-  {
-    "id": "fight-ford-2026-05-30-elmira",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 2:00 PM",
-    "location": "Elmira, ON",
-    "description": "63 Arthur St S. Target: MPP Mike Harris's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-etobicoke",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:30 PM",
-    "location": "Etobicoke, ON",
-    "description": "Weston Rd & Royal York Rd (end of Doug Ford's street)."
-  },
-  {
-    "id": "fight-ford-2026-05-30-fergus",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 10:00 AM",
-    "location": "Fergus, ON",
-    "description": "81 St Andrew St E. Target: MPP Joseph Racinsky's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-georgetown",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Georgetown, ON",
-    "description": "Mountainview Rd N & Guelph St, Mountainview Rd North/South."
-  },
-  {
-    "id": "fight-ford-2026-05-30-guelph",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Guelph, ON",
-    "description": "Gordon St & Wellington St E, Wellington Plaza."
-  },
-  {
-    "id": "fight-ford-2026-05-30-hamilton-dundurn",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 2:00 PM",
-    "location": "Hamilton, ON",
-    "description": "York Blvd & Dundurn St N, Dundurn Park."
-  },
-  {
-    "id": "fight-ford-2026-05-30-king-city",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "King City, ON",
-    "description": "2220 King Rd. Target: MPP Stephen Lecce's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-kingston",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Kingston, ON",
-    "description": "Princess St & Gardiners Rd, The North-West 'Big Box' hub."
-  },
-  {
-    "id": "fight-ford-2026-05-30-lindsay",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Lindsay, ON",
-    "description": "St. Joseph & Kent St W, Lindsay Square Mall."
-  },
-  {
-    "id": "fight-ford-2026-05-30-london",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "London, ON",
-    "description": "Central Ave, Victoria Park northwest corner."
-  },
-  {
-    "id": "fight-ford-2026-05-30-markham-thornhill",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:30 PM",
-    "location": "Markham-Thornhill, ON",
-    "description": "7380 McCowan Rd. Target: MPP Logan Kanapathi's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-meaford",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Meaford, ON",
-    "description": "Sykes St, Meaford Hall."
-  },
-  {
-    "id": "fight-ford-2026-05-30-milton",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:30 AM",
-    "location": "Milton, ON",
-    "description": "Main St & Martin St, downtown centre."
-  },
-  {
-    "id": "fight-ford-2026-05-30-mississauga",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Mississauga, ON",
-    "description": "120 Lakeshore Rd W. Target: MPP Rudy Cuzzetto's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-newmarket",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Newmarket, ON",
-    "description": "Yonge St & Sawmill Valley Dr. Target: MPP Dawn Gallagher Murphy's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-north-bay",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "North Bay, ON",
-    "description": "129 Main St E. Target: MPP Vic Fedeli's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-orangeville",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Orangeville, ON",
-    "description": "180 Broadway Ave. Target: MPP Sylvia Jones' office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-ottawa",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Ottawa, ON",
-    "description": "220 Elgin St, Canadian Tribute to Human Rights Monument."
-  },
-  {
-    "id": "fight-ford-2026-05-30-owen-sound",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026",
-    "location": "Owen Sound, ON",
-    "description": "345 8th St E. Target: MPP Paul Vickers' office. Time listed as TBA."
-  },
-  {
-    "id": "fight-ford-2026-05-30-pembroke",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Pembroke, ON",
-    "description": "400 Pembroke St E, Service Ontario Plaza."
-  },
-  {
-    "id": "fight-ford-2026-05-30-peterborough",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Peterborough, ON",
-    "description": "864 Chemong Rd. Target: MPP Dave Smith's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-pickering",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "Pickering, ON",
-    "description": "1550 Kingston Rd. Target: MPP Peter Bethlenfalvy's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-port-hope",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Port Hope, ON",
-    "description": "117 Peter St. Target: MPP David Piccini's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-sarnia",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Sarnia, ON",
-    "description": "805 Christina St N. Target: MPP Bob Bailey's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-simcoe",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Simcoe, ON",
-    "description": "50 Bonnie Dr, Wellington Park."
-  },
-  {
-    "id": "fight-ford-2026-05-30-st-catharines",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "St. Catharines, ON",
-    "description": "Tremont Dr & Glendale Ave, Pen Centre."
-  },
-  {
-    "id": "fight-ford-2026-05-30-st-thomas",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 2:00 PM",
-    "location": "St. Thomas, ON",
-    "description": "750 Talbot St. Target: MPP Rob Flack's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-stayner",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 2:00 PM",
-    "location": "Stayner, ON",
-    "description": "7317 Highway 26 E. Target: MPP Brian Saunderson's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-stouffville",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Stouffville, ON",
-    "description": "37 Sandiford Dr. Target: MPP Paul Calandra's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-strathroy",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Strathroy, ON",
-    "description": "81 Front St W. Target: MPP Steve Pinsonneault's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-sudbury",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Sudbury, ON",
-    "description": "Paris St & Brady St, Tom Davies Square."
-  },
-  {
-    "id": "fight-ford-2026-05-30-temiskaming-shores",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Temiskaming Shores, ON",
-    "description": "83 Whitewood Ave, Canada Post."
-  },
-  {
-    "id": "fight-ford-2026-05-30-thunder-bay",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "Thunder Bay, ON",
-    "description": "74 James St N. Target: MPP Kevin Holland's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-toronto",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "Toronto, ON",
-    "description": "111 Wellesley St W, Queen's Park."
-  },
-  {
-    "id": "fight-ford-2026-05-30-vaughan",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "Vaughan, ON",
-    "description": "Islington Ave & Rutherford Rd. Target: MPP Michael Tibollo's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-wallaceburg",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 11:00 AM",
-    "location": "Wallaceburg, ON",
-    "description": "60 McNaughton Ave. Target: MPP Steve Pinsonneault's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-waterdown",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Waterdown, ON",
-    "description": "Hamilton St & Dundas St E, Hamilton Street North/South."
-  },
-  {
-    "id": "fight-ford-2026-05-30-whitby",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 12:00 PM",
-    "location": "Whitby, ON",
-    "description": "300 Garden St. Target: MPP Lorne Coe's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-windsor",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Windsor, ON",
-    "description": "5452 Tecumseh Rd E. Target: MPP Andrew Dowie's office."
-  },
-  {
-    "id": "fight-ford-2026-05-30-woodstock",
-    "title": "Fight Ford Protests (May 30)",
-    "date": "May 30, 2026 · 1:00 PM",
-    "location": "Woodstock, ON",
-    "description": "12 Perry St. Target: MPP Ernie Hardeman's office."
-  }
-]
+  "events": [
+    {
+      "id": "cupe-2026-02-03-stratford",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 3, 2026 · 10:00 AM",
+      "location": "Stratford, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Matthew Rae.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-17-cobourg",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 17, 2026 · 10:00 AM",
+      "location": "Cobourg, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: David Piccini.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-18-ajax",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 18, 2026 · 10:00 AM",
+      "location": "Ajax, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Peter Bethlenfalvy.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-19-hamilton",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 19, 2026 · 10:00 AM",
+      "location": "Hamilton, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Neil Lumsden.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-23-peterborough",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 23, 2026 · 10:00 AM",
+      "location": "Peterborough, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Dave Smith.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-24-kenora",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 24, 2026 · 10:00 AM",
+      "location": "Kenora, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Greg Rickford.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-25-brockville",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 25, 2026 · 10:00 AM",
+      "location": "Brockville, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Steve Clark.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-26-ottawa-carleton",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 26, 2026 · 10:00 AM",
+      "location": "Ottawa/Carleton, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: George Darouze.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-02-27-north-bay",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Feb 27, 2026 · 10:00 AM",
+      "location": "North Bay, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Vic Fedeli.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-03-02-toronto",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Mar 2, 2026 · 10:00 AM",
+      "location": "Toronto, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Doug Ford.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "cupe-2026-03-03-pembroke",
+      "title": "Rally Against the Health Care Cuts",
+      "date": "Mar 3, 2026 · 10:00 AM",
+      "location": "Pembroke, ON",
+      "description": "CUPE Ontario rally against health care cuts. Target MPP: Billy Denault.",
+      "link": "https://www.facebook.com/CUPEOntario",
+      "status": "confirmed",
+      "topics": [
+        "healthcare"
+      ],
+      "organizer": "CUPE Ontario",
+      "campaignId": "cupe-healthcare-2026"
+    },
+    {
+      "id": "fighting-ford-feb-2026-02-21-provincewide",
+      "title": "Fighting Ford February",
+      "date": "Feb 21, 2026",
+      "location": "Province-wide (Ontario)",
+      "description": "Province-wide protest against Ford government policies.",
+      "link": "https://www.facebook.com/groups/onpcmustgo/posts/2136603803544800/?comment_id=2136824623522718&reply_comment_id=2137324506806063&notif_id=1769705116538518&notif_t=group_comment_mention",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "fighting-ford-feb-2026"
+    },
+    {
+      "id": "fight-ford-2026-05-30-angus",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Angus, ON",
+      "description": "Pacekeepers Park, 12 Commerce Rd. Target: MPP Doug Ford.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "12 Commerce Rd",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-barrie",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Barrie, ON",
+      "description": "Sadlon Arena, 55 Bayview Dr.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "55 Bayview Dr",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-belleville",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Belleville, ON",
+      "description": "Bell Front Shopping Centre, Bell Blvd & Front St N.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-bowmanville",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 2:00 PM",
+      "location": "Bowmanville, ON",
+      "description": "23 King St W. Target: MPP Todd McCarthy's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "23 King St W",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-bracebridge",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Bracebridge, ON",
+      "description": "230 Manitoba St. Target: MPP Graydon Smith's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "230 Manitoba St",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-burlington",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Burlington, ON",
+      "description": "3027 Harvester Rd. Target: MPP Natalie Pierre's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "3027 Harvester Rd",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-cambridge",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Cambridge, ON",
+      "description": "73 Water St. Target: MPP Brian Riddell's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "73 Water St",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-cornwall",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Cornwall, ON",
+      "description": "120 2nd St W. Target: MPP Nolan Quinn's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "120 2nd St W",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-elliot-lake",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Elliot Lake, ON",
+      "description": "325 Kings Hwy 108, Miner's Memorial Park.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "325 Kings Hwy 108, Miner's Memorial Park",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-elmira",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 2:00 PM",
+      "location": "Elmira, ON",
+      "description": "63 Arthur St S. Target: MPP Mike Harris's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "63 Arthur St S",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-etobicoke",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:30 PM",
+      "location": "Etobicoke, ON",
+      "description": "Weston Rd & Royal York Rd (end of Doug Ford's street).",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-fergus",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 10:00 AM",
+      "location": "Fergus, ON",
+      "description": "81 St Andrew St E. Target: MPP Joseph Racinsky's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "81 St Andrew St E",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-georgetown",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Georgetown, ON",
+      "description": "Mountainview Rd N & Guelph St, Mountainview Rd North/South.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-guelph",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Guelph, ON",
+      "description": "Gordon St & Wellington St E, Wellington Plaza.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-hamilton-dundurn",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 2:00 PM",
+      "location": "Hamilton, ON",
+      "description": "York Blvd & Dundurn St N, Dundurn Park.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-king-city",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "King City, ON",
+      "description": "2220 King Rd. Target: MPP Stephen Lecce's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "2220 King Rd",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-kingston",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Kingston, ON",
+      "description": "Princess St & Gardiners Rd, The North-West 'Big Box' hub.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-lindsay",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Lindsay, ON",
+      "description": "St. Joseph & Kent St W, Lindsay Square Mall.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-london",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "London, ON",
+      "description": "Central Ave, Victoria Park northwest corner.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-markham-thornhill",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:30 PM",
+      "location": "Markham-Thornhill, ON",
+      "description": "7380 McCowan Rd. Target: MPP Logan Kanapathi's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "7380 McCowan Rd",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-meaford",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Meaford, ON",
+      "description": "Sykes St, Meaford Hall.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-milton",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:30 AM",
+      "location": "Milton, ON",
+      "description": "Main St & Martin St, downtown centre.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-mississauga",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Mississauga, ON",
+      "description": "120 Lakeshore Rd W. Target: MPP Rudy Cuzzetto's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "120 Lakeshore Rd W",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-newmarket",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Newmarket, ON",
+      "description": "Yonge St & Sawmill Valley Dr. Target: MPP Dawn Gallagher Murphy's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-north-bay",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "North Bay, ON",
+      "description": "129 Main St E. Target: MPP Vic Fedeli's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "129 Main St E",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-orangeville",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Orangeville, ON",
+      "description": "180 Broadway Ave. Target: MPP Sylvia Jones' office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "180 Broadway Ave",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-ottawa",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Ottawa, ON",
+      "description": "220 Elgin St, Canadian Tribute to Human Rights Monument.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "220 Elgin St, Canadian Tribute to Human Rights Monument",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-owen-sound",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026",
+      "location": "Owen Sound, ON",
+      "description": "345 8th St E. Target: MPP Paul Vickers' office. Time listed as TBA.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "345 8th St E",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-pembroke",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Pembroke, ON",
+      "description": "400 Pembroke St E, Service Ontario Plaza.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "400 Pembroke St E, Service Ontario Plaza",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-peterborough",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Peterborough, ON",
+      "description": "864 Chemong Rd. Target: MPP Dave Smith's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "864 Chemong Rd",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-pickering",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Pickering, ON",
+      "description": "1550 Kingston Rd. Target: MPP Peter Bethlenfalvy's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "1550 Kingston Rd",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-port-hope",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Port Hope, ON",
+      "description": "117 Peter St. Target: MPP David Piccini's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "117 Peter St",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-sarnia",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Sarnia, ON",
+      "description": "805 Christina St N. Target: MPP Bob Bailey's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "805 Christina St N",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-simcoe",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Simcoe, ON",
+      "description": "50 Bonnie Dr, Wellington Park.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "50 Bonnie Dr, Wellington Park",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-st-catharines",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "St. Catharines, ON",
+      "description": "Tremont Dr & Glendale Ave, Pen Centre.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-st-thomas",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 2:00 PM",
+      "location": "St. Thomas, ON",
+      "description": "750 Talbot St. Target: MPP Rob Flack's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "750 Talbot St",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-stayner",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 2:00 PM",
+      "location": "Stayner, ON",
+      "description": "7317 Highway 26 E. Target: MPP Brian Saunderson's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-stouffville",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Stouffville, ON",
+      "description": "37 Sandiford Dr. Target: MPP Paul Calandra's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "37 Sandiford Dr",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-strathroy",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Strathroy, ON",
+      "description": "81 Front St W. Target: MPP Steve Pinsonneault's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "81 Front St W",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-sudbury",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Sudbury, ON",
+      "description": "Paris St & Brady St, Tom Davies Square.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-temiskaming-shores",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Temiskaming Shores, ON",
+      "description": "83 Whitewood Ave, Canada Post.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "83 Whitewood Ave, Canada Post",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-thunder-bay",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Thunder Bay, ON",
+      "description": "74 James St N. Target: MPP Kevin Holland's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "74 James St N",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-toronto",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Toronto, ON",
+      "description": "111 Wellesley St W, Queen's Park.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "111 Wellesley St W, Queen's Park",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-vaughan",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Vaughan, ON",
+      "description": "Islington Ave & Rutherford Rd. Target: MPP Michael Tibollo's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-wallaceburg",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Wallaceburg, ON",
+      "description": "60 McNaughton Ave. Target: MPP Steve Pinsonneault's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "60 McNaughton Ave",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-waterdown",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Waterdown, ON",
+      "description": "Hamilton St & Dundas St E, Hamilton Street North/South.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-whitby",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Whitby, ON",
+      "description": "300 Garden St. Target: MPP Lorne Coe's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "300 Garden St",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-windsor",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Windsor, ON",
+      "description": "5452 Tecumseh Rd E. Target: MPP Andrew Dowie's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "5452 Tecumseh Rd E",
+      "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-woodstock",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Woodstock, ON",
+      "description": "12 Perry St. Target: MPP Ernie Hardeman's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "address": "12 Perry St",
+      "featured": false
+    }
+  ]
+}

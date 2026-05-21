@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
+import ProtestsSiteBanner from './ProtestsSiteBanner'
 
 // Start with empty basePath so server and client first render match (avoids hydration error).
 // NEXT_PUBLIC_* is inlined at build time; BASE_PATH is server-only, so they can differ.
@@ -149,16 +150,7 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
             transition={{ duration: 0.2 }}
             className="sticky top-0 left-0 right-0 z-50 w-full"
           >
-            <div className="w-full bg-[#9f1239] text-white border-b border-white/20">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <a
-                  href={`${getNavHref('/protests', basePath)}#event-list`}
-                  className="flex min-h-[40px] items-center justify-center text-center text-xs sm:text-sm font-medium leading-none tracking-wide hover:underline underline-offset-4"
-                >
-                  Province-wide protests on May 30, 2026 - find your city and join in - View events
-                </a>
-              </div>
-            </div>
+            <ProtestsSiteBanner basePath={basePath} />
             <div className={`bg-white/80 backdrop-blur-md transition-all duration-300 w-full ${
               isScrolling ? 'shadow-sm' : ''
             }`}>

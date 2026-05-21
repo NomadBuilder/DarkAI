@@ -7,7 +7,17 @@ import Link from 'next/link'
 import { useMemo, useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { getPublicDataFile } from '../../utils/dataPath'
-import type { Protest } from '../../data/protests'
+import {
+  type Protest,
+  type ProtestTopicId,
+  type FeaturedCampaign,
+  PROTEST_TOPICS,
+  parseProtestDate,
+  parseProtestsFile,
+  getCityFromLocation,
+  mapsUrlForEvent,
+  topicLabel,
+} from '../../lib/protests'
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -55,62 +65,12 @@ export default function ProtestsPage() {
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
   const [protests, setProtests] = useState<Protest[]>([])
+  const [lastUpdated, setLastUpdated] = useState<string | null>(null)
+  const [featuredCampaign, setFeaturedCampaign] = useState<FeaturedCampaign | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedCity, setSelectedCity] = useState('All cities')
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
-
-  const parseProtestDate = (dateStr: string) => {
-    if (!dateStr) return null
-    const [datePartRaw, timePartRaw] = dateStr.split('·').map((part) => part.trim())
-    const datePart = datePartRaw || ''
-    const timePart = timePartRaw || ''
-    const dateMatch = datePart.match(/^([A-Za-z]{3,9})\s+(\d{1,2}),\s*(\d{4})$/)
-    if (!dateMatch) return null
-    const [, monthNameRaw, dayRaw, yearRaw] = dateMatch
-    const monthName = monthNameRaw.toLowerCase()
-    const monthMap: Record<string, number> = {
-      jan: 0,
-      january: 0,
-      feb: 1,
-      february: 1,
-      mar: 2,
-      march: 2,
-      apr: 3,
-      april: 3,
-      may: 4,
-      jun: 5,
-      june: 5,
-      jul: 6,
-      july: 6,
-      aug: 7,
-      august: 7,
-      sep: 8,
-      sept: 8,
-      september: 8,
-      oct: 9,
-      october: 9,
-      nov: 10,
-      november: 10,
-      dec: 11,
-      december: 11,
-    }
-    const monthIndex = monthMap[monthName]
-    if (monthIndex === undefined) return null
-    const timeMatch = timePart.match(/^(\d{1,2})(?::(\d{2}))?\s*(AM|PM)$/i)
-    let hour = 12
-    let minute = 0
-    if (timeMatch) {
-      const rawHour = parseInt(timeMatch[1], 10)
-      const rawMinute = timeMatch[2] ? parseInt(timeMatch[2], 10) : 0
-      const meridiem = timeMatch[3].toUpperCase()
-      hour = rawHour % 12
-      if (meridiem === 'PM') hour += 12
-      minute = rawMinute
-    }
-    const year = parseInt(yearRaw, 10)
-    const day = parseInt(dayRaw, 10)
-    return new Date(year, monthIndex, day, hour, minute)
-  }
+  const [selectedTopic, setSelectedTopic] = useState<ProtestTopicId | 'all'>('all')
 
   const formattedProtests = useMemo(() => {
     const now = new Date()
@@ -125,6 +85,8 @@ export default function ProtestsPage() {
         return protest.parsedDate >= startOfCurrentMonth
       })
       .sort((a, b) => {
+        if (a.featured && !b.featured) return -1
+        if (!a.featured && b.featured) return 1
         if (!a.parsedDate || !b.parsedDate) return 0
         return a.parsedDate.getTime() - b.parsedDate.getTime()
       })
@@ -133,8 +95,7 @@ export default function ProtestsPage() {
   const cityOptions = useMemo(() => {
     const cities = new Set<string>()
     formattedProtests.forEach((protest) => {
-      if (!protest.location) return
-      const city = protest.location.split(',')[0]?.trim()
+      const city = getCityFromLocation(protest.location)
       if (city) cities.add(city)
     })
     return ['All cities', ...Array.from(cities).sort()]
@@ -164,16 +125,23 @@ export default function ProtestsPage() {
 
   const filteredProtests = useMemo(() => {
     return formattedProtests.filter((protest) => {
-      const cityMatch =
-        selectedCity === 'All cities' || protest.location?.startsWith(selectedCity)
+      const city = getCityFromLocation(protest.location)
+      const cityMatch = selectedCity === 'All cities' || city === selectedCity || protest.location?.startsWith(selectedCity)
       const monthMatch = !selectedMonth
         ? true
         : protest.parsedDate
           ? `${protest.parsedDate.getFullYear()}-${String(protest.parsedDate.getMonth() + 1).padStart(2, '0')}` === selectedMonth
           : false
-      return cityMatch && monthMatch
+      const topicMatch =
+        selectedTopic === 'all' || (protest.topics?.includes(selectedTopic) ?? false)
+      return cityMatch && monthMatch && topicMatch
     })
-  }, [formattedProtests, selectedCity, selectedMonth])
+  }, [formattedProtests, selectedCity, selectedMonth, selectedTopic])
+
+  const calendarProtests = useMemo(
+    () => filteredProtests.filter((p) => p.status !== 'cancelled'),
+    [filteredProtests]
+  )
 
   const calendarDays = useMemo(() => {
     if (!selectedMonth) return []
@@ -188,7 +156,7 @@ export default function ProtestsPage() {
       days.push({ day: null, events: [] })
     }
     for (let day = 1; day <= daysInMonth; day += 1) {
-      const dayEvents = filteredProtests.filter((protest) => {
+      const dayEvents = calendarProtests.filter((protest) => {
         if (!protest.parsedDate) return false
         return (
           protest.parsedDate.getFullYear() === year &&
@@ -199,12 +167,12 @@ export default function ProtestsPage() {
       days.push({ day, events: dayEvents })
     }
     return days
-  }, [filteredProtests, selectedMonth])
+  }, [calendarProtests, selectedMonth])
 
   const mobileEventGroups = useMemo(() => {
     if (!selectedMonth) return []
-    const groups = new Map<string, typeof filteredProtests>()
-    filteredProtests.forEach((protest) => {
+    const groups = new Map<string, typeof calendarProtests>()
+    calendarProtests.forEach((protest) => {
       if (!protest.parsedDate) return
       const key = protest.parsedDate.toISOString().slice(0, 10)
       const group = groups.get(key) || []
@@ -220,14 +188,17 @@ export default function ProtestsPage() {
           : key
         return { key, label, items }
       })
-  }, [filteredProtests, selectedMonth])
+  }, [calendarProtests, selectedMonth])
 
   useEffect(() => {
     const url = getPublicDataFile('protests.json')
     fetch(url)
       .then((res) => (res.ok ? res.json() : []))
       .then((data) => {
-        setProtests(Array.isArray(data) ? data : [])
+        const file = parseProtestsFile(data)
+        setProtests(file.events)
+        setLastUpdated(file.lastUpdated ?? null)
+        setFeaturedCampaign(file.featuredCampaign?.enabled ? file.featuredCampaign : null)
       })
       .catch(() => setProtests([]))
       .finally(() => setLoading(false))
@@ -427,15 +398,35 @@ export default function ProtestsPage() {
           </div>
         </section>
 
+        {featuredCampaign?.label && (
+          <section className="px-4 sm:px-6 md:px-8 py-8 bg-[#9f1239]/5 border-y border-[#9f1239]/20">
+            <div className="max-w-4xl mx-auto text-center">
+              <p className="text-sm uppercase tracking-[0.2em] text-[#9f1239]/80 mb-2 font-medium">Featured</p>
+              <p className="text-xl sm:text-2xl font-light text-gray-900">{featuredCampaign.label}</p>
+              <a
+                href="#event-list"
+                className="inline-block mt-4 text-sm text-[#9f1239] font-light underline underline-offset-2 hover:text-[#881337]"
+              >
+                Jump to event list →
+              </a>
+            </div>
+          </section>
+        )}
+
         {/* Filters + Calendar */}
         <section className="relative px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 border-b border-slate-200 overflow-hidden">
           <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 opacity-80" />
           <div className="max-w-5xl mx-auto pl-4 sm:pl-6">
-            <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6">
+            <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6 mb-6">
               <div className="flex-1">
                 <p className="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Browse events</p>
                 <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-2">Find a protest near you</h2>
-                <p className="text-gray-600 font-light">Filter by city and view events on the calendar.</p>
+                <p className="text-gray-600 font-light">
+                  Filter by topic and city. Calendar shows confirmed upcoming events.
+                  {lastUpdated && (
+                    <span className="block text-sm text-slate-500 mt-1">List last updated {lastUpdated}.</span>
+                  )}
+                </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3">
                 <label className="text-sm text-slate-500 font-light">
@@ -469,6 +460,34 @@ export default function ProtestsPage() {
               </div>
             </div>
 
+            <div className="flex flex-wrap gap-2 mb-6">
+              <button
+                type="button"
+                onClick={() => setSelectedTopic('all')}
+                className={`px-3 py-1.5 rounded-full text-sm font-light border transition-colors ${
+                  selectedTopic === 'all'
+                    ? 'bg-slate-900 text-white border-slate-900'
+                    : 'bg-white text-gray-600 border-slate-200 hover:border-slate-300'
+                }`}
+              >
+                All topics
+              </button>
+              {PROTEST_TOPICS.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => setSelectedTopic(t.id)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-light border transition-colors ${
+                    selectedTopic === t.id
+                      ? 'bg-slate-900 text-white border-slate-900'
+                      : 'bg-white text-gray-600 border-slate-200 hover:border-slate-300'
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
+
             {loading ? (
               <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
                 Loading calendar…
@@ -476,6 +495,10 @@ export default function ProtestsPage() {
             ) : monthOptions.length === 0 ? (
               <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
                 No events listed yet.
+              </div>
+            ) : filteredProtests.length === 0 ? (
+              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
+                No events match these filters. Try another city, month, or topic.
               </div>
             ) : (
               <div className="mt-8 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
@@ -493,7 +516,7 @@ export default function ProtestsPage() {
                         <div className="text-xs text-slate-400 mb-1">{cell.day ?? ''}</div>
                         <div className="space-y-1">
                           {cell.events.slice(0, 2).map((event) => {
-                            const city = event.location?.split(',')[0]?.trim()
+                            const city = getCityFromLocation(event.location)
                             return (
                               <button
                                 key={event.id}
@@ -529,7 +552,7 @@ export default function ProtestsPage() {
                           <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">{group.label}</div>
                           <div className="space-y-2">
                             {group.items.map((event) => {
-                              const city = event.location?.split(',')[0]?.trim()
+                              const city = getCityFromLocation(event.location)
                               return (
                                 <button
                                   key={event.id}
@@ -565,7 +588,12 @@ export default function ProtestsPage() {
         >
           <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-300 to-blue-600 opacity-70" />
           <div className="max-w-5xl mx-auto pr-4 sm:pr-6">
-            <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-8 md:mb-10">Event List</h2>
+            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8 md:mb-10">
+              <h2 className="text-2xl md:text-3xl font-light text-gray-900">Event list</h2>
+              {!loading && filteredProtests.length > 0 && (
+                <p className="text-sm text-slate-500 font-light">{filteredProtests.length} shown</p>
+              )}
+            </div>
             {loading ? (
               <div className="rounded-xl bg-white border border-slate-200 p-12 text-center">
                 <p className="text-gray-500 font-light">Loading…</p>
@@ -584,46 +612,97 @@ export default function ProtestsPage() {
                   page for other ways to get involved.
                 </p>
               </motion.div>
+            ) : filteredProtests.length === 0 ? (
+              <div className="rounded-xl bg-white border border-slate-200 p-8 text-center text-gray-600 font-light">
+                No events match your filters.
+              </div>
             ) : (
               <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
-                {filteredProtests.map((protest, idx) => (
-                  <motion.article
-                    key={protest.id}
-                    id={`event-${protest.id}`}
-                    {...fadeIn}
-                    transition={{ delay: idx * 0.05 }}
-                    className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden hover:shadow-md transition-shadow"
-                  >
-                    <div className="p-6 sm:p-8 flex flex-col h-full">
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex flex-wrap gap-2 text-sm text-slate-500 font-light">
+                {filteredProtests.map((protest, idx) => {
+                  const mapsUrl = mapsUrlForEvent(protest)
+                  const isCancelled = protest.status === 'cancelled'
+                  const isPostponed = protest.status === 'postponed'
+                  return (
+                    <motion.article
+                      key={protest.id}
+                      id={`event-${protest.id}`}
+                      {...fadeIn}
+                      transition={{ delay: idx * 0.05 }}
+                      className={`rounded-2xl bg-white border shadow-sm overflow-hidden hover:shadow-md transition-shadow ${
+                        protest.featured ? 'border-blue-300 ring-1 ring-blue-100' : 'border-slate-200'
+                      } ${isCancelled ? 'opacity-60' : ''}`}
+                    >
+                      <div className="p-6 sm:p-8 flex flex-col h-full">
+                        <div className="flex flex-wrap items-center gap-2 mb-3">
+                          {protest.featured && (
+                            <span className="rounded-full bg-blue-100 text-blue-800 text-xs px-2 py-0.5 font-light">
+                              Featured
+                            </span>
+                          )}
+                          {isCancelled && (
+                            <span className="rounded-full bg-red-100 text-red-800 text-xs px-2 py-0.5 font-light">
+                              Cancelled
+                            </span>
+                          )}
+                          {isPostponed && (
+                            <span className="rounded-full bg-amber-100 text-amber-900 text-xs px-2 py-0.5 font-light">
+                              Postponed
+                            </span>
+                          )}
+                          {protest.topics?.map((tid) => (
+                            <span
+                              key={tid}
+                              className="rounded-full bg-slate-100 text-slate-600 text-xs px-2 py-0.5 font-light"
+                            >
+                              {topicLabel(tid)}
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex flex-wrap gap-2 text-sm text-slate-500 font-light mb-3">
                           <span>{protest.date}</span>
                           <span className="text-slate-300">·</span>
                           <span>{protest.location}</span>
                         </div>
-                        <span className="rounded-full bg-blue-50 text-blue-700 text-xs px-2 py-1">Event</span>
+                        {protest.organizer && (
+                          <p className="text-sm text-slate-600 font-light mb-2">{protest.organizer}</p>
+                        )}
+                        <h2 className="text-xl sm:text-2xl font-light text-gray-900 mb-3 leading-tight">
+                          {protest.title}
+                        </h2>
+                        {protest.address && (
+                          <p className="text-sm text-gray-500 font-light mb-2">{protest.address}</p>
+                        )}
+                        {protest.description && (
+                          <p className="text-gray-600 font-light leading-relaxed flex-grow mb-4">
+                            {protest.description}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-4 mt-auto pt-2">
+                          {protest.link && (
+                            <a
+                              href={protest.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 font-light text-sm"
+                            >
+                              Event page →
+                            </a>
+                          )}
+                          {mapsUrl && (
+                            <a
+                              href={mapsUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-700 font-light text-sm"
+                            >
+                              Directions →
+                            </a>
+                          )}
+                        </div>
                       </div>
-                      <h2 className="text-xl sm:text-2xl font-light text-gray-900 mb-3 leading-tight">
-                        {protest.title}
-                      </h2>
-                      {protest.description && (
-                        <p className="text-gray-600 font-light leading-relaxed flex-grow mb-4">
-                          {protest.description}
-                        </p>
-                      )}
-                      {protest.link ? (
-                        <a
-                          href={protest.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-700 font-light text-sm mt-auto"
-                        >
-                          Event details →
-                        </a>
-                      ) : null}
-                    </div>
-                  </motion.article>
-                ))}
+                    </motion.article>
+                  )
+                })}
               </div>
             )}
           </div>
