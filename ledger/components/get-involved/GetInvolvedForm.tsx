@@ -1,0 +1,531 @@
+'use client'
+
+import Link from 'next/link'
+import { useState, type FormEvent } from 'react'
+import {
+  buildGetInvolvedSubmitPayload,
+  emptyGetInvolvedFormState,
+  getInvolvedSubmitUrl,
+  visibleInvolvementRoles,
+  updatesTopicOptions,
+  volunteerRoleOptions,
+  type GetInvolvedFormState,
+  type InvolvementRole,
+} from '@/lib/get-involved'
+
+const inputClass =
+  'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
+const labelClass = 'block text-sm md:text-base font-light text-gray-700 mb-2'
+
+function toggleInList(list: string[], id: string): string[] {
+  return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
+}
+
+export default function GetInvolvedForm() {
+  const [form, setForm] = useState<GetInvolvedFormState>(emptyGetInvolvedFormState)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error' | 'not-configured'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [lastSubmittedRole, setLastSubmittedRole] = useState<InvolvementRole | ''>('')
+
+  const submitUrl = getInvolvedSubmitUrl()
+  const role = form.role as InvolvementRole | ''
+
+  const setField = <K extends keyof GetInvolvedFormState>(key: K, value: GetInvolvedFormState[K]) => {
+    setForm((prev) => ({ ...prev, [key]: value }))
+    if (submitStatus !== 'idle') setSubmitStatus('idle')
+  }
+
+  const validate = (): string | null => {
+    if (!form.role) return 'Please choose how you want to get involved.'
+    if (!form.name.trim()) return 'Please enter your name.'
+    if (!form.email.trim()) return 'Please enter your email.'
+    if (!form.city.trim()) return 'Please enter your city or community.'
+    if (!form.consent) return 'Please confirm you agree to be contacted.'
+
+    if (form.role === 'yard-sign') {
+      if (!form.yardSignDesign) return 'Please choose a sign design.'
+      if (!form.yardSignPaymentStatus) return 'Please tell us about payment (or if you still need to pay).'
+    }
+    if (form.role === 'dropoff') {
+      if (!form.dropoffLocation.trim()) return 'Please describe where you can host pickup or drop-off.'
+      if (!form.dropoffAvailability.trim()) return 'Please share when you are usually available.'
+      if (!form.dropoffListPublicly) return 'Please say whether we may list your area publicly.'
+    }
+    if (form.role === 'volunteer') {
+      if (form.volunteerRoles.length === 0) return 'Please select at least one way you can help.'
+      if (!form.volunteerAvailability.trim()) return 'Please share your general availability.'
+    }
+    return null
+  }
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    const validationError = validate()
+    if (validationError) {
+      setSubmitStatus('error')
+      setErrorMessage(validationError)
+      return
+    }
+
+    if (!submitUrl) {
+      setSubmitStatus('not-configured')
+      return
+    }
+
+    setIsSubmitting(true)
+    setSubmitStatus('idle')
+    setErrorMessage('')
+
+    try {
+      const body = new URLSearchParams(buildGetInvolvedSubmitPayload(form))
+      const res = await fetch(submitUrl, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: body.toString(),
+      })
+
+      const text = await res.text()
+      let ok = res.ok
+      if (text) {
+        try {
+          const parsed = JSON.parse(text) as { success?: boolean; ok?: boolean }
+          ok = ok && (parsed.success === true || parsed.ok === true)
+        } catch {
+          ok = res.ok && text.toLowerCase().includes('success')
+        }
+      }
+
+      if (!ok) throw new Error('Submission failed')
+
+      setLastSubmittedRole(form.role as InvolvementRole)
+      setSubmitStatus('success')
+      setForm(emptyGetInvolvedFormState)
+    } catch {
+      setSubmitStatus('error')
+      setErrorMessage(
+        'Something went wrong sending your sign-up. Please try again in a moment, or email the organizers listed on About.'
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (submitStatus === 'success') {
+    return (
+      <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-4 text-center">
+        <h2 className="text-2xl font-light text-gray-900">Thank you</h2>
+        <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">
+          We received your sign-up. A volunteer will follow up by email when we can match you locally.
+        </p>
+        {lastSubmittedRole === 'yard-sign' && (
+          <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
+            Haven&apos;t paid yet? You can still{' '}
+            <Link href="/products" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+              complete checkout
+            </Link>{' '}
+            after we confirm delivery in your area.
+          </p>
+        )}
+        <button
+          type="button"
+          onClick={() => setSubmitStatus('idle')}
+          className="mt-4 text-sm text-blue-600 underline underline-offset-2 hover:text-blue-700 font-light"
+        >
+          Submit another sign-up
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-8">
+      <fieldset className="space-y-4">
+        <legend className={labelClass}>How do you want to get involved? *</legend>
+        <div className="space-y-3">
+          {visibleInvolvementRoles.map((item) => (
+            <label
+              key={item.id}
+              className={`flex gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
+                form.role === item.id
+                  ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <input
+                type="radio"
+                name="role"
+                value={item.id}
+                checked={form.role === item.id}
+                onChange={() => setField('role', item.id)}
+                className="mt-1 shrink-0"
+                required={!form.role}
+              />
+              <span>
+                <span className="block text-sm font-medium text-gray-900">{item.label}</span>
+                <span className="block text-sm text-gray-600 font-light mt-0.5">{item.description}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      {form.role && (
+        <>
+          <div className="border-t border-gray-100 pt-8 space-y-6">
+            <h3 className="text-lg font-light text-gray-900">Your contact info</h3>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label htmlFor="gi-name" className={labelClass}>
+                  Full name *
+                </label>
+                <input
+                  id="gi-name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={form.name}
+                  onChange={(e) => setField('name', e.target.value)}
+                  className={inputClass}
+                  placeholder="Your name"
+                />
+              </div>
+              <div>
+                <label htmlFor="gi-email" className={labelClass}>
+                  Email *
+                </label>
+                <input
+                  id="gi-email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={form.email}
+                  onChange={(e) => setField('email', e.target.value)}
+                  className={inputClass}
+                  placeholder="you@example.com"
+                />
+              </div>
+              <div>
+                <label htmlFor="gi-phone" className={labelClass}>
+                  Phone <span className="text-gray-400">(recommended for delivery)</span>
+                </label>
+                <input
+                  id="gi-phone"
+                  type="tel"
+                  autoComplete="tel"
+                  value={form.phone}
+                  onChange={(e) => setField('phone', e.target.value)}
+                  className={inputClass}
+                  placeholder="Optional"
+                />
+              </div>
+              <div>
+                <label htmlFor="gi-city" className={labelClass}>
+                  City / community *
+                </label>
+                <input
+                  id="gi-city"
+                  type="text"
+                  autoComplete="address-level2"
+                  required
+                  value={form.city}
+                  onChange={(e) => setField('city', e.target.value)}
+                  className={inputClass}
+                  placeholder="e.g. Toronto, Ottawa, Hamilton"
+                />
+              </div>
+              <div>
+                <label htmlFor="gi-postal" className={labelClass}>
+                  Postal code
+                </label>
+                <input
+                  id="gi-postal"
+                  type="text"
+                  autoComplete="postal-code"
+                  value={form.postalCode}
+                  onChange={(e) => setField('postalCode', e.target.value)}
+                  className={inputClass}
+                  placeholder="Helps match you locally"
+                />
+              </div>
+            </div>
+          </div>
+
+          {role === 'yard-sign' && (
+            <div className="border-t border-gray-100 pt-8 space-y-6">
+              <h3 className="text-lg font-light text-gray-900">Yard sign request</h3>
+              <p className="text-sm text-gray-600 font-light -mt-4">
+                Signs are delivered by volunteers—not shipped by mail. Minimum contribution is on{' '}
+                <Link href="/products" className="text-blue-600 underline underline-offset-2">
+                  Products
+                </Link>
+                .
+              </p>
+              <div>
+                <label htmlFor="gi-design" className={labelClass}>
+                  Design *
+                </label>
+                <select
+                  id="gi-design"
+                  value={form.yardSignDesign}
+                  onChange={(e) => setField('yardSignDesign', e.target.value as GetInvolvedFormState['yardSignDesign'])}
+                  className={`${inputClass} bg-white`}
+                  required
+                >
+                  <option value="">Select a design</option>
+                  <option value="design-1">Design #1 — Healthcare, education, environment</option>
+                  <option value="design-2">Design #2 — Healthcare, education, transparency</option>
+                  <option value="either">Either design is fine</option>
+                </select>
+              </div>
+              <div>
+                <label htmlFor="gi-qty" className={labelClass}>
+                  How many signs?
+                </label>
+                <select
+                  id="gi-qty"
+                  value={form.yardSignQuantity}
+                  onChange={(e) => setField('yardSignQuantity', e.target.value)}
+                  className={`${inputClass} bg-white`}
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4+">4 or more</option>
+                </select>
+              </div>
+              <div>
+                <span className={labelClass}>Payment status *</span>
+                <div className="space-y-2">
+                  {(
+                    [
+                      ['paid', 'I already paid on Stripe'],
+                      ['not-yet', 'Not yet — I will pay after you confirm delivery'],
+                      ['need-help', 'I need help with cost (pay what you can)'],
+                    ] as const
+                  ).map(([value, label]) => (
+                    <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
+                      <input
+                        type="radio"
+                        name="yardSignPaymentStatus"
+                        checked={form.yardSignPaymentStatus === value}
+                        onChange={() => setField('yardSignPaymentStatus', value)}
+                      />
+                      {label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label htmlFor="gi-yard-notes" className={labelClass}>
+                  Delivery notes
+                </label>
+                <textarea
+                  id="gi-yard-notes"
+                  rows={3}
+                  value={form.yardSignNotes}
+                  onChange={(e) => setField('yardSignNotes', e.target.value)}
+                  className={`${inputClass} resize-y`}
+                  placeholder="Porch vs apartment, best times, etc."
+                />
+              </div>
+            </div>
+          )}
+
+          {role === 'dropoff' && (
+            <div className="border-t border-gray-100 pt-8 space-y-6">
+              <h3 className="text-lg font-light text-gray-900">Drop-off / pickup point</h3>
+              <div>
+                <label htmlFor="gi-dropoff-loc" className={labelClass}>
+                  Address or area you can serve *
+                </label>
+                <textarea
+                  id="gi-dropoff-loc"
+                  rows={3}
+                  required
+                  value={form.dropoffLocation}
+                  onChange={(e) => setField('dropoffLocation', e.target.value)}
+                  className={`${inputClass} resize-y`}
+                  placeholder="Neighbourhood, intersection, or full address if you are comfortable sharing"
+                />
+              </div>
+              <div>
+                <label htmlFor="gi-dropoff-when" className={labelClass}>
+                  When are you usually available? *
+                </label>
+                <input
+                  id="gi-dropoff-when"
+                  type="text"
+                  value={form.dropoffAvailability}
+                  onChange={(e) => setField('dropoffAvailability', e.target.value)}
+                  className={inputClass}
+                  placeholder="e.g. Weekday evenings, Saturday mornings, flexible"
+                />
+              </div>
+              <div>
+                <label htmlFor="gi-dropoff-cap" className={labelClass}>
+                  Roughly how many signs can you store at once?
+                </label>
+                <input
+                  id="gi-dropoff-cap"
+                  type="text"
+                  value={form.dropoffCapacity}
+                  onChange={(e) => setField('dropoffCapacity', e.target.value)}
+                  className={inputClass}
+                  placeholder="e.g. 5–10 in a garage"
+                />
+              </div>
+              <div>
+                <span className={labelClass}>May we list your area publicly for neighbours? *</span>
+                <div className="flex flex-wrap gap-4">
+                  {(['yes', 'no'] as const).map((value) => (
+                    <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
+                      <input
+                        type="radio"
+                        name="dropoffListPublicly"
+                        checked={form.dropoffListPublicly === value}
+                        onChange={() => setField('dropoffListPublicly', value)}
+                      />
+                      {value === 'yes' ? 'Yes — general area only' : 'No — coordinate privately'}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {role === 'volunteer' && (
+            <div className="border-t border-gray-100 pt-8 space-y-6">
+              <h3 className="text-lg font-light text-gray-900">Volunteer</h3>
+              <div>
+                <span className={labelClass}>What can you help with? *</span>
+                <div className="space-y-2">
+                  {volunteerRoleOptions.map((opt) => (
+                    <label key={opt.id} className="flex items-start gap-2 text-sm font-light text-gray-700">
+                      <input
+                        type="checkbox"
+                        checked={form.volunteerRoles.includes(opt.id)}
+                        onChange={() =>
+                          setField('volunteerRoles', toggleInList(form.volunteerRoles, opt.id))
+                        }
+                        className="mt-0.5"
+                      />
+                      {opt.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label htmlFor="gi-vol-avail" className={labelClass}>
+                  General availability *
+                </label>
+                <textarea
+                  id="gi-vol-avail"
+                  rows={2}
+                  value={form.volunteerAvailability}
+                  onChange={(e) => setField('volunteerAvailability', e.target.value)}
+                  className={`${inputClass} resize-y`}
+                  placeholder="Hours per week, days, or specific dates"
+                />
+              </div>
+              <div>
+                <span className={labelClass}>Do you have a vehicle for local runs?</span>
+                <div className="flex flex-wrap gap-4">
+                  {(['yes', 'no'] as const).map((value) => (
+                    <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
+                      <input
+                        type="radio"
+                        name="volunteerHasVehicle"
+                        checked={form.volunteerHasVehicle === value}
+                        onChange={() => setField('volunteerHasVehicle', value)}
+                      />
+                      {value === 'yes' ? 'Yes' : 'No'}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {role === 'updates' && (
+            <div className="border-t border-gray-100 pt-8 space-y-4">
+              <h3 className="text-lg font-light text-gray-900">Updates</h3>
+              <p className="text-sm text-gray-600 font-light">Optional — what topics interest you most?</p>
+              <div className="space-y-2">
+                {updatesTopicOptions.map((opt) => (
+                  <label key={opt.id} className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="checkbox"
+                      checked={form.updatesTopics.includes(opt.id)}
+                      onChange={() => setField('updatesTopics', toggleInList(form.updatesTopics, opt.id))}
+                    />
+                    {opt.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="border-t border-gray-100 pt-8 space-y-4">
+            <label htmlFor="gi-notes" className={labelClass}>
+              Anything else?
+            </label>
+            <textarea
+              id="gi-notes"
+              rows={3}
+              value={form.additionalNotes}
+              onChange={(e) => setField('additionalNotes', e.target.value)}
+              className={`${inputClass} resize-y`}
+              placeholder="Optional"
+            />
+          </div>
+
+          <label className="flex items-start gap-3 text-sm font-light text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.consent}
+              onChange={(e) => setField('consent', e.target.checked)}
+              className="mt-1 shrink-0"
+              required
+            />
+            <span>
+              I agree that Protect Ontario volunteers may contact me about this sign-up. My details are used only for
+              organizing signs, volunteers, and updates—not sold to third parties. *
+            </span>
+          </label>
+        </>
+      )}
+
+      {submitStatus === 'not-configured' && (
+        <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 text-amber-900 text-sm font-light">
+          Form storage is not connected yet. Organizers: set{' '}
+          <code className="text-xs bg-amber-100 px-1 rounded">NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL</code> and redeploy.
+          See <code className="text-xs bg-amber-100 px-1 rounded">ledger/GET_INVOLVED_GOOGLE_SHEET.md</code>.
+        </div>
+      )}
+
+      {submitStatus === 'error' && errorMessage && (
+        <div className="bg-red-50 border-2 border-red-400 rounded-lg p-4 text-red-800 text-sm font-light">
+          {errorMessage}
+        </div>
+      )}
+
+      <button
+        type="submit"
+        disabled={isSubmitting || !form.role}
+        className="w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        {isSubmitting ? 'Sending…' : 'Submit sign-up'}
+      </button>
+
+      <p className="text-xs text-gray-500 font-light text-center leading-relaxed">
+        Rallies and corrections: use the{' '}
+        <Link href="/about#contact" className="text-blue-600 underline underline-offset-2">
+          About contact form
+        </Link>
+        .
+      </p>
+    </form>
+  )
+}
