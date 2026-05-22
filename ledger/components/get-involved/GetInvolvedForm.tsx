@@ -6,7 +6,7 @@ import {
   buildGetInvolvedSubmitPayload,
   emptyGetInvolvedFormState,
   getInvolvedSubmitUrl,
-  visibleInvolvementRoles,
+  involvementRoles,
   updatesTopicOptions,
   volunteerRoleOptions,
   type GetInvolvedFormState,
@@ -44,8 +44,10 @@ export default function GetInvolvedForm() {
     if (!form.consent) return 'Please confirm you agree to be contacted.'
 
     if (form.role === 'yard-sign') {
-      if (!form.yardSignDesign) return 'Please choose a sign design.'
-      if (!form.yardSignPaymentStatus) return 'Please tell us about payment (or if you still need to pay).'
+      if (!form.yardSignDesign) return 'Please choose a sign design (or “either”).'
+    }
+    if (form.role === 'other') {
+      if (!form.otherDetails.trim()) return 'Please describe what you’re looking for.'
     }
     if (form.role === 'dropoff') {
       if (!form.dropoffLocation.trim()) return 'Please describe where you can host pickup or drop-off.'
@@ -144,7 +146,7 @@ export default function GetInvolvedForm() {
       <fieldset className="space-y-4">
         <legend className={labelClass}>How do you want to get involved? *</legend>
         <div className="space-y-3">
-          {visibleInvolvementRoles.map((item) => (
+          {involvementRoles.map((item) => (
             <label
               key={item.id}
               className={`flex gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
@@ -254,7 +256,7 @@ export default function GetInvolvedForm() {
 
           {role === 'yard-sign' && (
             <div className="border-t border-gray-100 pt-8 space-y-6">
-              <h3 className="text-lg font-light text-gray-900">Yard sign request</h3>
+              <h3 className="text-lg font-light text-gray-900">I want a sign</h3>
               <p className="text-sm text-gray-600 font-light -mt-4">
                 Signs are delivered by volunteers—not shipped by mail. Minimum contribution is on{' '}
                 <Link href="/products" className="text-blue-600 underline underline-offset-2">
@@ -296,7 +298,7 @@ export default function GetInvolvedForm() {
                 </select>
               </div>
               <div>
-                <span className={labelClass}>Payment status *</span>
+                <span className={labelClass}>Payment status (optional)</span>
                 <div className="space-y-2">
                   {(
                     [
@@ -448,6 +450,29 @@ export default function GetInvolvedForm() {
             </div>
           )}
 
+          {role === 'other' && (
+            <div className="border-t border-gray-100 pt-8 space-y-4">
+              <h3 className="text-lg font-light text-gray-900">Something else</h3>
+              <p className="text-sm text-gray-600 font-light -mt-2">
+                Weird idea? Partnership? Something we didn&apos;t list? Put it here—we read everything.
+              </p>
+              <div>
+                <label htmlFor="gi-other" className={labelClass}>
+                  What do you need? *
+                </label>
+                <textarea
+                  id="gi-other"
+                  rows={5}
+                  required
+                  value={form.otherDetails}
+                  onChange={(e) => setField('otherDetails', e.target.value)}
+                  className={`${inputClass} resize-y`}
+                  placeholder="Describe your request in a few sentences…"
+                />
+              </div>
+            </div>
+          )}
+
           {role === 'updates' && (
             <div className="border-t border-gray-100 pt-8 space-y-4">
               <h3 className="text-lg font-light text-gray-900">Updates</h3>
@@ -467,19 +492,21 @@ export default function GetInvolvedForm() {
             </div>
           )}
 
-          <div className="border-t border-gray-100 pt-8 space-y-4">
-            <label htmlFor="gi-notes" className={labelClass}>
-              Anything else?
-            </label>
-            <textarea
-              id="gi-notes"
-              rows={3}
-              value={form.additionalNotes}
-              onChange={(e) => setField('additionalNotes', e.target.value)}
-              className={`${inputClass} resize-y`}
-              placeholder="Optional"
-            />
-          </div>
+          {role !== 'other' && (
+            <div className="border-t border-gray-100 pt-8 space-y-4">
+              <label htmlFor="gi-notes" className={labelClass}>
+                Anything else?
+              </label>
+              <textarea
+                id="gi-notes"
+                rows={3}
+                value={form.additionalNotes}
+                onChange={(e) => setField('additionalNotes', e.target.value)}
+                className={`${inputClass} resize-y`}
+                placeholder="Optional"
+              />
+            </div>
+          )}
 
           <label className="flex items-start gap-3 text-sm font-light text-gray-700">
             <input

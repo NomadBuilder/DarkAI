@@ -51,8 +51,8 @@ export default function GetInvolvedPage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-lg sm:text-xl text-gray-600 font-light max-w-2xl mx-auto leading-relaxed"
             >
-              Host a local drop-off point, volunteer, or sign up for occasional updates. One form helps organizers match
-              you in your community.
+              Request a sign, host a drop-off point, volunteer, get updates, or tell us something we didn&apos;t list.
+              One form helps organizers match you in your community.
             </motion.p>
           </div>
         </section>

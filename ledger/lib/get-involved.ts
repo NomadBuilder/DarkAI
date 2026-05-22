@@ -3,9 +3,7 @@ export type InvolvementRole =
   | 'dropoff'
   | 'volunteer'
   | 'updates'
-
-/** Set true to show yard-sign on /get-involved (checkout handles orders for now). */
-export const SHOW_YARD_SIGN_ROLE = false
+  | 'other'
 
 export const involvementRoles: {
   id: InvolvementRole
@@ -14,8 +12,8 @@ export const involvementRoles: {
 }[] = [
   {
     id: 'yard-sign',
-    label: 'Request a yard sign',
-    description: 'Printed 18 × 24 in with a stand—delivered by volunteers in your area.',
+    label: 'I want a sign',
+    description: 'Request a yard sign for your area—we’ll follow up about design and local delivery.',
   },
   {
     id: 'dropoff',
@@ -32,11 +30,12 @@ export const involvementRoles: {
     label: 'Stay in the loop',
     description: 'Get occasional updates on protests, signs, and accountability work.',
   },
+  {
+    id: 'other',
+    label: 'Something else',
+    description: 'None of the above? Tell us what you have in mind—we’ll figure it out.',
+  },
 ]
-
-export const visibleInvolvementRoles = involvementRoles.filter(
-  (r) => SHOW_YARD_SIGN_ROLE || r.id !== 'yard-sign'
-)
 
 export type YardSignDesign = 'design-1' | 'design-2' | 'either'
 export type YardSignPaymentStatus = 'paid' | 'not-yet' | 'need-help'
@@ -60,6 +59,7 @@ export type GetInvolvedFormState = {
   volunteerAvailability: string
   volunteerHasVehicle: 'yes' | 'no' | ''
   updatesTopics: string[]
+  otherDetails: string
   additionalNotes: string
   consent: boolean
 }
@@ -83,6 +83,7 @@ export const emptyGetInvolvedFormState: GetInvolvedFormState = {
   volunteerAvailability: '',
   volunteerHasVehicle: '',
   updatesTopics: [],
+  otherDetails: '',
   additionalNotes: '',
   consent: false,
 }
@@ -105,6 +106,8 @@ export const updatesTopicOptions = [
 /** Flat payload for Google Apps Script `e.parameter` (URL-encoded POST). */
 export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Record<string, string> {
   const roleLabel = involvementRoles.find((r) => r.id === state.role)?.label ?? state.role
+  const notes =
+    state.role === 'other' ? state.otherDetails.trim() : state.additionalNotes.trim()
 
   return {
     submitted_at: new Date().toISOString(),
@@ -127,7 +130,7 @@ export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Reco
     volunteer_availability: state.volunteerAvailability.trim(),
     volunteer_has_vehicle: state.volunteerHasVehicle,
     updates_topics: state.updatesTopics.join(', '),
-    additional_notes: state.additionalNotes.trim(),
+    additional_notes: notes,
     source_page: 'get-involved',
   }
 }
