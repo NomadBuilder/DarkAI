@@ -258,7 +258,7 @@ export default function GetInvolvedForm() {
             <div className="border-t border-gray-100 pt-8 space-y-6">
               <h3 className="text-lg font-light text-gray-900">I want a sign</h3>
               <p className="text-sm text-gray-600 font-light -mt-4">
-                Signs are delivered by volunteers—not shipped by mail. Minimum contribution is on{' '}
+                Signs are delivered by volunteers—not shipped by mail. Checkout is $10 on{' '}
                 <Link href="/products" className="text-blue-600 underline underline-offset-2">
                   Products
                 </Link>

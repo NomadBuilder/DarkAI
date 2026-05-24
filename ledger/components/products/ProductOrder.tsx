@@ -16,8 +16,8 @@ export default function ProductOrder({ product }: Props) {
         <p className="text-xs uppercase tracking-[0.25em] text-[#9f1239] font-medium mb-2">Support the cause</p>
         <h2 className="text-xl font-light text-slate-900 mb-2">Checkout</h2>
         <p className="text-sm text-slate-600 font-light leading-relaxed">
-          Minimum <strong className="font-medium text-slate-800">${min} CAD</strong>. On Stripe you can pay more if you
-          can—it helps cover materials, printing, and volunteer delivery.
+          <strong className="font-medium text-slate-800">${min} CAD</strong> per sign—covers materials, printing, and
+          volunteer delivery.
         </p>
       </div>
 
@@ -32,7 +32,7 @@ export default function ProductOrder({ product }: Props) {
             Continue to checkout
           </a>
           <p className="text-xs text-slate-500 font-light">
-            You will set your contribution amount on Stripe (minimum ${min} CAD).
+            Checkout on Stripe (${min} CAD).
             {product.checkoutHint ? ` ${product.checkoutHint}` : null}
           </p>
         </div>

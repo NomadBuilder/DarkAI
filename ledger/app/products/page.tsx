@@ -22,8 +22,8 @@ export default function ProductsPage() {
             Materials you can order
           </h1>
           <p className="text-lg text-slate-200/95 font-light max-w-2xl leading-relaxed">
-            Ready-made protest materials, fulfilled by organizers and volunteers. Pay what you can above the minimum—every
-            dollar supports printing, stands, and local delivery.
+            Ready-made protest materials, fulfilled by organizers and volunteers. Yard signs are $10—every dollar
+            supports printing, stands, and local delivery.
           </p>
           <p className="mt-4 text-sm text-slate-300/90 font-light">
             Looking for DIY builders?{' '}
@@ -59,7 +59,7 @@ export default function ProductsPage() {
         <section className="max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
           <h2 className="text-lg font-medium text-slate-900 mb-3">How it works</h2>
           <ul className="space-y-3 text-sm text-slate-600 font-light leading-relaxed list-disc pl-5">
-            <li>Choose a product and continue to Stripe to set your contribution (minimum shown on each item).</li>
+            <li>Choose a product and continue to Stripe ($10 per yard sign).</li>
             <li>Complete checkout online or coordinate with your local organizer when noted.</li>
             <li>Receive your item through volunteer delivery or fulfilment described on each product page.</li>
           </ul>
