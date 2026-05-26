@@ -6,8 +6,14 @@ import Footer from '@/components/Footer'
 
 // Base URL and paths for meta, OG, and icons (lowercase canonical URL)
 const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''
-// Use canonical URL only when set (e.g. in production); otherwise relative so dev/404 doesn't break metadata
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || (typeof window !== 'undefined' ? window.location.origin : '')
+const CANONICAL_SITE_URL = 'https://protectont.ca'
+// Static export / production builds must set metadataBase or Next.js emits localhost:3000 for og:image
+const isProductionBuild =
+  process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true'
+const siteUrl = (
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  (isProductionBuild ? CANONICAL_SITE_URL : '')
+).replace(/\/$/, '')
 const metadataBase = siteUrl ? new URL(siteUrl) : undefined
 
 export const metadata: Metadata = {

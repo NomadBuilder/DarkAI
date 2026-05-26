@@ -29,6 +29,7 @@ npm install --include=dev
 echo ""
 echo "🔨 npm run build:protectont (NODE_ENV=production)..."
 export NODE_ENV=production
+export NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://protectont.ca}"
 export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=4096"
 if ! npm run build:protectont; then
   echo ""

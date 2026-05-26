@@ -117,7 +117,7 @@ services:
         fi
         
         # Run build with environment variables inline (more reliable) and capture all output
-        if ! NODE_ENV=production npm run build:protectont >> "$DIAG_LOG" 2>&1; then
+        if ! NODE_ENV=production NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://protectont.ca}" npm run build:protectont >> "$DIAG_LOG" 2>&1; then
           echo ""
           echo "❌ Build failed with exit code $?"
           echo "Current directory: $(pwd)"
