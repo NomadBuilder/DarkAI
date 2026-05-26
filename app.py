@@ -213,11 +213,12 @@ def serve_ledger_at_root(path):
         if sent:
             return sent
     else:
-        sent = _try_send(path + ".html")
-        if sent:
-            return sent
+        # Prefer directory export (trailingSlash) over orphan flat route.html from old builds.
         dir_index = os.path.join(path, "index.html")
         sent = _try_send(dir_index)
+        if sent:
+            return sent
+        sent = _try_send(path + ".html")
         if sent:
             return sent
 

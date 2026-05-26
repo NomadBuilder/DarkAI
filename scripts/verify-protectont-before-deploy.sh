@@ -16,6 +16,8 @@ echo ""
 echo "=========================================="
 echo "2. Copy ledger/out -> static/protectont (same as Render)"
 echo "=========================================="
+# Replace entirely so orphan *.html from old exports (pre-trailingSlash) are not left behind.
+rm -rf static/protectont
 mkdir -p static/protectont
 cp -r ledger/out/* static/protectont/
 echo "✅ static/protectont populated"
