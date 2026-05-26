@@ -23,9 +23,11 @@ import SectionJoinCtaBridge from './home-preview/SectionJoinCtaBridge'
 export default function ScrollyContainerHomePreview() {
   const containerRef = useRef<HTMLDivElement>(null)
   const ledgerSectionRef = useRef<HTMLDivElement>(null)
+  const atfSentinelRef = useRef<HTMLDivElement>(null)
   const { setScrollProgress, setCurrentYear } = useLedgerStore()
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
+  const [navOnDark, setNavOnDark] = useState(true)
 
   const handleMethodologyToggle = () => {
     if (showMethodology) {
@@ -44,6 +46,18 @@ export default function ScrollyContainerHomePreview() {
       setShowDataSources(true)
     }
   }
+
+  useEffect(() => {
+    const sentinel = atfSentinelRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setNavOnDark(entry.isIntersecting),
+      { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     const handleOpenDataSources = () => {
@@ -106,6 +120,7 @@ export default function ScrollyContainerHomePreview() {
       <TopNavigation
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
+        navOnDark={navOnDark}
         primaryCta={{ label: 'Get involved', href: '/join' }}
       />
       <div className="relative z-10 w-full">
@@ -113,6 +128,7 @@ export default function ScrollyContainerHomePreview() {
           <SectionColdOpenJoinBridge />
         </div>
         <SectionJoinPathBridge />
+        <div ref={atfSentinelRef} className="h-px w-full" aria-hidden />
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>

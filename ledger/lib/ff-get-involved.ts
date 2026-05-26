@@ -12,6 +12,10 @@ export const FF_COLORS = {
 export const FF_PAGE_GRADIENT =
   'linear-gradient(168deg, #5c4899 0%, #4a3888 18%, #3d2b7a 42%, #35266d 68%, #2a1f58 100%)'
 
+/** Homepage preview above-the-fold — join purple, fades to site white below */
+export const FF_ATF_GRADIENT =
+  'linear-gradient(168deg, #5c4899 0%, #4a3888 20%, #3d2b7a 48%, #35266d 72%, #4a3d8c 88%)'
+
 /** Printable yard-sign artwork (served from ledger/public) */
 export const FF_YARD_SIGN_DESIGNS = [
   {
