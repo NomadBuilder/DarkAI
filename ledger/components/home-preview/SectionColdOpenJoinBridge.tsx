@@ -10,24 +10,14 @@ export default function SectionColdOpenJoinBridge() {
   return (
     <section
       id="hero"
-      className="relative flex w-full items-start justify-center overflow-x-hidden px-4 py-12 pb-14 scroll-mt-16 sm:scroll-mt-20 sm:px-6 md:min-h-[80vh] md:items-center md:px-8 md:py-16 md:pb-16"
+      className="relative flex w-full items-start justify-center overflow-x-hidden px-4 py-12 pb-16 scroll-mt-16 sm:scroll-mt-20 sm:px-6 md:min-h-[85vh] md:items-center md:px-8 md:py-16 md:pb-20"
     >
-      <JoinPurpleBackdrop />
+      <JoinPurpleBackdrop fadeToWhite />
       <div className="relative z-10 w-full max-w-5xl space-y-8 text-center md:space-y-12">
-        <motion.p
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="mb-2 inline-flex items-center gap-2 rounded-full border border-[#f9e04c]/25 bg-[#f9e04c]/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[#f9e04c] sm:text-xs"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-[#ff9a3c]" aria-hidden />
-          Grassroots · Ontario
-        </motion.p>
-
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+          transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
         >
           <p
             className="text-3xl font-light leading-tight tracking-tight text-[#f9e04c] sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl"
@@ -70,7 +60,7 @@ export default function SectionColdOpenJoinBridge() {
           transition={{ duration: 1, delay: 1.8, ease: [0.22, 1, 0.36, 1] }}
           className="pt-8 md:pt-12"
         >
-          <p className="text-2xl font-light text-red-300 sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
+          <p className="text-2xl font-light text-white sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl">
             Then the cuts and sell-offs accelerated.
           </p>
         </motion.div>

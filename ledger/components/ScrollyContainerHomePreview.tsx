@@ -13,7 +13,6 @@ import MethodologyDrawer from './MethodologyDrawer'
 import DataSourcesDrawer from './DataSourcesDrawer'
 import TopNavigation from './TopNavigation'
 import SectionColdOpenJoinBridge from './home-preview/SectionColdOpenJoinBridge'
-import SectionJoinPathBridge from './home-preview/SectionJoinPathBridge'
 import SectionJoinCtaBridge from './home-preview/SectionJoinCtaBridge'
 
 /**
@@ -127,7 +126,6 @@ export default function ScrollyContainerHomePreview() {
         <div className="pt-0 sm:pt-[152px] md:pt-0">
           <SectionColdOpenJoinBridge />
         </div>
-        <SectionJoinPathBridge />
         <div ref={atfSentinelRef} className="h-px w-full" aria-hidden />
         <section id="timeline">
           <SectionPolicyTimeline />
