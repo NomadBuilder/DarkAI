@@ -19,13 +19,13 @@ function StoryAvatar({ story }: { story: StoryItem }) {
   const src = avatarSrc(story)
 
   return (
-    <div className="flex h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-black shadow-sm sm:h-16 sm:w-16">
+    <div className="flex h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100 shadow-sm sm:h-16 sm:w-16">
       {!imgError ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
           src={src}
           alt=""
-          className="h-full w-full object-cover"
+          className={`h-full w-full ${story.avatarUrl?.trim() ? 'object-cover' : 'object-contain p-1.5'}`}
           onError={() => setImgError(true)}
         />
       ) : (
@@ -197,9 +197,13 @@ export default function StoriesPageContent() {
             <form onSubmit={onSubmit} className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-6 sm:items-start">
                 <div className="flex flex-row sm:flex-col items-center gap-3 sm:gap-2 sm:w-28 shrink-0">
-                  <div className="flex h-16 w-16 overflow-hidden rounded-full border-2 border-slate-200 bg-black shadow-sm">
+                  <div className="flex h-16 w-16 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100 shadow-sm">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={formAvatarSrc} alt="" className="h-full w-full object-cover" />
+                    <img
+                      src={formAvatarSrc}
+                      alt=""
+                      className={`h-full w-full ${avatarPreview ? 'object-cover' : 'object-contain p-2'}`}
+                    />
                   </div>
                   <div className="flex flex-col gap-1 sm:items-center">
                     <label className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-light underline underline-offset-2">
