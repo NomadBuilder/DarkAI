@@ -10,39 +10,74 @@ import {
   FFV2_SOURCE_PAGE,
 } from '@/lib/ff-get-involved'
 
-const QUICK_ACTIONS: {
+type QuickAction = {
   id: string
   title: string
   subtitle: string
   role?: InvolvementRole
-  icon: string
-}[] = [
-  { id: 'signs', title: 'Signs', subtitle: 'Order or download artwork', role: 'yard-sign', icon: '🪧' },
-  {
-    id: 'hub',
-    title: 'Sign Pickup Hub',
-    subtitle: 'Host a local pickup point',
-    role: 'dropoff',
-    icon: '📍',
-  },
-  { id: 'volunteer', title: 'Volunteer', subtitle: 'Deliveries, outreach & events', role: 'volunteer', icon: '🤝' },
-  { id: 'donations', title: 'Donations', subtitle: 'Support the campaign', icon: '❤️' },
-  { id: 'other', title: 'Other', subtitle: 'Ideas, connections, skills', role: 'other', icon: '💡' },
+  icon: 'sign' | 'hub' | 'volunteer' | 'donate' | 'other'
+}
+
+const QUICK_ACTIONS: QuickAction[] = [
+  { id: 'signs', title: 'Signs', subtitle: 'Order or download artwork', role: 'yard-sign', icon: 'sign' },
+  { id: 'pickup-hub', title: 'Sign Pickup Hub', subtitle: 'Host a local pickup point', role: 'dropoff', icon: 'hub' },
+  { id: 'volunteer', title: 'Volunteer', subtitle: 'Deliveries, outreach & events', role: 'volunteer', icon: 'volunteer' },
+  { id: 'donations', title: 'Donations', subtitle: 'Support the campaign', icon: 'donate' },
+  { id: 'other', title: 'Other', subtitle: 'Ideas, connections, skills', role: 'other', icon: 'other' },
 ]
+
+function ActionIcon({ type }: { type: QuickAction['icon'] }) {
+  const className = 'h-6 w-6'
+  const stroke = FF_COLORS.headingText
+  switch (type) {
+    case 'sign':
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.75" aria-hidden>
+          <rect x="3" y="5" width="18" height="14" rx="2" />
+          <path d="M7 9h4M7 13h10" strokeLinecap="round" />
+        </svg>
+      )
+    case 'hub':
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.75" aria-hidden>
+          <path d="M12 21s7-4.5 7-11a7 7 0 1 0-14 0c0 6.5 7 11 7 11z" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+      )
+    case 'volunteer':
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.75" aria-hidden>
+          <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" strokeLinecap="round" />
+          <circle cx="9" cy="7" r="3" />
+          <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" strokeLinecap="round" />
+        </svg>
+      )
+    case 'donate':
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.75" aria-hidden>
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      )
+    case 'other':
+      return (
+        <svg className={className} viewBox="0 0 24 24" fill="none" stroke={stroke} strokeWidth="1.75" aria-hidden>
+          <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      )
+  }
+}
 
 function SectionCard({
   id,
   children,
-  className = '',
 }: {
   id: string
   children: React.ReactNode
-  className?: string
 }) {
   return (
     <section
       id={id}
-      className={`scroll-mt-24 rounded-3xl border border-[#f9e04c]/25 bg-gradient-to-br from-white/[0.12] to-white/[0.04] p-6 sm:p-8 shadow-[0_24px_80px_-24px_rgba(0,0,0,0.45)] backdrop-blur-sm ${className}`}
+      className="scroll-mt-28 sm:scroll-mt-32 rounded-[1.75rem] border border-[#f9e04c]/20 bg-gradient-to-br from-white/[0.14] via-white/[0.06] to-transparent p-5 shadow-[0_20px_60px_-24px_rgba(0,0,0,0.55)] backdrop-blur-md transition-[border-color,box-shadow] duration-300 hover:border-[#f9e04c]/35 sm:rounded-[2rem] sm:p-8 lg:p-10"
     >
       {children}
     </section>
@@ -51,14 +86,13 @@ function SectionCard({
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-6 flex flex-wrap items-center gap-3">
+    <div className="mb-6 sm:mb-8">
       <h2
-        className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] sm:text-base"
+        className="inline-flex items-center rounded-2xl px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] sm:text-sm"
         style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
       >
         {children}
       </h2>
-      <span className="h-px flex-1 min-w-[3rem] bg-[#f9e04c]/30" aria-hidden />
     </div>
   )
 }
@@ -75,8 +109,8 @@ function AccentLink({
   className?: string
 }) {
   const base =
-    'inline-flex items-center gap-1 font-semibold underline decoration-2 underline-offset-4 transition-colors hover:opacity-90'
-  const style = { color: FF_COLORS.link }
+    'inline-flex items-center gap-1.5 font-semibold underline decoration-2 underline-offset-[3px] transition-colors hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 rounded-sm'
+  const style = { color: FF_COLORS.link, outlineColor: FF_COLORS.link }
 
   if (onClick) {
     return (
@@ -95,7 +129,7 @@ function AccentLink({
     >
       {children}
       {href?.startsWith('http') && (
-        <span className="text-xs opacity-80" aria-hidden>
+        <span className="text-[0.65rem] font-bold opacity-90" aria-hidden>
           ↗
         </span>
       )}
@@ -107,19 +141,36 @@ function PrimaryButton({
   href,
   onClick,
   children,
+  fullWidthOnMobile = true,
 }: {
   href?: string
   onClick?: () => void
   children: React.ReactNode
+  fullWidthOnMobile?: boolean
 }) {
-  const className =
-    'inline-flex items-center justify-center rounded-xl px-7 py-3.5 text-sm font-bold uppercase tracking-wide shadow-lg transition-all hover:scale-[1.02] hover:shadow-xl active:scale-[0.98]'
-  const style = { backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }
+  const className = [
+    'inline-flex min-h-[3rem] items-center justify-center gap-2 rounded-2xl px-8 py-3.5 text-sm font-bold uppercase tracking-[0.08em]',
+    'shadow-[0_8px_24px_-8px_rgba(249,224,76,0.55)] transition-all motion-safe:hover:scale-[1.02] motion-safe:hover:shadow-[0_12px_32px_-8px_rgba(249,224,76,0.65)] motion-safe:active:scale-[0.98]',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+    fullWidthOnMobile ? 'w-full sm:w-auto' : '',
+  ].join(' ')
+  const style = {
+    backgroundColor: FF_COLORS.headingBg,
+    color: FF_COLORS.headingText,
+    outlineColor: FF_COLORS.headingBg,
+  }
+
+  const arrow = (
+    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+      <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
 
   if (onClick) {
     return (
       <button type="button" onClick={onClick} className={className} style={style}>
         {children}
+        {arrow}
       </button>
     )
   }
@@ -132,7 +183,29 @@ function PrimaryButton({
       rel={href?.startsWith('http') ? 'noopener noreferrer' : undefined}
     >
       {children}
+      {arrow}
     </a>
+  )
+}
+
+function SignOptionCard({
+  step,
+  children,
+}: {
+  step: string
+  children: React.ReactNode
+}) {
+  return (
+    <li className="flex gap-4 rounded-2xl border border-[#f9e04c]/15 bg-black/15 p-4 sm:p-5 transition-colors hover:border-[#f9e04c]/30 hover:bg-black/20">
+      <span
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
+        style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
+        aria-hidden
+      >
+        {step}
+      </span>
+      <span className="min-w-0 flex-1 pt-0.5 text-[0.95rem] leading-relaxed sm:text-base">{children}</span>
+    </li>
   )
 }
 
@@ -153,94 +226,120 @@ export default function FfV2GetInvolvedPage() {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
 
-  const textClass = 'text-[#f9e04c]'
+  const handleQuickAction = (action: QuickAction) => {
+    if (action.role) {
+      goToForm(action.role)
+      return
+    }
+    scrollToSection(action.id)
+  }
+
+  const prose = `text-[#f9e04c] text-[0.95rem] leading-relaxed sm:text-base sm:leading-relaxed`
 
   return (
     <div
-      className="relative min-h-screen overflow-x-hidden antialiased"
+      className="relative min-h-[100dvh] overflow-x-hidden antialiased selection:bg-[#f9e04c]/30 selection:text-[#1a1a1a]"
       style={{ backgroundColor: FF_COLORS.background }}
     >
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {/* Background */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
         <div
-          className="absolute -top-32 -right-24 h-[28rem] w-[28rem] rounded-full opacity-30 blur-3xl"
-          style={{ background: 'radial-gradient(circle, #5c3d9e 0%, transparent 70%)' }}
+          className="absolute -top-40 right-[-10%] h-[32rem] w-[32rem] rounded-full opacity-40 blur-3xl sm:h-[36rem] sm:w-[36rem]"
+          style={{ background: 'radial-gradient(circle, #6b4bb3 0%, transparent 68%)' }}
         />
         <div
-          className="absolute top-1/3 -left-32 h-80 w-80 rounded-full opacity-25 blur-3xl"
+          className="absolute top-[20%] left-[-15%] h-72 w-72 rounded-full opacity-30 blur-3xl sm:h-96 sm:w-96"
           style={{ background: 'radial-gradient(circle, #2a1f52 0%, transparent 70%)' }}
         />
         <div
-          className="absolute bottom-0 right-0 h-[min(45vh,360px)] w-[min(55vw,420px)] opacity-[0.35]"
+          className="absolute inset-0 opacity-[0.22]"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.18) 1.5px, transparent 1.5px)',
-            backgroundSize: '16px 16px',
-          }}
-        />
-        <div
-          className="absolute bottom-24 left-0 h-[min(35vh,280px)] w-[min(45vw,320px)] opacity-30"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.15) 1.5px, transparent 1.5px)',
-            backgroundSize: '16px 16px',
+            backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.2) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+            maskImage: 'linear-gradient(to bottom, black 0%, transparent 85%)',
           }}
         />
       </div>
 
-      <div className="relative z-10 mx-auto max-w-4xl px-4 pb-28 pt-12 sm:px-6 sm:pt-16 lg:px-8">
+      {/* Sticky jump nav — mobile & tablet */}
+      <div
+        className="sticky top-0 z-30 border-b border-[#f9e04c]/15 bg-[#3d2b7a]/85 backdrop-blur-xl lg:hidden"
+        role="navigation"
+        aria-label="Jump to section"
+      >
+        <div className="mx-auto flex max-w-5xl gap-2 overflow-x-auto px-4 py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {QUICK_ACTIONS.map((action) => {
+            const key = action.role ?? action.id
+            const isActive = activeNav === key
+            return (
+              <button
+                key={action.id}
+                type="button"
+                onClick={() => handleQuickAction(action)}
+                className={`shrink-0 snap-start rounded-full px-4 py-2 text-xs font-semibold transition-colors sm:text-sm ${
+                  isActive
+                    ? 'bg-[#f9e04c] text-[#1a1a1a]'
+                    : 'bg-white/10 text-[#f9e04c] hover:bg-white/15'
+                }`}
+              >
+                {action.title}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-5xl px-4 pb-20 pt-10 sm:px-6 sm:pb-28 sm:pt-14 lg:max-w-6xl lg:px-10 lg:pt-20">
         {/* Hero */}
-        <header className="mb-14 text-center sm:mb-16">
-          <p
-            className="mb-4 inline-block rounded-full border border-[#f9e04c]/30 bg-[#f9e04c]/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-[#f9e04c]"
-          >
+        <header className="mb-12 text-center sm:mb-16 lg:mb-20">
+          <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#f9e04c]/25 bg-[#f9e04c]/10 px-4 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.22em] text-[#f9e04c] sm:text-xs">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#ff9a3c]" aria-hidden />
             Grassroots · Ontario
           </p>
           <h1
-            className="text-4xl font-bold leading-tight tracking-tight text-[#f9e04c] sm:text-5xl md:text-6xl"
-            style={{ textShadow: '0 2px 24px rgba(0,0,0,0.25)' }}
+            className="text-[2.5rem] font-bold leading-[1.08] tracking-tight text-[#f9e04c] sm:text-5xl md:text-6xl lg:text-[4.25rem]"
+            style={{ textShadow: '0 4px 32px rgba(0,0,0,0.35)' }}
           >
             Hi there!
           </h1>
-          <div className={`mx-auto mt-8 max-w-2xl space-y-4 text-base leading-relaxed sm:text-lg ${textClass}`}>
-            {FF_INTRO.map((paragraph) => (
-              <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+          <div className="mx-auto mt-8 max-w-2xl space-y-4 sm:mt-10 sm:space-y-5">
+            {FF_INTRO.map((paragraph, i) => (
+              <p key={paragraph.slice(0, 24)} className={`${prose} ${i === 0 ? 'text-lg font-medium sm:text-xl' : 'text-[#f9e04c]/90'}`}>
+                {paragraph}
+              </p>
             ))}
           </div>
         </header>
 
-        {/* Quick actions */}
-        <nav className="mb-16" aria-label="What are you here for?">
-          <h2 className={`mb-6 text-center text-xl font-semibold sm:text-2xl ${textClass}`}>
+        {/* Quick actions — desktop grid */}
+        <nav className="mb-14 hidden lg:mb-20 lg:block" aria-label="What are you here for?">
+          <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight text-[#f9e04c]">
             What are you here for?
           </h2>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-3 gap-4 xl:grid-cols-5 xl:gap-5">
             {QUICK_ACTIONS.map((action) => {
-              const isActive = activeNav === (action.role ?? action.id)
+              const key = action.role ?? action.id
+              const isActive = activeNav === key
               return (
                 <button
                   key={action.id}
                   type="button"
-                  onClick={() => {
-                    if (action.role) {
-                      goToForm(action.role)
-                      return
-                    }
-                    scrollToSection(action.id)
-                  }}
-                  className={`group flex flex-col items-start rounded-2xl border p-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl ${
+                  onClick={() => handleQuickAction(action)}
+                  className={`group flex min-h-[10.5rem] flex-col rounded-[1.35rem] border p-6 text-left transition-all duration-300 motion-safe:hover:-translate-y-1 ${
                     isActive
-                      ? 'border-[#ff9a3c] bg-[#ff9a3c]/15 shadow-lg ring-2 ring-[#ff9a3c]/40'
-                      : 'border-[#f9e04c]/20 bg-[#f9e04c]/[0.07] hover:border-[#f9e04c]/45 hover:bg-[#f9e04c]/[0.12]'
+                      ? 'border-[#ff9a3c] bg-[#ff9a3c]/12 shadow-[0_16px_40px_-12px_rgba(255,154,60,0.45)] ring-2 ring-[#ff9a3c]/35'
+                      : 'border-[#f9e04c]/18 bg-[#f9e04c]/[0.06] hover:border-[#f9e04c]/40 hover:bg-[#f9e04c]/[0.11] hover:shadow-xl'
                   }`}
                 >
-                  <span className="mb-3 text-2xl" aria-hidden>
-                    {action.icon}
-                  </span>
-                  <span className="text-base font-bold text-[#f9e04c]">{action.title}</span>
-                  <span className="mt-1 text-sm leading-snug text-[#f9e04c]/75">{action.subtitle}</span>
                   <span
-                    className="mt-3 text-xs font-semibold uppercase tracking-wide transition-colors"
-                    style={{ color: FF_COLORS.link }}
+                    className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl shadow-inner"
+                    style={{ backgroundColor: FF_COLORS.headingBg }}
                   >
+                    <ActionIcon type={action.icon} />
+                  </span>
+                  <span className="text-lg font-bold text-[#f9e04c]">{action.title}</span>
+                  <span className="mt-2 flex-1 text-sm leading-snug text-[#f9e04c]/70">{action.subtitle}</span>
+                  <span className="mt-4 text-xs font-bold uppercase tracking-wider" style={{ color: FF_COLORS.link }}>
                     {action.role ? 'Go to form →' : 'View section →'}
                   </span>
                 </button>
@@ -249,50 +348,68 @@ export default function FfV2GetInvolvedPage() {
           </div>
         </nav>
 
-        <div className="space-y-8 sm:space-y-10">
-          {/* Signs */}
+        {/* Quick actions — mobile/tablet cards (below hero; sticky pills above) */}
+        <div className="mb-12 lg:hidden">
+          <h2 className={`mb-5 text-center text-xl font-semibold sm:text-2xl ${prose}`}>What are you here for?</h2>
+          <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2">
+            {QUICK_ACTIONS.map((action) => {
+              const key = action.role ?? action.id
+              const isActive = activeNav === key
+              return (
+                <button
+                  key={action.id}
+                  type="button"
+                  onClick={() => handleQuickAction(action)}
+                  className={`flex min-h-[5.5rem] items-center gap-4 rounded-2xl border p-4 text-left transition-all active:scale-[0.99] sm:p-5 ${
+                    isActive
+                      ? 'border-[#ff9a3c] bg-[#ff9a3c]/12 ring-2 ring-[#ff9a3c]/30'
+                      : 'border-[#f9e04c]/18 bg-[#f9e04c]/[0.06]'
+                  }`}
+                >
+                  <span
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: FF_COLORS.headingBg }}
+                  >
+                    <ActionIcon type={action.icon} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-bold text-[#f9e04c]">{action.title}</span>
+                    <span className="mt-0.5 block text-sm text-[#f9e04c]/70">{action.subtitle}</span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-6 sm:space-y-8 lg:space-y-10">
           <SectionCard id="signs">
             <SectionTitle>Signs</SectionTitle>
-            <div className={`space-y-5 text-base leading-relaxed sm:text-[1.05rem] ${textClass}`}>
+            <div className={`space-y-6 ${prose}`}>
               <p>
                 You can either order signs directly through us or download the artwork and have it printed
                 yourself at a local printer. Pricing may vary depending on your location and the quantity
                 ordered.
               </p>
-              <ul className="space-y-4">
-                <li className="flex gap-3 rounded-2xl border border-[#f9e04c]/15 bg-black/10 p-4">
-                  <span className="text-lg" aria-hidden>
-                    1
-                  </span>
-                  <span>
-                    <AccentLink onClick={() => goToForm('yard-sign')}>Order a sign from us</AccentLink>
-                  </span>
-                </li>
-                <li className="flex gap-3 rounded-2xl border border-[#f9e04c]/15 bg-black/10 p-4">
-                  <span className="text-lg" aria-hidden>
-                    2
-                  </span>
-                  <span>
-                    Download a high-resolution file for home printing or professional printing:{' '}
-                    <AccentLink href={FF_SIGN_DOWNLOADS.highRes}>High-resolution Dropbox</AccentLink>
-                  </span>
-                </li>
-                <li className="flex gap-3 rounded-2xl border border-[#f9e04c]/15 bg-black/10 p-4">
-                  <span className="text-lg" aria-hidden>
-                    3
-                  </span>
-                  <span>
-                    Download a low-resolution file for online sharing and social media posts:{' '}
-                    <AccentLink href={FF_SIGN_DOWNLOADS.lowRes}>Low-resolution Dropbox</AccentLink>
-                  </span>
-                </li>
+              <ul className="grid gap-3 sm:gap-4">
+                <SignOptionCard step="1">
+                  <AccentLink onClick={() => goToForm('yard-sign')}>Order a sign from us</AccentLink>
+                </SignOptionCard>
+                <SignOptionCard step="2">
+                  High-resolution file for home or professional printing:{' '}
+                  <AccentLink href={FF_SIGN_DOWNLOADS.highRes}>Download from Dropbox</AccentLink>
+                </SignOptionCard>
+                <SignOptionCard step="3">
+                  Low-resolution file for social sharing:{' '}
+                  <AccentLink href={FF_SIGN_DOWNLOADS.lowRes}>Download from Dropbox</AccentLink>
+                </SignOptionCard>
               </ul>
-              <div className="rounded-2xl border border-[#f9e04c]/40 bg-[#f9e04c]/15 px-5 py-4">
-                <p className="font-semibold text-[#f9e04c]">
+              <div className="rounded-2xl border border-[#f9e04c]/35 bg-gradient-to-r from-[#f9e04c]/20 to-[#f9e04c]/8 px-5 py-4 sm:px-6 sm:py-5">
+                <p className="font-semibold text-[#f9e04c] sm:text-lg">
                   Signs ordered through us are $10 each plus delivery. All digital downloads are free.
                 </p>
               </div>
-              <p className="text-[#f9e04c]/90">
+              <p className="text-[#f9e04c]/85">
                 If you&apos;d like to support the campaign further, donations are always appreciated.
                 Additional funds help us expand our reach through larger signs, billboards, promotional
                 materials, T-shirts, and more.
@@ -300,10 +417,9 @@ export default function FfV2GetInvolvedPage() {
             </div>
           </SectionCard>
 
-          {/* Pickup hub */}
           <SectionCard id="pickup-hub">
             <SectionTitle>Sign Pickup Hub</SectionTitle>
-            <div className={`space-y-4 text-base leading-relaxed sm:text-[1.05rem] ${textClass}`}>
+            <div className={`space-y-5 ${prose}`}>
               <p>Interested in becoming a local pickup location?</p>
               <p>
                 Please provide your location, availability, and contact information so we can determine
@@ -313,10 +429,9 @@ export default function FfV2GetInvolvedPage() {
             </div>
           </SectionCard>
 
-          {/* Volunteer */}
           <SectionCard id="volunteer">
             <SectionTitle>Volunteer</SectionTitle>
-            <div className={`space-y-4 text-base leading-relaxed sm:text-[1.05rem] ${textClass}`}>
+            <div className={`space-y-5 ${prose}`}>
               <p>We&apos;re always looking for people who want to help make a difference.</p>
               <p>
                 Whether you can assist with deliveries, organizing, outreach, logistics, events, or other
@@ -327,23 +442,34 @@ export default function FfV2GetInvolvedPage() {
             </div>
           </SectionCard>
 
-          {/* Donations */}
           <SectionCard id="donations">
             <SectionTitle>Donations</SectionTitle>
-            <div className={`space-y-5 text-base leading-relaxed sm:text-[1.05rem] ${textClass}`}>
+            <div className={`space-y-6 ${prose}`}>
               <p>Thank you for supporting our efforts.</p>
               <p>
                 Every contribution helps us reach more communities, expand our visibility, and continue
                 growing the movement.
               </p>
-              <PrimaryButton href={PROTECT_ONTARIO_DONATE_URL}>Donate</PrimaryButton>
+              <div className="rounded-3xl bg-[#f9e04c] p-4 shadow-lg sm:inline-block sm:p-5">
+                <a
+                  href={PROTECT_ONTARIO_DONATE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl px-10 py-4 text-base font-bold uppercase tracking-wide text-[#f9e04c] transition-opacity hover:opacity-90 sm:text-lg"
+                  style={{ backgroundColor: FF_COLORS.background }}
+                >
+                  Donate
+                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
+                    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </SectionCard>
 
-          {/* Other */}
           <SectionCard id="other">
             <SectionTitle>Other</SectionTitle>
-            <div className={`space-y-4 text-base leading-relaxed sm:text-[1.05rem] ${textClass}`}>
+            <div className={`space-y-5 ${prose}`}>
               <p>Have an idea, resource, connection, or skill that could help?</p>
               <p>
                 We&apos;re always interested in hearing suggestions related to logistics, community contacts,
@@ -354,21 +480,28 @@ export default function FfV2GetInvolvedPage() {
             </div>
           </SectionCard>
 
-          {/* Form */}
-          <section id="signup-form" className="scroll-mt-24 pt-4">
-            <div className="mb-8 text-center">
-              <h2 className="text-2xl font-bold text-[#f9e04c] sm:text-3xl">Sign-up form</h2>
-              <p className="mx-auto mt-2 max-w-lg text-sm text-[#f9e04c]/80 sm:text-base">
+          <section id="signup-form" className="scroll-mt-28 sm:scroll-mt-32 pt-4 lg:pt-8">
+            <div className="mb-8 text-center sm:mb-10">
+              <p
+                className="mb-3 text-xs font-bold uppercase tracking-[0.2em] sm:text-sm"
+                style={{ color: FF_COLORS.link }}
+              >
+                Ready to join?
+              </p>
+              <h2 className="text-2xl font-bold text-[#f9e04c] sm:text-3xl lg:text-4xl">Sign-up form</h2>
+              <p className="mx-auto mt-3 max-w-md text-sm text-[#f9e04c]/75 sm:mt-4 sm:max-w-lg sm:text-base">
                 One form for signs, pickup hubs, volunteering, and more. We&apos;ll follow up by email.
               </p>
             </div>
-            <div className="overflow-hidden rounded-3xl bg-white shadow-[0_32px_100px_-20px_rgba(0,0,0,0.5)] ring-1 ring-black/5">
-              <GetInvolvedForm
-                variant="ff"
-                sourcePage={FFV2_SOURCE_PAGE}
-                presetRole={presetRole}
-                embedded
-              />
+            <div className="rounded-[1.75rem] bg-gradient-to-b from-[#f9e04c]/25 to-[#f9e04c]/5 p-1 sm:rounded-[2rem] sm:p-1.5">
+              <div className="overflow-hidden rounded-[1.5rem] bg-white shadow-[0_32px_80px_-24px_rgba(0,0,0,0.55)] sm:rounded-[1.75rem]">
+                <GetInvolvedForm
+                  variant="ff"
+                  sourcePage={FFV2_SOURCE_PAGE}
+                  presetRole={presetRole}
+                  embedded
+                />
+              </div>
             </div>
           </section>
         </div>
