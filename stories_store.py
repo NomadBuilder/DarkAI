@@ -25,6 +25,19 @@ _TABLE = "protectont_stories"
 _PURGE_STORY_IDS = frozenset({"1338670e-05c2-4313-ae5c-7e15c48238e4"})
 _purge_done = False
 
+_STARTER_STORIES: list[dict[str, str]] = [
+    {
+        "id": "a1111111-1111-4111-8111-111111111101",
+        "display_name": "Sarah, Brampton",
+        "story": (
+            "my dad finally got his knee done after over a year. he could barely walk to the "
+            "mailbox. meanwhile we're hearing about more money going to private clinics. i'm "
+            "tired of being told to wait."
+        ),
+    },
+]
+_seed_stories_done = False
+
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parent
@@ -163,16 +176,31 @@ def _auto_approve() -> bool:
     return os.getenv("STORIES_AUTO_APPROVE", "true").strip().lower() in ("1", "true", "yes")
 
 
-def insert_story(
+def _story_exists(story_id: str) -> bool:
+    sid = (story_id or "").strip()
+    if not sid:
+        return False
+    if _postgres_configured():
+        conn = _connect()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(f"SELECT 1 FROM {_TABLE} WHERE id = %s::uuid LIMIT 1", (sid,))
+                return cur.fetchone() is not None
+        finally:
+            conn.close()
+    return any(str(s.get("id")) == sid for s in _load_json_stories())
+
+
+def _insert_story_record(
+    story_id: str,
     display_name: str,
     story: str,
+    *,
     avatar_path: str | None = None,
-) -> tuple[dict[str, Any] | None, str | None]:
-    ensure_schema()
-    story_id = str(uuid.uuid4())
-    status = "approved" if _auto_approve() else "pending"
-    created = datetime.now(timezone.utc).isoformat()
-
+    status: str = "approved",
+    created: str | None = None,
+) -> None:
+    created = created or datetime.now(timezone.utc).isoformat()
     if _postgres_configured():
         conn = _connect()
         try:
@@ -181,16 +209,16 @@ def insert_story(
                     f"""
                     INSERT INTO {_TABLE} (id, display_name, story, avatar_path, status, created_at)
                     VALUES (%s::uuid, %s, %s, %s, %s, %s::timestamptz)
+                    ON CONFLICT (id) DO NOTHING
                     """,
                     (story_id, display_name, story, avatar_path, status, created),
                 )
             conn.commit()
-        except Exception as e:
-            logger.exception("insert_story postgres failed")
-            return None, str(e)
         finally:
             conn.close()
     else:
+        if _story_exists(story_id):
+            return
         stories = _load_json_stories()
         stories.append(
             {
@@ -203,6 +231,38 @@ def insert_story(
             }
         )
         _save_json_stories(stories)
+
+
+def seed_starter_stories() -> None:
+    global _seed_stories_done
+    if _seed_stories_done:
+        return
+    _seed_stories_done = True
+    for item in _STARTER_STORIES:
+        if _story_exists(item["id"]):
+            continue
+        _insert_story_record(
+            item["id"],
+            item["display_name"],
+            item["story"],
+            avatar_path=None,
+            status="approved",
+        )
+
+
+def insert_story(
+    display_name: str,
+    story: str,
+    avatar_path: str | None = None,
+) -> tuple[dict[str, Any] | None, str | None]:
+    ensure_schema()
+    story_id = str(uuid.uuid4())
+    status = "approved" if _auto_approve() else "pending"
+    try:
+        _insert_story_record(story_id, display_name, story, avatar_path=avatar_path, status=status)
+    except Exception as e:
+        logger.exception("insert_story failed")
+        return None, str(e)
 
     return {
         "id": story_id,
@@ -250,6 +310,7 @@ def purge_known_test_stories() -> None:
 def list_public_stories(base_url: str, limit: int = 100) -> list[dict[str, Any]]:
     ensure_schema()
     purge_known_test_stories()
+    seed_starter_stories()
     limit = max(1, min(limit, 200))
     rows: list[dict[str, Any]] = []
 

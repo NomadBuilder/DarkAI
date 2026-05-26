@@ -1,32 +1,37 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { motion } from 'framer-motion'
 import {
+  STORY_DEFAULT_AVATAR_URL,
   STORY_MAX_LENGTH,
   fetchStories,
   submitStory,
   type StoryItem,
 } from '@/lib/stories'
 
+function avatarSrc(story: StoryItem): string {
+  return story.avatarUrl?.trim() || STORY_DEFAULT_AVATAR_URL
+}
+
 function StoryAvatar({ story }: { story: StoryItem }) {
   const [imgError, setImgError] = useState(false)
-  const showImg = story.avatarUrl && !imgError
+  const src = avatarSrc(story)
 
   return (
-    <div
-      className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-white bg-gradient-to-br from-slate-100 to-blue-50 text-base font-medium text-slate-600 shadow-sm sm:h-16 sm:w-16"
-      aria-hidden={!showImg}
-    >
-      {showImg ? (
+    <div className="flex h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-black shadow-sm sm:h-16 sm:w-16">
+      {!imgError ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={story.avatarUrl}
+          src={src}
           alt=""
           className="h-full w-full object-cover"
           onError={() => setImgError(true)}
         />
       ) : (
-        <span>{story.initial}</span>
+        <span className="flex h-full w-full items-center justify-center bg-slate-200 text-base font-medium text-slate-600">
+          {story.initial}
+        </span>
       )}
     </div>
   )
@@ -89,6 +94,8 @@ export default function StoriesPageContent() {
     return () => URL.revokeObjectURL(url)
   }, [avatarFile])
 
+  const formAvatarSrc = avatarPreview || STORY_DEFAULT_AVATAR_URL
+
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitError('')
@@ -128,161 +135,166 @@ export default function StoriesPageContent() {
   const remaining = STORY_MAX_LENGTH - story.length
 
   return (
-    <section className="px-4 sm:px-6 md:px-8 pb-16 md:pb-20">
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-50/80 via-white to-slate-50 pointer-events-none" aria-hidden />
-      <div className="relative max-w-3xl mx-auto">
-        {/* Compact intro */}
-        <header className="pt-2 pb-8 sm:pb-10 text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-blue-700/80 mb-3">
+    <>
+      <section className="relative flex items-start justify-center px-4 sm:px-6 md:px-8 pt-4 sm:pt-0 pb-12 md:pb-16 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50" />
+        <div className="relative max-w-3xl w-full text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl sm:text-5xl md:text-6xl font-light text-gray-900 mb-6 leading-tight"
+          >
             Community voices
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-light text-gray-900 leading-snug mb-3">
-            Stories from Ontarians
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600 font-light leading-relaxed max-w-lg mx-auto">
-            Real experiences with public services, the environment, and accountability. Add yours
-            below — a first name or nickname and optional photo are enough.
-          </p>
-        </header>
-
-        {/* Voices list — show first when there are stories */}
-        <div className="mb-10">
-          {loading && (
-            <p className="text-center text-sm text-gray-500 font-light py-8">Loading stories…</p>
-          )}
-          {loadError && (
-            <p className="text-center text-sm text-red-600 font-light py-4">{loadError}</p>
-          )}
-          {!loading && !loadError && stories.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-slate-200 bg-white/80 px-6 py-10 text-center">
-              <p className="text-gray-600 font-light text-sm sm:text-base">
-                No stories yet — yours could be the first.
-              </p>
-            </div>
-          )}
-          {!loading && stories.length > 0 && (
-            <ul className="flex flex-col gap-3 sm:gap-4 list-none p-0 m-0">
-              {stories.map((s) => (
-                <StoryCard key={s.id} story={s} />
-              ))}
-            </ul>
-          )}
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-lg sm:text-xl text-gray-600 font-light max-w-2xl mx-auto leading-relaxed"
+          >
+            Share how Doug Ford&apos;s government has affected you — a short note, first name or
+            nickname, optional photo. Read stories from other Ontarians below.
+          </motion.p>
         </div>
+      </section>
 
-        {/* Share form */}
-        <div
-          id="share-your-story"
-          className="scroll-mt-28 rounded-2xl border border-gray-200 bg-white shadow-md p-6 sm:p-8"
-        >
-          <h2 className="text-lg sm:text-xl font-light text-gray-900 mb-1">Share your story</h2>
-          <p className="text-sm text-gray-500 font-light mb-6">
-            Up to {STORY_MAX_LENGTH} characters · respectful tone · optional photo
-          </p>
+      <section className="px-4 sm:px-6 md:px-8 pb-16 md:pb-24 bg-gradient-to-b from-white to-slate-50">
+        <div className="max-w-4xl mx-auto space-y-10">
+          <div>
+            <h2 className="text-xl font-light text-gray-900 mb-2">Stories</h2>
+            <p className="text-sm text-gray-500 font-light mb-6">Newest first</p>
 
-          <form onSubmit={onSubmit} className="space-y-5">
-            <div className="flex flex-col sm:flex-row gap-5 sm:items-start">
-              <div className="flex flex-row sm:flex-col items-center sm:items-center gap-3 sm:gap-2 sm:w-24 shrink-0">
-                <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-slate-200 bg-slate-50 text-xl font-medium text-slate-600">
-                  {avatarPreview ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <span>{(displayName.trim()[0] || '?').toUpperCase()}</span>
-                  )}
+            {loading && (
+              <p className="text-sm text-gray-500 font-light py-6">Loading stories…</p>
+            )}
+            {loadError && <p className="text-sm text-red-600 font-light py-4">{loadError}</p>}
+            {!loading && !loadError && stories.length === 0 && (
+              <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-10 text-center">
+                <p className="text-gray-600 font-light text-sm sm:text-base">
+                  No stories yet — yours could be the first below.
+                </p>
+              </div>
+            )}
+            {!loading && stories.length > 0 && (
+              <ul className="flex flex-col gap-3 sm:gap-4 list-none p-0 m-0">
+                {stories.map((s) => (
+                  <StoryCard key={s.id} story={s} />
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div
+            id="share-your-story"
+            className="scroll-mt-28 rounded-2xl border border-gray-200 bg-white shadow-lg p-8 md:p-10"
+          >
+            <h2 className="text-2xl font-light text-gray-900 mb-2">Share your story</h2>
+            <p className="text-sm text-gray-500 font-light mb-8">
+              Up to {STORY_MAX_LENGTH} characters · respectful tone · photo optional
+            </p>
+
+            <form onSubmit={onSubmit} className="space-y-6">
+              <div className="flex flex-col sm:flex-row gap-6 sm:items-start">
+                <div className="flex flex-row sm:flex-col items-center gap-3 sm:gap-2 sm:w-28 shrink-0">
+                  <div className="flex h-16 w-16 overflow-hidden rounded-full border-2 border-slate-200 bg-black shadow-sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={formAvatarSrc} alt="" className="h-full w-full object-cover" />
+                  </div>
+                  <div className="flex flex-col gap-1 sm:items-center">
+                    <label className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-light underline underline-offset-2">
+                      {avatarFile ? 'Change photo' : 'Add your photo'}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp,image/gif"
+                        className="sr-only"
+                        onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+                      />
+                    </label>
+                    {avatarFile && (
+                      <button
+                        type="button"
+                        className="text-xs text-slate-500 hover:text-slate-700 font-light"
+                        onClick={() => {
+                          setAvatarFile(null)
+                          if (fileInputRef.current) fileInputRef.current.value = ''
+                        }}
+                      >
+                        Use default
+                      </button>
+                    )}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-1 sm:items-center">
-                  <label className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-light underline underline-offset-2">
-                    Photo
+                <div className="flex-1 space-y-4 min-w-0">
+                  <div>
+                    <label htmlFor="story-name" className="block text-sm font-light text-gray-700 mb-2">
+                      Name or nickname <span className="text-gray-400">(optional)</span>
+                    </label>
                     <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/png,image/jpeg,image/webp,image/gif"
-                      className="sr-only"
-                      onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+                      id="story-name"
+                      type="text"
+                      maxLength={60}
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g. Sarah, Brampton"
                     />
-                  </label>
-                  {avatarFile && (
-                    <button
-                      type="button"
-                      className="text-xs text-slate-500 hover:text-slate-700 font-light text-left sm:text-center"
-                      onClick={() => {
-                        setAvatarFile(null)
-                        if (fileInputRef.current) fileInputRef.current.value = ''
-                      }}
+                  </div>
+                  <div>
+                    <label htmlFor="story-text" className="block text-sm font-light text-gray-700 mb-2">
+                      Your story <span className="text-red-600">*</span>
+                    </label>
+                    <textarea
+                      id="story-text"
+                      required
+                      rows={4}
+                      maxLength={STORY_MAX_LENGTH}
+                      value={story}
+                      onChange={(e) => setStory(e.target.value)}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="In a few sentences, tell us what matters to you…"
+                    />
+                    <p
+                      className={`mt-1 text-xs font-light ${remaining < 20 ? 'text-amber-600' : 'text-gray-400'}`}
                     >
-                      Remove
-                    </button>
-                  )}
+                      {remaining} characters left
+                    </p>
+                  </div>
                 </div>
               </div>
-              <div className="flex-1 space-y-4 min-w-0">
-                <div>
-                  <label htmlFor="story-name" className="block text-sm font-light text-gray-700 mb-1.5">
-                    Name or nickname <span className="text-gray-400">(optional)</span>
-                  </label>
-                  <input
-                    id="story-name"
-                    type="text"
-                    maxLength={60}
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="e.g. Sam from Hamilton"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="story-text" className="block text-sm font-light text-gray-700 mb-1.5">
-                    Your story <span className="text-red-600">*</span>
-                  </label>
-                  <textarea
-                    id="story-text"
-                    required
-                    rows={3}
-                    maxLength={STORY_MAX_LENGTH}
-                    value={story}
-                    onChange={(e) => setStory(e.target.value)}
-                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-light resize-y focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="What’s changed for you or your community?"
-                  />
-                  <p
-                    className={`mt-1 text-xs font-light ${remaining < 20 ? 'text-amber-600' : 'text-gray-400'}`}
-                  >
-                    {remaining} characters left
-                  </p>
-                </div>
-              </div>
-            </div>
 
-            <input
-              type="text"
-              name="website"
-              tabIndex={-1}
-              autoComplete="off"
-              className="absolute -left-[9999px] opacity-0 h-0 w-0"
-              aria-hidden
-            />
+              <input
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                className="absolute -left-[9999px] opacity-0 h-0 w-0"
+                aria-hidden
+              />
 
-            {submitError && (
-              <p className="text-sm text-red-600 font-light" role="alert">
-                {submitError}
-              </p>
-            )}
-            {submitSuccess && (
-              <p className="text-sm text-green-700 font-light" role="status">
-                {submitSuccess}
-              </p>
-            )}
+              {submitError && (
+                <p className="text-sm text-red-600 font-light" role="alert">
+                  {submitError}
+                </p>
+              )}
+              {submitSuccess && (
+                <p className="text-sm text-green-700 font-light" role="status">
+                  {submitSuccess}
+                </p>
+              )}
 
-            <button
-              type="submit"
-              disabled={submitting}
-              className="w-full sm:w-auto px-7 py-3 bg-slate-900 text-white rounded-lg text-sm font-light hover:bg-slate-800 disabled:opacity-50 transition-colors"
-            >
-              {submitting ? 'Submitting…' : 'Submit story'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={submitting}
+                className="w-full sm:w-auto px-8 py-3.5 bg-slate-900 text-white rounded-lg text-base font-light hover:bg-slate-800 disabled:opacity-50 transition-colors"
+              >
+                {submitting ? 'Submitting…' : 'Submit story'}
+              </button>
+            </form>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   )
 }

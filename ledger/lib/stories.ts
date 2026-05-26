@@ -1,5 +1,8 @@
 export const STORY_MAX_LENGTH = 300
 
+/** Shown when a story has no uploaded photo */
+export const STORY_DEFAULT_AVATAR_URL = '/images/story-avatar-default.png'
+
 export type StoryItem = {
   id: string
   displayName: string

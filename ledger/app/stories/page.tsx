@@ -10,19 +10,29 @@ export default function StoriesPage() {
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
 
+  const handleMethodologyToggle = () => {
+    if (showMethodology) setShowMethodology(false)
+    else {
+      setShowDataSources(false)
+      setShowMethodology(true)
+    }
+  }
+
+  const handleDataSourcesToggle = () => {
+    if (showDataSources) setShowDataSources(false)
+    else {
+      setShowMethodology(false)
+      setShowDataSources(true)
+    }
+  }
+
   return (
-    <div className="relative min-h-screen bg-white">
+    <div className="relative min-h-screen">
       <TopNavigation
-        onDataSourcesClick={() => {
-          setShowMethodology(false)
-          setShowDataSources((v) => !v)
-        }}
-        onMethodologyClick={() => {
-          setShowDataSources(false)
-          setShowMethodology((v) => !v)
-        }}
+        onDataSourcesClick={handleDataSourcesToggle}
+        onMethodologyClick={handleMethodologyToggle}
       />
-      <div className="relative z-10 pt-24 sm:pt-28">
+      <div className="relative z-10 pt-28 sm:pt-32">
         <StoriesPageContent />
       </div>
       <MethodologyDrawer isOpen={showMethodology} onClose={() => setShowMethodology(false)} />
