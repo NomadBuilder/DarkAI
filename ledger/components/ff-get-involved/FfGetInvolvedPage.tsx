@@ -269,7 +269,7 @@ export default function FfGetInvolvedPage() {
 
   return (
     <div
-      className="relative min-h-[100dvh] overflow-x-hidden antialiased selection:bg-[#f9e04c]/30 selection:text-[#1a1a1a]"
+      className="relative min-h-[100dvh] overflow-x-hidden pt-28 antialiased selection:bg-[#f9e04c]/30 selection:text-[#1a1a1a] sm:pt-32 lg:pt-20"
       style={{ background: FF_PAGE_GRADIENT }}
     >
       {/* Background */}
@@ -303,10 +303,10 @@ export default function FfGetInvolvedPage() {
         />
       </div>
 
-      {/* Sticky jump nav — mobile & tablet */}
+      {/* Section jump nav — mobile & tablet (below site header) */}
       <div
-        className="sticky top-[6.5rem] z-30 border-b border-[#f9e04c]/15 backdrop-blur-xl sm:top-[9.5rem] lg:hidden"
-        style={{ backgroundColor: `${FF_COLORS.background}d9` }}
+        className="relative z-30 border-b border-[#f9e04c]/20 lg:hidden"
+        style={{ backgroundColor: FF_COLORS.background }}
         role="navigation"
         aria-label="Jump to section"
       >
@@ -319,10 +319,10 @@ export default function FfGetInvolvedPage() {
                 key={action.id}
                 type="button"
                 onClick={() => handleQuickAction(action)}
-                className={`shrink-0 snap-start rounded-full px-4 py-2 text-xs font-semibold transition-colors sm:text-sm ${
+                className={`shrink-0 snap-start rounded-full px-4 py-2.5 text-xs font-semibold transition-colors sm:text-sm ${
                   isActive
-                    ? 'bg-[#f9e04c] text-[#1a1a1a]'
-                    : 'bg-white/10 text-[#f9e04c] hover:bg-white/15'
+                    ? 'bg-[#f9e04c] text-[#1a1a1a] shadow-sm'
+                    : 'border border-[#f9e04c]/45 bg-[#2a1f58] text-[#f9e04c] hover:border-[#f9e04c]/70 hover:bg-[#35266d]'
                 }`}
               >
                 {action.title}
