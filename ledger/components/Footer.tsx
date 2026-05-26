@@ -1,8 +1,16 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+
+const HIDE_FOOTER_PATHS = /^\/(ffv2-get-involved|ff-get-involved|get-involved)\/?$/
 
 export default function Footer() {
+  const pathname = usePathname()
+  if (pathname && HIDE_FOOTER_PATHS.test(pathname)) {
+    return null
+  }
+
   return (
     <footer className="border-t border-slate-100 bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-3">

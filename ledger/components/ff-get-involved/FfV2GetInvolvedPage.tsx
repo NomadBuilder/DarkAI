@@ -75,7 +75,7 @@ function AccentLink({
   className?: string
 }) {
   const base =
-    'inline-flex items-center gap-1 font-semibold underline decoration-2 underline-offset-4 transition-colors hover:decoration-[#ff66b2]'
+    'inline-flex items-center gap-1 font-semibold underline decoration-2 underline-offset-4 transition-colors hover:opacity-90'
   const style = { color: FF_COLORS.link }
 
   if (onClick) {
@@ -228,7 +228,7 @@ export default function FfV2GetInvolvedPage() {
                   }}
                   className={`group flex flex-col items-start rounded-2xl border p-5 text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl ${
                     isActive
-                      ? 'border-[#ff3399] bg-[#ff3399]/15 shadow-lg ring-2 ring-[#ff3399]/40'
+                      ? 'border-[#ff9a3c] bg-[#ff9a3c]/15 shadow-lg ring-2 ring-[#ff9a3c]/40'
                       : 'border-[#f9e04c]/20 bg-[#f9e04c]/[0.07] hover:border-[#f9e04c]/45 hover:bg-[#f9e04c]/[0.12]'
                   }`}
                 >

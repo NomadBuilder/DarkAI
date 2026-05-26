@@ -11,7 +11,6 @@ import {
   type GetInvolvedFormState,
   type InvolvementRole,
 } from '@/lib/get-involved'
-
 const defaultInputClass =
   'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 const defaultLabelClass = 'block text-sm md:text-base font-light text-gray-700 mb-2'
@@ -37,13 +36,13 @@ export default function GetInvolvedForm({
 }: GetInvolvedFormProps) {
   const isFf = variant === 'ff'
   const inputClass = isFf
-    ? 'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#ff3399] focus:border-transparent'
+    ? 'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#ff9a3c] focus:border-transparent'
     : defaultInputClass
   const labelClass = isFf
     ? 'block text-sm md:text-base text-gray-800 mb-2'
     : defaultLabelClass
   const roleSelectedClass = isFf
-    ? 'border-[#ff3399] bg-[#fff5fa] ring-1 ring-[#ff3399]'
+    ? 'border-[#ff9a3c] bg-[#fff4e8] ring-1 ring-[#ff9a3c]'
     : 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500'
   const submitButtonClass = isFf
     ? 'w-full px-6 md:px-8 py-4 md:py-5 bg-[#3d2b7a] text-[#f9e04c] rounded-xl text-base md:text-lg font-semibold hover:bg-[#2f2260] transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
@@ -52,7 +51,7 @@ export default function GetInvolvedForm({
     ? 'p-8 md:p-10 lg:p-12 space-y-8'
     : 'bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-8'
   const linkClass = isFf
-    ? 'text-[#ff3399] underline underline-offset-2 hover:text-[#ff66b2]'
+    ? 'text-[#ff9a3c] underline underline-offset-2 hover:text-[#ffb366]'
     : 'text-blue-600 underline underline-offset-2 hover:text-blue-700'
 
   const [form, setForm] = useState<GetInvolvedFormState>(emptyGetInvolvedFormState)

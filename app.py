@@ -197,20 +197,38 @@ def serve_ledger_at_root(path):
     path = (path or "").strip("/")
     if not path or path == "index.html":
         return send_from_directory(LEDGER_DIR, "index.html")
+
+    def _try_send(relative_path: str):
+        full = os.path.join(LEDGER_DIR, relative_path)
+        if os.path.isfile(full):
+            return send_from_directory(LEDGER_DIR, relative_path)
+        return None
+
+    # Never serve index.html for missing assets (breaks Next.js static hydration).
+    basename = os.path.basename(path)
+    is_asset = path.startswith("_next/") or path.startswith("data/") or "." in basename
+
     if path.endswith(".html"):
-        try:
-            return send_from_directory(LEDGER_DIR, path)
-        except Exception:
-            pass
-    if not path.startswith(("_next/", "data/", "favicon", "logo", "og-image")):
-        try:
-            return send_from_directory(LEDGER_DIR, path + ".html")
-        except Exception:
-            pass
-    try:
-        return send_from_directory(LEDGER_DIR, path)
-    except Exception:
-        pass
+        sent = _try_send(path)
+        if sent:
+            return sent
+    else:
+        sent = _try_send(path + ".html")
+        if sent:
+            return sent
+        dir_index = os.path.join(path, "index.html")
+        sent = _try_send(dir_index)
+        if sent:
+            return sent
+
+    if is_asset:
+        return Response("Not found", status=404)
+
+    if not path.startswith(("favicon", "logo", "og-image")):
+        sent = _try_send(path)
+        if sent:
+            return sent
+
     return send_from_directory(LEDGER_DIR, "index.html")
 
 

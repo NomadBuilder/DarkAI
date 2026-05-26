@@ -5,8 +5,8 @@ export const FF_COLORS = {
   text: '#f9e04c',
   headingBg: '#f9e04c',
   headingText: '#1a1a1a',
-  link: '#ff3399',
-  linkHover: '#ff66b2',
+  link: '#ff9a3c',
+  linkHover: '#ffb366',
 } as const
 
 export const FF_SIGN_DOWNLOADS = {

@@ -215,15 +215,17 @@ export default function FfGetInvolvedPage() {
             Every contribution helps us reach more communities, expand our visibility, and continue
             growing the movement.
           </p>
-          <a
-            href={PROTECT_ONTARIO_DONATE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center mt-2 px-8 py-3.5 rounded-lg font-bold uppercase tracking-wide text-sm sm:text-base transition-opacity hover:opacity-95"
-            style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
-          >
-            Donate
-          </a>
+          <div className="mt-6 inline-block rounded-3xl bg-[#f9e04c] p-4 sm:p-5 shadow-lg">
+            <a
+              href={PROTECT_ONTARIO_DONATE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center rounded-2xl px-12 sm:px-16 py-4 sm:py-5 text-xl sm:text-2xl font-bold uppercase tracking-wide transition-opacity hover:opacity-90"
+              style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
+            >
+              Donate
+            </a>
+          </div>
         </section>
 
         <section id="other" className="scroll-mt-8 space-y-4" style={textStyle}>

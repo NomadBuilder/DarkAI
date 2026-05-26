@@ -4,7 +4,10 @@ const nextConfig = {
   // In dev, never use basePath so script/chunk URLs are root-relative (fixes 404 on page.js for /water, /receipts, etc.)
   ...(isDev ? { basePath: '' } : {}),
   // Never use static export in dev mode - only in production builds
-  ...(process.env.NODE_ENV === 'production' && process.env.STATIC_EXPORT === 'true' && { output: 'export' }),
+  ...(process.env.NODE_ENV === 'production' && process.env.STATIC_EXPORT === 'true' && {
+    output: 'export',
+    trailingSlash: true,
+  }),
   // Base path for deployment at ProtectOnt.ca (production only; set BASE_PATH for subpath)
   ...(process.env.NODE_ENV === 'production' && process.env.BASE_PATH && { basePath: process.env.BASE_PATH }),
   images: {
