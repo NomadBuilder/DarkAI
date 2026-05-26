@@ -116,6 +116,11 @@ services:
           echo "  ⚠️  NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL not set — form needs /api/protectont-config or rebuild after setting env"
         fi
         
+        # Social preview image (1200x630 PNG; SVG is not supported by Facebook/iMessage)
+        if command -v python3 >/dev/null 2>&1; then
+          python3 scripts/generate-og-image.py >> "$DIAG_LOG" 2>&1 || echo "  ⚠️  og-image.png generation skipped (commit ledger/public/og-image.png)" >> "$DIAG_LOG"
+        fi
+
         # Run build with environment variables inline (more reliable) and capture all output
         if ! NODE_ENV=production NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://protectont.ca}" npm run build:protectont >> "$DIAG_LOG" 2>&1; then
           echo ""

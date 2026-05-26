@@ -27,6 +27,12 @@ echo "📦 npm install..."
 npm install --include=dev
 
 echo ""
+echo "🖼️  Generating og-image.png for social previews..."
+if command -v python3 >/dev/null 2>&1; then
+  python3 scripts/generate-og-image.py || echo "⚠️  og-image generation skipped (install Pillow: pip install Pillow)"
+fi
+
+echo ""
 echo "🔨 npm run build:protectont (NODE_ENV=production)..."
 export NODE_ENV=production
 export NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://protectont.ca}"

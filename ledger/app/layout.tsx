@@ -33,9 +33,10 @@ export const metadata: Metadata = {
     siteName: 'Protect Ontario',
     images: [
       {
-        url: `${basePath}/og-image.svg`,
+        url: `${basePath}/og-image.png`,
         width: 1200,
         height: 630,
+        type: 'image/png',
         alt: 'Protect Ontario — ProtectOnt.ca — Public accountability in Ontario',
       },
     ],
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Protect Ontario — Public accountability in Ontario',
     description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
-    images: [{ url: `${basePath}/og-image.svg`, alt: 'Protect Ontario — ProtectOnt.ca' }],
+    images: [{ url: `${basePath}/og-image.png`, alt: 'Protect Ontario — ProtectOnt.ca' }],
   },
 }
 
