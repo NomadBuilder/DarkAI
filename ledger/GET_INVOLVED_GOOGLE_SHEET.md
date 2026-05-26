@@ -117,6 +117,23 @@ The live form loads the URL from **`/api/protectont-config`** at runtime, so you
 
 Opening the Google Script URL in a browser may show **“Script function not found: doGet”** — that is normal. The form uses **POST** (`doPost`); only a blank browser visit uses GET.
 
+## Email alerts (Resend)
+
+On protectont.ca the form posts to **`/api/get-involved-submit`**, which:
+
+1. Forwards the row to Google Sheets (same Apps Script URL as above).
+2. Sends an email via **Resend** (`RESEND_API_KEY` on Render).
+
+Set in Render:
+
+| Key | Value |
+|-----|--------|
+| `RESEND_API_KEY` | (already set) |
+| `FROM_EMAIL` | verified sender in Resend |
+| `GET_INVOLVED_ALERT_EMAIL` | `mufc4everch@gmail.com` (optional; defaults to this address) |
+
+If the sheet saves but email fails, the user still sees success; check Render logs for Resend errors.
+
 **Common mistake:** env key truncated (e.g. `NEXT_PUBLIC_GET_` instead of `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`). Copy the full key name.
 
 For local dev, put the URL in `ledger/.env.local` or repo-root `.env` and rebuild, or rely on Flask with the var in the environment.

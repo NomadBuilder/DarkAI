@@ -127,21 +127,37 @@ export function getInvolvedSubmitUrl(): string {
   return (process.env.NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL || '').trim()
 }
 
-/** Load submit URL: build-time env, then static JSON, then Flask API. */
-export async function loadGetInvolvedSubmitUrl(): Promise<string> {
+export type GetInvolvedClientConfig = {
+  submitViaApi: boolean
+  sheetSubmitUrl: string
+}
+
+/** Prefer server submit (Sheet + Resend email); else direct Google Apps Script URL. */
+export async function loadGetInvolvedClientConfig(): Promise<GetInvolvedClientConfig> {
   const builtIn = getInvolvedSubmitUrl()
-  if (builtIn) return builtIn
+  if (builtIn) {
+    return { submitViaApi: false, sheetSubmitUrl: builtIn }
+  }
 
   for (const path of ['/protectont-config.json', '/api/protectont-config']) {
     try {
       const res = await fetch(path)
       if (!res.ok) continue
-      const data = (await res.json()) as { getInvolvedSubmitUrl?: string }
+      const data = (await res.json()) as {
+        getInvolvedSubmitUrl?: string
+        submitViaApi?: boolean
+      }
+      if (data.submitViaApi) {
+        return {
+          submitViaApi: true,
+          sheetSubmitUrl: (data.getInvolvedSubmitUrl || '').trim(),
+        }
+      }
       const url = (data.getInvolvedSubmitUrl || '').trim()
-      if (url) return url
+      if (url) return { submitViaApi: false, sheetSubmitUrl: url }
     } catch {
       /* try next source */
     }
   }
-  return ''
+  return { submitViaApi: false, sheetSubmitUrl: '' }
 }

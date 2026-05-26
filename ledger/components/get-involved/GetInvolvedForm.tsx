@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import {
   buildGetInvolvedSubmitPayload,
   emptyGetInvolvedFormState,
-  loadGetInvolvedSubmitUrl,
+  loadGetInvolvedClientConfig,
   involvementRoles,
   volunteerRoleOptions,
   type GetInvolvedFormState,
@@ -26,14 +26,16 @@ export default function GetInvolvedForm() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [lastSubmittedRole, setLastSubmittedRole] = useState<InvolvementRole | ''>('')
-  const [submitUrl, setSubmitUrl] = useState('')
+  const [submitViaApi, setSubmitViaApi] = useState(false)
+  const [sheetSubmitUrl, setSheetSubmitUrl] = useState('')
   const [configLoaded, setConfigLoaded] = useState(false)
 
   useEffect(() => {
     let cancelled = false
-    loadGetInvolvedSubmitUrl().then((url) => {
+    loadGetInvolvedClientConfig().then((cfg) => {
       if (cancelled) return
-      if (url) setSubmitUrl(url)
+      setSubmitViaApi(cfg.submitViaApi)
+      setSheetSubmitUrl(cfg.sheetSubmitUrl)
       setConfigLoaded(true)
     })
     return () => {
@@ -93,7 +95,7 @@ export default function GetInvolvedForm() {
       return
     }
 
-    if (!submitUrl) {
+    if (!submitViaApi && !sheetSubmitUrl) {
       setSubmitStatus('error')
       setErrorMessage(
         configLoaded
@@ -109,7 +111,8 @@ export default function GetInvolvedForm() {
 
     try {
       const body = new URLSearchParams(buildGetInvolvedSubmitPayload(form))
-      const res = await fetch(submitUrl, {
+      const submitEndpoint = submitViaApi ? '/api/get-involved-submit' : sheetSubmitUrl
+      const res = await fetch(submitEndpoint, {
         method: 'POST',
         mode: 'cors',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },

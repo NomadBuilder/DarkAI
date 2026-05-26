@@ -235,7 +235,31 @@ def protectont_config():
         or os.environ.get("GET_INVOLVED_SUBMIT_URL")
         or ""
     ).strip()
-    return jsonify({"getInvolvedSubmitUrl": url}), 200
+    return jsonify({
+        "getInvolvedSubmitUrl": url,
+        "submitViaApi": True,
+    }), 200
+
+
+@app.route('/api/get-involved-submit', methods=['POST', 'OPTIONS'])
+def get_involved_submit_route():
+    """Save get-involved sign-up to Google Sheet and email organizers via Resend."""
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    from get_involved_submit import process_get_involved_submission
+
+    if request.form:
+        data = request.form.to_dict()
+    elif request.is_json:
+        data = request.get_json(silent=True) or {}
+    else:
+        data = dict(request.values) if request.values else {}
+
+    ok, err = process_get_involved_submission(data)
+    if ok:
+        return jsonify({"success": True}), 200
+    return jsonify({"success": False, "error": err or "Submission failed"}), 500
 
 
 @app.route('/api/chat', methods=['POST'])

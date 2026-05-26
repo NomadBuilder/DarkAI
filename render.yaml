@@ -110,7 +110,7 @@ services:
         echo "📝 protectont-config.json (get-involved submit URL for static export)..."
         SUBMIT_URL="${NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL:-${GET_INVOLVED_SUBMIT_URL:-}}"
         if [ -n "$SUBMIT_URL" ]; then
-          node -e "const fs=require('fs');const u=(process.env.NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL||process.env.GET_INVOLVED_SUBMIT_URL||'').trim();fs.writeFileSync('public/protectont-config.json',JSON.stringify({getInvolvedSubmitUrl:u}));"
+          node -e "const fs=require('fs');const u=(process.env.NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL||process.env.GET_INVOLVED_SUBMIT_URL||'').trim();fs.writeFileSync('public/protectont-config.json',JSON.stringify({getInvolvedSubmitUrl:u,submitViaApi:true}));"
           echo "  ✅ Wrote public/protectont-config.json"
         else
           echo "  ⚠️  NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL not set — form needs /api/protectont-config or rebuild after setting env"
