@@ -102,8 +102,36 @@ function sendNotificationEmail(p) {
     'Phone: ' + (p.phone || '(none)'),
     'City: ' + (p.city || ''),
     'Postal code: ' + (p.postal_code || '(none)'),
-    'Notes: ' + (p.yard_sign_notes || p.additional_notes || ''),
   ];
+
+  if (p.role === 'yard-sign') {
+    lines.push('', '--- Sign ---');
+    lines.push('Design: ' + (p.yard_sign_design || ''));
+    lines.push('Quantity: ' + (p.yard_sign_quantity || ''));
+    lines.push('Payment: ' + (p.yard_sign_payment_status || ''));
+    lines.push('Delivery / notes: ' + (p.yard_sign_notes || ''));
+  }
+  if (p.role === 'dropoff') {
+    lines.push('', '--- Drop-off ---');
+    lines.push('Location: ' + (p.dropoff_location || ''));
+    lines.push('Availability: ' + (p.dropoff_availability || ''));
+    lines.push('Capacity: ' + (p.dropoff_capacity || ''));
+    lines.push('List publicly: ' + (p.dropoff_list_publicly || ''));
+  }
+  if (p.role === 'volunteer') {
+    lines.push('', '--- Volunteer ---');
+    lines.push('Help with: ' + (p.volunteer_roles || ''));
+    lines.push('Availability: ' + (p.volunteer_availability || ''));
+    lines.push('Vehicle: ' + (p.volunteer_has_vehicle || ''));
+  }
+  if (p.role === 'other') {
+    lines.push('', '--- Something else ---');
+    lines.push(p.additional_notes || '');
+  }
+  if (p.role !== 'other' && p.additional_notes) {
+    lines.push('', 'Other notes: ' + p.additional_notes);
+  }
+
   MailApp.sendEmail({
     to: NOTIFY_EMAIL,
     subject: '[ProtectOnt] ' + role + ' — ' + (p.name || 'New sign-up'),
@@ -145,29 +173,15 @@ The live form loads the URL from **`/api/protectont-config`** at runtime, so you
 
 Opening the Google Script URL in a browser may show **“Script function not found: doGet”** — that is normal. The form uses **POST** (`doPost`); only a blank browser visit uses GET.
 
-## Email alerts (Resend)
+## Email alerts (Google Apps Script — recommended)
 
-On protectont.ca the form posts to **`/api/get-involved-submit`**, which:
+No `@protectont.ca` inbox needed. When a row is saved, **`MailApp`** in the script below emails **`mufc4everch@gmail.com`** from the Google account that owns the sheet (e.g. `mufcuw@gmail.com`).
 
-1. Forwards the row to Google Sheets (same Apps Script URL as above).
-2. Sends an email via **Resend** (`RESEND_API_KEY` on Render).
+The site posts to **`/api/get-involved-submit`** → Flask forwards to this script’s **`doPost`** → row + email.
 
-Set in Render:
+**You must:** paste the full script in section 2 (including `sendNotificationEmail`) and **Deploy → New version** on the web app.
 
-| Key | Value |
-|-----|--------|
-| `RESEND_API_KEY` | (already set) |
-| `FROM_EMAIL` | verified sender in Resend |
-| `GET_INVOLVED_ALERT_EMAIL` | `mufc4everch@gmail.com` (optional; defaults to this address) |
-
-If the sheet saves but email fails, the user still sees success; check **Render → Logs** for lines starting with `❌ Get-involved Resend`.
-
-**Common Resend issue:** with `FROM_EMAIL=onboarding@resend.dev`, Resend only delivers to the **email address that owns your Resend account** until you [verify a domain](https://resend.com/docs/dashboard/domains/introduction). Fix either:
-
-- Set `GET_INVOLVED_ALERT_EMAIL` to that Resend account email, **or**
-- Verify `protectont.ca` (or your domain) in Resend and set `FROM_EMAIL` to e.g. `Protect Ontario <notify@protectont.ca>`.
-
-**Backup (no Resend):** add `MailApp.sendEmail` inside your Apps Script `doPost` after `appendRow` (see email block in section 2 below)—the sheet forward already runs that script on every submit.
+Resend is **off** by default for get-involved. To use Resend later (verified domain), set on Render: `GET_INVOLVED_USE_RESEND=true`.
 
 **Common mistake:** env key truncated (e.g. `NEXT_PUBLIC_GET_` instead of `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`). Copy the full key name.
 

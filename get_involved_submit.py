@@ -183,7 +183,19 @@ def _send_via_smtp(
         return False, f"SMTP failed: {exc}"
 
 
+def _use_resend_for_alerts() -> bool:
+    return os.environ.get("GET_INVOLVED_USE_RESEND", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+
+
 def send_get_involved_alert(data: dict[str, Any]) -> bool:
+    if not _use_resend_for_alerts():
+        print("📧 Get-involved: email via Apps Script MailApp (Resend skipped)")
+        return True
+
     to_list = _alert_recipients()
     if not to_list:
         logger.warning("Get-involved alert skipped: no recipient addresses")
@@ -267,11 +279,7 @@ def process_get_involved_submission(data: dict[str, Any]) -> tuple[bool, str | N
     if not sheet_ok:
         return False, sheet_err or "Could not save to spreadsheet."
 
-    if not send_get_involved_alert(data):
-        logger.warning(
-            "Get-involved saved to sheet but alert email failed. "
-            "Check Render logs for Resend errors. With onboarding@resend.dev, Resend only "
-            "delivers to your Resend account email until you verify a domain."
-        )
+    if _use_resend_for_alerts() and not send_get_involved_alert(data):
+        logger.warning("Get-involved saved to sheet but Resend alert email failed.")
 
     return True, None
