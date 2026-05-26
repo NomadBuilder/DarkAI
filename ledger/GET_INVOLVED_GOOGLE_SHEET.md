@@ -110,7 +110,12 @@ If you rename the tab, change `SHEET_NAME` in the script to match exactly (case-
 
 The live form loads the URL from **`/api/protectont-config`** at runtime, so you do **not** need a new Ledger build just to change the script URL—only a Render redeploy after setting the variable.
 
-**Check:** open `https://protectont.ca/api/protectont-config` — you should see `{"getInvolvedSubmitUrl":"https://script.google.com/..."}`.
+**Check after deploy:**
+
+- `https://protectont.ca/protectont-config.json` — should include your `/exec` URL (written at build from env).
+- `https://protectont.ca/api/protectont-config` — same JSON once the latest Flask code is live.
+
+Opening the Google Script URL in a browser may show **“Script function not found: doGet”** — that is normal. The form uses **POST** (`doPost`); only a blank browser visit uses GET.
 
 **Common mistake:** env key truncated (e.g. `NEXT_PUBLIC_GET_` instead of `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`). Copy the full key name.
 

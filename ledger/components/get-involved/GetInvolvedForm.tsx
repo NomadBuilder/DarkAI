@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react'
 import {
   buildGetInvolvedSubmitPayload,
   emptyGetInvolvedFormState,
-  getInvolvedSubmitUrl,
+  loadGetInvolvedSubmitUrl,
   involvementRoles,
   volunteerRoleOptions,
   type GetInvolvedFormState,
@@ -26,19 +26,19 @@ export default function GetInvolvedForm() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [lastSubmittedRole, setLastSubmittedRole] = useState<InvolvementRole | ''>('')
-  const [submitUrl, setSubmitUrl] = useState(() => getInvolvedSubmitUrl())
-  const [configLoaded, setConfigLoaded] = useState(() => Boolean(getInvolvedSubmitUrl()))
+  const [submitUrl, setSubmitUrl] = useState('')
+  const [configLoaded, setConfigLoaded] = useState(false)
 
   useEffect(() => {
-    if (getInvolvedSubmitUrl()) return
-    fetch('/api/protectont-config')
-      .then((res) => res.json())
-      .then((data: { getInvolvedSubmitUrl?: string }) => {
-        const url = (data.getInvolvedSubmitUrl || '').trim()
-        if (url) setSubmitUrl(url)
-      })
-      .catch(() => {})
-      .finally(() => setConfigLoaded(true))
+    let cancelled = false
+    loadGetInvolvedSubmitUrl().then((url) => {
+      if (cancelled) return
+      if (url) setSubmitUrl(url)
+      setConfigLoaded(true)
+    })
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   const role = form.role as InvolvementRole | ''

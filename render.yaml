@@ -106,6 +106,16 @@ services:
         # Give Next.js enough memory on Render (default can be too low)
         export NODE_OPTIONS="${NODE_OPTIONS:-} --max-old-space-size=4096"
         
+        echo ""
+        echo "📝 protectont-config.json (get-involved submit URL for static export)..."
+        SUBMIT_URL="${NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL:-${GET_INVOLVED_SUBMIT_URL:-}}"
+        if [ -n "$SUBMIT_URL" ]; then
+          node -e "const fs=require('fs');const u=(process.env.NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL||process.env.GET_INVOLVED_SUBMIT_URL||'').trim();fs.writeFileSync('public/protectont-config.json',JSON.stringify({getInvolvedSubmitUrl:u}));"
+          echo "  ✅ Wrote public/protectont-config.json"
+        else
+          echo "  ⚠️  NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL not set — form needs /api/protectont-config or rebuild after setting env"
+        fi
+        
         # Run build with environment variables inline (more reliable) and capture all output
         if ! NODE_ENV=production npm run build:protectont >> "$DIAG_LOG" 2>&1; then
           echo ""

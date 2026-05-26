@@ -126,3 +126,22 @@ export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Reco
 export function getInvolvedSubmitUrl(): string {
   return (process.env.NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL || '').trim()
 }
+
+/** Load submit URL: build-time env, then static JSON, then Flask API. */
+export async function loadGetInvolvedSubmitUrl(): Promise<string> {
+  const builtIn = getInvolvedSubmitUrl()
+  if (builtIn) return builtIn
+
+  for (const path of ['/protectont-config.json', '/api/protectont-config']) {
+    try {
+      const res = await fetch(path)
+      if (!res.ok) continue
+      const data = (await res.json()) as { getInvolvedSubmitUrl?: string }
+      const url = (data.getInvolvedSubmitUrl || '').trim()
+      if (url) return url
+    } catch {
+      /* try next source */
+    }
+  }
+  return ''
+}
