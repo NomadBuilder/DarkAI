@@ -87,10 +87,7 @@ function SectionCard({
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-6 sm:mb-8">
-      <h2
-        className="inline-flex items-center rounded-2xl px-4 py-2.5 text-xs font-bold uppercase tracking-[0.14em] sm:text-sm"
-        style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
-      >
+      <h2 className="border-b border-[#f9e04c]/25 pb-3 text-2xl font-bold tracking-tight text-[#f9e04c] sm:text-3xl">
         {children}
       </h2>
     </div>
@@ -239,24 +236,38 @@ export default function FfV2GetInvolvedPage() {
   return (
     <div
       className="relative min-h-[100dvh] overflow-x-hidden antialiased selection:bg-[#f9e04c]/30 selection:text-[#1a1a1a]"
-      style={{ backgroundColor: FF_COLORS.background }}
+      style={{
+        background:
+          'linear-gradient(168deg, #5c4899 0%, #4a3888 18%, #3d2b7a 42%, #35266d 68%, #2a1f58 100%)',
+      }}
     >
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
         <div
-          className="absolute -top-40 right-[-10%] h-[32rem] w-[32rem] rounded-full opacity-40 blur-3xl sm:h-[36rem] sm:w-[36rem]"
-          style={{ background: 'radial-gradient(circle, #6b4bb3 0%, transparent 68%)' }}
-        />
-        <div
-          className="absolute top-[20%] left-[-15%] h-72 w-72 rounded-full opacity-30 blur-3xl sm:h-96 sm:w-96"
-          style={{ background: 'radial-gradient(circle, #2a1f52 0%, transparent 70%)' }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.22]"
+          className="absolute inset-0"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.2) 1px, transparent 1px)',
-            backgroundSize: '20px 20px',
-            maskImage: 'linear-gradient(to bottom, black 0%, transparent 85%)',
+            background:
+              'linear-gradient(to bottom, rgba(255,255,255,0.08) 0%, transparent 28%, rgba(0,0,0,0.12) 100%)',
+          }}
+        />
+        <div
+          className="absolute -top-32 right-[-8%] h-[28rem] w-[28rem] rounded-full opacity-50 blur-3xl sm:h-[34rem] sm:w-[34rem]"
+          style={{ background: 'radial-gradient(circle, #8b72c9 0%, transparent 65%)' }}
+        />
+        <div
+          className="absolute top-[12%] left-[-12%] h-80 w-80 rounded-full opacity-35 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #6a52b0 0%, transparent 68%)' }}
+        />
+        <div
+          className="absolute bottom-0 left-1/2 h-96 w-[120%] -translate-x-1/2 opacity-25 blur-3xl"
+          style={{ background: 'radial-gradient(ellipse at center, #f9e04c 0%, transparent 55%)' }}
+        />
+        <div
+          className="absolute inset-0 opacity-[0.14]"
+          style={{
+            backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.15) 1px, transparent 1px)',
+            backgroundSize: '22px 22px',
+            maskImage: 'linear-gradient(to bottom, black 0%, transparent 80%)',
           }}
         />
       </div>
@@ -316,16 +327,17 @@ export default function FfV2GetInvolvedPage() {
           <h2 className="mb-8 text-center text-2xl font-semibold tracking-tight text-[#f9e04c]">
             What are you here for?
           </h2>
-          <div className="grid grid-cols-3 gap-4 xl:grid-cols-5 xl:gap-5">
-            {QUICK_ACTIONS.map((action) => {
+          <div className="mx-auto grid max-w-4xl grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6 lg:gap-5">
+            {QUICK_ACTIONS.map((action, index) => {
               const key = action.role ?? action.id
               const isActive = activeNav === key
+              const gridSpan = index < 3 ? 'lg:col-span-2' : 'lg:col-span-3'
               return (
                 <button
                   key={action.id}
                   type="button"
                   onClick={() => handleQuickAction(action)}
-                  className={`group flex min-h-[10.5rem] flex-col rounded-[1.35rem] border p-6 text-left transition-all duration-300 motion-safe:hover:-translate-y-1 ${
+                  className={`group ${gridSpan} flex min-h-[10.5rem] flex-col rounded-[1.35rem] border p-6 text-left transition-all duration-300 motion-safe:hover:-translate-y-1 ${
                     isActive
                       ? 'border-[#ff9a3c] bg-[#ff9a3c]/12 shadow-[0_16px_40px_-12px_rgba(255,154,60,0.45)] ring-2 ring-[#ff9a3c]/35'
                       : 'border-[#f9e04c]/18 bg-[#f9e04c]/[0.06] hover:border-[#f9e04c]/40 hover:bg-[#f9e04c]/[0.11] hover:shadow-xl'
@@ -351,16 +363,17 @@ export default function FfV2GetInvolvedPage() {
         {/* Quick actions — mobile/tablet cards (below hero; sticky pills above) */}
         <div className="mb-12 lg:hidden">
           <h2 className={`mb-5 text-center text-xl font-semibold sm:text-2xl ${prose}`}>What are you here for?</h2>
-          <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2">
-            {QUICK_ACTIONS.map((action) => {
+          <div className="mx-auto grid max-w-2xl grid-cols-1 gap-3 min-[520px]:grid-cols-6">
+            {QUICK_ACTIONS.map((action, index) => {
               const key = action.role ?? action.id
               const isActive = activeNav === key
+              const gridSpan = index < 3 ? 'min-[520px]:col-span-2' : 'min-[520px]:col-span-3'
               return (
                 <button
                   key={action.id}
                   type="button"
                   onClick={() => handleQuickAction(action)}
-                  className={`flex min-h-[5.5rem] items-center gap-4 rounded-2xl border p-4 text-left transition-all active:scale-[0.99] sm:p-5 ${
+                  className={`${gridSpan} flex min-h-[5.5rem] items-center gap-4 rounded-2xl border p-4 text-left transition-all active:scale-[0.99] sm:p-5 ${
                     isActive
                       ? 'border-[#ff9a3c] bg-[#ff9a3c]/12 ring-2 ring-[#ff9a3c]/30'
                       : 'border-[#f9e04c]/18 bg-[#f9e04c]/[0.06]'
@@ -396,12 +409,12 @@ export default function FfV2GetInvolvedPage() {
                   <AccentLink onClick={() => goToForm('yard-sign')}>Order a sign from us</AccentLink>
                 </SignOptionCard>
                 <SignOptionCard step="2">
-                  High-resolution file for home or professional printing:{' '}
-                  <AccentLink href={FF_SIGN_DOWNLOADS.highRes}>Download from Dropbox</AccentLink>
+                  Download a high-resolution file for home printing or professional printing:{' '}
+                  <AccentLink href={FF_SIGN_DOWNLOADS.highRes}>High-resolution download</AccentLink>
                 </SignOptionCard>
                 <SignOptionCard step="3">
-                  Low-resolution file for social sharing:{' '}
-                  <AccentLink href={FF_SIGN_DOWNLOADS.lowRes}>Download from Dropbox</AccentLink>
+                  Download a low-resolution file for online sharing and social media posts:{' '}
+                  <AccentLink href={FF_SIGN_DOWNLOADS.lowRes}>Low-resolution download</AccentLink>
                 </SignOptionCard>
               </ul>
               <div className="rounded-2xl border border-[#f9e04c]/35 bg-gradient-to-r from-[#f9e04c]/20 to-[#f9e04c]/8 px-5 py-4 sm:px-6 sm:py-5">
