@@ -7,6 +7,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-export default function FfGetInvolvedLayout({ children }: { children: React.ReactNode }) {
-  return <div className="ff-get-involved-route">{children}</div>
+export default function JoinLayout({ children }: { children: React.ReactNode }) {
+  return <div className="join-route">{children}</div>
 }

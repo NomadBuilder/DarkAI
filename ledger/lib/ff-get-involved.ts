@@ -30,7 +30,7 @@ export const FF_YARD_SIGN_DESIGNS = [
   },
 ] as const
 
-export const FF_SOURCE_PAGE = 'ff-get-involved'
+export const FF_SOURCE_PAGE = 'join'
 
 export const FF_INTRO = [
   'Thank you for joining our cause. Together, we can make a difference.',
