@@ -20,7 +20,7 @@ export type GetInvolvedFormProps = {
   sourcePage?: string
   /** When set, selects this role and scrolls focus into the form (parent handles scroll). */
   presetRole?: InvolvementRole | ''
-  /** Drop outer card chrome when parent provides a container (e.g. ffv2 page). */
+  /** Drop outer card chrome when parent provides a container (e.g. ff get-involved page). */
   embedded?: boolean
 }
 
@@ -45,7 +45,7 @@ export default function GetInvolvedForm({
     ? 'border-[#ff9a3c] bg-[#fff4e8] ring-1 ring-[#ff9a3c]'
     : 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500'
   const submitButtonClass = isFf
-    ? 'w-full px-6 md:px-8 py-4 md:py-5 bg-[#3d2b7a] text-[#f9e04c] rounded-xl text-base md:text-lg font-semibold hover:bg-[#2f2260] transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
+    ? 'w-full px-6 md:px-8 py-4 md:py-5 bg-[#d35400] text-[#f9e04c] rounded-xl text-base md:text-lg font-semibold hover:bg-[#b8470a] transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
     : 'w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
   const shellClass = embedded
     ? 'p-8 md:p-10 lg:p-12 space-y-8'

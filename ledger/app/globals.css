@@ -134,8 +134,7 @@ button, a {
 }
 
 /* FF get-involved: full-bleed campaign pages (no site footer) */
-body:has(.ff-get-involved-route) footer,
-body:has(.ffv2-get-involved-route) footer {
+body:has(.ff-get-involved-route) footer {
   display: none;
 }
 

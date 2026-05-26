@@ -1,23 +1,38 @@
-/** Friends / campaign get-involved page — colors and assets from WebPage design PDF */
+/** Friends / campaign get-involved page — colors and assets */
 
 export const FF_COLORS = {
-  background: '#3d2b7a',
+  background: '#d35400',
+  backgroundDeep: '#9a3d08',
   text: '#f9e04c',
   headingBg: '#f9e04c',
   headingText: '#1a1a1a',
-  link: '#ff9a3c',
-  linkHover: '#ffb366',
+  link: '#fff4d6',
+  linkHover: '#ffffff',
+  accent: '#ff9a3c',
 } as const
 
-export const FF_SIGN_DOWNLOADS = {
-  highRes:
-    'https://www.dropbox.com/scl/fo/zjsj0yfgl7wnxm26tsnxb/AOQRV_vbtfgYYaqr7nO1Ojw?rlkey=e1bwzhin0hd8b1kf7gvl2eb8a&st=ch4ei88g&dl=0',
-  lowRes:
-    'https://www.dropbox.com/scl/fo/60q87jwucbf9j392ojoy1/AMBL-vtnt_TkNEXTH_vN5SY?rlkey=t7aq1vb1l5lfaormgm9z6g5kd&st=ke90plab&dl=0',
-} as const
+export const FF_PAGE_GRADIENT =
+  'linear-gradient(168deg, #f59a4a 0%, #e86f1a 18%, #d35400 42%, #b8470a 68%, #9a3d08 100%)'
+
+/** Printable yard-sign artwork (served from ledger/public) */
+export const FF_YARD_SIGN_DESIGNS = [
+  {
+    id: 'ford-design-1',
+    title: 'Healthcare · Education · Environment',
+    imageUrl: '/products/yard-signs/ford-design-1.png',
+    downloadUrl: '/products/yard-signs/ford-design-1.png',
+    filename: 'ford-design-1.png',
+  },
+  {
+    id: 'ford-design-2',
+    title: 'Healthcare · Education · Transparency',
+    imageUrl: '/products/yard-signs/ford-design-2.png',
+    downloadUrl: '/products/yard-signs/ford-design-2.png',
+    filename: 'ford-design-2.png',
+  },
+] as const
 
 export const FF_SOURCE_PAGE = 'ff-get-involved'
-export const FFV2_SOURCE_PAGE = 'ffv2-get-involved'
 
 export const FF_INTRO = [
   'Thank you for joining our cause. Together, we can make a difference.',

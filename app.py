@@ -295,8 +295,10 @@ def protect_ontario_and_ledger_redirect():
             return None  # Let ProtectOnt API routes handle this
         if path == "robots.txt":
             return Response(PROTECTONT_ROBOTS_TXT, mimetype="text/plain")
-        if path == "ff2-get-involved" or path.startswith("ff2-get-involved/"):
-            return redirect("https://protectont.ca/ffv2-get-involved/", code=301)
+        if path in ("ffv2-get-involved", "ff2-get-involved") or path.startswith(
+            ("ffv2-get-involved/", "ff2-get-involved/")
+        ):
+            return redirect("https://protectont.ca/ff-get-involved/", code=301)
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")
