@@ -89,8 +89,15 @@ export const volunteerRoleOptions = [
   { id: 'other', label: 'Other (describe below)' },
 ] as const
 
+export type GetInvolvedSubmitOptions = {
+  sourcePage?: string
+}
+
 /** Flat payload for Google Apps Script `e.parameter` (URL-encoded POST). */
-export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Record<string, string> {
+export function buildGetInvolvedSubmitPayload(
+  state: GetInvolvedFormState,
+  options: GetInvolvedSubmitOptions = {}
+): Record<string, string> {
   const roleLabel = involvementRoles.find((r) => r.id === state.role)?.label ?? state.role
   const notes =
     state.role === 'other' ? state.otherDetails.trim() : state.additionalNotes.trim()
@@ -119,7 +126,7 @@ export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Reco
     volunteer_has_vehicle: state.volunteerHasVehicle,
     updates_topics: '',
     additional_notes: notes,
-    source_page: 'get-involved',
+    source_page: options.sourcePage ?? 'get-involved',
   }
 }
 

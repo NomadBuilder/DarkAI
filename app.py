@@ -214,19 +214,6 @@ def serve_ledger_at_root(path):
     return send_from_directory(LEDGER_DIR, "index.html")
 
 
-def _load_protectont_context():
-    """Load Protect Ontario chat context JSON from static/protectont or ledger/out."""
-    base_dir = _ledger_dir()
-    context_path = os.path.join(base_dir, "chat-context.json")
-    if not os.path.isfile(context_path):
-        return None
-    try:
-        with open(context_path, "r", encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return None
-
-
 @app.route('/api/protectont-config', methods=['GET'])
 def protectont_config():
     """Runtime config for static ProtectOnt pages (e.g. get-involved form → Google Apps Script)."""
@@ -260,64 +247,6 @@ def get_involved_submit_route():
     if ok:
         return jsonify({"success": True}), 200
     return jsonify({"success": False, "error": err or "Submission failed"}), 500
-
-
-@app.route('/api/chat', methods=['POST'])
-def protectont_chat():
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        return jsonify({"error": "GEMINI_API_KEY not configured"}), 500
-
-    payload = request.get_json(silent=True) or {}
-    message = (payload.get("message") or "").strip()
-    if not message:
-        return jsonify({"error": "Message is required"}), 400
-
-    context = _load_protectont_context()
-    context_text = json.dumps(context, ensure_ascii=False, indent=2) if context else "{}"
-
-    system_prompt = (
-        "You are the Protect Ontario site assistant. "
-        "Answer ONLY using the provided site context. "
-        "If the answer is not in the context, say you don't have that information "
-        "and suggest relevant site pages (e.g., /water, /greenbelt, /healthcare, /wildlife, /protests, /methodology, /media). "
-        "Do not use external knowledge."
-    )
-
-    user_prompt = f"{system_prompt}\n\nSITE CONTEXT JSON:\n{context_text}\n\nUSER QUESTION:\n{message}"
-
-    url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
-    headers = {
-        "Content-Type": "application/json",
-        "X-goog-api-key": api_key,
-    }
-    data = {
-        "contents": [
-            {
-                "parts": [
-                    {"text": user_prompt}
-                ]
-            }
-        ]
-    }
-
-    try:
-        resp = requests.post(url, headers=headers, json=data, timeout=20)
-        resp.raise_for_status()
-        result = resp.json()
-        answer = (
-            result.get("candidates", [{}])[0]
-            .get("content", {})
-            .get("parts", [{}])[0]
-            .get("text", "")
-        )
-        if not answer:
-            answer = "I don't have enough information in the site context to answer that."
-        return jsonify({"answer": answer})
-    except requests.RequestException as e:
-        return jsonify({"error": "Chat request failed", "details": str(e)}), 502
-    except Exception as e:
-        return jsonify({"error": "Chat request failed", "details": str(e)}), 500
 
 
 # robots.txt for protectont.ca: allow all crawlers including Facebook (fixes FB Sharing Debugger 403)

@@ -12,15 +12,43 @@ import {
   type InvolvementRole,
 } from '@/lib/get-involved'
 
-const inputClass =
+const defaultInputClass =
   'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
-const labelClass = 'block text-sm md:text-base font-light text-gray-700 mb-2'
+const defaultLabelClass = 'block text-sm md:text-base font-light text-gray-700 mb-2'
+
+export type GetInvolvedFormProps = {
+  variant?: 'default' | 'ff'
+  sourcePage?: string
+  /** When set, selects this role and scrolls focus into the form (parent handles scroll). */
+  presetRole?: InvolvementRole | ''
+}
 
 function toggleInList(list: string[], id: string): string[] {
   return list.includes(id) ? list.filter((x) => x !== id) : [...list, id]
 }
 
-export default function GetInvolvedForm() {
+export default function GetInvolvedForm({
+  variant = 'default',
+  sourcePage = 'get-involved',
+  presetRole = '',
+}: GetInvolvedFormProps) {
+  const isFf = variant === 'ff'
+  const inputClass = isFf
+    ? 'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-[#ff3399] focus:border-transparent'
+    : defaultInputClass
+  const labelClass = isFf
+    ? 'block text-sm md:text-base text-gray-800 mb-2'
+    : defaultLabelClass
+  const roleSelectedClass = isFf
+    ? 'border-[#ff3399] bg-[#fff5fa] ring-1 ring-[#ff3399]'
+    : 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500'
+  const submitButtonClass = isFf
+    ? 'w-full px-6 md:px-8 py-4 md:py-5 bg-[#3d2b7a] text-[#f9e04c] rounded-lg text-base md:text-lg font-medium hover:bg-[#2f2260] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+    : 'w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+  const linkClass = isFf
+    ? 'text-[#ff3399] underline underline-offset-2 hover:text-[#ff66b2]'
+    : 'text-blue-600 underline underline-offset-2 hover:text-blue-700'
+
   const [form, setForm] = useState<GetInvolvedFormState>(emptyGetInvolvedFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
@@ -42,6 +70,12 @@ export default function GetInvolvedForm() {
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    if (!presetRole) return
+    setForm((prev) => ({ ...prev, role: presetRole }))
+    if (submitStatus !== 'idle') setSubmitStatus('idle')
+  }, [presetRole])
 
   const role = form.role as InvolvementRole | ''
   const isSignRequest = role === 'yard-sign'
@@ -110,7 +144,7 @@ export default function GetInvolvedForm() {
     setErrorMessage('')
 
     try {
-      const body = new URLSearchParams(buildGetInvolvedSubmitPayload(form))
+      const body = new URLSearchParams(buildGetInvolvedSubmitPayload(form, { sourcePage }))
       const submitEndpoint = submitViaApi ? '/api/get-involved-submit' : sheetSubmitUrl
       const res = await fetch(submitEndpoint, {
         method: 'POST',
@@ -155,7 +189,7 @@ export default function GetInvolvedForm() {
         {lastSubmittedRole === 'yard-sign' && (
           <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
             Haven&apos;t paid yet?{' '}
-            <Link href="/products" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+            <Link href="/products" className={linkClass}>
               Pay $10 per sign on Products
             </Link>{' '}
             when you&apos;re ready.
@@ -164,7 +198,7 @@ export default function GetInvolvedForm() {
         <button
           type="button"
           onClick={() => setSubmitStatus('idle')}
-          className="mt-4 text-sm text-blue-600 underline underline-offset-2 hover:text-blue-700 font-light"
+          className={`mt-4 text-sm ${linkClass} font-light`}
         >
           Submit another sign-up
         </button>
@@ -181,9 +215,7 @@ export default function GetInvolvedForm() {
             <label
               key={item.id}
               className={`flex gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
-                form.role === item.id
-                  ? 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500'
-                  : 'border-gray-200 hover:border-gray-300'
+                form.role === item.id ? roleSelectedClass : 'border-gray-200 hover:border-gray-300'
               }`}
             >
               <input
@@ -297,7 +329,7 @@ export default function GetInvolvedForm() {
               <h3 className="text-lg font-light text-gray-900">Sign request</h3>
               <p className="text-sm text-gray-600 font-light -mt-4">
                 $10 per sign, delivered by volunteers—not shipped by mail. Pay on{' '}
-                <Link href="/products" className="text-blue-600 underline underline-offset-2">
+                <Link href="/products" className={linkClass}>
                   Products
                 </Link>{' '}
                 when you&apos;re ready.
@@ -568,14 +600,14 @@ export default function GetInvolvedForm() {
       <button
         type="submit"
         disabled={isSubmitting || !form.role || !configLoaded}
-        className="w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className={submitButtonClass}
       >
         {isSubmitting ? 'Sending…' : 'Submit sign-up'}
       </button>
 
       <p className="text-xs text-gray-500 font-light text-center leading-relaxed">
         Rallies and corrections: use the{' '}
-        <Link href="/about#contact" className="text-blue-600 underline underline-offset-2">
+        <Link href="/about#contact" className={linkClass}>
           About contact form
         </Link>
         .
