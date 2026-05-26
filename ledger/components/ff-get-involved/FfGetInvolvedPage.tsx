@@ -440,21 +440,33 @@ export default function FfGetInvolvedPage() {
                 <SignOptionCard step="1">
                   <AccentLink onClick={() => goToForm('yard-sign')}>Order a sign from us</AccentLink>
                 </SignOptionCard>
+                <SignOptionCard step="2">
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection('download-a-sign')}
+                    className="text-left"
+                  >
+                    Download a sign
+                  </button>
+                </SignOptionCard>
               </ul>
-              <p className="text-[#f9e04c]/90">
-                Download printable artwork below and take it to a local printer, or use the files for
-                social media.
-              </p>
-              <div className="grid gap-6 sm:grid-cols-2">
-                {FF_YARD_SIGN_DESIGNS.map((design) => (
-                  <YardSignPreview
-                    key={design.id}
-                    title={design.title}
-                    imageUrl={design.imageUrl}
-                    downloadUrl={design.downloadUrl}
-                    filename={design.filename}
-                  />
-                ))}
+              <div id="download-a-sign" className="scroll-mt-28 sm:scroll-mt-32">
+                <h3 className="text-lg font-bold text-[#f9e04c] sm:text-xl">Download a sign</h3>
+                <p className="mt-2 text-[#f9e04c]/90">
+                  Download printable artwork below and take it to a local printer, or use the files for
+                  social media.
+                </p>
+                <div className="mt-5 grid gap-6 sm:grid-cols-2">
+                  {FF_YARD_SIGN_DESIGNS.map((design) => (
+                    <YardSignPreview
+                      key={design.id}
+                      title={design.title}
+                      imageUrl={design.imageUrl}
+                      downloadUrl={design.downloadUrl}
+                      filename={design.filename}
+                    />
+                  ))}
+                </div>
               </div>
               <div className="rounded-2xl border border-[#f9e04c]/35 bg-gradient-to-r from-[#f9e04c]/20 to-[#f9e04c]/8 px-5 py-4 sm:px-6 sm:py-5">
                 <p className="font-semibold text-[#f9e04c] sm:text-lg">
