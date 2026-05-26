@@ -305,7 +305,7 @@ export default function FfGetInvolvedPage() {
 
       {/* Sticky jump nav — mobile & tablet */}
       <div
-        className="sticky top-0 z-30 border-b border-[#f9e04c]/15 backdrop-blur-xl lg:hidden"
+        className="sticky top-[6.5rem] z-30 border-b border-[#f9e04c]/15 backdrop-blur-xl sm:top-[9.5rem] lg:hidden"
         style={{ backgroundColor: `${FF_COLORS.background}d9` }}
         role="navigation"
         aria-label="Jump to section"

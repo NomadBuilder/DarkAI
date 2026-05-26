@@ -31,9 +31,11 @@ interface TopNavigationProps {
   onMethodologyClick?: () => void
   /** Purple/yellow nav bar while over the join-styled hero (home preview) */
   navOnDark?: boolean
-  /** Override the primary CTA (defaults to Take Action → /take-action) */
+  /** Override the primary CTA (defaults to Take Action → /join) */
   primaryCta?: { label: string; href: string }
 }
+
+const DEFAULT_PRIMARY_CTA = { label: 'Take Action', href: '/join' } as const
 
 const issuesDropdownItems: NavItem[] = [
   { id: 'healthcare', label: 'Healthcare', href: '/healthcare' },
@@ -274,14 +276,14 @@ export default function TopNavigation({
                     Donate
                   </a>
                   <Link
-                    href={getNavHref(primaryCta?.href ?? '/take-action', basePath)}
+                    href={getNavHref(primaryCta?.href ?? DEFAULT_PRIMARY_CTA.href, basePath)}
                     className={`ml-2 lg:ml-2 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap ${
                       navOnDark
                         ? 'bg-[#f9e04c] text-[#1a1a1a] hover:bg-[#f5d84a]'
                         : 'text-white bg-[#2E4A6B] hover:bg-[#243d56]'
                     }`}
                   >
-                    {primaryCta?.label ?? 'Take Action'}
+                    {primaryCta?.label ?? DEFAULT_PRIMARY_CTA.label}
                   </Link>
                 </div>
 
@@ -478,7 +480,7 @@ function MobileMenu({
                           Donate
                         </a>
                         <a
-                          href={getNavHref(primaryCta?.href ?? '/take-action', basePath)}
+                          href={getNavHref(primaryCta?.href ?? DEFAULT_PRIMARY_CTA.href, basePath)}
                           onClick={() => setIsOpen(false)}
                           className={`block w-full text-center px-4 py-4 text-lg font-medium rounded-lg transition-colors ${
                             navOnDark
@@ -486,7 +488,7 @@ function MobileMenu({
                               : 'text-white bg-[#2E4A6B] hover:bg-[#243d56]'
                           }`}
                         >
-                          {primaryCta?.label ?? 'Take Action'}
+                          {primaryCta?.label ?? DEFAULT_PRIMARY_CTA.label}
                         </a>
                       </div>
                     </div>

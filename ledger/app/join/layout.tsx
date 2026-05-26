@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import JoinSiteChrome from '@/components/join/JoinSiteChrome'
 
 export const metadata: Metadata = {
   title: 'Get involved',
@@ -8,5 +9,9 @@ export const metadata: Metadata = {
 }
 
 export default function JoinLayout({ children }: { children: React.ReactNode }) {
-  return <div className="join-route">{children}</div>
+  return (
+    <div className="join-route">
+      <JoinSiteChrome>{children}</JoinSiteChrome>
+    </div>
+  )
 }

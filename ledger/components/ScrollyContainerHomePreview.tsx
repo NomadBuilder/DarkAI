@@ -120,7 +120,6 @@ export default function ScrollyContainerHomePreview() {
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
         navOnDark={navOnDark}
-        primaryCta={{ label: 'Get involved', href: '/join' }}
       />
       <div className="relative z-10 w-full">
         <div className="pt-0 sm:pt-[152px] md:pt-0">
