@@ -514,20 +514,7 @@ export default function FfGetInvolvedPage() {
                 Every contribution helps us reach more communities, expand our visibility, and continue
                 growing the movement.
               </p>
-              <div className="rounded-3xl bg-[#f9e04c] p-4 shadow-lg sm:inline-block sm:p-5">
-                <a
-                  href={PROTECT_ONTARIO_DONATE_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex min-h-[3.25rem] w-full items-center justify-center gap-2 rounded-2xl px-10 py-4 text-base font-bold uppercase tracking-wide text-[#f9e04c] transition-opacity hover:opacity-90 sm:text-lg"
-                  style={{ backgroundColor: FF_COLORS.background }}
-                >
-                  Donate
-                  <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden>
-                    <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </a>
-              </div>
+              <PrimaryButton href={PROTECT_ONTARIO_DONATE_URL}>Donate</PrimaryButton>
             </div>
           </SectionCard>
 
