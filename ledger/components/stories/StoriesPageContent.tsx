@@ -3,35 +3,34 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import {
-  STORY_DEFAULT_AVATAR_URL,
   STORY_MAX_LENGTH,
   fetchStories,
   submitStory,
   type StoryItem,
 } from '@/lib/stories'
+import DefaultStoryAvatarIcon from './DefaultStoryAvatarIcon'
 
-function avatarSrc(story: StoryItem): string {
-  return story.avatarUrl?.trim() || STORY_DEFAULT_AVATAR_URL
-}
+const avatarFrameClass =
+  'flex shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100 text-slate-400 shadow-sm'
 
 function StoryAvatar({ story }: { story: StoryItem }) {
   const [imgError, setImgError] = useState(false)
-  const src = avatarSrc(story)
+  const uploaded = Boolean(story.avatarUrl?.trim())
 
   return (
-    <div className="flex h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100 shadow-sm sm:h-16 sm:w-16">
-      {!imgError ? (
+    <div className={`${avatarFrameClass} h-14 w-14 sm:h-16 sm:w-16`}>
+      {uploaded && !imgError ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={src}
+          src={story.avatarUrl}
           alt=""
-          className={`h-full w-full ${story.avatarUrl?.trim() ? 'object-cover' : 'object-contain p-1.5'}`}
+          className="h-full w-full object-cover"
           onError={() => setImgError(true)}
         />
+      ) : uploaded && imgError ? (
+        <span className="text-base font-medium text-slate-600">{story.initial}</span>
       ) : (
-        <span className="flex h-full w-full items-center justify-center bg-slate-200 text-base font-medium text-slate-600">
-          {story.initial}
-        </span>
+        <DefaultStoryAvatarIcon className="h-[88%] w-[88%]" />
       )}
     </div>
   )
@@ -93,8 +92,6 @@ export default function StoriesPageContent() {
     setAvatarPreview(url)
     return () => URL.revokeObjectURL(url)
   }, [avatarFile])
-
-  const formAvatarSrc = avatarPreview || STORY_DEFAULT_AVATAR_URL
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -197,13 +194,13 @@ export default function StoriesPageContent() {
             <form onSubmit={onSubmit} className="space-y-6">
               <div className="flex flex-col sm:flex-row gap-6 sm:items-start">
                 <div className="flex flex-row sm:flex-col items-center gap-3 sm:gap-2 sm:w-28 shrink-0">
-                  <div className="flex h-16 w-16 overflow-hidden rounded-full border-2 border-slate-200 bg-slate-100 shadow-sm">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={formAvatarSrc}
-                      alt=""
-                      className={`h-full w-full ${avatarPreview ? 'object-cover' : 'object-contain p-2'}`}
-                    />
+                  <div className={`${avatarFrameClass} h-16 w-16`}>
+                    {avatarPreview ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={avatarPreview} alt="" className="h-full w-full object-cover" />
+                    ) : (
+                      <DefaultStoryAvatarIcon className="h-[88%] w-[88%]" />
+                    )}
                   </div>
                   <div className="flex flex-col gap-1 sm:items-center">
                     <label className="cursor-pointer text-sm text-blue-600 hover:text-blue-700 font-light underline underline-offset-2">
