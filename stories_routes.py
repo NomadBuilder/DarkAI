@@ -6,6 +6,7 @@ import logging
 import os
 
 from stories_store import (
+    delete_story,
     insert_story,
     list_public_stories,
     save_avatar_file,
@@ -70,3 +71,23 @@ def register_stories_routes(app):
             else "Thank you — your story was received and will appear after a quick review."
         )
         return jsonify({"success": True, "message": msg, **(result or {})}), 200
+
+    @app.route("/api/stories/<story_id>", methods=["DELETE", "OPTIONS"])
+    def api_stories_delete(story_id: str):
+        from flask import jsonify, request
+
+        if request.method == "OPTIONS":
+            return "", 204
+
+        token = os.getenv("STORIES_ADMIN_TOKEN", "").strip()
+        if not token:
+            return jsonify({"success": False, "error": "Not configured"}), 503
+
+        auth = request.headers.get("Authorization", "")
+        provided = auth.removeprefix("Bearer ").strip() if auth.startswith("Bearer ") else ""
+        if provided != token:
+            return jsonify({"success": False, "error": "Unauthorized"}), 401
+
+        if delete_story(story_id):
+            return jsonify({"success": True}), 200
+        return jsonify({"success": False, "error": "Not found"}), 404

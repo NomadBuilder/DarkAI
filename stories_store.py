@@ -21,6 +21,10 @@ MAX_AVATAR_BYTES = 2 * 1024 * 1024
 _JSON_PATH = Path(__file__).resolve().parent / "instance" / "stories.json"
 _TABLE = "protectont_stories"
 
+# One-time removals (purged on first stories API access after deploy)
+_PURGE_STORY_IDS = frozenset({"1338670e-05c2-4313-ae5c-7e15c48238e4"})
+_purge_done = False
+
 
 def _repo_root() -> Path:
     return Path(__file__).resolve().parent
@@ -207,8 +211,45 @@ def insert_story(
     }, None
 
 
+def delete_story(story_id: str) -> bool:
+    """Delete a story by id. Returns True if removed."""
+    ensure_schema()
+    sid = (story_id or "").strip()
+    if not sid:
+        return False
+
+    removed = False
+    if _postgres_configured():
+        conn = _connect()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(f"DELETE FROM {_TABLE} WHERE id = %s::uuid", (sid,))
+                removed = cur.rowcount > 0
+            conn.commit()
+        finally:
+            conn.close()
+    else:
+        stories = _load_json_stories()
+        n = len(stories)
+        stories = [s for s in stories if str(s.get("id")) != sid]
+        if len(stories) < n:
+            _save_json_stories(stories)
+            removed = True
+    return removed
+
+
+def purge_known_test_stories() -> None:
+    global _purge_done
+    if _purge_done:
+        return
+    _purge_done = True
+    for sid in _PURGE_STORY_IDS:
+        delete_story(sid)
+
+
 def list_public_stories(base_url: str, limit: int = 100) -> list[dict[str, Any]]:
     ensure_schema()
+    purge_known_test_stories()
     limit = max(1, min(limit, 200))
     rows: list[dict[str, Any]] = []
 

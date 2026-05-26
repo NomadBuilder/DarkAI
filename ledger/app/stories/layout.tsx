@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Your stories',
+  title: 'Community voices',
   description:
-    'Share how Doug Ford’s policies have affected you and why you want change. Short community stories from Ontarians.',
+    'Stories from Ontarians about public services, the environment, and accountability. Share yours in a few sentences.',
 }
 
 export default function StoriesLayout({ children }: { children: React.ReactNode }) {
