@@ -29,6 +29,10 @@ interface NavItem {
 interface TopNavigationProps {
   onDataSourcesClick?: () => void
   onMethodologyClick?: () => void
+  /** Purple/yellow nav bar while over the join-styled hero (home preview) */
+  navOnDark?: boolean
+  /** Override the primary CTA (defaults to Take Action → /take-action) */
+  primaryCta?: { label: string; href: string }
 }
 
 const issuesDropdownItems: NavItem[] = [
@@ -67,7 +71,12 @@ const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
 
 const DROPDOWN_LEAVE_DELAY_MS = 200
 
-export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }: TopNavigationProps = {}) {
+export default function TopNavigation({
+  onDataSourcesClick,
+  onMethodologyClick,
+  navOnDark = false,
+  primaryCta,
+}: TopNavigationProps = {}) {
   const [isScrolling, setIsScrolling] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
@@ -152,22 +161,28 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
             className="sticky top-0 left-0 right-0 z-50 w-full"
           >
             <ProtestsSiteBanner basePath={basePath} />
-            <div className={`bg-white/80 backdrop-blur-md transition-all duration-300 w-full ${
-              isScrolling ? 'shadow-sm' : ''
-            }`}>
+            <div
+              className={`backdrop-blur-md transition-all duration-300 w-full ${
+                navOnDark
+                  ? 'border-b border-[#f9e04c]/15 bg-[#3d2b7a]/90'
+                  : `bg-white/80 ${isScrolling ? 'shadow-sm' : ''}`
+              }`}
+            >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
               <div className="flex items-center justify-between h-14 sm:h-16">
                 {/* Logo/Title */}
                 <div className="flex-shrink-0">
                   <Link
                     href={basePath || '/'}
-                    className="flex items-center gap-2 text-sm sm:text-base font-light text-gray-900 hover:text-gray-700 transition-colors"
+                    className={`flex items-center gap-2 text-sm sm:text-base font-light transition-colors ${
+                      navOnDark ? 'text-[#f9e04c] hover:text-[#f9e04c]/85' : 'text-gray-900 hover:text-gray-700'
+                    }`}
                     aria-label="Protect Ontario – Home"
                   >
-                    <img 
-                      src={basePath ? `${basePath}/logo-icon-text.svg` : '/logo-icon-text.svg'} 
-                      alt="" 
-                      className="h-9 sm:h-10 w-auto"
+                    <img
+                      src={basePath ? `${basePath}/logo-icon-text.svg` : '/logo-icon-text.svg'}
+                      alt=""
+                      className={`h-9 sm:h-10 w-auto ${navOnDark ? 'brightness-0 invert' : ''}`}
                     />
                   </Link>
                 </div>
@@ -195,7 +210,11 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                           }}
                         >
                           <button
-                            className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap flex items-center gap-1"
+                            className={`px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap flex items-center gap-1 ${
+                              navOnDark
+                                ? 'text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'
+                            }`}
                           >
                             {item.label}
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -232,7 +251,11 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                     <button
                       key={item.id}
                       onClick={() => handleNavClick(item)}
-                      className="px-3 lg:px-4 py-2 text-sm lg:text-base font-light text-gray-600 hover:text-gray-900 transition-colors rounded-md hover:bg-gray-100/50 whitespace-nowrap"
+                      className={`px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap ${
+                        navOnDark
+                          ? 'text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10'
+                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/50'
+                      }`}
                     >
                       {item.label}
                     </button>
@@ -242,27 +265,37 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
                     href={DONATE_STRIPE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="ml-2 lg:ml-3 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-[#2E4A6B] border-2 border-[#2E4A6B] hover:bg-[#2E4A6B] hover:text-white rounded-lg transition-colors whitespace-nowrap"
+                    className={`ml-2 lg:ml-3 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium rounded-lg transition-colors whitespace-nowrap ${
+                      navOnDark
+                        ? 'border-2 border-[#f9e04c]/50 text-[#f9e04c] hover:bg-[#f9e04c]/10'
+                        : 'text-[#2E4A6B] border-2 border-[#2E4A6B] hover:bg-[#2E4A6B] hover:text-white'
+                    }`}
                   >
                     Donate
                   </a>
                   <Link
-                    href={getNavHref('/take-action', basePath)}
-                    className="ml-2 lg:ml-2 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium text-white bg-[#2E4A6B] hover:bg-[#243d56] rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap"
+                    href={getNavHref(primaryCta?.href ?? '/take-action', basePath)}
+                    className={`ml-2 lg:ml-2 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap ${
+                      navOnDark
+                        ? 'bg-[#f9e04c] text-[#1a1a1a] hover:bg-[#f5d84a]'
+                        : 'text-white bg-[#2E4A6B] hover:bg-[#243d56]'
+                    }`}
                   >
-                    Take Action
+                    {primaryCta?.label ?? 'Take Action'}
                   </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
                 <div className="md:hidden relative z-[90]">
-                  <MobileMenu 
-                    navItems={navItems} 
+                  <MobileMenu
+                    navItems={navItems}
                     scrollToSection={scrollToSection}
                     onMenuStateChange={setIsMobileMenuOpen}
                     onDataSourcesClick={onDataSourcesClick}
                     onMethodologyClick={onMethodologyClick}
                     basePath={basePath}
+                    navOnDark={navOnDark}
+                    primaryCta={primaryCta}
                   />
                 </div>
               </div>
@@ -273,20 +306,24 @@ export default function TopNavigation({ onDataSourcesClick, onMethodologyClick }
   )
 }
 
-function MobileMenu({ 
-  navItems, 
+function MobileMenu({
+  navItems,
   scrollToSection,
   onMenuStateChange,
   onDataSourcesClick,
   onMethodologyClick,
-  basePath
-}: { 
+  basePath,
+  navOnDark = false,
+  primaryCta,
+}: {
   navItems: NavItem[]
   scrollToSection: (id: string) => void
   onMenuStateChange?: (isOpen: boolean) => void
   onDataSourcesClick?: () => void
   onMethodologyClick?: () => void
   basePath: string
+  navOnDark?: boolean
+  primaryCta?: { label: string; href: string }
 }) {
   const [isOpen, setIsOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
@@ -320,7 +357,9 @@ function MobileMenu({
           e.stopPropagation()
           setIsOpen(prev => !prev)
         }}
-        className="p-2 text-gray-600 hover:text-gray-900 transition-colors relative z-[80]"
+        className={`p-2 transition-colors relative z-[80] ${
+          navOnDark ? 'text-[#f9e04c] hover:text-[#f9e04c]/85' : 'text-gray-600 hover:text-gray-900'
+        }`}
         aria-label="Toggle menu"
         aria-expanded={isOpen}
         type="button"
@@ -439,11 +478,15 @@ function MobileMenu({
                           Donate
                         </a>
                         <a
-                          href={getNavHref('/take-action', basePath)}
+                          href={getNavHref(primaryCta?.href ?? '/take-action', basePath)}
                           onClick={() => setIsOpen(false)}
-                          className="block w-full text-center px-4 py-4 text-lg font-medium text-white bg-[#2E4A6B] hover:bg-[#243d56] rounded-lg transition-colors"
+                          className={`block w-full text-center px-4 py-4 text-lg font-medium rounded-lg transition-colors ${
+                            navOnDark
+                              ? 'bg-[#f9e04c] text-[#1a1a1a] hover:bg-[#f5d84a]'
+                              : 'text-white bg-[#2E4A6B] hover:bg-[#243d56]'
+                          }`}
                         >
-                          Take Action
+                          {primaryCta?.label ?? 'Take Action'}
                         </a>
                       </div>
                     </div>
