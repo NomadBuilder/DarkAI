@@ -106,3 +106,7 @@ instance/
 # Customer-uploaded poster artwork (keep folder via .gitkeep)
 static/uploads/print-artwork/*
 !static/uploads/print-artwork/.gitkeep
+
+# Community story avatars (keep folder via .gitkeep)
+static/uploads/stories/*
+!static/uploads/stories/.gitkeep
