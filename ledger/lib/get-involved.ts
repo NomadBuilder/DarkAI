@@ -1,9 +1,6 @@
-export type InvolvementRole =
-  | 'yard-sign'
-  | 'dropoff'
-  | 'volunteer'
-  | 'updates'
-  | 'other'
+export const PROTECT_ONTARIO_DONATE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
+
+export type InvolvementRole = 'yard-sign' | 'dropoff' | 'volunteer' | 'other'
 
 export const involvementRoles: {
   id: InvolvementRole
@@ -26,11 +23,6 @@ export const involvementRoles: {
     description: 'Help with delivery, events, outreach, or other organizer tasks.',
   },
   {
-    id: 'updates',
-    label: 'Stay in the loop',
-    description: 'Get occasional updates on protests, signs, and accountability work.',
-  },
-  {
     id: 'other',
     label: 'Something else',
     description: 'None of the above? Tell us what you have in mind—we’ll figure it out.',
@@ -49,6 +41,7 @@ export type GetInvolvedFormState = {
   postalCode: string
   yardSignDesign: YardSignDesign | ''
   yardSignQuantity: string
+  yardSignDeliveryAddress: string
   yardSignPaymentStatus: YardSignPaymentStatus | ''
   yardSignNotes: string
   dropoffLocation: string
@@ -58,7 +51,6 @@ export type GetInvolvedFormState = {
   volunteerRoles: string[]
   volunteerAvailability: string
   volunteerHasVehicle: 'yes' | 'no' | ''
-  updatesTopics: string[]
   otherDetails: string
   additionalNotes: string
   consent: boolean
@@ -72,7 +64,8 @@ export const emptyGetInvolvedFormState: GetInvolvedFormState = {
   city: '',
   postalCode: '',
   yardSignDesign: '',
-  yardSignQuantity: '1',
+  yardSignQuantity: '',
+  yardSignDeliveryAddress: '',
   yardSignPaymentStatus: '',
   yardSignNotes: '',
   dropoffLocation: '',
@@ -82,7 +75,6 @@ export const emptyGetInvolvedFormState: GetInvolvedFormState = {
   volunteerRoles: [],
   volunteerAvailability: '',
   volunteerHasVehicle: '',
-  updatesTopics: [],
   otherDetails: '',
   additionalNotes: '',
   consent: false,
@@ -95,12 +87,6 @@ export const volunteerRoleOptions = [
   { id: 'coordination', label: 'Local coordination (email, matching)' },
   { id: 'social', label: 'Social media or graphics' },
   { id: 'other', label: 'Other (describe below)' },
-] as const
-
-export const updatesTopicOptions = [
-  { id: 'protests', label: 'Protests & rallies' },
-  { id: 'signs', label: 'Yard signs & materials' },
-  { id: 'policy', label: 'Policy & public accountability' },
 ] as const
 
 /** Flat payload for Google Apps Script `e.parameter` (URL-encoded POST). */
@@ -121,7 +107,9 @@ export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Reco
     yard_sign_design: state.yardSignDesign,
     yard_sign_quantity: state.yardSignQuantity,
     yard_sign_payment_status: state.yardSignPaymentStatus,
-    yard_sign_notes: state.yardSignNotes.trim(),
+    yard_sign_notes: [state.yardSignDeliveryAddress.trim(), state.yardSignNotes.trim()]
+      .filter(Boolean)
+      .join(' | '),
     dropoff_location: state.dropoffLocation.trim(),
     dropoff_availability: state.dropoffAvailability.trim(),
     dropoff_capacity: state.dropoffCapacity.trim(),
@@ -129,7 +117,7 @@ export function buildGetInvolvedSubmitPayload(state: GetInvolvedFormState): Reco
     volunteer_roles: state.volunteerRoles.join(', '),
     volunteer_availability: state.volunteerAvailability.trim(),
     volunteer_has_vehicle: state.volunteerHasVehicle,
-    updates_topics: state.updatesTopics.join(', '),
+    updates_topics: '',
     additional_notes: notes,
     source_page: 'get-involved',
   }

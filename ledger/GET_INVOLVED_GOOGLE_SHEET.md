@@ -136,7 +136,7 @@ Commit `static/protectont/` if you ship static files from git.
 | Apps Script | Appends one row to `Responses` in [your spreadsheet](https://docs.google.com/spreadsheets/d/1YAblLgEymjxJKVTC4nY4tHCH3NHQmFUdECe7j8gDg4k/edit) |
 | Dawn / organizers | Sort/filter by **role** (column B) and **city** (column G) |
 
-Roles on the form: `yard-sign` (I want a sign), `dropoff`, `volunteer`, `updates`, `other` (something else → `additional_notes` column).
+Roles on the form: `yard-sign` (I want a sign), `dropoff`, `volunteer`, `other` (something else → `additional_notes` column).
 
 ---
 
@@ -146,5 +146,4 @@ Roles on the form: `yard-sign` (I want a sign), `dropoff`, `volunteer`, `updates
 |--------|------------|
 | `dropoff_*` | Host a drop-off / pickup point |
 | `volunteer_*` | Volunteer |
-| `updates_topics` | Stay in the loop |
 | `yard_sign_*` | (unused while yard-sign is hidden) |
