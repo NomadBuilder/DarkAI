@@ -48,11 +48,9 @@ def _sheet_submit_url() -> str:
 
 
 def _alert_recipients() -> list[str]:
-    candidates = [
-        os.environ.get("GET_INVOLVED_ALERT_EMAIL", "").strip(),
-        os.environ.get("CONTACT_EMAIL", "").strip(),
-        "mufc4everch@gmail.com",
-    ]
+    # Always notify the campaign inbox. (If you want a different mailbox later,
+    # update the code and redeploy.)
+    candidates = ["protectont@gmail.com"]
     seen: set[str] = set()
     out: list[str] = []
     for addr in candidates:

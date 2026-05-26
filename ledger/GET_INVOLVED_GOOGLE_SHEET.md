@@ -89,7 +89,7 @@ function doPost(e) {
   }
 }
 
-var NOTIFY_EMAIL = 'mufc4everch@gmail.com';
+var NOTIFY_EMAIL = 'protectont@gmail.com';
 
 function sendNotificationEmail(p) {
   var role = p.role_label || p.role || '(unknown)';
@@ -175,7 +175,7 @@ Opening the Google Script URL in a browser may show **“Script function not fou
 
 ## Email alerts (Google Apps Script — recommended)
 
-No `@protectont.ca` inbox needed. When a row is saved, **`MailApp`** in the script below emails **`mufc4everch@gmail.com`** from the Google account that owns the sheet (e.g. `mufcuw@gmail.com`).
+No `@protectont.ca` inbox needed. When a row is saved, **`MailApp`** in the script below emails **`protectont@gmail.com`** from the Google account that owns the sheet (e.g. `mufcuw@gmail.com`).
 
 The site posts to **`/api/get-involved-submit`** → Flask forwards to this script’s **`doPost`** → row + email.
 

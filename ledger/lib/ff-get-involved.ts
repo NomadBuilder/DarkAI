@@ -17,3 +17,10 @@ export const FF_SIGN_DOWNLOADS = {
 } as const
 
 export const FF_SOURCE_PAGE = 'ff-get-involved'
+export const FFV2_SOURCE_PAGE = 'ffv2-get-involved'
+
+export const FF_INTRO = [
+  'Thank you for joining our cause. Together, we can make a difference.',
+  "We are a growing grassroots group powered by volunteers and community support. As we continue to expand, we're building new delivery networks, sign pickup hubs, and local connections across Ontario.",
+  "Thank you for your patience as we grow. We may still be building resources in your area, but we'll work with you to find the best way to get a sign to you.",
+] as const

@@ -21,6 +21,8 @@ export type GetInvolvedFormProps = {
   sourcePage?: string
   /** When set, selects this role and scrolls focus into the form (parent handles scroll). */
   presetRole?: InvolvementRole | ''
+  /** Drop outer card chrome when parent provides a container (e.g. ffv2 page). */
+  embedded?: boolean
 }
 
 function toggleInList(list: string[], id: string): string[] {
@@ -31,6 +33,7 @@ export default function GetInvolvedForm({
   variant = 'default',
   sourcePage = 'get-involved',
   presetRole = '',
+  embedded = false,
 }: GetInvolvedFormProps) {
   const isFf = variant === 'ff'
   const inputClass = isFf
@@ -43,8 +46,11 @@ export default function GetInvolvedForm({
     ? 'border-[#ff3399] bg-[#fff5fa] ring-1 ring-[#ff3399]'
     : 'border-blue-500 bg-blue-50/50 ring-1 ring-blue-500'
   const submitButtonClass = isFf
-    ? 'w-full px-6 md:px-8 py-4 md:py-5 bg-[#3d2b7a] text-[#f9e04c] rounded-lg text-base md:text-lg font-medium hover:bg-[#2f2260] transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+    ? 'w-full px-6 md:px-8 py-4 md:py-5 bg-[#3d2b7a] text-[#f9e04c] rounded-xl text-base md:text-lg font-semibold hover:bg-[#2f2260] transition-all hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed'
     : 'w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+  const shellClass = embedded
+    ? 'p-8 md:p-10 lg:p-12 space-y-8'
+    : 'bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-8'
   const linkClass = isFf
     ? 'text-[#ff3399] underline underline-offset-2 hover:text-[#ff66b2]'
     : 'text-blue-600 underline underline-offset-2 hover:text-blue-700'
@@ -181,7 +187,7 @@ export default function GetInvolvedForm({
 
   if (submitStatus === 'success') {
     return (
-      <div className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-4 text-center">
+      <div className={`${shellClass} text-center`}>
         <h2 className="text-2xl font-light text-gray-900">Thank you</h2>
         <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">
           We received your sign-up. A volunteer will follow up by email when we can match you locally.
@@ -207,7 +213,7 @@ export default function GetInvolvedForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-8 md:p-12 border border-gray-200 shadow-lg space-y-8">
+    <form onSubmit={handleSubmit} className={shellClass}>
       <fieldset className="space-y-4">
         <legend className={labelClass}>How do you want to get involved? *</legend>
         <div className="space-y-3">
