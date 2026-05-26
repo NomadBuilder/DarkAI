@@ -16,17 +16,15 @@ import SectionColdOpenJoinBridge from './home-preview/SectionColdOpenJoinBridge'
 import SectionJoinCtaBridge from './home-preview/SectionJoinCtaBridge'
 
 /**
- * Homepage preview that shares visual language with /join (purple gradient, yellow type, CTAs).
+ * Homepage preview — same visual style as /, with light CTAs toward /join.
  * Original homepage remains at / via ScrollyContainer.
  */
 export default function ScrollyContainerHomePreview() {
   const containerRef = useRef<HTMLDivElement>(null)
   const ledgerSectionRef = useRef<HTMLDivElement>(null)
-  const heroSentinelRef = useRef<HTMLDivElement>(null)
   const { setScrollProgress, setCurrentYear } = useLedgerStore()
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
-  const [navOnDark, setNavOnDark] = useState(true)
 
   const handleMethodologyToggle = () => {
     if (showMethodology) {
@@ -53,21 +51,6 @@ export default function ScrollyContainerHomePreview() {
     }
     window.addEventListener('openDataSources', handleOpenDataSources)
     return () => window.removeEventListener('openDataSources', handleOpenDataSources)
-  }, [])
-
-  useEffect(() => {
-    const sentinel = heroSentinelRef.current
-    if (!sentinel) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setNavOnDark(entry.isIntersecting)
-      },
-      { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
-    )
-
-    observer.observe(sentinel)
-    return () => observer.disconnect()
   }, [])
 
   useEffect(() => {
@@ -118,18 +101,16 @@ export default function ScrollyContainerHomePreview() {
   }, [setCurrentYear])
 
   return (
-    <div ref={containerRef} className="relative w-full overflow-x-hidden home-preview-route">
+    <div ref={containerRef} className="relative w-full overflow-x-hidden">
       <TopNavigation
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
-        navOnDark={navOnDark}
-        primaryCta={{ label: 'Get involved', href: '/join' }}
       />
       <div className="relative z-10 w-full">
-        <SectionColdOpenJoinBridge />
-        <div ref={heroSentinelRef} className="h-px w-full" aria-hidden />
-
-        <section id="timeline" className="bg-gradient-to-b from-slate-50 to-white">
+        <div className="pt-0 sm:pt-[152px] md:pt-0">
+          <SectionColdOpenJoinBridge />
+        </div>
+        <section id="timeline">
           <SectionPolicyTimeline />
         </section>
         <section id="ledger" ref={ledgerSectionRef}>
