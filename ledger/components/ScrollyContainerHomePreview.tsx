@@ -13,6 +13,7 @@ import MethodologyDrawer from './MethodologyDrawer'
 import DataSourcesDrawer from './DataSourcesDrawer'
 import TopNavigation from './TopNavigation'
 import SectionColdOpenJoinBridge from './home-preview/SectionColdOpenJoinBridge'
+import SectionJoinPathBridge from './home-preview/SectionJoinPathBridge'
 import SectionJoinCtaBridge from './home-preview/SectionJoinCtaBridge'
 
 /**
@@ -105,11 +106,13 @@ export default function ScrollyContainerHomePreview() {
       <TopNavigation
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
+        primaryCta={{ label: 'Get involved', href: '/join' }}
       />
       <div className="relative z-10 w-full">
         <div className="pt-0 sm:pt-[152px] md:pt-0">
           <SectionColdOpenJoinBridge />
         </div>
+        <SectionJoinPathBridge />
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>

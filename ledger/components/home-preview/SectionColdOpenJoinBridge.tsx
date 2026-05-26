@@ -3,12 +3,12 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 
-/** Homepage cold open — same look as /, with a light path to /join */
+/** Homepage cold open — same look as /, with clear path to /join */
 export default function SectionColdOpenJoinBridge() {
   return (
     <section
       id="hero"
-      className="relative flex w-full items-start justify-center overflow-x-hidden px-4 py-12 pb-20 scroll-mt-16 sm:scroll-mt-20 sm:px-6 md:min-h-screen md:items-center md:px-8 md:py-16 md:pb-16"
+      className="relative flex w-full items-start justify-center overflow-x-hidden px-4 py-12 pb-12 scroll-mt-16 sm:scroll-mt-20 sm:px-6 md:min-h-[85vh] md:items-center md:px-8 md:py-16 md:pb-14"
     >
       <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-slate-50" aria-hidden />
       <div className="relative w-full max-w-5xl space-y-8 text-center md:space-y-12">
@@ -60,18 +60,25 @@ export default function SectionColdOpenJoinBridge() {
           </p>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 2.1 }}
-          className="text-base font-light text-gray-600 sm:text-lg"
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 2.05, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col items-center justify-center gap-4 pt-2 sm:flex-row sm:gap-5 md:pt-4"
         >
-          Want to help?{' '}
-          <Link href="/join" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+          <Link
+            href="/join"
+            className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg bg-[#2E4A6B] px-8 py-3.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#243d56] sm:w-auto"
+          >
             Get involved
           </Link>
-          {' '}— signs, volunteering, and pickup hubs.
-        </motion.p>
+          <a
+            href="#timeline"
+            className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg border-2 border-[#2E4A6B] px-8 py-3.5 text-sm font-medium text-[#2E4A6B] transition-colors hover:bg-[#2E4A6B] hover:text-white sm:w-auto"
+          >
+            See what changed
+          </a>
+        </motion.div>
       </div>
     </section>
   )
