@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { FF_COLORS } from '@/lib/ff-get-involved'
 import JoinPurpleBackdrop from './JoinPurpleBackdrop'
 
 /** Homepage cold open — join purple above the fold, original copy */
@@ -12,7 +11,7 @@ export default function SectionColdOpenJoinBridge() {
       id="hero"
       className="relative flex w-full items-start justify-center overflow-x-hidden px-4 py-12 pb-16 scroll-mt-16 sm:scroll-mt-20 sm:px-6 md:min-h-[85vh] md:items-center md:px-8 md:py-16 md:pb-20"
     >
-      <JoinPurpleBackdrop fadeToWhite />
+      <JoinPurpleBackdrop />
       <div className="relative z-10 w-full max-w-5xl space-y-8 text-center md:space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -73,14 +72,13 @@ export default function SectionColdOpenJoinBridge() {
         >
           <Link
             href="/join"
-            className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-2xl px-8 py-3.5 text-sm font-bold uppercase tracking-[0.06em] shadow-[0_8px_24px_-8px_rgba(249,224,76,0.5)] transition-all hover:scale-[1.02] sm:w-auto"
-            style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
+            className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg bg-[#f9e04c] px-8 py-3.5 text-sm font-semibold text-[#1a1a1a] shadow-md transition-colors hover:bg-[#f5d84a] sm:w-auto"
           >
             Get involved
           </Link>
           <a
             href="#timeline"
-            className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-2xl border-2 border-[#f9e04c]/45 bg-white/10 px-8 py-3.5 text-sm font-semibold text-[#f9e04c] backdrop-blur-sm transition-colors hover:border-[#f9e04c]/70 hover:bg-white/15 sm:w-auto"
+            className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg border-2 border-white bg-transparent px-8 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-white/15 sm:w-auto"
           >
             See what changed
           </a>
