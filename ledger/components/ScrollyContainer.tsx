@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useLedgerStore } from '@/store/ledgerStore'
-import SectionColdOpen from './sections/SectionColdOpen'
 import SectionPolicyTimeline from './sections/SectionPolicyTimeline'
 import SectionLedgerEnhanced from './sections/SectionLedgerEnhanced'
 import SectionFordTracker from './sections/SectionFordTracker'
@@ -13,15 +12,18 @@ import ReceiptOverlay from './ReceiptOverlay'
 import MethodologyDrawer from './MethodologyDrawer'
 import DataSourcesDrawer from './DataSourcesDrawer'
 import TopNavigation from './TopNavigation'
+import SectionColdOpenJoinBridge from './home/SectionColdOpenJoinBridge'
+import SectionJoinCtaBridge from './home/SectionJoinCtaBridge'
 
 export default function ScrollyContainer() {
   const containerRef = useRef<HTMLDivElement>(null)
   const ledgerSectionRef = useRef<HTMLDivElement>(null)
+  const atfSentinelRef = useRef<HTMLDivElement>(null)
   const { setScrollProgress, setCurrentYear } = useLedgerStore()
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
+  const [navOnDark, setNavOnDark] = useState(true)
 
-  // Ensure only one drawer is open at a time
   const handleMethodologyToggle = () => {
     if (showMethodology) {
       setShowMethodology(false)
@@ -40,7 +42,18 @@ export default function ScrollyContainer() {
     }
   }
 
-  // Listen for custom event to open data sources drawer
+  useEffect(() => {
+    const sentinel = atfSentinelRef.current
+    if (!sentinel) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setNavOnDark(entry.isIntersecting),
+      { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
+    )
+    observer.observe(sentinel)
+    return () => observer.disconnect()
+  }, [])
+
   useEffect(() => {
     const handleOpenDataSources = () => {
       setShowMethodology(false)
@@ -49,14 +62,13 @@ export default function ScrollyContainer() {
     window.addEventListener('openDataSources', handleOpenDataSources)
     return () => window.removeEventListener('openDataSources', handleOpenDataSources)
   }, [])
-  const [isLedgerVisible, setIsLedgerVisible] = useState(false)
 
   useEffect(() => {
     let ticking = false
 
     const handleScroll = () => {
       if (!containerRef.current || !ledgerSectionRef.current || ticking) return
-      
+
       ticking = true
       requestAnimationFrame(() => {
         if (!containerRef.current || !ledgerSectionRef.current) return
@@ -64,43 +76,32 @@ export default function ScrollyContainer() {
         const scrollTop = window.scrollY
         const scrollHeight = containerRef.current.scrollHeight - window.innerHeight
         const progress = Math.min(Math.max(0, scrollTop / scrollHeight), 1)
-        
-        setScrollProgress(progress)
 
-        // Only update year when ledger section is in view
-        const ledgerRect = ledgerSectionRef.current.getBoundingClientRect()
-        const isLedgerInView = ledgerRect.top < window.innerHeight && ledgerRect.bottom > 0
-        
-        // Year mapping is now handled by SectionLedger component
-        // This keeps the scroll progress for other uses
-        
+        setScrollProgress(progress)
         ticking = false
       })
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll() // Initial call
+    handleScroll()
 
     return () => window.removeEventListener('scroll', handleScroll)
   }, [setScrollProgress, setCurrentYear])
 
-  // Track when SectionLedger is in view - make it more sensitive
   useEffect(() => {
     if (!ledgerSectionRef.current) return
 
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          setIsLedgerVisible(entry.isIntersecting)
-          // Also set initial year when section becomes visible
           if (entry.isIntersecting && entry.intersectionRatio > 0) {
-            setCurrentYear(2018) // Start at first year of current policy era
+            setCurrentYear(2018)
           }
         })
       },
       {
-        threshold: [0, 0.05, 0.1, 0.5, 1], // Multiple thresholds for better detection
-        rootMargin: '0px', // No margin - trigger immediately
+        threshold: [0, 0.05, 0.1, 0.5, 1],
+        rootMargin: '0px',
       }
     )
 
@@ -111,15 +112,16 @@ export default function ScrollyContainer() {
 
   return (
     <div ref={containerRef} className="relative w-full overflow-x-hidden">
-      <TopNavigation 
+      <TopNavigation
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
+        navOnDark={navOnDark}
       />
-      {/* Scrollable content sections */}
-            <div className="relative z-10 w-full">
+      <div className="relative z-10 w-full">
         <div className="pt-0 sm:pt-[152px] md:pt-0">
-          <SectionColdOpen />
+          <SectionColdOpenJoinBridge />
         </div>
+        <div ref={atfSentinelRef} className="h-px w-full" aria-hidden />
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>
@@ -132,17 +134,18 @@ export default function ScrollyContainer() {
           <SectionKeyFindings />
         </section>
         <SectionLoss />
-        <section id="sources" className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-t border-slate-100">
-          <div className="max-w-4xl mx-auto">
-            <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4">Sources &amp; citations</h3>
-            <ul className="space-y-2 text-sm md:text-base text-gray-700 font-light leading-relaxed">
+        <SectionJoinCtaBridge />
+        <section id="sources" className="border-t border-slate-100 bg-white px-4 py-12 sm:px-6 md:px-8 md:py-16">
+          <div className="mx-auto max-w-4xl">
+            <h3 className="mb-4 text-xl font-light text-gray-900 sm:text-2xl">Sources &amp; citations</h3>
+            <ul className="space-y-2 text-sm font-light leading-relaxed text-gray-700 md:text-base">
               <li id="source-1">
                 <span className="mr-2 text-slate-500">1.</span>
                 <a
                   href="https://www.ontario.ca/page/public-accounts"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                  className="text-blue-600 underline underline-offset-2 hover:text-blue-700"
                 >
                   Ontario Public Accounts (2018–2024)
                 </a>
@@ -153,7 +156,7 @@ export default function ScrollyContainer() {
                   href="https://www.policyalternatives.ca/news-research/hollowed-out/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                  className="text-blue-600 underline underline-offset-2 hover:text-blue-700"
                 >
                   CCPA: “Hollowed Out” — Ontario public hospitals &amp; private staffing agencies
                 </a>
@@ -164,7 +167,7 @@ export default function ScrollyContainer() {
                   href="https://www.cbc.ca/news/canada/toronto/ontario-doug-ford-private-clinic-surgeries-fees-hospitals-1.7026926"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                  className="text-blue-600 underline underline-offset-2 hover:text-blue-700"
                 >
                   CBC: For-profit clinic paid more than public hospitals (Bill 60)
                 </a>
@@ -175,7 +178,7 @@ export default function ScrollyContainer() {
                   href="https://data.ontario.ca/dataset/public-accounts-detailed-schedule-of-payments"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-600 hover:text-blue-700 underline underline-offset-2"
+                  className="text-blue-600 underline underline-offset-2 hover:text-blue-700"
                 >
                   Ontario Open Data: Detailed Schedule of Payments
                 </a>
@@ -185,21 +188,11 @@ export default function ScrollyContainer() {
         </section>
       </div>
 
-      {/* Receipts overlay */}
       <ReceiptOverlay />
 
-      {/* Methodology drawer */}
-      <MethodologyDrawer 
-        isOpen={showMethodology} 
-        onClose={() => setShowMethodology(false)} 
-      />
+      <MethodologyDrawer isOpen={showMethodology} onClose={() => setShowMethodology(false)} />
 
-      {/* Data Sources drawer */}
-      <DataSourcesDrawer 
-        isOpen={showDataSources} 
-        onClose={() => setShowDataSources(false)} 
-      />
-
+      <DataSourcesDrawer isOpen={showDataSources} onClose={() => setShowDataSources(false)} />
     </div>
   )
 }

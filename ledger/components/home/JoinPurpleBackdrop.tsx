@@ -1,6 +1,6 @@
 import { FF_ATF_GRADIENT } from '@/lib/ff-get-involved'
 
-/** Shared join-purple atmosphere for home-preview hero */
+/** Shared join-purple atmosphere for homepage hero */
 export default function JoinPurpleBackdrop() {
   return (
     <>
