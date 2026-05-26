@@ -363,6 +363,12 @@ def ledger_status():
         or os.environ.get("GET_INVOLVED_SUBMIT_URL")
         or ""
     ).strip()
+    try:
+        from get_involved_submit import _alert_recipients, _from_address
+
+        alert_recipients = _alert_recipients()
+    except Exception:
+        alert_recipients = []
     return jsonify({
         "request_host": request.host,
         "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
@@ -373,6 +379,9 @@ def ledger_status():
         "ledger_index_exists": index_exists,
         "ledger_dir": LEDGER_DIR,
         "get_involved_configured": bool(get_involved_url),
+        "resend_api_key_set": bool(os.environ.get("RESEND_API_KEY", "").strip()),
+        "get_involved_alert_recipients": alert_recipients,
+        "from_email": _from_address() if alert_recipients else os.getenv("FROM_EMAIL", ""),
         "ok": is_protect_ontario_domain() and ledger_dir_exists and index_exists,
     }), 200
 

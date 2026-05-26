@@ -5,6 +5,9 @@ from __future__ import annotations
 import html
 import logging
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from typing import Any
 
 import requests
@@ -44,12 +47,29 @@ def _sheet_submit_url() -> str:
     ).strip()
 
 
-def _alert_email() -> str:
-    return (
-        os.environ.get("GET_INVOLVED_ALERT_EMAIL", "").strip()
-        or os.environ.get("CONTACT_EMAIL", "").strip()
-        or "mufc4everch@gmail.com"
-    )
+def _alert_recipients() -> list[str]:
+    candidates = [
+        os.environ.get("GET_INVOLVED_ALERT_EMAIL", "").strip(),
+        os.environ.get("CONTACT_EMAIL", "").strip(),
+        "mufc4everch@gmail.com",
+    ]
+    seen: set[str] = set()
+    out: list[str] = []
+    for addr in candidates:
+        key = addr.lower()
+        if addr and key not in seen:
+            seen.add(key)
+            out.append(addr)
+    return out
+
+
+def _from_address() -> str:
+    raw = os.getenv("FROM_EMAIL", "onboarding@resend.dev").strip()
+    if not raw:
+        raw = "onboarding@resend.dev"
+    if "<" in raw and ">" in raw:
+        return raw
+    return f"Protect Ontario <{raw}>"
 
 
 def _format_submission_email(data: dict[str, Any]) -> tuple[str, str, str]:
@@ -79,20 +99,22 @@ def _format_submission_email(data: dict[str, Any]) -> tuple[str, str, str]:
     return subject, text, body_html
 
 
-def send_get_involved_alert(data: dict[str, Any]) -> bool:
+def _send_via_resend(
+    *,
+    to_list: list[str],
+    subject: str,
+    text: str,
+    body_html: str,
+    reply_to: str | None,
+) -> tuple[bool, str | None]:
     api_key = os.getenv("RESEND_API_KEY", "").strip()
     if not api_key:
-        logger.warning("Get-involved alert skipped: RESEND_API_KEY not set")
-        return False
+        return False, "RESEND_API_KEY not set"
 
-    to_email = _alert_email()
-    from_email = os.getenv("FROM_EMAIL", "onboarding@resend.dev").strip()
-    subject, text, body_html = _format_submission_email(data)
-    reply_to = (data.get("email") or "").strip() or None
-
+    from_email = _from_address()
     payload: dict[str, Any] = {
         "from": from_email,
-        "to": [to_email],
+        "to": to_list,
         "subject": subject[:998],
         "text": text[:50000],
         "html": body_html[:50000],
@@ -111,12 +133,104 @@ def send_get_involved_alert(data: dict[str, Any]) -> bool:
             timeout=20,
         )
         if r.status_code >= 400:
-            logger.error("Get-involved Resend failed: %s %s", r.status_code, r.text[:500])
-            return False
-        return True
-    except requests.RequestException:
-        logger.exception("Get-involved Resend request failed")
+            try:
+                detail = r.json()
+                msg = detail.get("message") or r.text[:500]
+            except ValueError:
+                msg = r.text[:500]
+            return False, f"Resend HTTP {r.status_code}: {msg}"
+        try:
+            msg_id = r.json().get("id")
+        except ValueError:
+            msg_id = None
+        print(f"✅ Get-involved Resend sent to {to_list}" + (f" (id={msg_id})" if msg_id else ""))
+        return True, None
+    except requests.RequestException as exc:
+        return False, f"Resend request failed: {exc}"
+
+
+def _send_via_smtp(
+    *,
+    to_list: list[str],
+    subject: str,
+    text: str,
+    reply_to: str | None,
+) -> tuple[bool, str | None]:
+    smtp_username = os.getenv("SMTP_USERNAME", "").strip()
+    smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
+    if not smtp_username or not smtp_password:
+        return False, "SMTP not configured"
+
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com").strip()
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+
+    msg = MIMEMultipart()
+    msg["From"] = smtp_username
+    msg["To"] = ", ".join(to_list)
+    msg["Subject"] = subject[:998]
+    if reply_to:
+        msg["Reply-To"] = reply_to
+    msg.attach(MIMEText(text, "plain"))
+
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(smtp_username, smtp_password)
+            server.sendmail(smtp_username, to_list, msg.as_string())
+        print(f"✅ Get-involved SMTP sent to {to_list}")
+        return True, None
+    except Exception as exc:
+        return False, f"SMTP failed: {exc}"
+
+
+def send_get_involved_alert(data: dict[str, Any]) -> bool:
+    to_list = _alert_recipients()
+    if not to_list:
+        logger.warning("Get-involved alert skipped: no recipient addresses")
         return False
+
+    subject, text, body_html = _format_submission_email(data)
+    reply_to = (data.get("email") or "").strip() or None
+
+    print(f"📧 Get-involved alert: from={_from_address()} to={to_list} reply_to={reply_to or '(none)'}")
+
+    ok, err = _send_via_resend(
+        to_list=to_list,
+        subject=subject,
+        text=text,
+        body_html=body_html,
+        reply_to=reply_to,
+    )
+    if ok:
+        return True
+
+    print(f"❌ Get-involved Resend failed: {err}")
+    logger.error("Get-involved Resend failed: %s", err)
+
+    # Retry without reply_to (some Resend setups reject unverified reply-to)
+    if reply_to:
+        ok2, err2 = _send_via_resend(
+            to_list=to_list,
+            subject=subject,
+            text=text,
+            body_html=body_html,
+            reply_to=None,
+        )
+        if ok2:
+            return True
+        print(f"❌ Get-involved Resend retry (no reply-to) failed: {err2}")
+
+    ok_smtp, err_smtp = _send_via_smtp(
+        to_list=to_list,
+        subject=subject,
+        text=text,
+        reply_to=reply_to,
+    )
+    if ok_smtp:
+        return True
+    print(f"❌ Get-involved SMTP failed: {err_smtp}")
+    logger.error("Get-involved SMTP failed: %s", err_smtp)
+    return False
 
 
 def forward_to_google_sheet(data: dict[str, Any]) -> tuple[bool, str | None]:
@@ -135,8 +249,7 @@ def forward_to_google_sheet(data: dict[str, Any]) -> tuple[bool, str | None]:
                 if parsed.get("success") is False:
                     return False, parsed.get("error") or "Sheet script returned an error"
             except ValueError:
-                if "success" not in text.lower():
-                    pass
+                pass
         return True, None
     except requests.RequestException as e:
         logger.exception("Get-involved sheet forward failed")
@@ -155,6 +268,10 @@ def process_get_involved_submission(data: dict[str, Any]) -> tuple[bool, str | N
         return False, sheet_err or "Could not save to spreadsheet."
 
     if not send_get_involved_alert(data):
-        logger.warning("Get-involved saved to sheet but Resend alert email failed")
+        logger.warning(
+            "Get-involved saved to sheet but alert email failed. "
+            "Check Render logs for Resend errors. With onboarding@resend.dev, Resend only "
+            "delivers to your Resend account email until you verify a domain."
+        )
 
     return True, None

@@ -78,10 +78,38 @@ function doPost(e) {
       p.additional_notes || '',
       p.source_page || 'get-involved',
     ]);
+    try {
+      sendNotificationEmail(p);
+    } catch (mailErr) {
+      Logger.log('Email failed: ' + mailErr);
+    }
     return jsonResponse({ success: true });
   } catch (err) {
     return jsonResponse({ success: false, error: String(err) });
   }
+}
+
+var NOTIFY_EMAIL = 'mufc4everch@gmail.com';
+
+function sendNotificationEmail(p) {
+  var role = p.role_label || p.role || '(unknown)';
+  var lines = [
+    'New get-involved sign-up on protectont.ca',
+    '',
+    'Type: ' + role,
+    'Name: ' + (p.name || ''),
+    'Email: ' + (p.email || ''),
+    'Phone: ' + (p.phone || '(none)'),
+    'City: ' + (p.city || ''),
+    'Postal code: ' + (p.postal_code || '(none)'),
+    'Notes: ' + (p.yard_sign_notes || p.additional_notes || ''),
+  ];
+  MailApp.sendEmail({
+    to: NOTIFY_EMAIL,
+    subject: '[ProtectOnt] ' + role + ' — ' + (p.name || 'New sign-up'),
+    body: lines.join('\n'),
+    replyTo: p.email || undefined,
+  });
 }
 
 function jsonResponse(obj) {
@@ -132,7 +160,14 @@ Set in Render:
 | `FROM_EMAIL` | verified sender in Resend |
 | `GET_INVOLVED_ALERT_EMAIL` | `mufc4everch@gmail.com` (optional; defaults to this address) |
 
-If the sheet saves but email fails, the user still sees success; check Render logs for Resend errors.
+If the sheet saves but email fails, the user still sees success; check **Render → Logs** for lines starting with `❌ Get-involved Resend`.
+
+**Common Resend issue:** with `FROM_EMAIL=onboarding@resend.dev`, Resend only delivers to the **email address that owns your Resend account** until you [verify a domain](https://resend.com/docs/dashboard/domains/introduction). Fix either:
+
+- Set `GET_INVOLVED_ALERT_EMAIL` to that Resend account email, **or**
+- Verify `protectont.ca` (or your domain) in Resend and set `FROM_EMAIL` to e.g. `Protect Ontario <notify@protectont.ca>`.
+
+**Backup (no Resend):** add `MailApp.sendEmail` inside your Apps Script `doPost` after `appendRow` (see email block in section 2 below)—the sheet forward already runs that script on every submit.
 
 **Common mistake:** env key truncated (e.g. `NEXT_PUBLIC_GET_` instead of `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`). Copy the full key name.
 
