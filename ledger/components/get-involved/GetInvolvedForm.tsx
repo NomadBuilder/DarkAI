@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import {
   buildGetInvolvedSubmitPayload,
   emptyGetInvolvedFormState,
@@ -23,11 +23,24 @@ function toggleInList(list: string[], id: string): string[] {
 export default function GetInvolvedForm() {
   const [form, setForm] = useState<GetInvolvedFormState>(emptyGetInvolvedFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error' | 'not-configured'>('idle')
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
   const [errorMessage, setErrorMessage] = useState('')
   const [lastSubmittedRole, setLastSubmittedRole] = useState<InvolvementRole | ''>('')
+  const [submitUrl, setSubmitUrl] = useState(() => getInvolvedSubmitUrl())
+  const [configLoaded, setConfigLoaded] = useState(() => Boolean(getInvolvedSubmitUrl()))
 
-  const submitUrl = getInvolvedSubmitUrl()
+  useEffect(() => {
+    if (getInvolvedSubmitUrl()) return
+    fetch('/api/protectont-config')
+      .then((res) => res.json())
+      .then((data: { getInvolvedSubmitUrl?: string }) => {
+        const url = (data.getInvolvedSubmitUrl || '').trim()
+        if (url) setSubmitUrl(url)
+      })
+      .catch(() => {})
+      .finally(() => setConfigLoaded(true))
+  }, [])
+
   const role = form.role as InvolvementRole | ''
   const isSignRequest = role === 'yard-sign'
 
@@ -81,7 +94,12 @@ export default function GetInvolvedForm() {
     }
 
     if (!submitUrl) {
-      setSubmitStatus('not-configured')
+      setSubmitStatus('error')
+      setErrorMessage(
+        configLoaded
+          ? 'Sign-up is temporarily unavailable. Please try again later or use the About contact form.'
+          : 'Still loading—please try again in a moment.'
+      )
       return
     }
 
@@ -538,14 +556,6 @@ export default function GetInvolvedForm() {
         </>
       )}
 
-      {submitStatus === 'not-configured' && (
-        <div className="bg-amber-50 border border-amber-300 rounded-lg p-4 text-amber-900 text-sm font-light">
-          Form storage is not connected yet. Organizers: set{' '}
-          <code className="text-xs bg-amber-100 px-1 rounded">NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL</code> and redeploy.
-          See <code className="text-xs bg-amber-100 px-1 rounded">ledger/GET_INVOLVED_GOOGLE_SHEET.md</code>.
-        </div>
-      )}
-
       {submitStatus === 'error' && errorMessage && (
         <div className="bg-red-50 border-2 border-red-400 rounded-lg p-4 text-red-800 text-sm font-light">
           {errorMessage}
@@ -554,7 +564,7 @@ export default function GetInvolvedForm() {
 
       <button
         type="submit"
-        disabled={isSubmitting || !form.role}
+        disabled={isSubmitting || !form.role || !configLoaded}
         className="w-full px-6 md:px-8 py-4 md:py-5 bg-slate-900 text-white rounded-lg text-base md:text-lg font-light hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {isSubmitting ? 'Sending…' : 'Submit sign-up'}

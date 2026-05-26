@@ -227,6 +227,17 @@ def _load_protectont_context():
         return None
 
 
+@app.route('/api/protectont-config', methods=['GET'])
+def protectont_config():
+    """Runtime config for static ProtectOnt pages (e.g. get-involved form → Google Apps Script)."""
+    url = (
+        os.environ.get("NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL")
+        or os.environ.get("GET_INVOLVED_SUBMIT_URL")
+        or ""
+    ).strip()
+    return jsonify({"getInvolvedSubmitUrl": url}), 200
+
+
 @app.route('/api/chat', methods=['POST'])
 def protectont_chat():
     api_key = os.getenv("GEMINI_API_KEY")
@@ -323,6 +334,11 @@ def ledger_status():
     LEDGER_DIR = _ledger_dir()
     ledger_dir_exists = os.path.isdir(LEDGER_DIR)
     index_exists = os.path.isfile(os.path.join(LEDGER_DIR, "index.html")) if ledger_dir_exists else False
+    get_involved_url = (
+        os.environ.get("NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL")
+        or os.environ.get("GET_INVOLVED_SUBMIT_URL")
+        or ""
+    ).strip()
     return jsonify({
         "request_host": request.host,
         "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
@@ -332,6 +348,7 @@ def ledger_status():
         "ledger_dir_exists": ledger_dir_exists,
         "ledger_index_exists": index_exists,
         "ledger_dir": LEDGER_DIR,
+        "get_involved_configured": bool(get_involved_url),
         "ok": is_protect_ontario_domain() and ledger_dir_exists and index_exists,
     }), 200
 

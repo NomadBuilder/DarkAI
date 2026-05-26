@@ -103,18 +103,18 @@ If you rename the tab, change `SHEET_NAME` in the script to match exactly (case-
 
 ## 3. Connect protectont.ca
 
-1. Render → your service → **Environment** → add:
-   - Key: `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`
-   - Value: the `/exec` URL from step 2
-2. Redeploy (or run locally in `ledger/.env.local` and rebuild).
+1. Render → your service → **Environment** → add **one** of:
+   - `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL` = your `/exec` URL, or
+   - `GET_INVOLVED_SUBMIT_URL` = same URL (server-only; works without rebuilding the site)
+2. **Redeploy** the Render service (restart picks up env vars).
 
-From repo root after env is set:
+The live form loads the URL from **`/api/protectont-config`** at runtime, so you do **not** need a new Ledger build just to change the script URL—only a Render redeploy after setting the variable.
 
-```bash
-./scripts/verify-protectont-before-deploy.sh
-```
+**Check:** open `https://protectont.ca/api/protectont-config` — you should see `{"getInvolvedSubmitUrl":"https://script.google.com/..."}`.
 
-Commit `static/protectont/` if you ship static files from git.
+**Common mistake:** env key truncated (e.g. `NEXT_PUBLIC_GET_` instead of `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`). Copy the full key name.
+
+For local dev, put the URL in `ledger/.env.local` or repo-root `.env` and rebuild, or rely on Flask with the var in the environment.
 
 ---
 
