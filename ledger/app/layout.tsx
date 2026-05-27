@@ -4,22 +4,27 @@ import './globals.css'
 import ErrorBoundary from '@/components/ErrorBoundary'
 import Footer from '@/components/Footer'
 
-// Base URL and paths for meta, OG, and icons (lowercase canonical URL)
-const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''
 const CANONICAL_SITE_URL = 'https://protectont.ca'
-// Static export / production builds must set metadataBase or Next.js emits localhost:3000 for og:image
-const isProductionBuild =
+const basePath = process.env.BASE_PATH || process.env.NEXT_PUBLIC_BASE_PATH || ''
+
+const isStaticExport =
   process.env.NODE_ENV === 'production' || process.env.STATIC_EXPORT === 'true'
+
+/** Absolute OG image URL — never relative (avoids localhost in social crawlers). */
+const OG_IMAGE_URL = `${CANONICAL_SITE_URL}${basePath}/og-image.png`
+
 const siteUrl = (
-  process.env.NEXT_PUBLIC_SITE_URL ||
-  (isProductionBuild ? CANONICAL_SITE_URL : '')
-).replace(/\/$/, '')
-const metadataBase = siteUrl ? new URL(siteUrl) : undefined
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '') ||
+  (isStaticExport ? CANONICAL_SITE_URL : '')
+)
+
+const metadataBase = siteUrl ? new URL(siteUrl) : new URL(CANONICAL_SITE_URL)
 
 export const metadata: Metadata = {
   metadataBase,
   title: 'Protect Ontario — Public accountability in Ontario',
-  description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
+  description:
+    'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
   applicationName: 'Protect Ontario',
   keywords: ['Ontario', 'provincial government', 'public spending', 'accountability', 'ProtectOnt.ca'],
   icons: {
@@ -28,12 +33,13 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: 'Protect Ontario — Public accountability in Ontario',
-    description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
-    url: basePath || '/',
+    description:
+      'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
+    url: CANONICAL_SITE_URL,
     siteName: 'Protect Ontario',
     images: [
       {
-        url: `${basePath}/og-image.png`,
+        url: OG_IMAGE_URL,
         width: 1200,
         height: 630,
         type: 'image/png',
@@ -46,8 +52,9 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Protect Ontario — Public accountability in Ontario',
-    description: 'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
-    images: [{ url: `${basePath}/og-image.png`, alt: 'Protect Ontario — ProtectOnt.ca' }],
+    description:
+      'An interactive visualization of how public money in Ontario has shifted toward private, for-profit delivery—and how to track protests, policy, and public land.',
+    images: [{ url: OG_IMAGE_URL, alt: 'Protect Ontario — ProtectOnt.ca' }],
   },
 }
 
@@ -58,7 +65,6 @@ export const viewport: Viewport = {
   themeColor: '#ffffff',
 }
 
-// Get GTM ID from environment variable
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || ''
 
 export default function RootLayout({
@@ -69,7 +75,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="antialiased" suppressHydrationWarning>
-        {/* Google Tag Manager */}
         {GTM_ID && (
           <>
             <Script
