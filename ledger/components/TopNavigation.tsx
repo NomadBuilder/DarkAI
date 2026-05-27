@@ -24,6 +24,14 @@ interface NavItem {
   action?: 'dataSources' | 'methodology'
   isDropdown?: boolean
   dropdownItems?: NavItem[]
+  /** Grouped sections inside a dropdown (e.g. Resources → Create) */
+  dropdownGroups?: { label?: string; items: NavItem[] }[]
+}
+
+function getDropdownGroups(item: NavItem): { label?: string; items: NavItem[] }[] {
+  if (item.dropdownGroups?.length) return item.dropdownGroups
+  if (item.dropdownItems?.length) return [{ items: item.dropdownItems }]
+  return []
 }
 
 interface TopNavigationProps {
@@ -45,28 +53,37 @@ const issuesDropdownItems: NavItem[] = [
   { id: 'indigenous-rights', label: 'Indigenous rights', href: '/indigenous-rights' },
 ]
 
-const dataDropdownItems: NavItem[] = [
+const aboutDropdownItems: NavItem[] = [
+  { id: 'about', label: 'About', href: '/about' },
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
-const resourcesDropdownItems: NavItem[] = [
-  { id: 'stories', label: 'Your stories', href: '/stories' },
-  { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
-  { id: 'chants', label: 'Chant Bank', href: '/chants' },
-  { id: 'shirts', label: 'Shirts', href: '/shirts' },
-  { id: 'signs', label: 'Signs', href: '/signs' },
-  { id: 'products', label: 'Products', href: '/products' },
-  { id: 'stickers', label: 'Stickers', href: '/stickers' },
+const resourcesDropdownGroups: { label?: string; items: NavItem[] }[] = [
+  {
+    items: [
+      { id: 'stories', label: 'Your stories', href: '/stories' },
+      { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
+      { id: 'chants', label: 'Chant Bank', href: '/chants' },
+    ],
+  },
+  {
+    label: 'Create',
+    items: [
+      { id: 'shirts', label: 'Shirts', href: '/shirts' },
+      { id: 'signs', label: 'Signs', href: '/signs' },
+      { id: 'stickers', label: 'Stickers', href: '/stickers' },
+    ],
+  },
 ]
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
-  { id: 'data', label: 'The Data', isDropdown: true, dropdownItems: dataDropdownItems },
+  { id: 'products', label: 'Products', href: '/products' },
   { id: 'events', label: 'Events', href: '/protests' },
-  { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
-  { id: 'about', label: 'About', href: '/about' },
+  { id: 'resources', label: 'Resources', isDropdown: true, dropdownGroups: resourcesDropdownGroups },
+  { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]
 
 const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
@@ -147,12 +164,43 @@ export default function TopNavigation({
     } else if (item.action === 'methodology' && onMethodologyClick) {
       onMethodologyClick()
     } else if (item.href) {
-      // Use the basePath-aware href
       window.location.href = getNavHref(item.href, basePath)
     } else if (item.section) {
       scrollToSection(item.section)
     }
   }
+
+  const renderDropdownPanel = (item: NavItem, onSelect: () => void) => (
+    <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
+      {getDropdownGroups(item).map((group, groupIndex) => (
+        <div
+          key={group.label ?? `group-${groupIndex}`}
+          className={groupIndex > 0 ? 'mt-1 border-t border-gray-100 pt-1' : ''}
+        >
+          {group.label ? (
+            <div className="px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-gray-500">
+              {group.label}
+            </div>
+          ) : null}
+          {group.items.map((dropdownItem) => (
+            <button
+              key={dropdownItem.id}
+              type="button"
+              onClick={() => {
+                handleNavClick(dropdownItem)
+                onSelect()
+              }}
+              className={`w-full text-left py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors ${
+                group.label ? 'px-6' : 'px-4'
+              }`}
+            >
+              {dropdownItem.label}
+            </button>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
 
   return (
     <>
@@ -192,7 +240,7 @@ export default function TopNavigation({
                 {/* Navigation Items + Take Action CTA */}
                 <div className="hidden md:flex items-center flex-1 justify-end gap-1 lg:gap-2 xl:gap-3 max-w-6xl mx-4">
                   {navItems.map((item) => {
-                    if (item.isDropdown && item.dropdownItems) {
+                    if (item.isDropdown && (item.dropdownItems || item.dropdownGroups)) {
                       return (
                         <div
                           key={item.id}
@@ -230,20 +278,7 @@ export default function TopNavigation({
                               exit={{ opacity: 0, y: -10 }}
                               className="absolute top-full left-0 pt-1 z-50"
                             >
-                              <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[180px]">
-                                {item.dropdownItems.map((dropdownItem) => (
-                                  <button
-                                    key={dropdownItem.id}
-                                    onClick={() => {
-                                      handleNavClick(dropdownItem)
-                                      setOpenDropdown(null)
-                                    }}
-                                    className="w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 transition-colors"
-                                  >
-                                    {dropdownItem.label}
-                                  </button>
-                                ))}
-                              </div>
+                              {renderDropdownPanel(item, () => setOpenDropdown(null))}
                             </motion.div>
                           )}
                         </div>
@@ -291,10 +326,8 @@ export default function TopNavigation({
                 <div className="md:hidden relative z-[90]">
                   <MobileMenu
                     navItems={navItems}
-                    scrollToSection={scrollToSection}
+                    onNavItemClick={handleNavClick}
                     onMenuStateChange={setIsMobileMenuOpen}
-                    onDataSourcesClick={onDataSourcesClick}
-                    onMethodologyClick={onMethodologyClick}
                     basePath={basePath}
                     navOnDark={navOnDark}
                     primaryCta={primaryCta}
@@ -310,19 +343,15 @@ export default function TopNavigation({
 
 function MobileMenu({
   navItems,
-  scrollToSection,
+  onNavItemClick,
   onMenuStateChange,
-  onDataSourcesClick,
-  onMethodologyClick,
   basePath,
   navOnDark = false,
   primaryCta,
 }: {
   navItems: NavItem[]
-  scrollToSection: (id: string) => void
+  onNavItemClick: (item: NavItem) => void
   onMenuStateChange?: (isOpen: boolean) => void
-  onDataSourcesClick?: () => void
-  onMethodologyClick?: () => void
   basePath: string
   navOnDark?: boolean
   primaryCta?: { label: string; href: string }
@@ -418,31 +447,35 @@ function MobileMenu({
                   >
                     <div className="p-4 space-y-1">
                       {navItems.map((item) => {
-                        if (item.isDropdown && item.dropdownItems) {
+                        if (item.isDropdown && (item.dropdownItems || item.dropdownGroups)) {
                           return (
                             <div key={item.id} className="space-y-1">
                               <div className="px-4 py-2 text-sm font-medium text-gray-500 uppercase tracking-wider">
                                 {item.label}
                               </div>
-                              {item.dropdownItems.map((dropdownItem) => (
-                                <button
-                                  key={dropdownItem.id}
-                                  onClick={() => {
-                                    if (dropdownItem.action === 'dataSources' && onDataSourcesClick) {
-                                      onDataSourcesClick()
-                                    } else if (dropdownItem.action === 'methodology' && onMethodologyClick) {
-                                      onMethodologyClick()
-                                    } else if (dropdownItem.href) {
-                                      window.location.href = getNavHref(dropdownItem.href, basePath)
-                                    } else if (dropdownItem.section) {
-                                      scrollToSection(dropdownItem.section)
-                                    }
-                                    setIsOpen(false)
-                                  }}
-                                  className="w-full text-left px-6 py-3 text-base font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
-                                >
-                                  {dropdownItem.label}
-                                </button>
+                              {getDropdownGroups(item).map((group, groupIndex) => (
+                                <div key={group.label ?? `mobile-group-${groupIndex}`}>
+                                  {group.label ? (
+                                    <div className="px-6 py-1.5 text-xs font-medium uppercase tracking-wider text-gray-400">
+                                      {group.label}
+                                    </div>
+                                  ) : null}
+                                  {group.items.map((dropdownItem) => (
+                                    <button
+                                      key={dropdownItem.id}
+                                      type="button"
+                                      onClick={() => {
+                                        onNavItemClick(dropdownItem)
+                                        setIsOpen(false)
+                                      }}
+                                      className={`w-full text-left py-3 text-base font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 rounded-md transition-colors ${
+                                        group.label ? 'px-8' : 'px-6'
+                                      }`}
+                                    >
+                                      {dropdownItem.label}
+                                    </button>
+                                  ))}
+                                </div>
                               ))}
                             </div>
                           )
@@ -450,17 +483,9 @@ function MobileMenu({
                         return (
                         <button
                           key={item.id}
+                          type="button"
                           onClick={() => {
-                            if (item.action === 'dataSources' && onDataSourcesClick) {
-                              onDataSourcesClick()
-                            } else if (item.action === 'methodology' && onMethodologyClick) {
-                              onMethodologyClick()
-                            } else if (item.href) {
-                              // Use the basePath-aware href
-                              window.location.href = getNavHref(item.href, basePath)
-                            } else if (item.section) {
-                              scrollToSection(item.section)
-                            }
+                            onNavItemClick(item)
                             setIsOpen(false)
                           }}
                           className="w-full text-left px-4 py-4 text-lg font-light text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-md transition-colors"
