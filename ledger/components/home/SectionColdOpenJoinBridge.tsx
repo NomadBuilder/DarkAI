@@ -9,7 +9,7 @@ export default function SectionColdOpenJoinBridge() {
   return (
     <section
       id="hero"
-      className="relative flex w-full items-start justify-center overflow-x-hidden px-4 py-12 pb-16 scroll-mt-16 sm:scroll-mt-20 sm:px-6 md:min-h-[85vh] md:items-center md:px-8 md:py-16 md:pb-20"
+      className="relative flex w-full items-start justify-center overflow-x-hidden px-4 pb-16 pt-28 scroll-mt-16 sm:scroll-mt-20 sm:px-6 sm:pb-20 sm:pt-32 md:min-h-[85vh] md:items-center md:px-8 md:py-16 md:pb-20 lg:pt-20"
     >
       <JoinPurpleBackdrop />
       <div className="relative z-10 w-full max-w-5xl space-y-8 text-center md:space-y-12">

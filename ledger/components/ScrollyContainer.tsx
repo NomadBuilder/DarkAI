@@ -18,11 +18,9 @@ import SectionJoinCtaBridge from './home/SectionJoinCtaBridge'
 export default function ScrollyContainer() {
   const containerRef = useRef<HTMLDivElement>(null)
   const ledgerSectionRef = useRef<HTMLDivElement>(null)
-  const atfSentinelRef = useRef<HTMLDivElement>(null)
   const { setScrollProgress, setCurrentYear } = useLedgerStore()
   const [showMethodology, setShowMethodology] = useState(false)
   const [showDataSources, setShowDataSources] = useState(false)
-  const [navOnDark, setNavOnDark] = useState(true)
 
   const handleMethodologyToggle = () => {
     if (showMethodology) {
@@ -41,18 +39,6 @@ export default function ScrollyContainer() {
       setShowDataSources(true)
     }
   }
-
-  useEffect(() => {
-    const sentinel = atfSentinelRef.current
-    if (!sentinel) return
-
-    const observer = new IntersectionObserver(
-      ([entry]) => setNavOnDark(entry.isIntersecting),
-      { threshold: 0, rootMargin: '-72px 0px 0px 0px' }
-    )
-    observer.observe(sentinel)
-    return () => observer.disconnect()
-  }, [])
 
   useEffect(() => {
     const handleOpenDataSources = () => {
@@ -115,13 +101,9 @@ export default function ScrollyContainer() {
       <TopNavigation
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
-        navOnDark={navOnDark}
       />
       <div className="relative z-10 w-full">
-        <div className="pt-0 sm:pt-[152px] md:pt-0">
-          <SectionColdOpenJoinBridge />
-        </div>
-        <div ref={atfSentinelRef} className="h-px w-full" aria-hidden />
+        <SectionColdOpenJoinBridge />
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>
