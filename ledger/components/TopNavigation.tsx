@@ -79,11 +79,11 @@ const resourcesDropdownGroups: { label?: string; items: NavItem[] }[] = [
 ]
 
 const navItems: NavItem[] = [
-  { id: 'issues', label: 'Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
+  { id: 'issues', label: 'The Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
+  { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
+  { id: 'resources', label: 'Resources', isDropdown: true, dropdownGroups: resourcesDropdownGroups },
   { id: 'products', label: 'Products', href: '/products' },
   { id: 'events', label: 'Events', href: '/protests' },
-  { id: 'resources', label: 'Resources', isDropdown: true, dropdownGroups: resourcesDropdownGroups },
-  { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]
 
 const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
