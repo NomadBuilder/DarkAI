@@ -18,6 +18,8 @@ import {
   mapsUrlForEvent,
   topicLabel,
 } from '../../lib/protests'
+import FindNearestProtest from '../../components/protests/FindNearestProtest'
+import ProtestFaq from '../../components/protests/ProtestFaq'
 
 const fadeIn = {
   initial: { opacity: 0, y: 20 },
@@ -55,6 +57,7 @@ const rallyTopics = [
 ]
 
 const getReadyLinks = [
+  { label: 'First-time protest FAQ', href: '#protest-faq', description: 'What to expect, what to bring, and safety basics' },
   { label: 'What you can do', href: '/take-action', description: 'Contact your MPP, petitions, and more' },
   { label: 'Protest chants', href: '/chants', description: 'Call-and-response lines for the crowd' },
   { label: 'Print a sign', href: '/signs', description: 'Make a yard sign or poster before you head out' },
@@ -295,20 +298,30 @@ export default function ProtestsPage() {
               className="flex flex-wrap justify-center gap-3"
             >
               <a
-                href="#event-list"
+                href="#find-nearest"
                 className="inline-flex items-center px-6 py-3 rounded-lg bg-slate-900 text-white text-sm font-light hover:bg-slate-800 transition-colors"
               >
-                Browse upcoming events
+                Find nearest protest
               </a>
-              <Link
-                href="/take-action"
+              <a
+                href="#event-list"
                 className="inline-flex items-center px-6 py-3 rounded-lg border border-slate-300 bg-white text-slate-800 text-sm font-light hover:bg-slate-50 transition-colors"
               >
-                More ways to take action
-              </Link>
+                Browse all events
+              </a>
+              <a
+                href="#protest-faq"
+                className="inline-flex items-center px-6 py-3 rounded-lg border border-slate-300 bg-white text-slate-800 text-sm font-light hover:bg-slate-50 transition-colors"
+              >
+                First-time FAQ
+              </a>
             </motion.div>
           </div>
         </section>
+
+        {!loading && <FindNearestProtest protests={protests} campaignId="may-30-2026" />}
+
+        <ProtestFaq />
 
         <section className="px-4 sm:px-6 md:px-8 py-14 md:py-20 bg-white">
           <div className="max-w-4xl mx-auto">
@@ -370,17 +383,26 @@ export default function ProtestsPage() {
               Practical resources on this site—not legal advice. Follow organizer instructions at the event.
             </motion.p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {getReadyLinks.map((item, idx) => (
-                <motion.div key={item.href} {...fadeIn} transition={{ delay: idx * 0.05 }}>
-                  <Link
-                    href={item.href}
-                    className="flex flex-col h-full rounded-xl border border-slate-200 bg-slate-50/50 p-6 hover:bg-blue-50/40 hover:border-blue-100 transition-colors"
-                  >
-                    <span className="text-lg font-light text-gray-900">{item.label}</span>
-                    <span className="text-sm text-gray-600 font-light mt-1">{item.description}</span>
-                  </Link>
-                </motion.div>
-              ))}
+              {getReadyLinks.map((item, idx) => {
+                const isHash = item.href.startsWith('#')
+                const className =
+                  'flex flex-col h-full rounded-xl border border-slate-200 bg-slate-50/50 p-6 hover:bg-blue-50/40 hover:border-blue-100 transition-colors'
+                return (
+                  <motion.div key={item.href} {...fadeIn} transition={{ delay: idx * 0.05 }}>
+                    {isHash ? (
+                      <a href={item.href} className={className}>
+                        <span className="text-lg font-light text-gray-900">{item.label}</span>
+                        <span className="text-sm text-gray-600 font-light mt-1">{item.description}</span>
+                      </a>
+                    ) : (
+                      <Link href={item.href} className={className}>
+                        <span className="text-lg font-light text-gray-900">{item.label}</span>
+                        <span className="text-sm text-gray-600 font-light mt-1">{item.description}</span>
+                      </Link>
+                    )}
+                  </motion.div>
+                )
+              })}
             </div>
             <motion.div
               {...fadeIn}
