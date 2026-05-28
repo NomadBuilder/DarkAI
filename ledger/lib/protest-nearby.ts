@@ -57,25 +57,44 @@ function writeGeoCache(key: string, coords: LatLng): void {
   }
 }
 
-/** Geocode postal / ZIP via OpenStreetMap Nominatim (client-side, cached per session). */
-export async function geocodePostalCode(normalized: string): Promise<LatLng | null> {
-  const cached = readGeoCache(normalized)
-  if (cached) return cached
+type GeocoderCaResponse = {
+  latt?: string | number
+  longt?: string | number
+  error?: { code?: string; description?: string }
+  success?: boolean
+}
 
-  const isUsZip = /^\d{5}/.test(normalized)
+/** Canadian postals — Nominatim rarely returns results; geocoder.ca is reliable. */
+async function geocodeCanadianPostal(normalized: string): Promise<LatLng | null> {
+  const url = `https://geocoder.ca/?locate=${encodeURIComponent(normalized)}&json=1`
+  const res = await fetch(url, { headers: { Accept: 'application/json' } })
+  if (!res.ok) return null
+
+  const data = (await res.json()) as GeocoderCaResponse
+  if (data.error || data.success === false) return null
+
+  const lat = typeof data.latt === 'number' ? data.latt : parseFloat(String(data.latt ?? ''))
+  const lng = typeof data.longt === 'number' ? data.longt : parseFloat(String(data.longt ?? ''))
+  if (Number.isNaN(lat) || Number.isNaN(lng)) return null
+
+  return { lat, lng }
+}
+
+/** US ZIP via Nominatim (requires User-Agent per usage policy). */
+async function geocodeUsZip(normalized: string): Promise<LatLng | null> {
+  const zip = normalized.slice(0, 5)
   const params = new URLSearchParams({
     format: 'json',
     limit: '1',
-    countrycodes: isUsZip ? 'us' : 'ca',
+    countrycodes: 'us',
+    postalcode: zip,
   })
-  if (isUsZip) {
-    params.set('postalcode', normalized.slice(0, 5))
-  } else {
-    params.set('postalcode', formatCanadianPostal(normalized))
-  }
 
   const res = await fetch(`${NOMINATIM_URL}?${params.toString()}`, {
-    headers: { Accept: 'application/json' },
+    headers: {
+      Accept: 'application/json',
+      'User-Agent': 'ProtectOnt/1.0 (https://protectont.ca; events postal lookup)',
+    },
   })
   if (!res.ok) return null
 
@@ -83,8 +102,23 @@ export async function geocodePostalCode(normalized: string): Promise<LatLng | nu
   const hit = data[0]
   if (!hit?.lat || !hit?.lon) return null
 
-  const coords = { lat: parseFloat(hit.lat), lng: parseFloat(hit.lon) }
-  if (Number.isNaN(coords.lat) || Number.isNaN(coords.lng)) return null
+  const lat = parseFloat(hit.lat)
+  const lng = parseFloat(hit.lon)
+  if (Number.isNaN(lat) || Number.isNaN(lng)) return null
+  return { lat, lng }
+}
+
+/** Geocode postal / ZIP (client-side, cached per session). */
+export async function geocodePostalCode(normalized: string): Promise<LatLng | null> {
+  const cached = readGeoCache(normalized)
+  if (cached) return cached
+
+  const isUsZip = /^\d{5}/.test(normalized)
+  const coords = isUsZip
+    ? await geocodeUsZip(normalized)
+    : await geocodeCanadianPostal(normalized)
+
+  if (!coords) return null
 
   writeGeoCache(normalized, coords)
   return coords
