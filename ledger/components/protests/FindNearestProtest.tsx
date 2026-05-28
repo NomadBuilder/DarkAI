@@ -8,11 +8,14 @@ import { mapsUrlForEvent } from '@/lib/protests'
 import {
   formatDistanceKm,
   geocodePostalCode,
-  isValidPostalInput,
-  normalizePostalInput,
   rankProtestsByDistance,
   type ProtestWithDistance,
 } from '@/lib/protest-nearby'
+import {
+  formatPostalCodeDisplay,
+  isValidPostalCode,
+  normalizePostalCode,
+} from '@/lib/postal-code'
 
 type Props = {
   protests: Protest[]
@@ -31,15 +34,19 @@ export default function FindNearestProtest({ protests, campaignId = 'may-30-2026
     setError('')
     setResults(null)
 
-    const normalized = normalizePostalInput(postal)
-    if (!isValidPostalInput(normalized)) {
-      setError('Enter a valid Canadian postal code (e.g. M5H 2N2) or US ZIP code.')
+    const parsed = normalizePostalCode(postal)
+    if (!isValidPostalCode(parsed)) {
+      setError(
+        'Enter a valid Canadian postal code (e.g. M5H 2N2, with or without a space) or US ZIP code.'
+      )
       return
     }
 
+    setPostal(formatPostalCodeDisplay(parsed))
+
     setLoading(true)
     try {
-      const coords = await geocodePostalCode(normalized)
+      const coords = await geocodePostalCode(parsed.value)
       if (!coords) {
         setError('We couldn’t find that postal code. Double-check and try again.')
         return
@@ -107,6 +114,10 @@ export default function FindNearestProtest({ protests, campaignId = 'may-30-2026
                 placeholder="e.g. L4M 1A1 or M5H 2N2"
                 value={postal}
                 onChange={(e) => setPostal(e.target.value)}
+                onBlur={() => {
+                  const p = normalizePostalCode(postal)
+                  if (p.kind !== 'unknown') setPostal(formatPostalCodeDisplay(p))
+                }}
                 className="flex-1 rounded-lg border border-slate-200 px-4 py-3 text-gray-900 font-light placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-200"
               />
               <button

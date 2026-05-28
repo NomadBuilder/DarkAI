@@ -1,28 +1,19 @@
 import type { Protest } from './protests'
 import { getCityFromLocation } from './protests'
 import { getCityCoordinates, type LatLng } from './protest-city-coordinates'
+import { normalizePostalCode, type PostalKind } from './postal-code'
+
+export {
+  formatCanadianPostal,
+  formatPostalCodeDisplay,
+  isValidPostalInput,
+  isValidPostalCode,
+  normalizePostalCode,
+  normalizePostalInput,
+} from './postal-code'
 
 const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search'
 const GEO_CACHE_PREFIX = 'protectont-geocode-'
-
-/** Canadian postal code or US ZIP (5 digits). */
-export function normalizePostalInput(raw: string): string {
-  return raw.trim().toUpperCase().replace(/\s+/g, '')
-}
-
-export function isValidPostalInput(normalized: string): boolean {
-  if (!normalized) return false
-  if (/^\d{5}(-\d{4})?$/.test(normalized)) return true
-  return /^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(normalized)
-}
-
-/** Format Canadian postal for display: A1A 1A1 */
-export function formatCanadianPostal(normalized: string): string {
-  if (/^[A-Z]\d[A-Z]\d[A-Z]\d$/.test(normalized)) {
-    return `${normalized.slice(0, 3)} ${normalized.slice(3)}`
-  }
-  return normalized
-}
 
 export function haversineKm(a: LatLng, b: LatLng): number {
   const R = 6371
@@ -108,20 +99,25 @@ async function geocodeUsZip(normalized: string): Promise<LatLng | null> {
   return { lat, lng }
 }
 
-/** Geocode postal / ZIP (client-side, cached per session). */
-export async function geocodePostalCode(normalized: string): Promise<LatLng | null> {
-  const cached = readGeoCache(normalized)
+/** Geocode postal / ZIP (client-side, cached per session). Accepts raw or normalized input. */
+export async function geocodePostalCode(rawOrNormalized: string): Promise<LatLng | null> {
+  const { value, kind } = normalizePostalCode(rawOrNormalized)
+  if (kind === 'unknown' || !value) return null
+
+  const cached = readGeoCache(value)
   if (cached) return cached
 
-  const isUsZip = /^\d{5}/.test(normalized)
-  const coords = isUsZip
-    ? await geocodeUsZip(normalized)
-    : await geocodeCanadianPostal(normalized)
+  const coords =
+    kind === 'us' ? await geocodeUsZip(value) : await geocodeCanadianPostal(value)
 
   if (!coords) return null
 
-  writeGeoCache(normalized, coords)
+  writeGeoCache(value, coords)
   return coords
+}
+
+export function postalKindFromInput(raw: string): PostalKind {
+  return normalizePostalCode(raw).kind
 }
 
 export type ProtestWithDistance = {

@@ -1,3 +1,5 @@
+import { formatPostalCodeDisplay, normalizePostalCode } from './postal-code'
+
 export const PROTECT_ONTARIO_DONATE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
 
 export type InvolvementRole = 'yard-sign' | 'dropoff' | 'volunteer' | 'other'
@@ -116,7 +118,12 @@ export function buildGetInvolvedSubmitPayload(
     email: state.email.trim(),
     phone: state.phone.trim(),
     city: state.city.trim(),
-    postal_code: state.postalCode.trim(),
+    postal_code: (() => {
+      const parsed = normalizePostalCode(state.postalCode)
+      return parsed.kind !== 'unknown'
+        ? formatPostalCodeDisplay(parsed)
+        : state.postalCode.trim()
+    })(),
     yard_sign_size: sizeLabel,
     /** Kept for existing Google Sheet column; same value as yard_sign_size */
     yard_sign_design: sizeLabel,
