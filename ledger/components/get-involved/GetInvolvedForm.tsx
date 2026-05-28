@@ -337,7 +337,11 @@ export default function GetInvolvedForm({
                 <Link href="/products" className={linkClass}>
                   Products
                 </Link>{' '}
-                when you&apos;re ready.
+                or via e-transfer to{' '}
+                <a href="mailto:FIGHT_FORD_SIGNS@outlook.com" className={linkClass}>
+                  FIGHT_FORD_SIGNS@outlook.com
+                </a>{' '}
+                (preferred) when you&apos;re ready.
               </p>
               <div className="sm:col-span-2">
                 <label htmlFor="gi-delivery-addr" className={labelClass}>
