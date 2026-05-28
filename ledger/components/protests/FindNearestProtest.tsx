@@ -63,11 +63,6 @@ export default function FindNearestProtest({ protests, campaignId = 'may-30-2026
       }
 
       setResults(ranked)
-      const top = ranked[0]
-      requestAnimationFrame(() => {
-        const el = document.getElementById(`event-${top.protest.id}`)
-        el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      })
     } catch {
       setError('Lookup failed. Check your connection and try again.')
     } finally {
