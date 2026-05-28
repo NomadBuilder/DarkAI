@@ -193,10 +193,14 @@ export default function GetInvolvedForm({
         </p>
         {lastSubmittedRole === 'yard-sign' && (
           <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
-            Haven&apos;t paid yet?{' '}
+            Haven&apos;t paid yet? Pay $10 per sign on{' '}
             <Link href="/products" className={linkClass}>
-              Pay $10 per sign on Products
-            </Link>{' '}
+              Products
+            </Link>
+            , Stripe checkout, or e-transfer to{' '}
+            <a href="mailto:FIGHT_FORD_SIGNS@outlook.com" className={linkClass}>
+              FIGHT_FORD_SIGNS@outlook.com
+            </a>{' '}
             when you&apos;re ready.
           </p>
         )}
@@ -396,8 +400,8 @@ export default function GetInvolvedForm({
                 <div className="space-y-2">
                   {(
                     [
-                      ['paid', 'I already paid $10 per sign on Stripe'],
-                      ['not-yet', 'Not yet — I will pay on Products ($10 per sign)'],
+                      ['paid', 'I already paid $10 per sign (Products, Stripe, or e-transfer)'],
+                      ['not-yet', 'Not yet — I will pay on Products, Stripe, or e-transfer'],
                     ] as const
                   ).map(([value, label]) => (
                     <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
