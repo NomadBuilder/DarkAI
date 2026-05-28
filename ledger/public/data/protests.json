@@ -1,8 +1,8 @@
 {
-  "lastUpdated": "2026-05-21",
+  "lastUpdated": "2026-05-28",
   "featuredCampaign": {
     "enabled": true,
-    "label": "Province-wide protests on May 30, 2026 — find your city and join in",
+    "label": "Province-wide protests (60+ cities!) on May 30, 2026 — find your city and join in",
     "href": "#event-list"
   },
   "events": [
@@ -178,28 +178,28 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Angus, ON",
-      "description": "Pacekeepers Park, 12 Commerce Rd. Target: MPP Doug Ford.",
+      "description": "Peacekeepers Park, 12 Commerce Rd.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "12 Commerce Rd",
-      "featured": false
+      "featured": false,
+      "address": "12 Commerce Rd"
     },
     {
       "id": "fight-ford-2026-05-30-barrie",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Barrie, ON",
-      "description": "Sadlon Arena, 55 Bayview Dr.",
+      "description": "Sadlon Arena, 555 Bayview Dr.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "55 Bayview Dr",
-      "featured": false
+      "featured": false,
+      "address": "555 Bayview Dr"
     },
     {
       "id": "fight-ford-2026-05-30-belleville",
@@ -215,6 +215,20 @@
       "featured": false
     },
     {
+      "id": "fight-ford-2026-05-30-blyth",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Blyth, ON",
+      "description": "408 Queen St. Target: MPP Lisa Thompson's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "408 Queen St"
+    },
+    {
       "id": "fight-ford-2026-05-30-bowmanville",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 2:00 PM",
@@ -225,8 +239,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "23 King St W",
-      "featured": false
+      "featured": false,
+      "address": "23 King St W"
     },
     {
       "id": "fight-ford-2026-05-30-bracebridge",
@@ -239,8 +253,63 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "230 Manitoba St",
+      "featured": false,
+      "address": "230 Manitoba St"
+    },
+    {
+      "id": "fight-ford-2026-05-30-bradford",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Bradford, ON",
+      "description": "Bradford West Gwillimbury Public Library, 425 Holland St W.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "425 Holland St W"
+    },
+    {
+      "id": "fight-ford-2026-05-30-brampton",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:00 PM",
+      "location": "Brampton, ON",
+      "description": "City Hall, Main St S & Wellington St E.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
       "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-brantford",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Brantford, ON",
+      "description": "96 Nelson St. Target: MPP Will Bouma's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "96 Nelson St"
+    },
+    {
+      "id": "fight-ford-2026-05-30-brockville",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Brockville, ON",
+      "description": "South End Brockville Railway Tunnel, 77 Blockhouse Island Pkwy.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "77 Blockhouse Island Pkwy"
     },
     {
       "id": "fight-ford-2026-05-30-burlington",
@@ -253,8 +322,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "3027 Harvester Rd",
-      "featured": false
+      "featured": false,
+      "address": "3027 Harvester Rd"
     },
     {
       "id": "fight-ford-2026-05-30-cambridge",
@@ -267,8 +336,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "73 Water St",
-      "featured": false
+      "featured": false,
+      "address": "73 Water St"
     },
     {
       "id": "fight-ford-2026-05-30-cornwall",
@@ -281,22 +350,22 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "120 2nd St W",
-      "featured": false
+      "featured": false,
+      "address": "120 2nd St W"
     },
     {
       "id": "fight-ford-2026-05-30-elliot-lake",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Elliot Lake, ON",
-      "description": "325 Kings Hwy 108, Miner's Memorial Park.",
+      "description": "Miner's Memorial Park, 325 King's Hwy 108.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "325 Kings Hwy 108, Miner's Memorial Park",
-      "featured": false
+      "featured": false,
+      "address": "325 King's Hwy 108"
     },
     {
       "id": "fight-ford-2026-05-30-elmira",
@@ -309,42 +378,56 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "63 Arthur St S",
-      "featured": false
+      "featured": false,
+      "address": "63 Arthur St S"
     },
     {
-      "id": "fight-ford-2026-05-30-etobicoke",
+      "id": "fight-ford-2026-05-30-etobicoke-weston",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:30 PM",
       "location": "Etobicoke, ON",
-      "description": "Weston Rd & Royal York Rd (end of Doug Ford's street).",
+      "description": "End of Doug Ford's street, Weston Wood Rd & Royal York Rd.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
       "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-etobicoke-office",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 2:00 PM",
+      "location": "Etobicoke, ON",
+      "description": "Doug Ford's office, 964 Albion Rd.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "964 Albion Rd"
     },
     {
       "id": "fight-ford-2026-05-30-fergus",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 10:00 AM",
       "location": "Fergus, ON",
-      "description": "81 St Andrew St E. Target: MPP Joseph Racinsky's office.",
+      "description": "181 St. Andrew St E. Target: MPP Joseph Racinsky's office.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "81 St Andrew St E",
-      "featured": false
+      "featured": false,
+      "address": "181 St. Andrew St E"
     },
     {
       "id": "fight-ford-2026-05-30-georgetown",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Georgetown, ON",
-      "description": "Mountainview Rd N & Guelph St, Mountainview Rd North/South.",
+      "description": "Mountainview Road North/South, Mountainview Rd N & Guelph St.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -357,7 +440,7 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Guelph, ON",
-      "description": "Gordon St & Wellington St E, Wellington Plaza.",
+      "description": "Wellington Plaza, Gordon St & Wellington St E.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -366,17 +449,31 @@
       "featured": false
     },
     {
-      "id": "fight-ford-2026-05-30-hamilton-dundurn",
+      "id": "fight-ford-2026-05-30-hamilton",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 2:00 PM",
       "location": "Hamilton, ON",
-      "description": "York Blvd & Dundurn St N, Dundurn Park.",
+      "description": "Dundurn Park, York Blvd & Dundurn St N.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
       "featured": false
+    },
+    {
+      "id": "fight-ford-2026-05-30-kincardine",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:30 PM",
+      "location": "Kincardine, ON",
+      "description": "807 Queen St. Target: MPP Lisa Thompson's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "807 Queen St"
     },
     {
       "id": "fight-ford-2026-05-30-king-city",
@@ -389,15 +486,15 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "2220 King Rd",
-      "featured": false
+      "featured": false,
+      "address": "2220 King Rd"
     },
     {
       "id": "fight-ford-2026-05-30-kingston",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Kingston, ON",
-      "description": "Princess St & Gardiners Rd, The North-West 'Big Box' hub.",
+      "description": "The North-West \"Big Box\" hub, Princess St & Gardiners Rd.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -410,7 +507,7 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Lindsay, ON",
-      "description": "St. Joseph & Kent St W, Lindsay Square Mall.",
+      "description": "Lindsay Square Mall, St. Joseph & Kent St W.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -423,7 +520,7 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "London, ON",
-      "description": "Central Ave, Victoria Park northwest corner.",
+      "description": "Victoria Park northwest corner, Central Ave.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -442,15 +539,15 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "7380 McCowan Rd",
-      "featured": false
+      "featured": false,
+      "address": "7380 McCowan Rd"
     },
     {
       "id": "fight-ford-2026-05-30-meaford",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Meaford, ON",
-      "description": "Sykes St, Meaford Hall.",
+      "description": "Meaford Hall, Sykes St.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -463,7 +560,7 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 11:30 AM",
       "location": "Milton, ON",
-      "description": "Main St & Martin St, downtown centre.",
+      "description": "Downtown Centre, Main St & Martin St.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -482,8 +579,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "120 Lakeshore Rd W",
-      "featured": false
+      "featured": false,
+      "address": "120 Lakeshore Rd W"
     },
     {
       "id": "fight-ford-2026-05-30-newmarket",
@@ -503,14 +600,42 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "North Bay, ON",
-      "description": "129 Main St E. Target: MPP Vic Fedeli's office.",
+      "description": "219 Main St E. Target: MPP Vic Fedeli's office.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "129 Main St E",
-      "featured": false
+      "featured": false,
+      "address": "219 Main St E"
+    },
+    {
+      "id": "fight-ford-2026-05-30-oakville-crawford",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Oakville, ON",
+      "description": "74 Rebecca St. Target: MPP Stephen Crawford's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "74 Rebecca St"
+    },
+    {
+      "id": "fight-ford-2026-05-30-oakville-triantafilopoulos",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 1:30 PM",
+      "location": "Oakville, ON",
+      "description": "2525 Old Bronte Rd. Target: MPP Effie Triantafilopoulos' office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "2525 Old Bronte Rd"
     },
     {
       "id": "fight-ford-2026-05-30-orangeville",
@@ -523,50 +648,50 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "180 Broadway Ave",
-      "featured": false
+      "featured": false,
+      "address": "180 Broadway Ave"
     },
     {
       "id": "fight-ford-2026-05-30-ottawa",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Ottawa, ON",
-      "description": "220 Elgin St, Canadian Tribute to Human Rights Monument.",
+      "description": "Canadian Tribute to Human Rights Monument, 220 Elgin St.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "220 Elgin St, Canadian Tribute to Human Rights Monument",
-      "featured": false
+      "featured": false,
+      "address": "220 Elgin St"
     },
     {
       "id": "fight-ford-2026-05-30-owen-sound",
       "title": "Fight Ford Protests (May 30)",
-      "date": "May 30, 2026",
+      "date": "May 30, 2026 · 9:00 AM",
       "location": "Owen Sound, ON",
-      "description": "345 8th St E. Target: MPP Paul Vickers' office. Time listed as TBA.",
+      "description": "345 8th St E. Target: MPP Paul Vickers' office.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "345 8th St E",
-      "featured": false
+      "featured": false,
+      "address": "345 8th St E"
     },
     {
       "id": "fight-ford-2026-05-30-pembroke",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Pembroke, ON",
-      "description": "400 Pembroke St E, Service Ontario Plaza.",
+      "description": "Service Ontario Plaza, 400 Pembroke St E.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "400 Pembroke St E, Service Ontario Plaza",
-      "featured": false
+      "featured": false,
+      "address": "400 Pembroke St E"
     },
     {
       "id": "fight-ford-2026-05-30-peterborough",
@@ -579,8 +704,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "864 Chemong Rd",
-      "featured": false
+      "featured": false,
+      "address": "864 Chemong Rd"
     },
     {
       "id": "fight-ford-2026-05-30-pickering",
@@ -593,8 +718,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "1550 Kingston Rd",
-      "featured": false
+      "featured": false,
+      "address": "1550 Kingston Rd"
     },
     {
       "id": "fight-ford-2026-05-30-port-hope",
@@ -607,8 +732,22 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "117 Peter St",
-      "featured": false
+      "featured": false,
+      "address": "117 Peter St"
+    },
+    {
+      "id": "fight-ford-2026-05-30-richmond-hill",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 3:00 PM",
+      "location": "Richmond Hill, ON",
+      "description": "9555 Yonge St. Target: MPP Daisy Wai's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "9555 Yonge St"
     },
     {
       "id": "fight-ford-2026-05-30-sarnia",
@@ -621,29 +760,43 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "805 Christina St N",
-      "featured": false
+      "featured": false,
+      "address": "805 Christina St N"
+    },
+    {
+      "id": "fight-ford-2026-05-30-sault-ste-marie",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 11:00 AM",
+      "location": "Sault Ste. Marie, ON",
+      "description": "153 Great Northern Rd. Target: MPP Chris Scott's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "153 Great Northern Rd"
     },
     {
       "id": "fight-ford-2026-05-30-simcoe",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Simcoe, ON",
-      "description": "50 Bonnie Dr, Wellington Park.",
+      "description": "Wellington Park, 50 Bonnie Dr.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "50 Bonnie Dr, Wellington Park",
-      "featured": false
+      "featured": false,
+      "address": "50 Bonnie Dr"
     },
     {
       "id": "fight-ford-2026-05-30-st-catharines",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 11:00 AM",
       "location": "St. Catharines, ON",
-      "description": "Tremont Dr & Glendale Ave, Pen Centre.",
+      "description": "Pen Centre, Tremont Dr & Glendale Ave.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -656,14 +809,14 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 2:00 PM",
       "location": "St. Thomas, ON",
-      "description": "750 Talbot St. Target: MPP Rob Flack's office.",
+      "description": "750 Talbot St. Target: MPP Robert Flack's office.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "750 Talbot St",
-      "featured": false
+      "featured": false,
+      "address": "750 Talbot St"
     },
     {
       "id": "fight-ford-2026-05-30-stayner",
@@ -676,7 +829,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "featured": false
+      "featured": false,
+      "address": "7317 Highway 26 E"
     },
     {
       "id": "fight-ford-2026-05-30-stouffville",
@@ -689,8 +843,22 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "37 Sandiford Dr",
-      "featured": false
+      "featured": false,
+      "address": "37 Sandiford Dr"
+    },
+    {
+      "id": "fight-ford-2026-05-30-stratford",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 10:00 AM",
+      "location": "Stratford, ON",
+      "description": "55 Lorne Ave E. Target: MPP Matthew Rae's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "55 Lorne Ave E"
     },
     {
       "id": "fight-ford-2026-05-30-strathroy",
@@ -703,15 +871,15 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "81 Front St W",
-      "featured": false
+      "featured": false,
+      "address": "81 Front St W"
     },
     {
       "id": "fight-ford-2026-05-30-sudbury",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
       "location": "Sudbury, ON",
-      "description": "Paris St & Brady St, Tom Davies Square.",
+      "description": "Tom Davies Square, Paris St & Brady St.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -724,42 +892,42 @@
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Temiskaming Shores, ON",
-      "description": "83 Whitewood Ave, Canada Post.",
+      "description": "Canada Post, 83 Whitewood Ave.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "83 Whitewood Ave, Canada Post",
-      "featured": false
+      "featured": false,
+      "address": "83 Whitewood Ave"
     },
     {
       "id": "fight-ford-2026-05-30-thunder-bay",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 11:00 AM",
       "location": "Thunder Bay, ON",
-      "description": "74 James St N. Target: MPP Kevin Holland's office.",
+      "description": "774 James St N. Target: MPP Kevin Holland's office.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "74 James St N",
-      "featured": false
+      "featured": false,
+      "address": "774 James St N"
     },
     {
       "id": "fight-ford-2026-05-30-toronto",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 11:00 AM",
       "location": "Toronto, ON",
-      "description": "111 Wellesley St W, Queen's Park.",
+      "description": "Queen's Park, 111 Wellesley St W.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "111 Wellesley St W, Queen's Park",
-      "featured": false
+      "featured": false,
+      "address": "111 Wellesley St W"
     },
     {
       "id": "fight-ford-2026-05-30-vaughan",
@@ -785,15 +953,15 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "60 McNaughton Ave",
-      "featured": false
+      "featured": false,
+      "address": "60 McNaughton Ave"
     },
     {
       "id": "fight-ford-2026-05-30-waterdown",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 1:00 PM",
       "location": "Waterdown, ON",
-      "description": "Hamilton St & Dundas St E, Hamilton Street North/South.",
+      "description": "Hamilton Street North/South, Hamilton St & Dundas St E.",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -802,18 +970,32 @@
       "featured": false
     },
     {
-      "id": "fight-ford-2026-05-30-whitby",
+      "id": "fight-ford-2026-05-30-waterloo",
       "title": "Fight Ford Protests (May 30)",
       "date": "May 30, 2026 · 12:00 PM",
-      "location": "Whitby, ON",
-      "description": "300 Garden St. Target: MPP Lorne Coe's office.",
+      "location": "Waterloo, ON",
+      "description": "City Hall, 100 Regina St S.",
       "status": "confirmed",
       "topics": [
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "300 Garden St",
-      "featured": false
+      "featured": false,
+      "address": "100 Regina St S"
+    },
+    {
+      "id": "fight-ford-2026-05-30-whitby",
+      "title": "Fight Ford Protests (May 30)",
+      "date": "May 30, 2026 · 12:00 PM",
+      "location": "Whitby, ON",
+      "description": "3000 Garden St. Target: MPP Lorne Coe's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "may-30-2026",
+      "featured": false,
+      "address": "3000 Garden St"
     },
     {
       "id": "fight-ford-2026-05-30-windsor",
@@ -826,8 +1008,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "5452 Tecumseh Rd E",
-      "featured": false
+      "featured": false,
+      "address": "5452 Tecumseh Rd E"
     },
     {
       "id": "fight-ford-2026-05-30-woodstock",
@@ -840,8 +1022,8 @@
         "accountability"
       ],
       "campaignId": "may-30-2026",
-      "address": "12 Perry St",
-      "featured": false
+      "featured": false,
+      "address": "12 Perry St"
     }
   ]
 }
