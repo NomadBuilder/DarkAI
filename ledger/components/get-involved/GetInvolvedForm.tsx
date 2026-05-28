@@ -103,7 +103,7 @@ export default function GetInvolvedForm({
       if (!form.yardSignDeliveryAddress.trim()) {
         return 'Please tell us where you live / where we should deliver the sign(s).'
       }
-      if (!form.yardSignDesign) return 'Please choose a sign design (or “either”).'
+      if (!form.yardSignSize) return 'Please choose a sign size.'
       if (!form.yardSignQuantity) return 'Please tell us how many signs you need.'
       if (!form.yardSignPaymentStatus) return 'Please tell us if you have paid yet ($10 per sign).'
     } else if (!form.city.trim()) {
@@ -376,20 +376,19 @@ export default function GetInvolvedForm({
                 </select>
               </div>
               <div>
-                <label htmlFor="gi-design" className={labelClass}>
-                  Design *
+                <label htmlFor="gi-size" className={labelClass}>
+                  Size *
                 </label>
                 <select
-                  id="gi-design"
-                  value={form.yardSignDesign}
-                  onChange={(e) => setField('yardSignDesign', e.target.value as GetInvolvedFormState['yardSignDesign'])}
+                  id="gi-size"
+                  value={form.yardSignSize}
+                  onChange={(e) => setField('yardSignSize', e.target.value as GetInvolvedFormState['yardSignSize'])}
                   className={`${inputClass} bg-white`}
                   required
                 >
-                  <option value="">Select a design</option>
-                  <option value="design-1">Design #1 — Healthcare, education, environment</option>
-                  <option value="design-2">Design #2 — Healthcare, education, transparency</option>
-                  <option value="either">Either design is fine</option>
+                  <option value="">Select a size</option>
+                  <option value="24x18">24&quot; × 18&quot;</option>
+                  <option value="18x12">18&quot; × 12&quot;</option>
                 </select>
               </div>
               <div>

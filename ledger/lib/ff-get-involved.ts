@@ -17,22 +17,13 @@ export const FF_ATF_GRADIENT =
   'linear-gradient(168deg, #5c4899 0%, #4a3888 20%, #3d2b7a 48%, #35266d 72%, #4a3d8c 88%)'
 
 /** Printable yard-sign artwork (served from ledger/public) */
-export const FF_YARD_SIGN_DESIGNS = [
-  {
-    id: 'ford-design-1',
-    title: 'Healthcare · Education · Environment',
-    imageUrl: '/products/yard-signs/ford-design-1.png',
-    downloadUrl: '/products/yard-signs/ford-design-1.png',
-    filename: 'ford-design-1.png',
-  },
-  {
-    id: 'ford-design-2',
-    title: 'Healthcare · Education · Transparency',
-    imageUrl: '/products/yard-signs/ford-design-2.png',
-    downloadUrl: '/products/yard-signs/ford-design-2.png',
-    filename: 'ford-design-2.png',
-  },
-] as const
+export const FF_YARD_SIGN_ART = {
+  id: 'ford-failed-you',
+  title: 'Ford Failed You — Healthcare · Education · Transparency',
+  imageUrl: '/products/yard-signs/ford-failed-you.png',
+  downloadUrl: '/products/yard-signs/ford-failed-you.png',
+  filename: 'ford-failed-you.png',
+} as const
 
 export const FF_SOURCE_PAGE = 'join'
 

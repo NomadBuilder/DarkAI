@@ -29,7 +29,6 @@ export default function ProductDetail({ product }: Props) {
           </Link>
           <p className="text-xs sm:text-sm uppercase tracking-[0.35em] text-blue-200/90 mb-3 font-medium">
             {product.categoryLabel}
-            {product.variantLabel ? ` · ${product.variantLabel}` : ''}
           </p>
           <h1 className="text-3xl sm:text-4xl font-light tracking-tight leading-tight">{product.name}</h1>
         </div>

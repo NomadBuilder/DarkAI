@@ -10,7 +10,7 @@ export const involvementRoles: {
   {
     id: 'yard-sign',
     label: 'I want a sign',
-    description: 'Request a yard sign for your area—we’ll follow up about design and local delivery.',
+    description: 'Request a Ford Failed You yard sign—we’ll follow up about size and local delivery.',
   },
   {
     id: 'dropoff',
@@ -29,8 +29,13 @@ export const involvementRoles: {
   },
 ]
 
-export type YardSignDesign = 'design-1' | 'design-2' | 'either'
+export type YardSignSize = '24x18' | '18x12'
 export type YardSignPaymentStatus = 'paid' | 'not-yet' | 'need-help'
+
+export const yardSignSizeLabels: Record<YardSignSize, string> = {
+  '24x18': '24" × 18"',
+  '18x12': '18" × 12"',
+}
 
 export type GetInvolvedFormState = {
   role: InvolvementRole | ''
@@ -39,7 +44,7 @@ export type GetInvolvedFormState = {
   phone: string
   city: string
   postalCode: string
-  yardSignDesign: YardSignDesign | ''
+  yardSignSize: YardSignSize | ''
   yardSignQuantity: string
   yardSignDeliveryAddress: string
   yardSignPaymentStatus: YardSignPaymentStatus | ''
@@ -63,7 +68,7 @@ export const emptyGetInvolvedFormState: GetInvolvedFormState = {
   phone: '',
   city: '',
   postalCode: '',
-  yardSignDesign: '',
+  yardSignSize: '',
   yardSignQuantity: '',
   yardSignDeliveryAddress: '',
   yardSignPaymentStatus: '',
@@ -101,6 +106,7 @@ export function buildGetInvolvedSubmitPayload(
   const roleLabel = involvementRoles.find((r) => r.id === state.role)?.label ?? state.role
   const notes =
     state.role === 'other' ? state.otherDetails.trim() : state.additionalNotes.trim()
+  const sizeLabel = state.yardSignSize ? yardSignSizeLabels[state.yardSignSize] : ''
 
   return {
     submitted_at: new Date().toISOString(),
@@ -111,7 +117,9 @@ export function buildGetInvolvedSubmitPayload(
     phone: state.phone.trim(),
     city: state.city.trim(),
     postal_code: state.postalCode.trim(),
-    yard_sign_design: state.yardSignDesign,
+    yard_sign_size: sizeLabel,
+    /** Kept for existing Google Sheet column; same value as yard_sign_size */
+    yard_sign_design: sizeLabel,
     yard_sign_quantity: state.yardSignQuantity,
     yard_sign_payment_status: state.yardSignPaymentStatus,
     yard_sign_notes: [state.yardSignDeliveryAddress.trim(), state.yardSignNotes.trim()]

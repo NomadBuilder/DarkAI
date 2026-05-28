@@ -44,7 +44,7 @@ export default function ProductsPage() {
               <section key={category.id} id={category.id} className="scroll-mt-28">
                 <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-2">{category.label}</h2>
                 <p className="text-sm text-slate-600 font-light leading-relaxed max-w-2xl mb-5">{category.description}</p>
-                <div className="grid gap-6 md:grid-cols-2">
+                <div className="grid gap-6 max-w-xl">
                   {items.map((product, i) => (
                     <ProductCard key={product.slug} product={product} index={i} />
                   ))}

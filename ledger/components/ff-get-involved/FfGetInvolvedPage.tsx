@@ -8,7 +8,7 @@ import {
   FF_INTRO,
   FF_PAGE_GRADIENT,
   FF_SOURCE_PAGE,
-  FF_YARD_SIGN_DESIGNS,
+  FF_YARD_SIGN_ART,
 } from '@/lib/ff-get-involved'
 
 type QuickAction = {
@@ -457,15 +457,12 @@ export default function FfGetInvolvedPage() {
                   social media.
                 </p>
                 <div className="mt-5 grid gap-6 sm:grid-cols-2">
-                  {FF_YARD_SIGN_DESIGNS.map((design) => (
-                    <YardSignPreview
-                      key={design.id}
-                      title={design.title}
-                      imageUrl={design.imageUrl}
-                      downloadUrl={design.downloadUrl}
-                      filename={design.filename}
-                    />
-                  ))}
+                  <YardSignPreview
+                    title={FF_YARD_SIGN_ART.title}
+                    imageUrl={FF_YARD_SIGN_ART.imageUrl}
+                    downloadUrl={FF_YARD_SIGN_ART.downloadUrl}
+                    filename={FF_YARD_SIGN_ART.filename}
+                  />
                 </div>
               </div>
               <div className="rounded-2xl border border-[#f9e04c]/35 bg-gradient-to-r from-[#f9e04c]/20 to-[#f9e04c]/8 px-5 py-4 sm:px-6 sm:py-5">

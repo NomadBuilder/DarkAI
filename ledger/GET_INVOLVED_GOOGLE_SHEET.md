@@ -106,7 +106,7 @@ function sendNotificationEmail(p) {
 
   if (p.role === 'yard-sign') {
     lines.push('', '--- Sign ---');
-    lines.push('Design: ' + (p.yard_sign_design || ''));
+    lines.push('Size: ' + (p.yard_sign_size || p.yard_sign_design || ''));
     lines.push('Quantity: ' + (p.yard_sign_quantity || ''));
     lines.push('Payment: ' + (p.yard_sign_payment_status || ''));
     lines.push('Delivery / notes: ' + (p.yard_sign_notes || ''));

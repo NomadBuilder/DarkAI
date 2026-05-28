@@ -20,8 +20,6 @@ export type CatalogProduct = {
   themes?: string[]
   minPriceCad: number
   stripeCheckoutUrl: string | null
-  /** Optional detail header line, e.g. "Design #1" */
-  variantLabel?: string
   /** Extra copy below the checkout button */
   checkoutHint?: string
   sortOrder: number
@@ -30,62 +28,46 @@ export type CatalogProduct = {
 export const YARD_SIGN_STRIPE_CHECKOUT_URL =
   'https://buy.stripe.com/dRm3cvdHKeh76Nsfdm4gg01'
 
+export const YARD_SIGN_SIZES = ['24" × 18"', '18" × 12"'] as const
+
 export const productCategories: ProductCategory[] = [
   {
     id: 'yard-signs',
     label: 'Yard signs',
     description:
-      'Ready-made protest designs, printed at 18 × 24 in with a stand. Delivered by organizers in your area—not shipped by mail.',
+      'Ford Failed You — healthcare, education, transparency. Printed with a stand in your choice of size. Delivered by organizers in your area—not shipped by mail.',
   },
 ]
 
 export const catalogProducts: CatalogProduct[] = [
   {
-    slug: 'ford-yard-sign-1',
-    name: 'Yard Sign Design #1',
+    slug: 'ford-failed-you',
+    name: 'Ford Failed You — Protest Yard Sign',
     categoryId: 'yard-signs',
     categoryLabel: 'Yard sign',
-    image: '/products/yard-signs/ford-design-1.png',
-    summary: 'Healthcare, education, and environment. 18 × 24 in with stand—delivered by your local organizer.',
+    image: '/products/yard-signs/ford-failed-you.png',
+    summary:
+      'Healthcare · Education · Transparency. $10 per sign with stand—choose 24″ × 18″ or 18″ × 12″ when you order or sign up.',
     specs: [
-      '18 × 24 in printed yard sign',
+      'One design: Healthcare · Education · Transparency — Ford Failed You!',
+      'Sizes: 24″ × 18″ or 18″ × 12″ (select on the sign-up form or note at checkout)',
       'Stand included',
-      'Themes: Healthcare · Education · Environment',
-      'Delivered by a local organizer—not shipped by mail',
-    ],
-    themes: ['Healthcare', 'Education', 'Environment'],
-    minPriceCad: 10,
-    stripeCheckoutUrl: YARD_SIGN_STRIPE_CHECKOUT_URL,
-    variantLabel: 'Design #1',
-    checkoutHint: 'Mention Design #1 in the order notes if prompted.',
-    sortOrder: 1,
-  },
-  {
-    slug: 'ford-yard-sign-2',
-    name: 'Yard Sign Design #2',
-    categoryId: 'yard-signs',
-    categoryLabel: 'Yard sign',
-    image: '/products/yard-signs/ford-design-2.png',
-    summary: 'Healthcare, education, and transparency. 18 × 24 in with stand—delivered by your local organizer.',
-    specs: [
-      '18 × 24 in printed yard sign',
-      'Stand included',
-      'Themes: Healthcare · Education · Transparency',
       'Delivered by a local organizer—not shipped by mail',
     ],
     themes: ['Healthcare', 'Education', 'Transparency'],
     minPriceCad: 10,
     stripeCheckoutUrl: YARD_SIGN_STRIPE_CHECKOUT_URL,
-    variantLabel: 'Design #2',
-    checkoutHint: 'Mention Design #2 in the order notes if prompted.',
-    sortOrder: 2,
+    checkoutHint: 'Mention your preferred size (24″ × 18″ or 18″ × 12″) in the order notes if prompted.',
+    sortOrder: 1,
   },
 ]
 
-/** Legacy slugs from /yard-signs/* — keep redirects working */
+/** Legacy slugs — redirect to the current yard sign product */
 export const legacyProductSlugRedirects: Record<string, string> = {
-  'ford-design-1': 'ford-yard-sign-1',
-  'ford-design-2': 'ford-yard-sign-2',
+  'ford-design-1': 'ford-failed-you',
+  'ford-design-2': 'ford-failed-you',
+  'ford-yard-sign-1': 'ford-failed-you',
+  'ford-yard-sign-2': 'ford-failed-you',
 }
 
 export function getProductBySlug(slug: string): CatalogProduct | undefined {

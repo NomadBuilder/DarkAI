@@ -48,7 +48,7 @@ const shippedProducts = [
     priceFrom: '$10 CAD',
     sizes: '18 × 24 in · stand included · organizer delivery',
     description:
-      'Two ready-made protest yard sign designs—printed with a stand, delivered by volunteers in your area.',
+      'Ford Failed You yard sign—printed with a stand in 24″ × 18″ or 18″ × 12″, delivered by volunteers in your area.',
     href: '/products#yard-signs',
     cta: 'Browse yard signs',
     accent: 'from-amber-900/90 to-[#2E4A6B]',
