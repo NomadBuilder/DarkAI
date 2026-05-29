@@ -31,12 +31,13 @@ export const involvementRoles: {
   },
 ]
 
-export type YardSignSize = '24x18' | '18x12'
+export type YardSignSize = '24x18' | '18x12' | 'any'
 export type YardSignPaymentStatus = 'paid' | 'not-yet' | 'need-help'
 
 export const yardSignSizeLabels: Record<YardSignSize, string> = {
   '24x18': '24" × 18"',
   '18x12': '18" × 12"',
+  any: 'Any size',
 }
 
 export type GetInvolvedFormState = {
