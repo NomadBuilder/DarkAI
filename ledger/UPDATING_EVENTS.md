@@ -1,25 +1,30 @@
 # Updating events on protectont.ca
 
-Protect Ontario does **not** use logins or per-group editor accounts. Events are curated centrally and published through git deploy.
+Protect Ontario does **not** use logins or per-group editor accounts. Events are curated centrally.
 
 ## For organizers
 
 - To suggest a rally: use the **contact form on [/about](https://protectont.ca/about)** with title, date, location, and event link.
 - You do not need access to `/admin-events`.
 
-## For site maintainers
+## For site maintainers (auto-save)
 
-1. Open **`/admin-events`** on a local or preview build (or edit `ledger/public/data/protests.json` directly).
-2. Add/remove events in `/admin-events` (topics, organizer, address, campaign ID, status, featured). Use dates like `May 30, 2026 · 2:00 PM` so the calendar parses correctly.
-3. Set **Site banner & meta** (red nav text, last updated date) in the admin UI.
-4. Download **`protests.json`** (wrapped format with `events` array) and save to **`ledger/public/data/protests.json`**.
-5. From repo root:
+1. On Render (or local `.env`), set **`PROTECTONT_EVENTS_ADMIN_TOKEN`** to a long random secret.
+2. Open **`/admin-events`** on protectont.ca.
+3. Enter that secret under **Publish key** and tap **Remember key** (stored in your browser only).
+4. Add, edit, or remove events and tap **Save** — changes publish to the live site immediately (no download step).
+5. Banner and “last updated” fields auto-save after you stop typing.
 
-   ```bash
-   ./scripts/verify-protectont-before-deploy.sh
-   ```
+Optional: **Download backup** exports a JSON copy for git or disaster recovery.
 
-6. Commit **`ledger/`** and **`static/protectont/`**, then push to deploy.
+If auto-save is unavailable (token not set on the server), use **Download backup** and deploy via git:
+
+```bash
+# Save backup to ledger/public/data/protests.json, then:
+./scripts/verify-protectont-before-deploy.sh
+```
+
+Commit **`ledger/`** and **`static/protectont/`**, then push.
 
 Re-run migration helper (optional): `node scripts/migrate-protests-json.mjs`
 

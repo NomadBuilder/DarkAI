@@ -242,6 +242,8 @@ def serve_ledger_at_root(path):
 @app.route('/api/protectont-config', methods=['GET'])
 def protectont_config():
     """Runtime config for static ProtectOnt pages (e.g. get-involved form → Google Apps Script)."""
+    from protectont_events import events_save_enabled
+
     url = (
         os.environ.get("NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL")
         or os.environ.get("GET_INVOLVED_SUBMIT_URL")
@@ -250,7 +252,50 @@ def protectont_config():
     return jsonify({
         "getInvolvedSubmitUrl": url,
         "submitViaApi": True,
+        "eventsSaveEnabled": events_save_enabled(),
     }), 200
+
+
+@app.route('/api/protectont/protests', methods=['GET', 'POST', 'OPTIONS'])
+def api_protectont_protests():
+    """GET current protests.json; POST saves to ledger/public and static/protectont (live)."""
+    from protectont_events import (
+        events_admin_token,
+        events_save_enabled,
+        read_protests_json,
+        write_protests_json,
+    )
+
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    if request.method == 'GET':
+        data, err = read_protests_json()
+        if err:
+            return jsonify({"error": err}), 404
+        return jsonify(data), 200
+
+    if not events_save_enabled():
+        return jsonify({
+            "error": "Server save not configured",
+            "message": "Set PROTECTONT_EVENTS_ADMIN_TOKEN on the server",
+        }), 503
+
+    token = events_admin_token()
+    auth = request.headers.get("Authorization", "")
+    provided = auth.removeprefix("Bearer ").strip() if auth.startswith("Bearer ") else ""
+    if provided != token:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    raw = request.get_data(as_text=True)
+    if not raw:
+        return jsonify({"error": "Empty body"}), 400
+
+    ok, err = write_protests_json(raw)
+    if not ok:
+        return jsonify({"error": err or "Save failed"}), 400
+
+    return jsonify({"success": True}), 200
 
 
 @app.route('/api/get-involved-submit', methods=['POST', 'OPTIONS'])

@@ -114,9 +114,14 @@ export default function AdminEventsPage() {
   const [loadStatus, setLoadStatus] = useState<'loading' | 'ok' | 'empty' | 'error'>('loading')
   const [form, setForm] = useState<EventForm>(emptyForm())
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [saveHint, setSaveHint] = useState(false)
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error' | 'needs-key'>('idle')
+  const [saveError, setSaveError] = useState('')
+  const [autoSaveEnabled, setAutoSaveEnabled] = useState(false)
+  const [adminToken, setAdminToken] = useState('')
   const [addFormOpen, setAddFormOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const skipBannerPersistRef = useRef(true)
 
   const applyFile = (file: ProtestsFile) => {
     setEvents(file.events)
@@ -147,6 +152,57 @@ export default function AdminEventsPage() {
       cancelled = true
     }
   }, [])
+
+  useEffect(() => {
+    fetch('/api/protectont-config', { cache: 'no-store' })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((cfg) => setAutoSaveEnabled(!!cfg.eventsSaveEnabled))
+      .catch(() => setAutoSaveEnabled(false))
+    const stored = typeof window !== 'undefined' ? sessionStorage.getItem('protectont-events-admin-token') : null
+    if (stored) setAdminToken(stored)
+  }, [])
+
+  const persistToServer = async (file: ProtestsFile) => {
+    if (!autoSaveEnabled) {
+      setSaveStatus('needs-key')
+      return
+    }
+    const token = adminToken.trim()
+    if (!token) {
+      setSaveStatus('needs-key')
+      return
+    }
+    setSaveStatus('saving')
+    setSaveError('')
+    try {
+      const res = await fetch('/api/protectont/protests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: serializeProtestsFile(file),
+      })
+      const body = await res.json().catch(() => ({}))
+      if (!res.ok) {
+        setSaveStatus('error')
+        setSaveError((body as { error?: string }).error || `Save failed (${res.status})`)
+        return
+      }
+      setSaveStatus('saved')
+      setLastUpdated(file.lastUpdated ?? new Date().toISOString().slice(0, 10))
+    } catch {
+      setSaveStatus('error')
+      setSaveError('Network error — could not reach the server')
+    }
+  }
+
+  const schedulePersist = (file: ProtestsFile) => {
+    if (persistTimerRef.current) clearTimeout(persistTimerRef.current)
+    persistTimerRef.current = setTimeout(() => {
+      void persistToServer(file)
+    }, 600)
+  }
 
   const validation = useMemo(() => validateEvents(events), [events])
   const visibleCount = validation.filter((v) => v.visible).length
@@ -193,6 +249,16 @@ export default function AdminEventsPage() {
     events,
   })
 
+  useEffect(() => {
+    if (loadStatus !== 'ok') return
+    if (skipBannerPersistRef.current) {
+      skipBannerPersistRef.current = false
+      return
+    }
+    schedulePersist(buildFile())
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- debounce banner/meta only
+  }, [featuredCampaign, lastUpdated, loadStatus])
+
   const formToEvent = (id: string): Protest => {
     const base: Protest = {
       id,
@@ -233,14 +299,22 @@ export default function AdminEventsPage() {
     if (!form.title.trim()) return
     const id = editingId ?? `${slugify(form.title)}-${slugify(form.date) || Date.now()}`
     const event = formToEvent(id)
+    let nextEvents: Protest[]
     if (editingId) {
-      setEvents((prev) => prev.map((p) => (p.id === editingId ? event : p)))
+      nextEvents = events.map((p) => (p.id === editingId ? event : p))
+      setEvents(nextEvents)
     } else {
-      setEvents((prev) => [...prev, event])
+      nextEvents = [...events, event]
+      setEvents(nextEvents)
     }
     setForm(emptyForm())
     setEditingId(null)
-    setSaveHint(true)
+    const file: ProtestsFile = {
+      lastUpdated: lastUpdated || new Date().toISOString().slice(0, 10),
+      featuredCampaign: featuredCampaign.label.trim() ? featuredCampaign : undefined,
+      events: nextEvents,
+    }
+    void persistToServer(file)
   }
 
   const handleCancelEdit = () => {
@@ -251,9 +325,13 @@ export default function AdminEventsPage() {
 
   const handleRemove = (id: string) => {
     if (!window.confirm('Remove this event from the list?')) return
-    setEvents((prev) => prev.filter((p) => p.id !== id))
+    const nextEvents = events.filter((p) => p.id !== id)
+    setEvents(nextEvents)
     if (editingId === id) handleCancelEdit()
-    setSaveHint(true)
+    void persistToServer({
+      ...buildFile(),
+      events: nextEvents,
+    })
   }
 
   const handleDuplicate = (p: Protest) => {
@@ -283,7 +361,6 @@ export default function AdminEventsPage() {
     a.click()
     URL.revokeObjectURL(url)
     setLastUpdated(new Date().toISOString().slice(0, 10))
-    setSaveHint(false)
   }
 
   const handleLoadFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,7 +371,7 @@ export default function AdminEventsPage() {
       try {
         const data = JSON.parse(reader.result as string)
         applyFile(parseProtestsFile(data))
-        setSaveHint(false)
+        setSaveStatus('idle')
       } catch {
         alert(
           'We could not open that file. Choose the backup you downloaded from this page, or start fresh from the live site list.'
@@ -361,13 +438,61 @@ export default function AdminEventsPage() {
           </div>
         )}
 
-        {saveHint && (
-          <div className="bg-blue-600 text-white rounded-2xl p-5 mb-6 text-sm font-light shadow-lg shadow-blue-600/20">
-            <p className="font-medium mb-1">Remember to save your work</p>
-            <p className="text-blue-100">
-              Changes are not live until you download your updated list and send it to whoever publishes the site.
+        {autoSaveEnabled && (
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 mb-6 shadow-sm">
+            <p className="text-sm font-medium text-slate-900 mb-2">Publish key</p>
+            <p className="text-xs text-slate-500 font-light mb-3">
+              Saves go live on protectont.ca automatically. Enter the same secret as{' '}
+              <code className="text-slate-700 bg-slate-100 px-1 rounded">PROTECTONT_EVENTS_ADMIN_TOKEN</code> on
+              the server (stored in this browser only).
             </p>
+            <div className="flex flex-wrap gap-2">
+              <input
+                type="password"
+                value={adminToken}
+                onChange={(e) => setAdminToken(e.target.value)}
+                placeholder="Admin key"
+                className={`${inputClass} max-w-md flex-1 min-w-[12rem]`}
+                autoComplete="off"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  sessionStorage.setItem('protectont-events-admin-token', adminToken.trim())
+                  setSaveStatus('idle')
+                }}
+                className="text-sm py-2.5 px-4 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 font-light"
+              >
+                Remember key
+              </button>
+            </div>
           </div>
+        )}
+
+        {saveStatus === 'saving' && (
+          <p className="text-sm text-slate-600 font-light mb-4">Publishing to the live site…</p>
+        )}
+        {saveStatus === 'saved' && (
+          <p className="text-sm text-emerald-700 font-light mb-4 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3">
+            Saved — the public Events page is updated (refresh if you already have it open).
+          </p>
+        )}
+        {saveStatus === 'error' && (
+          <p className="text-sm text-red-700 font-light mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
+            {saveError || 'Could not save. Check your admin key and try again.'}
+          </p>
+        )}
+        {saveStatus === 'needs-key' && autoSaveEnabled && !adminToken.trim() && (
+          <p className="text-sm text-amber-800 font-light mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+            Enter your publish key above so saves can go live.
+          </p>
+        )}
+        {!autoSaveEnabled && loadStatus === 'ok' && (
+          <p className="text-sm text-amber-900 font-light mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+            Auto-save is off on this server. Use <strong className="font-normal">Download backup</strong> and
+            deploy via git, or set <code className="bg-amber-100/80 px-1 rounded">PROTECTONT_EVENTS_ADMIN_TOKEN</code>{' '}
+            in Render.
+          </p>
         )}
 
         <CollapsibleSection
@@ -381,10 +506,7 @@ export default function AdminEventsPage() {
               <input
                 type="checkbox"
                 checked={featuredCampaign.enabled}
-                onChange={(e) => {
-                  setFeaturedCampaign((c) => ({ ...c, enabled: e.target.checked }))
-                  setSaveHint(true)
-                }}
+                onChange={(e) => setFeaturedCampaign((c) => ({ ...c, enabled: e.target.checked }))}
                 className="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
               />
               Show announcement on the website
@@ -394,10 +516,7 @@ export default function AdminEventsPage() {
               <input
                 type="text"
                 value={featuredCampaign.label}
-                onChange={(e) => {
-                  setFeaturedCampaign((c) => ({ ...c, label: e.target.value }))
-                  setSaveHint(true)
-                }}
+                onChange={(e) => setFeaturedCampaign((c) => ({ ...c, label: e.target.value }))}
                 placeholder="e.g. Province-wide protest Saturday June 27, 2026 — find your city"
                 className={inputClass}
               />
@@ -407,10 +526,7 @@ export default function AdminEventsPage() {
               <input
                 type="date"
                 value={lastUpdated}
-                onChange={(e) => {
-                  setLastUpdated(e.target.value)
-                  setSaveHint(true)
-                }}
+                onChange={(e) => setLastUpdated(e.target.value)}
                 className={`${inputClass} max-w-xs`}
               />
             </div>
@@ -634,7 +750,7 @@ export default function AdminEventsPage() {
                 disabled={events.length === 0}
                 className="text-sm py-2 px-4 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-40 font-light transition-colors shadow-sm"
               >
-                Download list
+                Download backup
               </button>
             </div>
           </div>
@@ -735,26 +851,13 @@ export default function AdminEventsPage() {
           </div>
         </div>
 
-        <CollapsibleSection
-          title="When you are done"
-          subtitle="How to publish your changes"
-          defaultOpen={false}
-        >
-          <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-600 font-light pt-2">
-            <li>Review the list and fix any date warnings.</li>
-            <li>
-              Tap <strong className="font-normal text-slate-800">Download list</strong>.
-            </li>
-            <li>Send that file to your site publisher.</li>
-          </ol>
-          <p className="mt-4 text-sm text-slate-500 font-light">
-            Public suggestions go through the{' '}
-            <Link href="/about#contact" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
-              contact form
-            </Link>
-            .
-          </p>
-        </CollapsibleSection>
+        <p className="text-sm text-slate-500 font-light mb-6">
+          Public event suggestions go through the{' '}
+          <Link href="/about#contact" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
+            contact form
+          </Link>
+          .
+        </p>
 
         <p className="mt-4 text-center pb-8">
           <Link href="/" className="text-sm text-slate-500 hover:text-slate-800 font-light underline underline-offset-2">
