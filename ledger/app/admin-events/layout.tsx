@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Update events — Protect Ontario',
+  title: 'Manage events — Protect Ontario',
   robots: { index: false, follow: false },
 }
 
