@@ -14,6 +14,7 @@ import {
   parseProtestsFile,
   serializeProtestsFile,
   isValidProtestDate,
+  parseProtestDate,
   validateEvents,
 } from '../../lib/protests'
 
@@ -52,6 +53,56 @@ const emptyForm = (): EventForm => ({
   topics: [],
 })
 
+function CollapsibleSection({
+  title,
+  subtitle,
+  defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange,
+  accent = 'slate',
+  children,
+}: {
+  title: string
+  subtitle?: string
+  defaultOpen?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  accent?: 'slate' | 'rose' | 'blue'
+  children: React.ReactNode
+}) {
+  const [internalOpen, setInternalOpen] = useState(defaultOpen)
+  const open = controlledOpen ?? internalOpen
+  const setOpen = (value: boolean | ((v: boolean) => boolean)) => {
+    const next = typeof value === 'function' ? value(open) : value
+    onOpenChange?.(next)
+    if (controlledOpen === undefined) setInternalOpen(next)
+  }
+  const accentBorder =
+    accent === 'rose' ? 'border-rose-200' : accent === 'blue' ? 'border-blue-200' : 'border-slate-200'
+  const accentBg =
+    accent === 'rose' ? 'bg-rose-50/80' : accent === 'blue' ? 'bg-blue-50/50' : 'bg-white'
+
+  return (
+    <div className={`rounded-2xl border ${accentBorder} ${accentBg} shadow-sm overflow-hidden mb-6`}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-start justify-between gap-4 px-5 py-4 sm:px-6 text-left hover:bg-white/60 transition-colors"
+        aria-expanded={open}
+      >
+        <span>
+          <span className="block text-lg font-medium text-slate-900">{title}</span>
+          {subtitle && <span className="block text-sm text-slate-500 font-light mt-0.5">{subtitle}</span>}
+        </span>
+        <span className="text-slate-400 text-xl shrink-0 mt-0.5" aria-hidden>
+          {open ? '−' : '+'}
+        </span>
+      </button>
+      {open && <div className="px-5 pb-5 sm:px-6 sm:pb-6 pt-0 border-t border-slate-100/80">{children}</div>}
+    </div>
+  )
+}
+
 export default function AdminEventsPage() {
   const [events, setEvents] = useState<Protest[]>([])
   const [lastUpdated, setLastUpdated] = useState('')
@@ -64,6 +115,7 @@ export default function AdminEventsPage() {
   const [form, setForm] = useState<EventForm>(emptyForm())
   const [editingId, setEditingId] = useState<string | null>(null)
   const [saveHint, setSaveHint] = useState(false)
+  const [addFormOpen, setAddFormOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const applyFile = (file: ProtestsFile) => {
@@ -100,11 +152,44 @@ export default function AdminEventsPage() {
   const visibleCount = validation.filter((v) => v.visible).length
   const needsDateFix = validation.filter((v) => !v.dateOk).length
 
+  /** Newest first; events without a parseable date sink to the bottom */
+  const sortedEvents = useMemo(() => {
+    return [...events].sort((a, b) => {
+      const ta = parseProtestDate(a.date)?.getTime()
+      const tb = parseProtestDate(b.date)?.getTime()
+      if (ta != null && tb != null) return tb - ta
+      if (ta != null) return -1
+      if (tb != null) return 1
+      return 0
+    })
+  }, [events])
+
+  /** Month groups preserve newest-first order (first group = most recent month) */
+  const eventsByMonth = useMemo(() => {
+    const groups: { key: string; label: string; items: Protest[] }[] = []
+    const indexByKey = new Map<string, number>()
+    for (const p of sortedEvents) {
+      const d = parseProtestDate(p.date)
+      const key = d
+        ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+        : 'unknown'
+      const label = d
+        ? d.toLocaleString('en-US', { month: 'long', year: 'numeric' })
+        : 'Date not set'
+      const idx = indexByKey.get(key)
+      if (idx === undefined) {
+        indexByKey.set(key, groups.length)
+        groups.push({ key, label, items: [p] })
+      } else {
+        groups[idx].items.push(p)
+      }
+    }
+    return groups
+  }, [sortedEvents])
+
   const buildFile = (): ProtestsFile => ({
     lastUpdated: lastUpdated || new Date().toISOString().slice(0, 10),
-    featuredCampaign: featuredCampaign.label.trim()
-      ? featuredCampaign
-      : undefined,
+    featuredCampaign: featuredCampaign.label.trim() ? featuredCampaign : undefined,
     events,
   })
 
@@ -141,6 +226,7 @@ export default function AdminEventsPage() {
       topics: p.topics ?? [],
     })
     setEditingId(p.id)
+    setAddFormOpen(true)
   }
 
   const handleSave = () => {
@@ -160,6 +246,7 @@ export default function AdminEventsPage() {
   const handleCancelEdit = () => {
     setForm(emptyForm())
     setEditingId(null)
+    setAddFormOpen(false)
   }
 
   const handleRemove = (id: string) => {
@@ -218,70 +305,79 @@ export default function AdminEventsPage() {
     e.target.value = ''
   }
 
-  return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 md:px-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-light text-gray-900">Manage events</h1>
-            <p className="text-gray-600 font-light mt-2 max-w-xl">
-              Add, edit, or remove protests and rallies shown on the public Events page.
-            </p>
-          </div>
-          <Link
-            href="/protests"
-            className="text-sm text-blue-600 hover:text-blue-700 font-light underline underline-offset-2 shrink-0"
-          >
-            View public page →
-          </Link>
-        </div>
+  const inputClass =
+    'w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-slate-900 font-light bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-300 transition-shadow'
 
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-white">
+      <header className="bg-gradient-to-br from-slate-950 via-[#152a45] to-slate-900 text-white px-4 sm:px-6 md:px-8 py-10 sm:py-12">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-blue-200/90 mb-2 font-medium">
+                Events editor
+              </p>
+              <h1 className="text-2xl sm:text-3xl font-light tracking-tight">Manage events</h1>
+              <p className="text-slate-300/95 font-light mt-2 max-w-lg text-sm sm:text-base">
+                Add, edit, or remove protests shown on the public Events page.
+              </p>
+            </div>
+            <Link
+              href="/protests"
+              className="inline-flex items-center gap-1.5 text-sm text-white/90 hover:text-white bg-white/10 hover:bg-white/15 border border-white/20 rounded-full px-4 py-2 transition-colors shrink-0"
+            >
+              View live page →
+            </Link>
+          </div>
+
+          {loadStatus !== 'loading' && events.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-8">
+              <span className="inline-flex items-center rounded-full bg-white/10 border border-white/15 px-3 py-1 text-sm font-light">
+                {events.length} total
+              </span>
+              <span className="inline-flex items-center rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-100 px-3 py-1 text-sm font-light">
+                {visibleCount} live on site
+              </span>
+              {needsDateFix > 0 && (
+                <span className="inline-flex items-center rounded-full bg-amber-500/20 border border-amber-400/30 text-amber-100 px-3 py-1 text-sm font-light">
+                  {needsDateFix} need date fix
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 py-8 sm:py-10">
         {loadStatus === 'loading' && (
-          <p className="text-gray-500 text-sm font-light mb-6">Loading current events…</p>
+          <p className="text-slate-500 text-sm font-light mb-6 animate-pulse">Loading current events…</p>
         )}
         {loadStatus === 'error' && (
-          <div className="text-amber-900 text-sm font-light mb-6 bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <p className="font-medium text-amber-950 mb-1">Could not load the live event list</p>
-            <p>
-              Use <strong className="font-normal">Restore from backup</strong> below if you have a saved copy from
-              this page.
+          <div className="text-amber-950 text-sm font-light mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-5">
+            <p className="font-medium mb-1">Could not load the live event list</p>
+            <p className="text-amber-900">
+              Use <strong className="font-normal">Restore from backup</strong> below if you have a saved copy.
             </p>
-          </div>
-        )}
-
-        {events.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-xl p-4 mb-6 text-sm font-light">
-            <span className="text-gray-900">{events.length} events in your list</span>
-            <span className="text-slate-400 mx-2">·</span>
-            <span className="text-emerald-700">{visibleCount} will show on the website</span>
-            {needsDateFix > 0 && (
-              <>
-                <span className="text-slate-400 mx-2">·</span>
-                <span className="text-red-600">
-                  {needsDateFix} need a clearer date (won&apos;t show until fixed)
-                </span>
-              </>
-            )}
           </div>
         )}
 
         {saveHint && (
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm text-blue-900 font-light">
-            <p className="font-medium text-blue-950 mb-1">Remember to save your work</p>
-            <p>
-              Changes here are not live on the website until you download your updated list and send it to whoever
-              publishes the site.
+          <div className="bg-blue-600 text-white rounded-2xl p-5 mb-6 text-sm font-light shadow-lg shadow-blue-600/20">
+            <p className="font-medium mb-1">Remember to save your work</p>
+            <p className="text-blue-100">
+              Changes are not live until you download your updated list and send it to whoever publishes the site.
             </p>
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-          <h2 className="text-lg font-light text-gray-900 mb-1">Announcement banner</h2>
-          <p className="text-sm text-slate-500 font-light mb-4">
-            Optional red message at the top of the site and on the Events page.
-          </p>
-          <div className="space-y-4">
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+        <CollapsibleSection
+          title="Announcement banner"
+          subtitle="Optional message on the website and Events page"
+          defaultOpen={false}
+          accent="rose"
+        >
+          <div className="space-y-4 pt-2">
+            <label className="flex items-center gap-3 text-sm text-slate-700">
               <input
                 type="checkbox"
                 checked={featuredCampaign.enabled}
@@ -289,11 +385,12 @@ export default function AdminEventsPage() {
                   setFeaturedCampaign((c) => ({ ...c, enabled: e.target.checked }))
                   setSaveHint(true)
                 }}
+                className="rounded border-slate-300 text-rose-600 focus:ring-rose-500"
               />
               Show announcement on the website
             </label>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Announcement text</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Announcement text</label>
               <input
                 type="text"
                 value={featuredCampaign.label}
@@ -302,11 +399,11 @@ export default function AdminEventsPage() {
                   setSaveHint(true)
                 }}
                 placeholder="e.g. Province-wide protest Saturday June 27, 2026 — find your city"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                className={inputClass}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">List last updated</label>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">List last updated</label>
               <input
                 type="date"
                 value={lastUpdated}
@@ -314,30 +411,32 @@ export default function AdminEventsPage() {
                   setLastUpdated(e.target.value)
                   setSaveHint(true)
                 }}
-                className="w-full max-w-xs px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                className={`${inputClass} max-w-xs`}
               />
-              <p className="text-xs text-slate-500 mt-1">Shown on the Events page so visitors know the list is current.</p>
             </div>
           </div>
-        </div>
+        </CollapsibleSection>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-          <h2 className="text-lg font-light text-gray-900 mb-1">
-            {editingId ? 'Edit event' : 'Add a new event'}
-          </h2>
-          {editingId && (
-            <button
-              type="button"
-              onClick={handleCancelEdit}
-              className="text-sm text-slate-500 hover:text-slate-700 mb-4 underline underline-offset-2"
-            >
-              Cancel editing
-            </button>
-          )}
-          <div className="space-y-4">
+        <CollapsibleSection
+          title={editingId ? 'Edit event' : 'Add a new event'}
+          subtitle={editingId ? 'Update the fields below and save' : 'Tap + to expand the form'}
+          open={addFormOpen || !!editingId}
+          onOpenChange={setAddFormOpen}
+          accent="blue"
+        >
+          <div className="space-y-4 pt-2">
+            {editingId && (
+              <button
+                type="button"
+                onClick={handleCancelEdit}
+                className="text-sm text-slate-500 hover:text-slate-800 underline underline-offset-2"
+              >
+                Cancel editing
+              </button>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1.5">
                   Event name *
                 </label>
                 <input
@@ -346,11 +445,11 @@ export default function AdminEventsPage() {
                   value={form.title}
                   onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                   placeholder="e.g. Fight Ford Protests (June 27)"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1.5">
                   Date &amp; time
                 </label>
                 <input
@@ -359,23 +458,23 @@ export default function AdminEventsPage() {
                   value={form.date}
                   onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
                   placeholder="June 27, 2026 · 1:00 PM"
-                  className={`w-full px-3 py-2 border rounded-lg text-gray-900 font-light ${
-                    form.date && !isValidProtestDate(form.date) ? 'border-red-400' : 'border-slate-300'
-                  }`}
+                  className={`${inputClass} ${form.date && !isValidProtestDate(form.date) ? '!border-red-400 !ring-red-100' : ''}`}
                 />
                 {form.date && !isValidProtestDate(form.date) && (
-                  <p className="text-xs text-red-600 mt-1">
-                    Use a format like &quot;June 27, 2026 · 1:00 PM&quot; or &quot;June 27, 2026&quot;.
+                  <p className="text-xs text-red-600 mt-1.5">
+                    Use &quot;June 27, 2026 · 1:00 PM&quot; or &quot;June 27, 2026&quot;.
                   </p>
                 )}
               </div>
               <div>
-                <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Status
+                </label>
                 <select
                   id="status"
                   value={form.status}
                   onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as ProtestStatus }))}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                  className={inputClass}
                 >
                   {PROTEST_STATUSES.map((s) => (
                     <option key={s.id} value={s.id}>
@@ -385,7 +484,7 @@ export default function AdminEventsPage() {
                 </select>
               </div>
               <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="location" className="block text-sm font-medium text-slate-700 mb-1.5">
                   City
                 </label>
                 <input
@@ -394,11 +493,11 @@ export default function AdminEventsPage() {
                   value={form.location}
                   onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
                   placeholder="Toronto, ON"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="address" className="block text-sm font-medium text-slate-700 mb-1.5">
                   Meeting place / address
                 </label>
                 <input
@@ -406,25 +505,23 @@ export default function AdminEventsPage() {
                   type="text"
                   value={form.address}
                   onChange={(e) => setForm((f) => ({ ...f, address: e.target.value }))}
-                  placeholder="Queen's Park, 111 Wellesley St W"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <label htmlFor="organizer" className="block text-sm font-medium text-gray-700 mb-1">
-                  Who is organizing (optional)
+                <label htmlFor="organizer" className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Organizer (optional)
                 </label>
                 <input
                   id="organizer"
                   type="text"
                   value={form.organizer}
                   onChange={(e) => setForm((f) => ({ ...f, organizer: e.target.value }))}
-                  placeholder="Community group name"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                  className={inputClass}
                 />
               </div>
               <div>
-                <label htmlFor="campaignId" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="campaignId" className="block text-sm font-medium text-slate-700 mb-1.5">
                   Protest day group (optional)
                 </label>
                 <input
@@ -433,25 +530,22 @@ export default function AdminEventsPage() {
                   value={form.campaignId}
                   onChange={(e) => setForm((f) => ({ ...f, campaignId: e.target.value }))}
                   placeholder="e.g. june-27-2026"
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                  className={inputClass}
                 />
-                <p className="text-xs text-slate-500 mt-1">
-                  Use the same label for events that belong together on one province-wide day.
-                </p>
               </div>
             </div>
             <div>
-              <span className="block text-sm font-medium text-gray-700 mb-2">Topics (optional)</span>
+              <span className="block text-sm font-medium text-slate-700 mb-2">Topics (optional)</span>
               <div className="flex flex-wrap gap-2">
                 {PROTEST_TOPICS.map((t) => (
                   <button
                     key={t.id}
                     type="button"
                     onClick={() => toggleTopic(t.id)}
-                    className={`px-3 py-1 rounded-full text-sm font-light border transition-colors ${
+                    className={`px-3 py-1.5 rounded-full text-sm font-light border transition-all ${
                       form.topics.includes(t.id)
-                        ? 'bg-slate-900 text-white border-slate-900'
-                        : 'bg-white text-gray-600 border-slate-300 hover:border-slate-400'
+                        ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
+                        : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-800'
                     }`}
                   >
                     {t.label}
@@ -460,21 +554,20 @@ export default function AdminEventsPage() {
               </div>
             </div>
             <div>
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-                Short description for visitors
+              <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1.5">
+                Short description
               </label>
               <textarea
                 id="description"
                 rows={2}
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                placeholder="Where to meet and what to expect"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                className={inputClass}
               />
             </div>
             <div>
-              <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
-                Facebook or website link (optional)
+              <label htmlFor="link" className="block text-sm font-medium text-slate-700 mb-1.5">
+                Link (optional)
               </label>
               <input
                 id="link"
@@ -482,132 +575,193 @@ export default function AdminEventsPage() {
                 value={form.link}
                 onChange={(e) => setForm((f) => ({ ...f, link: e.target.value }))}
                 placeholder="https://"
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-gray-900 font-light"
+                className={inputClass}
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-gray-700">
+            <label className="flex items-center gap-3 text-sm text-slate-700">
               <input
                 type="checkbox"
                 checked={form.featured}
                 onChange={(e) => setForm((f) => ({ ...f, featured: e.target.checked }))}
+                className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
               />
-              Highlight this event near the top of the list
+              Highlight near top of public list
             </label>
             <button
               type="button"
               onClick={handleSave}
-              className="w-full py-3 bg-slate-900 text-white text-sm font-light rounded-lg hover:bg-slate-800 transition-colors"
+              className="w-full py-3.5 bg-gradient-to-r from-blue-700 to-blue-600 text-white text-sm font-medium rounded-xl hover:from-blue-800 hover:to-blue-700 transition-all shadow-md shadow-blue-600/25"
             >
               {editingId ? 'Save changes' : 'Add event'}
             </button>
           </div>
-        </div>
+        </CollapsibleSection>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-6 mb-8">
-          <h2 className="text-lg font-light text-gray-900 mb-2">Your event list ({events.length})</h2>
-          <p className="text-sm text-slate-600 font-light mb-4">
-            Tap an event to edit it. When you are finished, download a copy and send it to whoever updates the
-            live website.
-          </p>
-          <div className="flex flex-wrap gap-3 mb-4">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json,.txt,application/json"
-              className="hidden"
-              onChange={handleLoadFile}
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="text-sm py-2 px-4 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 font-light"
-            >
-              Restore from backup
-            </button>
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={events.length === 0}
-              className="text-sm py-2 px-4 bg-slate-800 text-white rounded-lg hover:bg-slate-700 disabled:opacity-50 font-light"
-            >
-              Download updated list
-            </button>
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-md shadow-slate-900/5 overflow-hidden mb-6">
+          <div className="px-5 py-4 sm:px-6 border-b border-slate-100 bg-slate-50/80 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-medium text-slate-900">Your events</h2>
+              <p className="text-xs text-slate-500 font-light mt-0.5">Newest first · tap to edit</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  handleCancelEdit()
+                  setAddFormOpen(true)
+                }}
+                className="text-sm py-2 px-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-light transition-colors shadow-sm"
+              >
+                + Add event
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json,.txt,application/json"
+                className="hidden"
+                onChange={handleLoadFile}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="text-sm py-2 px-4 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 font-light transition-colors"
+              >
+                Restore backup
+              </button>
+              <button
+                type="button"
+                onClick={handleDownload}
+                disabled={events.length === 0}
+                className="text-sm py-2 px-4 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-40 font-light transition-colors shadow-sm"
+              >
+                Download list
+              </button>
+            </div>
           </div>
-          <ul className="space-y-2 max-h-[32rem] overflow-y-auto">
-            {events.length === 0 ? (
-              <li className="text-sm text-slate-500 py-4">No events yet. Add one above.</li>
+
+          <div className="max-h-[32rem] overflow-y-auto">
+            {sortedEvents.length === 0 ? (
+              <p className="text-sm text-slate-500 py-12 text-center font-light px-4">
+                No events yet — tap <strong className="font-normal">+ Add event</strong> above.
+              </p>
             ) : (
-              events.map((p) => {
-                const v = validation.find((x) => x.id === p.id)
-                return (
-                  <li
-                    key={p.id}
-                    className={`flex items-start justify-between gap-3 py-3 border-b border-slate-100 last:border-0 ${
-                      editingId === p.id ? 'bg-blue-50/50 -mx-2 px-2 rounded' : ''
-                    }`}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => loadEventIntoForm(p)}
-                      className="min-w-0 text-left flex-1"
-                    >
-                      <p className="font-medium text-gray-900">{p.title}</p>
-                      <p className="text-sm text-gray-500">
-                        {p.date} · {p.location}
-                        {p.organizer ? ` · ${p.organizer}` : ''}
-                      </p>
-                      {!v?.dateOk || (p.status && p.status !== 'confirmed') ? (
-                        <p className="text-xs text-slate-500 mt-0.5">
-                          {!v?.dateOk && <span className="text-red-600">Check date format · </span>}
-                          {p.status && p.status !== 'confirmed' && <span>{p.status}</span>}
-                        </p>
-                      ) : null}
-                    </button>
-                    <div className="flex flex-col gap-1 shrink-0">
-                      <button
-                        type="button"
-                        onClick={() => handleDuplicate(p)}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-light"
-                      >
-                        Copy as new
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleRemove(p.id)}
-                        className="text-xs text-red-600 hover:text-red-800 font-light"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  </li>
-                )
-              })
+              eventsByMonth.map((group) => (
+                <section key={group.key}>
+                  <div className="sticky top-0 z-10 px-4 sm:px-5 py-2.5 bg-slate-100/95 backdrop-blur-sm border-y border-slate-200/80">
+                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-500">
+                      {group.label}
+                      <span className="font-normal text-slate-400 ml-2">({group.items.length})</span>
+                    </p>
+                  </div>
+                  <ul className="divide-y divide-slate-100">
+                    {group.items.map((p) => {
+                      const v = validation.find((x) => x.id === p.id)
+                      const isEditing = editingId === p.id
+                      const timePart = p.date.includes('·') ? p.date.split('·')[1]?.trim() : null
+                      return (
+                        <li
+                          key={p.id}
+                          className={`group transition-colors ${
+                            isEditing ? 'bg-blue-50' : 'hover:bg-slate-50/80'
+                          }`}
+                        >
+                          <div className="flex items-stretch">
+                            <div
+                              className={`w-1 shrink-0 ${
+                                isEditing
+                                  ? 'bg-blue-500'
+                                  : p.featured
+                                    ? 'bg-amber-400'
+                                    : 'bg-slate-200 group-hover:bg-blue-300'
+                              }`}
+                            />
+                            <div className="flex flex-1 items-start justify-between gap-3 py-4 px-4 sm:px-5 min-w-0">
+                              <button
+                                type="button"
+                                onClick={() => loadEventIntoForm(p)}
+                                className="min-w-0 text-left flex-1"
+                              >
+                                <div className="flex flex-wrap items-center gap-2 mb-1">
+                                  {timePart && (
+                                    <span className="text-xs font-medium text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md">
+                                      {timePart}
+                                    </span>
+                                  )}
+                                  {p.featured && (
+                                    <span className="text-[10px] uppercase tracking-wider bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded">
+                                      Highlighted
+                                    </span>
+                                  )}
+                                  {p.status && p.status !== 'confirmed' && (
+                                    <span className="text-[10px] uppercase tracking-wider bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                                      {p.status}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="font-medium text-slate-900 leading-snug">{p.title}</p>
+                                <p className="text-sm text-slate-500 font-light mt-1">
+                                  {p.location}
+                                  {p.organizer ? ` · ${p.organizer}` : ''}
+                                </p>
+                                {!v?.dateOk && (
+                                  <p className="text-xs text-red-600 mt-1">Check date format</p>
+                                )}
+                              </button>
+                              <div className="flex flex-col gap-1.5 shrink-0 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDuplicate(p)}
+                                  className="text-xs text-blue-600 hover:text-blue-800 font-light px-2 py-1 rounded-lg hover:bg-blue-50"
+                                >
+                                  Copy
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRemove(p.id)}
+                                  className="text-xs text-red-600 hover:text-red-800 font-light px-2 py-1 rounded-lg hover:bg-red-50"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </section>
+              ))
             )}
-          </ul>
+          </div>
         </div>
 
-        <div className="rounded-xl border border-slate-200 bg-slate-100/80 p-5 text-sm text-slate-600 font-light">
-          <p className="font-medium text-slate-800 mb-2">When you are done</p>
-          <ol className="list-decimal pl-5 space-y-1">
-            <li>Review the list above and fix any date warnings.</li>
-            <li>Tap <strong className="font-normal text-slate-800">Download updated list</strong>.</li>
-            <li>Send that file to your site publisher so the public Events page can be refreshed.</li>
+        <CollapsibleSection
+          title="When you are done"
+          subtitle="How to publish your changes"
+          defaultOpen={false}
+        >
+          <ol className="list-decimal pl-5 space-y-2 text-sm text-slate-600 font-light pt-2">
+            <li>Review the list and fix any date warnings.</li>
+            <li>
+              Tap <strong className="font-normal text-slate-800">Download list</strong>.
+            </li>
+            <li>Send that file to your site publisher.</li>
           </ol>
-          <p className="mt-3">
-            Need to list an event for the public? Visitors can also suggest rallies through the{' '}
+          <p className="mt-4 text-sm text-slate-500 font-light">
+            Public suggestions go through the{' '}
             <Link href="/about#contact" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
               contact form
             </Link>
             .
           </p>
-        </div>
+        </CollapsibleSection>
 
-        <p className="mt-8 text-center">
-          <Link href="/" className="text-sm text-blue-600 hover:text-blue-700 font-light underline underline-offset-2">
+        <p className="mt-4 text-center pb-8">
+          <Link href="/" className="text-sm text-slate-500 hover:text-slate-800 font-light underline underline-offset-2">
             ← Back to homepage
           </Link>
         </p>
-      </div>
+      </main>
     </div>
   )
 }
