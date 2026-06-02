@@ -29,6 +29,8 @@ export interface FeaturedCampaign {
   enabled: boolean
   label: string
   href?: string
+  /** Nearest-event lookup prefers this campaign when set */
+  campaignId?: string
 }
 
 export interface ProtestsFile {

@@ -74,51 +74,62 @@ export default function ProtestsPage() {
   const [selectedCity, setSelectedCity] = useState('All cities')
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
   const [selectedTopic, setSelectedTopic] = useState<ProtestTopicId | 'all'>('all')
+  const [showPastEvents, setShowPastEvents] = useState(false)
+  const [calendarExpanded, setCalendarExpanded] = useState(false)
 
-  const formattedProtests = useMemo(() => {
+  const startOfToday = useMemo(() => {
     const now = new Date()
-    const startOfCurrentMonth = new Date(now.getFullYear(), now.getMonth(), 1)
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  }, [])
+
+  type ProtestWithDate = Protest & { parsedDate: Date }
+
+  const protestsWithDates = useMemo(() => {
     return protests
       .map((protest) => ({
         ...protest,
         parsedDate: parseProtestDate(protest.date),
       }))
-      .filter((protest) => {
-        if (!protest.parsedDate) return false
-        return protest.parsedDate >= startOfCurrentMonth
-      })
+      .filter((p): p is ProtestWithDate => p.parsedDate !== null)
       .sort((a, b) => {
         if (a.featured && !b.featured) return -1
         if (!a.featured && b.featured) return 1
-        if (!a.parsedDate || !b.parsedDate) return 0
         return a.parsedDate.getTime() - b.parsedDate.getTime()
       })
   }, [protests])
 
+  const upcomingProtests = useMemo(
+    () => protestsWithDates.filter((p) => p.parsedDate >= startOfToday),
+    [protestsWithDates, startOfToday]
+  )
+
+  const pastProtests = useMemo(
+    () => protestsWithDates.filter((p) => p.parsedDate < startOfToday),
+    [protestsWithDates, startOfToday]
+  )
+
+  const displayPool = showPastEvents ? protestsWithDates : upcomingProtests
+
   const cityOptions = useMemo(() => {
     const cities = new Set<string>()
-    formattedProtests.forEach((protest) => {
+    displayPool.forEach((protest) => {
       const city = getCityFromLocation(protest.location)
       if (city) cities.add(city)
     })
     return ['All cities', ...Array.from(cities).sort()]
-  }, [formattedProtests])
+  }, [displayPool])
 
   const monthOptions = useMemo(() => {
     const months = new Map<string, string>()
-    const now = new Date()
-    const currentMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`
-    formattedProtests.forEach((protest) => {
-      if (!protest.parsedDate) return
+    displayPool.forEach((protest) => {
       const year = protest.parsedDate.getFullYear()
       const month = protest.parsedDate.getMonth()
       const key = `${year}-${String(month + 1).padStart(2, '0')}`
-      if (key < currentMonthKey) return
       const label = protest.parsedDate.toLocaleString('en-US', { month: 'long', year: 'numeric' })
       months.set(key, label)
     })
     return Array.from(months.entries()).sort(([a], [b]) => (a < b ? -1 : 1))
-  }, [formattedProtests])
+  }, [displayPool])
 
   useEffect(() => {
     if (!selectedMonth && monthOptions.length > 0) {
@@ -127,24 +138,33 @@ export default function ProtestsPage() {
   }, [monthOptions, selectedMonth])
 
   const filteredProtests = useMemo(() => {
-    return formattedProtests.filter((protest) => {
+    return displayPool.filter((protest) => {
       const city = getCityFromLocation(protest.location)
       const cityMatch = selectedCity === 'All cities' || city === selectedCity || protest.location?.startsWith(selectedCity)
       const monthMatch = !selectedMonth
         ? true
-        : protest.parsedDate
-          ? `${protest.parsedDate.getFullYear()}-${String(protest.parsedDate.getMonth() + 1).padStart(2, '0')}` === selectedMonth
-          : false
+        : `${protest.parsedDate.getFullYear()}-${String(protest.parsedDate.getMonth() + 1).padStart(2, '0')}` === selectedMonth
       const topicMatch =
         selectedTopic === 'all' || (protest.topics?.includes(selectedTopic) ?? false)
       return cityMatch && monthMatch && topicMatch
     })
-  }, [formattedProtests, selectedCity, selectedMonth, selectedTopic])
+  }, [displayPool, selectedCity, selectedMonth, selectedTopic])
 
   const calendarProtests = useMemo(
     () => filteredProtests.filter((p) => p.status !== 'cancelled'),
     [filteredProtests]
   )
+
+  const calendarDaysWithEvents = useMemo(() => {
+    if (!selectedMonth) return 0
+    const days = new Set<number>()
+    calendarProtests.forEach((protest) => {
+      days.add(protest.parsedDate.getDate())
+    })
+    return days.size
+  }, [calendarProtests, selectedMonth])
+
+  const showCalendarBlock = calendarDaysWithEvents > 1
 
   const calendarDays = useMemo(() => {
     if (!selectedMonth) return []
@@ -319,7 +339,17 @@ export default function ProtestsPage() {
           </div>
         </section>
 
-        {!loading && <FindNearestProtest protests={protests} campaignId="may-30-2026" />}
+        {!loading && upcomingProtests.length > 0 && (
+          <FindNearestProtest
+            protests={upcomingProtests}
+            campaignId={featuredCampaign?.campaignId}
+            dateLabel={
+              featuredCampaign?.label?.includes('June 27')
+                ? 'Saturday June 27, 2026'
+                : 'upcoming province-wide actions'
+            }
+          />
+        )}
 
         <ProtestFaq />
 
@@ -409,12 +439,13 @@ export default function ProtestsPage() {
               className="mt-10 rounded-xl bg-blue-50/60 border border-blue-100 p-6 sm:p-8 text-center"
             >
               <p className="text-gray-700 font-light text-base sm:text-lg leading-relaxed">
-                <strong className="font-normal text-gray-900">Have a rally to list?</strong> Send the title, date, city,
-                and event link through the{' '}
+                <strong className="font-normal text-gray-900">Want to add an event?</strong> Anyone can suggest a rally—we
+                don&apos;t offer organizer logins. Send the title, date, time, city, address, and a link (if you have one)
+                through the{' '}
                 <Link href="/about#contact" className="text-blue-600 underline underline-offset-2 hover:text-blue-700">
                   contact form on About
                 </Link>
-                . We add events when we publish updates—we don&apos;t hand out site logins to organizers.
+                . We review submissions and publish updates here.
               </p>
             </motion.div>
           </div>
@@ -435,16 +466,19 @@ export default function ProtestsPage() {
           </section>
         )}
 
-        {/* Filters + Calendar */}
-        <section className="relative px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 border-b border-slate-200 overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-400 to-blue-600 opacity-80" />
-          <div className="max-w-5xl mx-auto pl-4 sm:pl-6">
+        {/* Event list + filters */}
+        <section
+          id="event-list"
+          className="relative scroll-mt-28 sm:scroll-mt-32 px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 border-b border-slate-200 overflow-hidden"
+        >
+          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-300 to-blue-600 opacity-70" />
+          <div className="max-w-5xl mx-auto pr-4 sm:pl-6">
             <div className="flex flex-col md:flex-row md:items-end gap-4 md:gap-6 mb-6">
               <div className="flex-1">
-                <p className="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Browse events</p>
+                <p className="text-sm uppercase tracking-[0.2em] text-slate-400 mb-2">Upcoming events</p>
                 <h2 className="text-2xl md:text-3xl font-light text-gray-900 mb-2">Find a protest near you</h2>
                 <p className="text-gray-600 font-light">
-                  Filter by topic and city. Calendar shows confirmed upcoming events.
+                  Past rallies are hidden by default. Filter by city, month, and topic.
                   {lastUpdated && (
                     <span className="block text-sm text-slate-500 mt-1">List last updated {lastUpdated}.</span>
                   )}
@@ -510,112 +544,23 @@ export default function ProtestsPage() {
               ))}
             </div>
 
-            {loading ? (
-              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
-                Loading calendar…
-              </div>
-            ) : monthOptions.length === 0 ? (
-              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
-                No events listed yet.
-              </div>
-            ) : filteredProtests.length === 0 ? (
-              <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-6 text-sm text-slate-500">
-                No events match these filters. Try another city, month, or topic.
-              </div>
-            ) : (
-              <div className="mt-8 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                <div className="hidden sm:block">
-                  <div className="grid grid-cols-7 bg-slate-100 text-xs uppercase tracking-widest text-slate-500">
-                    {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
-                      <div key={day} className="px-3 py-2 text-center">
-                        {day}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-7 gap-px bg-slate-100">
-                    {calendarDays.map((cell, idx) => (
-                      <div key={`${cell.day}-${idx}`} className="min-h-[110px] bg-white p-2">
-                        <div className="text-xs text-slate-400 mb-1">{cell.day ?? ''}</div>
-                        <div className="space-y-1">
-                          {cell.events.slice(0, 2).map((event) => {
-                            const city = getCityFromLocation(event.location)
-                            return (
-                              <button
-                                key={event.id}
-                                type="button"
-                                onClick={() => {
-                                  const el = document.getElementById(`event-${event.id}`)
-                                  if (el) {
-                                    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                  }
-                                }}
-                                className="w-full text-left rounded-md bg-blue-50 text-blue-700 text-xs px-2 py-1 leading-tight hover:bg-blue-100 transition-colors"
-                              >
-                                <span className="block font-medium">{event.title}</span>
-                                {city ? <span className="block text-[11px] text-blue-500">{city}</span> : null}
-                              </button>
-                            )
-                          })}
-                          {cell.events.length > 2 && (
-                            <div className="text-xs text-slate-400">+{cell.events.length - 2} more</div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="sm:hidden">
-                  <div className="divide-y divide-slate-100">
-                    {mobileEventGroups.length === 0 ? (
-                      <div className="p-4 text-sm text-slate-500">No events this month.</div>
-                    ) : (
-                      mobileEventGroups.map((group) => (
-                        <div key={group.key} className="p-4">
-                          <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">{group.label}</div>
-                          <div className="space-y-2">
-                            {group.items.map((event) => {
-                              const city = getCityFromLocation(event.location)
-                              return (
-                                <button
-                                  key={event.id}
-                                  type="button"
-                                  onClick={() => {
-                                    const el = document.getElementById(`event-${event.id}`)
-                                    if (el) {
-                                      el.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                    }
-                                  }}
-                                  className="w-full text-left rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-2 text-sm text-blue-800"
-                                >
-                                  <div className="font-medium">{event.title}</div>
-                                  {city ? <div className="text-xs text-blue-600">{city}</div> : null}
-                                </button>
-                              )
-                            })}
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {/* Card list */}
-        <section
-          id="event-list"
-          className="relative scroll-mt-28 sm:scroll-mt-32 px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-slate-50 min-h-[50vh] overflow-hidden"
-        >
-          <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-blue-300 to-blue-600 opacity-70" />
-          <div className="max-w-5xl mx-auto pr-4 sm:pr-6">
-            <div className="flex flex-wrap items-baseline justify-between gap-4 mb-8 md:mb-10">
-              <h2 className="text-2xl md:text-3xl font-light text-gray-900">Event list</h2>
+            <div className="flex flex-wrap items-center justify-between gap-3 mb-8">
               {!loading && filteredProtests.length > 0 && (
                 <p className="text-sm text-slate-500 font-light">{filteredProtests.length} shown</p>
               )}
+              {pastProtests.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowPastEvents((v) => !v)}
+                  className="text-sm text-blue-600 font-light underline underline-offset-2 hover:text-blue-700"
+                >
+                  {showPastEvents
+                    ? 'Hide past events'
+                    : `Show past events (${pastProtests.length})`}
+                </button>
+              )}
             </div>
+
             {loading ? (
               <div className="rounded-xl bg-white border border-slate-200 p-12 text-center">
                 <p className="text-gray-500 font-light">Loading…</p>
@@ -725,6 +670,113 @@ export default function ProtestsPage() {
                     </motion.article>
                   )
                 })}
+              </div>
+            )}
+
+            {showCalendarBlock && !loading && filteredProtests.length > 0 && (
+              <div className="mt-12 pt-10 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setCalendarExpanded((v) => !v)}
+                  className="flex w-full items-center justify-between gap-4 text-left rounded-xl border border-slate-200 bg-white px-5 py-4 hover:bg-slate-50 transition-colors"
+                  aria-expanded={calendarExpanded}
+                >
+                  <span>
+                    <span className="block text-sm uppercase tracking-[0.2em] text-slate-400 mb-1">
+                      Optional
+                    </span>
+                    <span className="block text-lg font-light text-gray-900">Calendar view</span>
+                    <span className="block text-sm text-slate-500 font-light mt-1">
+                      Month grid for {monthOptions.find(([k]) => k === selectedMonth)?.[1] ?? 'selected month'}
+                    </span>
+                  </span>
+                  <span className="text-slate-400 text-xl shrink-0" aria-hidden>
+                    {calendarExpanded ? '−' : '+'}
+                  </span>
+                </button>
+
+                {calendarExpanded && (
+                  <div className="mt-4 rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                    <div className="hidden sm:block">
+                      <div className="grid grid-cols-7 bg-slate-100 text-xs uppercase tracking-widest text-slate-500">
+                        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((day) => (
+                          <div key={day} className="px-3 py-2 text-center">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-7 gap-px bg-slate-100">
+                        {calendarDays.map((cell, idx) => (
+                          <div key={`${cell.day}-${idx}`} className="min-h-[110px] bg-white p-2">
+                            <div className="text-xs text-slate-400 mb-1">{cell.day ?? ''}</div>
+                            <div className="space-y-1">
+                              {cell.events.slice(0, 2).map((event) => {
+                                const city = getCityFromLocation(event.location)
+                                return (
+                                  <button
+                                    key={event.id}
+                                    type="button"
+                                    onClick={() => {
+                                      document.getElementById(`event-${event.id}`)?.scrollIntoView({
+                                        behavior: 'smooth',
+                                        block: 'start',
+                                      })
+                                    }}
+                                    className="w-full text-left rounded-md bg-blue-50 text-blue-700 text-xs px-2 py-1 leading-tight hover:bg-blue-100 transition-colors"
+                                  >
+                                    <span className="block font-medium">{event.title}</span>
+                                    {city ? (
+                                      <span className="block text-[11px] text-blue-500">{city}</span>
+                                    ) : null}
+                                  </button>
+                                )
+                              })}
+                              {cell.events.length > 2 && (
+                                <div className="text-xs text-slate-400">+{cell.events.length - 2} more</div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="sm:hidden">
+                      <div className="divide-y divide-slate-100">
+                        {mobileEventGroups.length === 0 ? (
+                          <div className="p-4 text-sm text-slate-500">No events this month.</div>
+                        ) : (
+                          mobileEventGroups.map((group) => (
+                            <div key={group.key} className="p-4">
+                              <div className="text-xs uppercase tracking-widest text-slate-400 mb-2">
+                                {group.label}
+                              </div>
+                              <div className="space-y-2">
+                                {group.items.map((event) => {
+                                  const city = getCityFromLocation(event.location)
+                                  return (
+                                    <button
+                                      key={event.id}
+                                      type="button"
+                                      onClick={() => {
+                                        document.getElementById(`event-${event.id}`)?.scrollIntoView({
+                                          behavior: 'smooth',
+                                          block: 'start',
+                                        })
+                                      }}
+                                      className="w-full text-left rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-2 text-sm text-blue-800"
+                                    >
+                                      <div className="font-medium">{event.title}</div>
+                                      {city ? <div className="text-xs text-blue-600">{city}</div> : null}
+                                    </button>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>

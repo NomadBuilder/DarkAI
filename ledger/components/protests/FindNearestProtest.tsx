@@ -19,11 +19,17 @@ import {
 
 type Props = {
   protests: Protest[]
-  /** Prefer May 30 campaign when finding nearest */
+  /** Prefer this campaign when finding nearest (e.g. june-27-2026) */
   campaignId?: string
+  /** Shown in helper copy, e.g. "June 27, 2026" */
+  dateLabel?: string
 }
 
-export default function FindNearestProtest({ protests, campaignId = 'may-30-2026' }: Props) {
+export default function FindNearestProtest({
+  protests,
+  campaignId,
+  dateLabel = 'upcoming province-wide actions',
+}: Props) {
   const [postal, setPostal] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -82,15 +88,12 @@ export default function FindNearestProtest({ protests, campaignId = 'may-30-2026
           viewport={{ once: true }}
           transition={{ duration: 0.45 }}
         >
-          <p className="text-xs sm:text-sm uppercase tracking-[0.3em] text-blue-800/70 mb-3 font-medium text-center">
-            May 30, 2026
-          </p>
           <h2 className="text-2xl sm:text-3xl font-light text-gray-900 mb-3 text-center">
             Find your nearest protest
           </h2>
           <p className="text-gray-600 font-light text-center mb-8 leading-relaxed max-w-xl mx-auto">
             Enter your postal code (or ZIP if you&apos;re near the border). We&apos;ll show the closest Fight Ford
-            rallies on May 30 and scroll you to the details.
+            rallies for {dateLabel}.
           </p>
 
           <form
@@ -133,8 +136,7 @@ export default function FindNearestProtest({ protests, campaignId = 'may-30-2026
           {results && results.length > 0 && (
             <div className="mt-8 space-y-4" role="status" aria-live="polite">
               <p className="text-sm text-slate-500 font-light text-center">
-                Closest listings for May 30 (straight-line distance between city centres—confirm the exact spot on
-                the map):
+                Closest listings (straight-line distance between city centres—confirm the exact spot on the map):
               </p>
               {results.map(({ protest, distanceKm, city }, idx) => {
                 const mapsUrl = mapsUrlForEvent(protest)

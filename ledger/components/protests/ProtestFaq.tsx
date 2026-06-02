@@ -23,7 +23,7 @@ const FAQ_ITEMS: FaqItem[] = [
     question: 'I’ve never been to a protest. Is that okay?',
     answer: (
       <>
-        Yes. Many people at province-wide days like May 30 are attending their first rally. You don&apos;t need
+        Yes. Many people at province-wide days are attending their first rally. You don&apos;t need
         experience—showing up with a sign or simply standing in solidarity counts. Arrive a few minutes early, find
         the gathering point listed for your city, and follow what the crowd and any marshals or organizers are doing.
       </>
@@ -149,7 +149,7 @@ export default function ProtestFaq() {
           </h2>
           <p className="text-gray-600 font-light leading-relaxed max-w-2xl mx-auto">
             Nervous about what to expect? You&apos;re not alone. Here are straightforward answers for people heading
-            to their first rally—especially the province-wide day on May 30, 2026.
+            to their first rally—especially upcoming province-wide days.
           </p>
         </motion.div>
 

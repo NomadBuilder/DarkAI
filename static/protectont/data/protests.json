@@ -1,9 +1,10 @@
 {
-  "lastUpdated": "2026-05-28",
+  "lastUpdated": "2026-06-02",
   "featuredCampaign": {
     "enabled": true,
-    "label": "Province-wide protests (60+ cities!) on May 30, 2026 — find your city and join in",
-    "href": "#event-list"
+    "label": "Province-wide protest Saturday June 27, 2026 — find your city and join in",
+    "href": "#event-list",
+    "campaignId": "june-27-2026"
   },
   "events": [
     {
@@ -1023,6 +1024,199 @@
       ],
       "campaignId": "may-30-2026",
       "featured": false,
+      "address": "12 Perry St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-angus",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Angus, ON",
+      "description": "Peacekeepers Park, 12 Commerce Rd.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "12 Commerce Rd"
+    },
+    {
+      "id": "fight-ford-2026-06-27-barrie",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Barrie, ON",
+      "description": "Sadlon Arena, 555 Bayview Dr.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "555 Bayview Dr"
+    },
+    {
+      "id": "fight-ford-2026-06-27-bowmanville",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "Bowmanville, ON",
+      "description": "23 King St W. Target: MPP Todd McCarthy's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "23 King St W"
+    },
+    {
+      "id": "fight-ford-2026-06-27-brantford",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Brantford, ON",
+      "description": "96 Nelson St. Target: MPP Will Bouma's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "96 Nelson St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-cornwall",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Cornwall, ON",
+      "description": "120 2nd St W. Target: MPP Nolan Quinn's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "120 2nd St W"
+    },
+    {
+      "id": "fight-ford-2026-06-27-guelph",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Guelph, ON",
+      "description": "Wellington Plaza, Gordon St & Wellington St E.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-london",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "London, ON",
+      "description": "Victoria Park northwest corner, Central Ave.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-new-liskeard",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 10:00 AM",
+      "location": "New Liskeard, ON",
+      "description": "Canada Post, 83 Whitewood Ave.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "83 Whitewood Ave"
+    },
+    {
+      "id": "fight-ford-2026-06-27-simcoe",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Simcoe, ON",
+      "description": "Wellington Park, 50 Bonnie Dr.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "50 Bonnie Dr"
+    },
+    {
+      "id": "fight-ford-2026-06-27-st-catharines",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 11:00 AM",
+      "location": "St. Catharines, ON",
+      "description": "Pen Centre, Tremont Dr & Glendale Ave.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-stayner",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "Stayner, ON",
+      "description": "7317 Highway 26 E. Target: MPP Brian Saunderson's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "7317 Highway 26 E"
+    },
+    {
+      "id": "fight-ford-2026-06-27-stratford",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 10:00 AM",
+      "location": "Stratford, ON",
+      "description": "55 Lorne Ave E. Target: MPP Matthew Rae's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "55 Lorne Ave E"
+    },
+    {
+      "id": "fight-ford-2026-06-27-wallaceburg",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026",
+      "location": "Wallaceburg, ON",
+      "description": "60 McNaughton Ave. Target: MPP Steve Pinsonneault's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "60 McNaughton Ave"
+    },
+    {
+      "id": "fight-ford-2026-06-27-woodstock",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Woodstock, ON",
+      "description": "12 Perry St. Target: MPP Ernie Hardeman's office.",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
       "address": "12 Perry St"
     }
   ]

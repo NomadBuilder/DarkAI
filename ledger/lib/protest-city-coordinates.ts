@@ -55,6 +55,7 @@ export const PROTEST_CITY_COORDINATES: Record<string, LatLng> = {
   strathroy: { lat: 42.955, lng: -81.623 },
   sudbury: { lat: 46.4917, lng: -80.993 },
   'temiskaming shores': { lat: 47.5126, lng: -79.6829 },
+  'new liskeard': { lat: 47.5126, lng: -79.6829 },
   'thunder bay': { lat: 48.3809, lng: -89.2477 },
   toronto: { lat: 43.6532, lng: -79.3832 },
   vaughan: { lat: 43.8361, lng: -79.4983 },
