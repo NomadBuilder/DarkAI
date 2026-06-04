@@ -11,8 +11,123 @@ export type VolunteerOptionCopy = {
   label: string
 }
 
+export type SelectOptionCopy = {
+  value: string
+  label: string
+}
+
+export type ContactCopy = {
+  detailsTitleSign: string
+  detailsTitleOther: string
+  nameLabel: string
+  namePlaceholder: string
+  emailLabel: string
+  emailPlaceholder: string
+  phoneLabel: string
+  phoneRecommended: string
+  phonePlaceholderSign: string
+  phonePlaceholderOther: string
+  cityLabel: string
+  cityPlaceholder: string
+  postalLabel: string
+  postalPlaceholder: string
+}
+
+export type YardSignCopy = {
+  sectionTitle: string
+  introPrefix: string
+  productsLinkLabel: string
+  introMiddle: string
+  paymentEmail: string
+  introSuffix: string
+  deliveryAddressLabel: string
+  deliveryAddressPlaceholder: string
+  quantityLabel: string
+  quantityPlaceholder: string
+  quantityOptions: SelectOptionCopy[]
+  sizeLabel: string
+  sizePlaceholder: string
+  sizeOptions: SelectOptionCopy[]
+  paymentLabel: string
+  paymentPaidLabel: string
+  paymentNotYetLabel: string
+  deliveryNotesLabel: string
+  deliveryNotesPlaceholder: string
+}
+
+export type DropoffCopy = {
+  sectionTitle: string
+  locationLabel: string
+  locationPlaceholder: string
+  availabilityLabel: string
+  availabilityPlaceholder: string
+  capacityLabel: string
+  capacityPlaceholder: string
+  listPubliclyLabel: string
+  listPubliclyYes: string
+  listPubliclyNo: string
+}
+
+export type VolunteerSectionCopy = {
+  sectionTitle: string
+  rolesLabel: string
+  availabilityLabel: string
+  availabilityPlaceholder: string
+  vehicleLabel: string
+  vehicleYes: string
+  vehicleNo: string
+}
+
+export type OtherSectionCopy = {
+  sectionTitle: string
+  intro: string
+  detailsLabel: string
+  detailsPlaceholder: string
+}
+
+export type SharedCopy = {
+  anythingElseLabel: string
+  anythingElsePlaceholder: string
+  submitAnotherLabel: string
+  sendingLabel: string
+}
+
+export type SuccessYardSignCopy = {
+  prefix: string
+  productsLinkLabel: string
+  middle: string
+  paymentEmail: string
+  suffix: string
+}
+
+export type ValidationCopy = {
+  chooseRole: string
+  name: string
+  email: string
+  consent: string
+  phoneSign: string
+  city: string
+  postalSign: string
+  deliveryAddress: string
+  signSize: string
+  signQuantity: string
+  signPayment: string
+  otherDetails: string
+  dropoffLocation: string
+  dropoffAvailability: string
+  dropoffListPublicly: string
+  volunteerRoles: string
+  volunteerAvailability: string
+}
+
+export type ErrorsCopy = {
+  unavailable: string
+  loading: string
+  submitFailed: string
+}
+
 export type GetInvolvedFormCopy = {
-  version: 1
+  version: 2
   rolesQuestion: string
   submitButton: string
   footerPrefix: string
@@ -22,10 +137,38 @@ export type GetInvolvedFormCopy = {
   consentText: string
   roles: FormRoleCopy[]
   volunteerOptions: VolunteerOptionCopy[]
+  contact: ContactCopy
+  yardSign: YardSignCopy
+  dropoff: DropoffCopy
+  volunteer: VolunteerSectionCopy
+  other: OtherSectionCopy
+  shared: SharedCopy
+  successYardSign: SuccessYardSignCopy
+  validation: ValidationCopy
+  errors: ErrorsCopy
+}
+
+function mergeStr(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value.trim() : fallback
+}
+
+function mergeSelectOptions(value: unknown, fallback: SelectOptionCopy[]): SelectOptionCopy[] {
+  if (!Array.isArray(value) || value.length === 0) return fallback
+  const parsed = value
+    .filter((o) => o && typeof o === 'object' && typeof (o as { value?: string }).value === 'string')
+    .map((o) => {
+      const item = o as { value: string; label?: string }
+      const fb = fallback.find((x) => x.value === item.value)
+      return {
+        value: item.value,
+        label: mergeStr(item.label, fb?.label ?? item.value),
+      }
+    })
+  return parsed.length > 0 ? parsed : fallback
 }
 
 export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
-  version: 1,
+  version: 2,
   rolesQuestion: 'How do you want to get involved? *',
   submitButton: 'Submit sign-up',
   footerPrefix: 'Rallies and corrections: use the',
@@ -41,17 +184,140 @@ export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
     description: r.description,
   })),
   volunteerOptions: volunteerRoleOptions.map((o) => ({ id: o.id, label: o.label })),
+  contact: {
+    detailsTitleSign: 'Your details',
+    detailsTitleOther: 'Your contact info',
+    nameLabel: 'Full name *',
+    namePlaceholder: 'Your name',
+    emailLabel: 'Email *',
+    emailPlaceholder: 'you@example.com',
+    phoneLabel: 'Phone',
+    phoneRecommended: ' (recommended)',
+    phonePlaceholderSign: 'For delivery coordination',
+    phonePlaceholderOther: 'Optional',
+    cityLabel: 'City / community *',
+    cityPlaceholder: 'e.g. Toronto, Ottawa, Hamilton',
+    postalLabel: 'Postal code',
+    postalPlaceholder: 'e.g. M5V 1A1',
+  },
+  yardSign: {
+    sectionTitle: 'Sign request',
+    introPrefix: '$10 per sign, delivered by volunteers—not shipped by mail. Pay on ',
+    productsLinkLabel: 'Products',
+    introMiddle: ' or via e-transfer to ',
+    paymentEmail: 'FIGHT_FORD_SIGNS@outlook.com',
+    introSuffix: " (preferred) when you're ready.",
+    deliveryAddressLabel: 'Where you live / delivery address *',
+    deliveryAddressPlaceholder: 'Street address, intersection, or clear directions for drop-off',
+    quantityLabel: 'How many signs? *',
+    quantityPlaceholder: 'Select quantity',
+    quantityOptions: [
+      { value: '1', label: '1' },
+      { value: '2', label: '2' },
+      { value: '3', label: '3' },
+      { value: '4+', label: '4 or more' },
+    ],
+    sizeLabel: 'Size *',
+    sizePlaceholder: 'Select a size',
+    sizeOptions: [
+      { value: '24x18', label: '24" × 18"' },
+      { value: '18x12', label: '18" × 12"' },
+      { value: 'any', label: 'Any size' },
+    ],
+    paymentLabel: 'Payment *',
+    paymentPaidLabel: 'I already paid $10 per sign (Products, Stripe, or e-transfer)',
+    paymentNotYetLabel: 'Not yet — I will pay on Products, Stripe, or e-transfer',
+    deliveryNotesLabel: 'Delivery notes (optional)',
+    deliveryNotesPlaceholder: 'Porch vs apartment, best times, etc.',
+  },
+  dropoff: {
+    sectionTitle: 'Drop-off / pickup point',
+    locationLabel: 'Address or area you can serve *',
+    locationPlaceholder:
+      'Neighbourhood, intersection, or full address if you are comfortable sharing',
+    availabilityLabel: 'When are you usually available? *',
+    availabilityPlaceholder: 'e.g. Weekday evenings, Saturday mornings, flexible',
+    capacityLabel: 'Roughly how many signs can you store at once?',
+    capacityPlaceholder: 'e.g. 5–10 in a garage',
+    listPubliclyLabel: 'May we list your area publicly for neighbours? *',
+    listPubliclyYes: 'Yes — general area only',
+    listPubliclyNo: 'No — coordinate privately',
+  },
+  volunteer: {
+    sectionTitle: 'Volunteer',
+    rolesLabel: 'What can you help with? *',
+    availabilityLabel: 'General availability *',
+    availabilityPlaceholder: 'Hours per week, days, or specific dates',
+    vehicleLabel: 'Do you have a vehicle for local runs?',
+    vehicleYes: 'Yes',
+    vehicleNo: 'No',
+  },
+  other: {
+    sectionTitle: 'Something else',
+    intro: "Weird idea? Partnership? Something we didn't list? Put it here—we read everything.",
+    detailsLabel: 'What do you need? *',
+    detailsPlaceholder: 'Describe your request in a few sentences…',
+  },
+  shared: {
+    anythingElseLabel: 'Anything else?',
+    anythingElsePlaceholder: 'Optional',
+    submitAnotherLabel: 'Submit another sign-up',
+    sendingLabel: 'Sending…',
+  },
+  successYardSign: {
+    prefix: "Haven't paid yet? Pay $10 per sign on ",
+    productsLinkLabel: 'Products',
+    middle: ', Stripe checkout, or e-transfer to ',
+    paymentEmail: 'FIGHT_FORD_SIGNS@outlook.com',
+    suffix: " when you're ready.",
+  },
+  validation: {
+    chooseRole: 'Please choose how you want to get involved.',
+    name: 'Please enter your name.',
+    email: 'Please enter your email.',
+    consent: 'Please confirm you agree to be contacted.',
+    phoneSign: 'Please enter a phone number so we can arrange delivery.',
+    city: 'Please enter your city or community.',
+    postalSign: 'Please enter your postal code.',
+    deliveryAddress: 'Please tell us where you live / where we should deliver the sign(s).',
+    signSize: 'Please choose a sign size.',
+    signQuantity: 'Please tell us how many signs you need.',
+    signPayment: 'Please tell us if you have paid yet ($10 per sign).',
+    otherDetails: 'Please describe what you’re looking for.',
+    dropoffLocation: 'Please describe where you can host pickup or drop-off.',
+    dropoffAvailability: 'Please share when you are usually available.',
+    dropoffListPublicly: 'Please say whether we may list your area publicly.',
+    volunteerRoles: 'Please select at least one way you can help.',
+    volunteerAvailability: 'Please share your general availability.',
+  },
+  errors: {
+    unavailable:
+      'Sign-up is temporarily unavailable. Please try again later or use the About contact form.',
+    loading: 'Still loading—please try again in a moment.',
+    submitFailed:
+      'Something went wrong sending your sign-up. Please try again in a moment, or email the organizers listed on About.',
+  },
 })
 
 const ROLE_IDS: InvolvementRole[] = ['yard-sign', 'dropoff', 'volunteer', 'other']
+
+function mergeSection<T extends object>(value: unknown, fallback: T, keys: (keyof T)[]): T {
+  const src = value && typeof value === 'object' ? (value as Record<string, unknown>) : {}
+  const out = { ...fallback }
+  for (const key of keys) {
+    const fb = fallback[key]
+    const v = src[key as string]
+    if (typeof fb === 'string') {
+      ;(out as Record<string, unknown>)[key as string] = mergeStr(v, fb)
+    }
+  }
+  return out
+}
 
 export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
   const base = defaultGetInvolvedFormCopy()
   if (!data || typeof data !== 'object') return base
   const d = data as Record<string, unknown>
-
-  const str = (key: keyof GetInvolvedFormCopy, fallback: string) =>
-    typeof d[key] === 'string' && (d[key] as string).trim() ? (d[key] as string).trim() : fallback
 
   let roles = base.roles
   if (Array.isArray(d.roles)) {
@@ -63,11 +329,8 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
       const fallback = base.roles.find((r) => r.id === id)!
       parsed.push({
         id,
-        label: typeof row?.label === 'string' && row.label.trim() ? row.label.trim() : fallback.label,
-        description:
-          typeof row?.description === 'string' && row.description.trim()
-            ? row.description.trim()
-            : fallback.description,
+        label: mergeStr(row?.label, fallback.label),
+        description: mergeStr(row?.description, fallback.description),
       })
     }
     roles = parsed
@@ -80,28 +343,74 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
       .map((o) => {
         const item = o as { id: string; label?: string }
         const fallback = base.volunteerOptions.find((x) => x.id === item.id)
-        return {
-          id: item.id,
-          label:
-            typeof item.label === 'string' && item.label.trim()
-              ? item.label.trim()
-              : fallback?.label ?? item.id,
-        }
+        return { id: item.id, label: mergeStr(item.label, fallback?.label ?? item.id) }
       })
     if (volunteerOptions.length === 0) volunteerOptions = base.volunteerOptions
   }
 
+  const ys = d.yardSign
+  const yardSign: YardSignCopy = {
+    ...mergeSection(ys, base.yardSign, [
+      'sectionTitle',
+      'introPrefix',
+      'productsLinkLabel',
+      'introMiddle',
+      'paymentEmail',
+      'introSuffix',
+      'deliveryAddressLabel',
+      'deliveryAddressPlaceholder',
+      'quantityLabel',
+      'quantityPlaceholder',
+      'sizeLabel',
+      'sizePlaceholder',
+      'paymentLabel',
+      'paymentPaidLabel',
+      'paymentNotYetLabel',
+      'deliveryNotesLabel',
+      'deliveryNotesPlaceholder',
+    ] as (keyof YardSignCopy)[]),
+    quantityOptions: mergeSelectOptions(
+      ys && typeof ys === 'object' ? (ys as { quantityOptions?: unknown }).quantityOptions : undefined,
+      base.yardSign.quantityOptions
+    ),
+    sizeOptions: mergeSelectOptions(
+      ys && typeof ys === 'object' ? (ys as { sizeOptions?: unknown }).sizeOptions : undefined,
+      base.yardSign.sizeOptions
+    ),
+  }
+
   return {
-    version: 1,
-    rolesQuestion: str('rolesQuestion', base.rolesQuestion),
-    submitButton: str('submitButton', base.submitButton),
-    footerPrefix: str('footerPrefix', base.footerPrefix),
-    footerLinkLabel: str('footerLinkLabel', base.footerLinkLabel),
-    successTitle: str('successTitle', base.successTitle),
-    successBody: str('successBody', base.successBody),
-    consentText: str('consentText', base.consentText),
+    version: 2,
+    rolesQuestion: mergeStr(d.rolesQuestion, base.rolesQuestion),
+    submitButton: mergeStr(d.submitButton, base.submitButton),
+    footerPrefix: mergeStr(d.footerPrefix, base.footerPrefix),
+    footerLinkLabel: mergeStr(d.footerLinkLabel, base.footerLinkLabel),
+    successTitle: mergeStr(d.successTitle, base.successTitle),
+    successBody: mergeStr(d.successBody, base.successBody),
+    consentText: mergeStr(d.consentText, base.consentText),
     roles,
     volunteerOptions,
+    contact: mergeSection(d.contact, base.contact, Object.keys(base.contact) as (keyof ContactCopy)[]),
+    yardSign,
+    dropoff: mergeSection(d.dropoff, base.dropoff, Object.keys(base.dropoff) as (keyof DropoffCopy)[]),
+    volunteer: mergeSection(
+      d.volunteer,
+      base.volunteer,
+      Object.keys(base.volunteer) as (keyof VolunteerSectionCopy)[]
+    ),
+    other: mergeSection(d.other, base.other, Object.keys(base.other) as (keyof OtherSectionCopy)[]),
+    shared: mergeSection(d.shared, base.shared, Object.keys(base.shared) as (keyof SharedCopy)[]),
+    successYardSign: mergeSection(
+      d.successYardSign,
+      base.successYardSign,
+      Object.keys(base.successYardSign) as (keyof SuccessYardSignCopy)[]
+    ),
+    validation: mergeSection(
+      d.validation,
+      base.validation,
+      Object.keys(base.validation) as (keyof ValidationCopy)[]
+    ),
+    errors: mergeSection(d.errors, base.errors, Object.keys(base.errors) as (keyof ErrorsCopy)[]),
   }
 }
 

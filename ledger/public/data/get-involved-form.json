@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "rolesQuestion": "How do you want to get involved? *",
   "submitButton": "Submit sign-up",
   "footerPrefix": "Rallies and corrections: use the",
@@ -11,7 +11,7 @@
     {
       "id": "yard-sign",
       "label": "I want a sign",
-      "description": "Request a Ford Failed You yard sign—we'll follow up about size and local delivery."
+      "description": "Request a Ford Failed You yard sign—we’ll follow up about size and local delivery."
     },
     {
       "id": "dropoff",
@@ -26,7 +26,7 @@
     {
       "id": "other",
       "label": "Something else",
-      "description": "None of the above? Tell us what you have in mind—we'll figure it out."
+      "description": "None of the above? Tell us what you have in mind—we’ll figure it out."
     }
   ],
   "volunteerOptions": [
@@ -54,5 +54,136 @@
       "id": "other",
       "label": "Other (describe below)"
     }
-  ]
+  ],
+  "contact": {
+    "detailsTitleSign": "Your details",
+    "detailsTitleOther": "Your contact info",
+    "nameLabel": "Full name *",
+    "namePlaceholder": "Your name",
+    "emailLabel": "Email *",
+    "emailPlaceholder": "you@example.com",
+    "phoneLabel": "Phone",
+    "phoneRecommended": " (recommended)",
+    "phonePlaceholderSign": "For delivery coordination",
+    "phonePlaceholderOther": "Optional",
+    "cityLabel": "City / community *",
+    "cityPlaceholder": "e.g. Toronto, Ottawa, Hamilton",
+    "postalLabel": "Postal code",
+    "postalPlaceholder": "e.g. M5V 1A1"
+  },
+  "yardSign": {
+    "sectionTitle": "Sign request",
+    "introPrefix": "$10 per sign, delivered by volunteers—not shipped by mail. Pay on ",
+    "productsLinkLabel": "Products",
+    "introMiddle": " or via e-transfer to ",
+    "paymentEmail": "FIGHT_FORD_SIGNS@outlook.com",
+    "introSuffix": " (preferred) when you're ready.",
+    "deliveryAddressLabel": "Where you live / delivery address *",
+    "deliveryAddressPlaceholder": "Street address, intersection, or clear directions for drop-off",
+    "quantityLabel": "How many signs? *",
+    "quantityPlaceholder": "Select quantity",
+    "quantityOptions": [
+      {
+        "value": "1",
+        "label": "1"
+      },
+      {
+        "value": "2",
+        "label": "2"
+      },
+      {
+        "value": "3",
+        "label": "3"
+      },
+      {
+        "value": "4+",
+        "label": "4 or more"
+      }
+    ],
+    "sizeLabel": "Size *",
+    "sizePlaceholder": "Select a size",
+    "sizeOptions": [
+      {
+        "value": "24x18",
+        "label": "24\" × 18\""
+      },
+      {
+        "value": "18x12",
+        "label": "18\" × 12\""
+      },
+      {
+        "value": "any",
+        "label": "Any size"
+      }
+    ],
+    "paymentLabel": "Payment *",
+    "paymentPaidLabel": "I already paid $10 per sign (Products, Stripe, or e-transfer)",
+    "paymentNotYetLabel": "Not yet — I will pay on Products, Stripe, or e-transfer",
+    "deliveryNotesLabel": "Delivery notes (optional)",
+    "deliveryNotesPlaceholder": "Porch vs apartment, best times, etc."
+  },
+  "dropoff": {
+    "sectionTitle": "Drop-off / pickup point",
+    "locationLabel": "Address or area you can serve *",
+    "locationPlaceholder": "Neighbourhood, intersection, or full address if you are comfortable sharing",
+    "availabilityLabel": "When are you usually available? *",
+    "availabilityPlaceholder": "e.g. Weekday evenings, Saturday mornings, flexible",
+    "capacityLabel": "Roughly how many signs can you store at once?",
+    "capacityPlaceholder": "e.g. 5–10 in a garage",
+    "listPubliclyLabel": "May we list your area publicly for neighbours? *",
+    "listPubliclyYes": "Yes — general area only",
+    "listPubliclyNo": "No — coordinate privately"
+  },
+  "volunteer": {
+    "sectionTitle": "Volunteer",
+    "rolesLabel": "What can you help with? *",
+    "availabilityLabel": "General availability *",
+    "availabilityPlaceholder": "Hours per week, days, or specific dates",
+    "vehicleLabel": "Do you have a vehicle for local runs?",
+    "vehicleYes": "Yes",
+    "vehicleNo": "No"
+  },
+  "other": {
+    "sectionTitle": "Something else",
+    "intro": "Weird idea? Partnership? Something we didn't list? Put it here—we read everything.",
+    "detailsLabel": "What do you need? *",
+    "detailsPlaceholder": "Describe your request in a few sentences…"
+  },
+  "shared": {
+    "anythingElseLabel": "Anything else?",
+    "anythingElsePlaceholder": "Optional",
+    "submitAnotherLabel": "Submit another sign-up",
+    "sendingLabel": "Sending…"
+  },
+  "successYardSign": {
+    "prefix": "Haven't paid yet? Pay $10 per sign on ",
+    "productsLinkLabel": "Products",
+    "middle": ", Stripe checkout, or e-transfer to ",
+    "paymentEmail": "FIGHT_FORD_SIGNS@outlook.com",
+    "suffix": " when you're ready."
+  },
+  "validation": {
+    "chooseRole": "Please choose how you want to get involved.",
+    "name": "Please enter your name.",
+    "email": "Please enter your email.",
+    "consent": "Please confirm you agree to be contacted.",
+    "phoneSign": "Please enter a phone number so we can arrange delivery.",
+    "city": "Please enter your city or community.",
+    "postalSign": "Please enter your postal code.",
+    "deliveryAddress": "Please tell us where you live / where we should deliver the sign(s).",
+    "signSize": "Please choose a sign size.",
+    "signQuantity": "Please tell us how many signs you need.",
+    "signPayment": "Please tell us if you have paid yet ($10 per sign).",
+    "otherDetails": "Please describe what you’re looking for.",
+    "dropoffLocation": "Please describe where you can host pickup or drop-off.",
+    "dropoffAvailability": "Please share when you are usually available.",
+    "dropoffListPublicly": "Please say whether we may list your area publicly.",
+    "volunteerRoles": "Please select at least one way you can help.",
+    "volunteerAvailability": "Please share your general availability."
+  },
+  "errors": {
+    "unavailable": "Sign-up is temporarily unavailable. Please try again later or use the About contact form.",
+    "loading": "Still loading—please try again in a moment.",
+    "submitFailed": "Something went wrong sending your sign-up. Please try again in a moment, or email the organizers listed on About."
+  }
 }

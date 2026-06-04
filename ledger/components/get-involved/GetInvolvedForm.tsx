@@ -14,6 +14,7 @@ import {
   loadGetInvolvedFormCopy,
   type GetInvolvedFormCopy,
 } from '@/lib/get-involved-form-config'
+
 const defaultInputClass =
   'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 const defaultLabelClass = 'block text-sm md:text-base font-light text-gray-700 mb-2'
@@ -21,9 +22,7 @@ const defaultLabelClass = 'block text-sm md:text-base font-light text-gray-700 m
 export type GetInvolvedFormProps = {
   variant?: 'default' | 'ff'
   sourcePage?: string
-  /** When set, selects this role and scrolls focus into the form (parent handles scroll). */
   presetRole?: InvolvementRole | ''
-  /** Drop outer card chrome when parent provides a container (e.g. ff get-involved page). */
   embedded?: boolean
 }
 
@@ -94,10 +93,13 @@ export default function GetInvolvedForm({
     if (!presetRole) return
     setForm((prev) => ({ ...prev, role: presetRole }))
     if (submitStatus !== 'idle') setSubmitStatus('idle')
-  }, [presetRole])
+  }, [presetRole, submitStatus])
 
   const role = form.role as InvolvementRole | ''
   const isSignRequest = role === 'yard-sign'
+  const v = formCopy.validation
+  const c = formCopy.contact
+  const ys = formCopy.yardSign
 
   const setField = <K extends keyof GetInvolvedFormState>(key: K, value: GetInvolvedFormState[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -105,36 +107,32 @@ export default function GetInvolvedForm({
   }
 
   const validate = (): string | null => {
-    if (!form.role) return 'Please choose how you want to get involved.'
-    if (!form.name.trim()) return 'Please enter your name.'
-    if (!form.email.trim()) return 'Please enter your email.'
-    if (!form.consent) return 'Please confirm you agree to be contacted.'
+    if (!form.role) return v.chooseRole
+    if (!form.name.trim()) return v.name
+    if (!form.email.trim()) return v.email
+    if (!form.consent) return v.consent
 
     if (form.role === 'yard-sign') {
-      if (!form.phone.trim()) return 'Please enter a phone number so we can arrange delivery.'
-      if (!form.city.trim()) return 'Please enter your city or community.'
-      if (!form.postalCode.trim()) return 'Please enter your postal code.'
-      if (!form.yardSignDeliveryAddress.trim()) {
-        return 'Please tell us where you live / where we should deliver the sign(s).'
-      }
-      if (!form.yardSignSize) return 'Please choose a sign size.'
-      if (!form.yardSignQuantity) return 'Please tell us how many signs you need.'
-      if (!form.yardSignPaymentStatus) return 'Please tell us if you have paid yet ($10 per sign).'
+      if (!form.phone.trim()) return v.phoneSign
+      if (!form.city.trim()) return v.city
+      if (!form.postalCode.trim()) return v.postalSign
+      if (!form.yardSignDeliveryAddress.trim()) return v.deliveryAddress
+      if (!form.yardSignSize) return v.signSize
+      if (!form.yardSignQuantity) return v.signQuantity
+      if (!form.yardSignPaymentStatus) return v.signPayment
     } else if (!form.city.trim()) {
-      return 'Please enter your city or community.'
+      return v.city
     }
 
-    if (form.role === 'other') {
-      if (!form.otherDetails.trim()) return 'Please describe what you’re looking for.'
-    }
+    if (form.role === 'other' && !form.otherDetails.trim()) return v.otherDetails
     if (form.role === 'dropoff') {
-      if (!form.dropoffLocation.trim()) return 'Please describe where you can host pickup or drop-off.'
-      if (!form.dropoffAvailability.trim()) return 'Please share when you are usually available.'
-      if (!form.dropoffListPublicly) return 'Please say whether we may list your area publicly.'
+      if (!form.dropoffLocation.trim()) return v.dropoffLocation
+      if (!form.dropoffAvailability.trim()) return v.dropoffAvailability
+      if (!form.dropoffListPublicly) return v.dropoffListPublicly
     }
     if (form.role === 'volunteer') {
-      if (form.volunteerRoles.length === 0) return 'Please select at least one way you can help.'
-      if (!form.volunteerAvailability.trim()) return 'Please share your general availability.'
+      if (form.volunteerRoles.length === 0) return v.volunteerRoles
+      if (!form.volunteerAvailability.trim()) return v.volunteerAvailability
     }
     return null
   }
@@ -150,11 +148,7 @@ export default function GetInvolvedForm({
 
     if (!submitViaApi && !sheetSubmitUrl) {
       setSubmitStatus('error')
-      setErrorMessage(
-        configLoaded
-          ? 'Sign-up is temporarily unavailable. Please try again later or use the About contact form.'
-          : 'Still loading—please try again in a moment.'
-      )
+      setErrorMessage(configLoaded ? formCopy.errors.unavailable : formCopy.errors.loading)
       return
     }
 
@@ -192,13 +186,13 @@ export default function GetInvolvedForm({
       setForm(emptyGetInvolvedFormState)
     } catch {
       setSubmitStatus('error')
-      setErrorMessage(
-        'Something went wrong sending your sign-up. Please try again in a moment, or email the organizers listed on About.'
-      )
+      setErrorMessage(formCopy.errors.submitFailed)
     } finally {
       setIsSubmitting(false)
     }
   }
+
+  const sy = formCopy.successYardSign
 
   if (submitStatus === 'success') {
     return (
@@ -207,15 +201,15 @@ export default function GetInvolvedForm({
         <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">{formCopy.successBody}</p>
         {lastSubmittedRole === 'yard-sign' && (
           <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
-            Haven&apos;t paid yet? Pay $10 per sign on{' '}
+            {sy.prefix}
             <Link href="/products" className={linkClass}>
-              Products
+              {sy.productsLinkLabel}
             </Link>
-            , Stripe checkout, or e-transfer to{' '}
-            <a href="mailto:FIGHT_FORD_SIGNS@outlook.com" className={linkClass}>
-              FIGHT_FORD_SIGNS@outlook.com
-            </a>{' '}
-            when you&apos;re ready.
+            {sy.middle}
+            <a href={`mailto:${ys.paymentEmail}`} className={linkClass}>
+              {sy.paymentEmail}
+            </a>
+            {sy.suffix}
           </p>
         )}
         <button
@@ -223,11 +217,16 @@ export default function GetInvolvedForm({
           onClick={() => setSubmitStatus('idle')}
           className={`mt-4 text-sm ${linkClass} font-light`}
         >
-          Submit another sign-up
+          {formCopy.shared.submitAnotherLabel}
         </button>
       </div>
     )
   }
+
+  const df = formCopy.dropoff
+  const vol = formCopy.volunteer
+  const oth = formCopy.other
+  const sh = formCopy.shared
 
   return (
     <form onSubmit={handleSubmit} className={shellClass}>
@@ -263,12 +262,12 @@ export default function GetInvolvedForm({
         <>
           <div className="border-t border-gray-100 pt-8 space-y-6">
             <h3 className="text-lg font-light text-gray-900">
-              {isSignRequest ? 'Your details' : 'Your contact info'}
+              {isSignRequest ? c.detailsTitleSign : c.detailsTitleOther}
             </h3>
             <div className="grid gap-6 sm:grid-cols-2">
               <div className="sm:col-span-2">
                 <label htmlFor="gi-name" className={labelClass}>
-                  Full name *
+                  {c.nameLabel}
                 </label>
                 <input
                   id="gi-name"
@@ -278,12 +277,12 @@ export default function GetInvolvedForm({
                   value={form.name}
                   onChange={(e) => setField('name', e.target.value)}
                   className={inputClass}
-                  placeholder="Your name"
+                  placeholder={c.namePlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="gi-email" className={labelClass}>
-                  Email *
+                  {c.emailLabel}
                 </label>
                 <input
                   id="gi-email"
@@ -293,15 +292,14 @@ export default function GetInvolvedForm({
                   value={form.email}
                   onChange={(e) => setField('email', e.target.value)}
                   className={inputClass}
-                  placeholder="you@example.com"
+                  placeholder={c.emailPlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="gi-phone" className={labelClass}>
-                  Phone {isSignRequest ? '*' : ''}
-                  {!isSignRequest && (
-                    <span className="text-gray-400"> (recommended)</span>
-                  )}
+                  {c.phoneLabel}
+                  {isSignRequest ? ' *' : ''}
+                  {!isSignRequest && <span className="text-gray-400">{c.phoneRecommended}</span>}
                 </label>
                 <input
                   id="gi-phone"
@@ -311,12 +309,12 @@ export default function GetInvolvedForm({
                   value={form.phone}
                   onChange={(e) => setField('phone', e.target.value)}
                   className={inputClass}
-                  placeholder={isSignRequest ? 'For delivery coordination' : 'Optional'}
+                  placeholder={isSignRequest ? c.phonePlaceholderSign : c.phonePlaceholderOther}
                 />
               </div>
               <div>
                 <label htmlFor="gi-city" className={labelClass}>
-                  City / community *
+                  {c.cityLabel}
                 </label>
                 <input
                   id="gi-city"
@@ -326,12 +324,13 @@ export default function GetInvolvedForm({
                   value={form.city}
                   onChange={(e) => setField('city', e.target.value)}
                   className={inputClass}
-                  placeholder="e.g. Toronto, Ottawa, Hamilton"
+                  placeholder={c.cityPlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="gi-postal" className={labelClass}>
-                  Postal code {isSignRequest ? '*' : ''}
+                  {c.postalLabel}
+                  {isSignRequest ? ' *' : ''}
                 </label>
                 <input
                   id="gi-postal"
@@ -341,7 +340,7 @@ export default function GetInvolvedForm({
                   value={form.postalCode}
                   onChange={(e) => setField('postalCode', e.target.value)}
                   className={inputClass}
-                  placeholder="e.g. M5V 1A1"
+                  placeholder={c.postalPlaceholder}
                 />
               </div>
             </div>
@@ -349,21 +348,21 @@ export default function GetInvolvedForm({
 
           {role === 'yard-sign' && (
             <div className="border-t border-gray-100 pt-8 space-y-6">
-              <h3 className="text-lg font-light text-gray-900">Sign request</h3>
+              <h3 className="text-lg font-light text-gray-900">{ys.sectionTitle}</h3>
               <p className="text-sm text-gray-600 font-light -mt-4">
-                $10 per sign, delivered by volunteers—not shipped by mail. Pay on{' '}
+                {ys.introPrefix}
                 <Link href="/products" className={linkClass}>
-                  Products
-                </Link>{' '}
-                or via e-transfer to{' '}
-                <a href="mailto:FIGHT_FORD_SIGNS@outlook.com" className={linkClass}>
-                  FIGHT_FORD_SIGNS@outlook.com
-                </a>{' '}
-                (preferred) when you&apos;re ready.
+                  {ys.productsLinkLabel}
+                </Link>
+                {ys.introMiddle}
+                <a href={`mailto:${ys.paymentEmail}`} className={linkClass}>
+                  {ys.paymentEmail}
+                </a>
+                {ys.introSuffix}
               </p>
               <div className="sm:col-span-2">
                 <label htmlFor="gi-delivery-addr" className={labelClass}>
-                  Where you live / delivery address *
+                  {ys.deliveryAddressLabel}
                 </label>
                 <textarea
                   id="gi-delivery-addr"
@@ -372,12 +371,12 @@ export default function GetInvolvedForm({
                   value={form.yardSignDeliveryAddress}
                   onChange={(e) => setField('yardSignDeliveryAddress', e.target.value)}
                   className={`${inputClass} resize-y`}
-                  placeholder="Street address, intersection, or clear directions for drop-off"
+                  placeholder={ys.deliveryAddressPlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="gi-qty" className={labelClass}>
-                  How many signs? *
+                  {ys.quantityLabel}
                 </label>
                 <select
                   id="gi-qty"
@@ -386,55 +385,62 @@ export default function GetInvolvedForm({
                   className={`${inputClass} bg-white`}
                   required
                 >
-                  <option value="">Select quantity</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4+">4 or more</option>
+                  <option value="">{ys.quantityPlaceholder}</option>
+                  {ys.quantityOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label htmlFor="gi-size" className={labelClass}>
-                  Size *
+                  {ys.sizeLabel}
                 </label>
                 <select
                   id="gi-size"
                   value={form.yardSignSize}
-                  onChange={(e) => setField('yardSignSize', e.target.value as GetInvolvedFormState['yardSignSize'])}
+                  onChange={(e) =>
+                    setField('yardSignSize', e.target.value as GetInvolvedFormState['yardSignSize'])
+                  }
                   className={`${inputClass} bg-white`}
                   required
                 >
-                  <option value="">Select a size</option>
-                  <option value="24x18">24&quot; × 18&quot;</option>
-                  <option value="18x12">18&quot; × 12&quot;</option>
-                  <option value="any">Any size</option>
+                  <option value="">{ys.sizePlaceholder}</option>
+                  {ys.sizeOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
-                <span className={labelClass}>Payment *</span>
+                <span className={labelClass}>{ys.paymentLabel}</span>
                 <div className="space-y-2">
-                  {(
-                    [
-                      ['paid', 'I already paid $10 per sign (Products, Stripe, or e-transfer)'],
-                      ['not-yet', 'Not yet — I will pay on Products, Stripe, or e-transfer'],
-                    ] as const
-                  ).map(([value, label]) => (
-                    <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
-                      <input
-                        type="radio"
-                        name="yardSignPaymentStatus"
-                        checked={form.yardSignPaymentStatus === value}
-                        onChange={() => setField('yardSignPaymentStatus', value)}
-                        required={!form.yardSignPaymentStatus}
-                      />
-                      {label}
-                    </label>
-                  ))}
+                  <label className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="radio"
+                      name="yardSignPaymentStatus"
+                      checked={form.yardSignPaymentStatus === 'paid'}
+                      onChange={() => setField('yardSignPaymentStatus', 'paid')}
+                      required={!form.yardSignPaymentStatus}
+                    />
+                    {ys.paymentPaidLabel}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="radio"
+                      name="yardSignPaymentStatus"
+                      checked={form.yardSignPaymentStatus === 'not-yet'}
+                      onChange={() => setField('yardSignPaymentStatus', 'not-yet')}
+                    />
+                    {ys.paymentNotYetLabel}
+                  </label>
                 </div>
               </div>
               <div>
                 <label htmlFor="gi-yard-notes" className={labelClass}>
-                  Delivery notes (optional)
+                  {ys.deliveryNotesLabel}
                 </label>
                 <textarea
                   id="gi-yard-notes"
@@ -442,7 +448,7 @@ export default function GetInvolvedForm({
                   value={form.yardSignNotes}
                   onChange={(e) => setField('yardSignNotes', e.target.value)}
                   className={`${inputClass} resize-y`}
-                  placeholder="Porch vs apartment, best times, etc."
+                  placeholder={ys.deliveryNotesPlaceholder}
                 />
               </div>
             </div>
@@ -450,10 +456,10 @@ export default function GetInvolvedForm({
 
           {role === 'dropoff' && (
             <div className="border-t border-gray-100 pt-8 space-y-6">
-              <h3 className="text-lg font-light text-gray-900">Drop-off / pickup point</h3>
+              <h3 className="text-lg font-light text-gray-900">{df.sectionTitle}</h3>
               <div>
                 <label htmlFor="gi-dropoff-loc" className={labelClass}>
-                  Address or area you can serve *
+                  {df.locationLabel}
                 </label>
                 <textarea
                   id="gi-dropoff-loc"
@@ -462,12 +468,12 @@ export default function GetInvolvedForm({
                   value={form.dropoffLocation}
                   onChange={(e) => setField('dropoffLocation', e.target.value)}
                   className={`${inputClass} resize-y`}
-                  placeholder="Neighbourhood, intersection, or full address if you are comfortable sharing"
+                  placeholder={df.locationPlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="gi-dropoff-when" className={labelClass}>
-                  When are you usually available? *
+                  {df.availabilityLabel}
                 </label>
                 <input
                   id="gi-dropoff-when"
@@ -475,12 +481,12 @@ export default function GetInvolvedForm({
                   value={form.dropoffAvailability}
                   onChange={(e) => setField('dropoffAvailability', e.target.value)}
                   className={inputClass}
-                  placeholder="e.g. Weekday evenings, Saturday mornings, flexible"
+                  placeholder={df.availabilityPlaceholder}
                 />
               </div>
               <div>
                 <label htmlFor="gi-dropoff-cap" className={labelClass}>
-                  Roughly how many signs can you store at once?
+                  {df.capacityLabel}
                 </label>
                 <input
                   id="gi-dropoff-cap"
@@ -488,23 +494,30 @@ export default function GetInvolvedForm({
                   value={form.dropoffCapacity}
                   onChange={(e) => setField('dropoffCapacity', e.target.value)}
                   className={inputClass}
-                  placeholder="e.g. 5–10 in a garage"
+                  placeholder={df.capacityPlaceholder}
                 />
               </div>
               <div>
-                <span className={labelClass}>May we list your area publicly for neighbours? *</span>
+                <span className={labelClass}>{df.listPubliclyLabel}</span>
                 <div className="flex flex-wrap gap-4">
-                  {(['yes', 'no'] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
-                      <input
-                        type="radio"
-                        name="dropoffListPublicly"
-                        checked={form.dropoffListPublicly === value}
-                        onChange={() => setField('dropoffListPublicly', value)}
-                      />
-                      {value === 'yes' ? 'Yes — general area only' : 'No — coordinate privately'}
-                    </label>
-                  ))}
+                  <label className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="radio"
+                      name="dropoffListPublicly"
+                      checked={form.dropoffListPublicly === 'yes'}
+                      onChange={() => setField('dropoffListPublicly', 'yes')}
+                    />
+                    {df.listPubliclyYes}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="radio"
+                      name="dropoffListPublicly"
+                      checked={form.dropoffListPublicly === 'no'}
+                      onChange={() => setField('dropoffListPublicly', 'no')}
+                    />
+                    {df.listPubliclyNo}
+                  </label>
                 </div>
               </div>
             </div>
@@ -512,9 +525,9 @@ export default function GetInvolvedForm({
 
           {role === 'volunteer' && (
             <div className="border-t border-gray-100 pt-8 space-y-6">
-              <h3 className="text-lg font-light text-gray-900">Volunteer</h3>
+              <h3 className="text-lg font-light text-gray-900">{vol.sectionTitle}</h3>
               <div>
-                <span className={labelClass}>What can you help with? *</span>
+                <span className={labelClass}>{vol.rolesLabel}</span>
                 <div className="space-y-2">
                   {formCopy.volunteerOptions.map((opt) => (
                     <label key={opt.id} className="flex items-start gap-2 text-sm font-light text-gray-700">
@@ -533,7 +546,7 @@ export default function GetInvolvedForm({
               </div>
               <div>
                 <label htmlFor="gi-vol-avail" className={labelClass}>
-                  General availability *
+                  {vol.availabilityLabel}
                 </label>
                 <textarea
                   id="gi-vol-avail"
@@ -541,23 +554,30 @@ export default function GetInvolvedForm({
                   value={form.volunteerAvailability}
                   onChange={(e) => setField('volunteerAvailability', e.target.value)}
                   className={`${inputClass} resize-y`}
-                  placeholder="Hours per week, days, or specific dates"
+                  placeholder={vol.availabilityPlaceholder}
                 />
               </div>
               <div>
-                <span className={labelClass}>Do you have a vehicle for local runs?</span>
+                <span className={labelClass}>{vol.vehicleLabel}</span>
                 <div className="flex flex-wrap gap-4">
-                  {(['yes', 'no'] as const).map((value) => (
-                    <label key={value} className="flex items-center gap-2 text-sm font-light text-gray-700">
-                      <input
-                        type="radio"
-                        name="volunteerHasVehicle"
-                        checked={form.volunteerHasVehicle === value}
-                        onChange={() => setField('volunteerHasVehicle', value)}
-                      />
-                      {value === 'yes' ? 'Yes' : 'No'}
-                    </label>
-                  ))}
+                  <label className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="radio"
+                      name="volunteerHasVehicle"
+                      checked={form.volunteerHasVehicle === 'yes'}
+                      onChange={() => setField('volunteerHasVehicle', 'yes')}
+                    />
+                    {vol.vehicleYes}
+                  </label>
+                  <label className="flex items-center gap-2 text-sm font-light text-gray-700">
+                    <input
+                      type="radio"
+                      name="volunteerHasVehicle"
+                      checked={form.volunteerHasVehicle === 'no'}
+                      onChange={() => setField('volunteerHasVehicle', 'no')}
+                    />
+                    {vol.vehicleNo}
+                  </label>
                 </div>
               </div>
             </div>
@@ -565,13 +585,11 @@ export default function GetInvolvedForm({
 
           {role === 'other' && (
             <div className="border-t border-gray-100 pt-8 space-y-4">
-              <h3 className="text-lg font-light text-gray-900">Something else</h3>
-              <p className="text-sm text-gray-600 font-light -mt-2">
-                Weird idea? Partnership? Something we didn&apos;t list? Put it here—we read everything.
-              </p>
+              <h3 className="text-lg font-light text-gray-900">{oth.sectionTitle}</h3>
+              <p className="text-sm text-gray-600 font-light -mt-2">{oth.intro}</p>
               <div>
                 <label htmlFor="gi-other" className={labelClass}>
-                  What do you need? *
+                  {oth.detailsLabel}
                 </label>
                 <textarea
                   id="gi-other"
@@ -580,7 +598,7 @@ export default function GetInvolvedForm({
                   value={form.otherDetails}
                   onChange={(e) => setField('otherDetails', e.target.value)}
                   className={`${inputClass} resize-y`}
-                  placeholder="Describe your request in a few sentences…"
+                  placeholder={oth.detailsPlaceholder}
                 />
               </div>
             </div>
@@ -589,7 +607,7 @@ export default function GetInvolvedForm({
           {role !== 'other' && role !== 'yard-sign' && (
             <div className="border-t border-gray-100 pt-8 space-y-4">
               <label htmlFor="gi-notes" className={labelClass}>
-                Anything else?
+                {sh.anythingElseLabel}
               </label>
               <textarea
                 id="gi-notes"
@@ -597,7 +615,7 @@ export default function GetInvolvedForm({
                 value={form.additionalNotes}
                 onChange={(e) => setField('additionalNotes', e.target.value)}
                 className={`${inputClass} resize-y`}
-                placeholder="Optional"
+                placeholder={sh.anythingElsePlaceholder}
               />
             </div>
           )}
@@ -626,7 +644,7 @@ export default function GetInvolvedForm({
         disabled={isSubmitting || !form.role || !configLoaded}
         className={submitButtonClass}
       >
-        {isSubmitting ? 'Sending…' : formCopy.submitButton}
+        {isSubmitting ? sh.sendingLabel : formCopy.submitButton}
       </button>
 
       <p className="text-xs text-gray-500 font-light text-center leading-relaxed">
