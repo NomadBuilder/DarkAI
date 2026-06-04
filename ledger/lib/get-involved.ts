@@ -104,9 +104,10 @@ export type GetInvolvedSubmitOptions = {
 /** Flat payload for Google Apps Script `e.parameter` (URL-encoded POST). */
 export function buildGetInvolvedSubmitPayload(
   state: GetInvolvedFormState,
-  options: GetInvolvedSubmitOptions = {}
+  options: GetInvolvedSubmitOptions = {},
+  roles: { id: InvolvementRole; label: string }[] = involvementRoles
 ): Record<string, string> {
-  const roleLabel = involvementRoles.find((r) => r.id === state.role)?.label ?? state.role
+  const roleLabel = roles.find((r) => r.id === state.role)?.label ?? state.role
   const notes =
     state.role === 'other' ? state.otherDetails.trim() : state.additionalNotes.trim()
   const sizeLabel = state.yardSignSize ? yardSignSizeLabels[state.yardSignSize] : ''

@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "rolesQuestion": "How do you want to get involved? *",
+  "submitButton": "Submit sign-up",
+  "footerPrefix": "Rallies and corrections: use the",
+  "footerLinkLabel": "About contact form",
+  "successTitle": "Thank you",
+  "successBody": "We received your sign-up. A volunteer will follow up by email when we can match you locally.",
+  "consentText": "I agree that Protect Ontario volunteers may contact me about this sign-up. My details are used only for organizing—not sold to third parties. *",
+  "roles": [
+    {
+      "id": "yard-sign",
+      "label": "I want a sign",
+      "description": "Request a Ford Failed You yard sign—we'll follow up about size and local delivery."
+    },
+    {
+      "id": "dropoff",
+      "label": "Host a drop-off / pickup point",
+      "description": "Store signs briefly so neighbours can pick up or receive deliveries."
+    },
+    {
+      "id": "volunteer",
+      "label": "Volunteer",
+      "description": "Help with delivery, events, outreach, or other organizer tasks."
+    },
+    {
+      "id": "other",
+      "label": "Something else",
+      "description": "None of the above? Tell us what you have in mind—we'll figure it out."
+    }
+  ],
+  "volunteerOptions": [
+    {
+      "id": "delivery",
+      "label": "Sign delivery or pickup runs"
+    },
+    {
+      "id": "events",
+      "label": "Events & rallies (tabling, outreach)"
+    },
+    {
+      "id": "printing",
+      "label": "Printing / materials prep"
+    },
+    {
+      "id": "coordination",
+      "label": "Local coordination (email, matching)"
+    },
+    {
+      "id": "social",
+      "label": "Social media or graphics"
+    },
+    {
+      "id": "other",
+      "label": "Other (describe below)"
+    }
+  ]
+}

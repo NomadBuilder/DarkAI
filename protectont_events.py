@@ -21,7 +21,26 @@ def events_admin_token() -> str:
 
 
 def events_save_enabled() -> bool:
-    return bool(events_admin_token())
+    """Live save from /admin-events is on by default; set PROTECTONT_EVENTS_DISABLE_SAVE=1 to turn off."""
+    flag = os.getenv("PROTECTONT_EVENTS_DISABLE_SAVE", "").strip().lower()
+    return flag not in ("1", "true", "yes")
+
+
+def save_request_allowed(origin: str, referer: str) -> bool:
+    """Allow browser saves from ProtectOnt admin (same site); blocks drive-by curl without Origin."""
+    o = (origin or "").strip().rstrip("/")
+    if o:
+        if o == "https://protectont.ca" or o == "http://protectont.ca":
+            return True
+        if o.startswith("http://localhost") or o.startswith("http://127.0.0.1"):
+            return True
+    ref = (referer or "").strip()
+    if ref:
+        if "protectont.ca" in ref:
+            return True
+        if "localhost" in ref or "127.0.0.1" in ref:
+            return True
+    return False
 
 
 def read_protests_json() -> Tuple[Optional[dict], Optional[str]]:

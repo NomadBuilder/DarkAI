@@ -243,6 +243,7 @@ def serve_ledger_at_root(path):
 def protectont_config():
     """Runtime config for static ProtectOnt pages (e.g. get-involved form → Google Apps Script)."""
     from protectont_events import events_save_enabled
+    from protectont_form_config import form_save_enabled
 
     url = (
         os.environ.get("NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL")
@@ -253,6 +254,7 @@ def protectont_config():
         "getInvolvedSubmitUrl": url,
         "submitViaApi": True,
         "eventsSaveEnabled": events_save_enabled(),
+        "formSaveEnabled": form_save_enabled(),
     }), 200
 
 
@@ -263,6 +265,7 @@ def api_protectont_protests():
         events_admin_token,
         events_save_enabled,
         read_protests_json,
+        save_request_allowed,
         write_protests_json,
     )
 
@@ -277,21 +280,74 @@ def api_protectont_protests():
 
     if not events_save_enabled():
         return jsonify({
-            "error": "Server save not configured",
-            "message": "Set PROTECTONT_EVENTS_ADMIN_TOKEN on the server",
+            "error": "Server save disabled",
+            "message": "Unset PROTECTONT_EVENTS_DISABLE_SAVE to allow saves from /admin-events",
         }), 503
 
-    token = events_admin_token()
-    auth = request.headers.get("Authorization", "")
-    provided = auth.removeprefix("Bearer ").strip() if auth.startswith("Bearer ") else ""
-    if provided != token:
-        return jsonify({"error": "Unauthorized"}), 401
+    origin = request.headers.get("Origin", "")
+    referer = request.headers.get("Referer", "")
+    if not save_request_allowed(origin, referer):
+        token = events_admin_token()
+        if token:
+            auth = request.headers.get("Authorization", "")
+            provided = auth.removeprefix("Bearer ").strip() if auth.startswith("Bearer ") else ""
+            if provided != token:
+                return jsonify({"error": "Unauthorized"}), 401
+        else:
+            return jsonify({
+                "error": "Forbidden",
+                "message": "Saves are only accepted from the ProtectOnt admin-events page",
+            }), 403
 
     raw = request.get_data(as_text=True)
     if not raw:
         return jsonify({"error": "Empty body"}), 400
 
     ok, err = write_protests_json(raw)
+    if not ok:
+        return jsonify({"error": err or "Save failed"}), 400
+
+    return jsonify({"success": True}), 200
+
+
+@app.route('/api/protectont/get-involved-form', methods=['GET', 'POST', 'OPTIONS'])
+def api_protectont_get_involved_form():
+    """GET/POST join form copy for /join and /form-admin."""
+    from protectont_form_config import (
+        form_save_enabled,
+        read_form_config_json,
+        save_from_form_admin,
+        write_form_config_json,
+    )
+
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    if request.method == 'GET':
+        data, err = read_form_config_json()
+        if err:
+            return jsonify({"error": err}), 404
+        return jsonify(data), 200
+
+    if not form_save_enabled():
+        return jsonify({
+            "error": "Server save disabled",
+            "message": "Unset PROTECTONT_FORM_DISABLE_SAVE to allow saves from /form-admin",
+        }), 503
+
+    origin = request.headers.get("Origin", "")
+    referer = request.headers.get("Referer", "")
+    if not save_from_form_admin(origin, referer):
+        return jsonify({
+            "error": "Forbidden",
+            "message": "Saves are only accepted from protectont.ca/form-admin",
+        }), 403
+
+    raw = request.get_data(as_text=True)
+    if not raw:
+        return jsonify({"error": "Empty body"}), 400
+
+    ok, err = write_form_config_json(raw)
     if not ok:
         return jsonify({"error": err or "Save failed"}), 400
 

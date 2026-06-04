@@ -6,11 +6,14 @@ import {
   buildGetInvolvedSubmitPayload,
   emptyGetInvolvedFormState,
   loadGetInvolvedClientConfig,
-  involvementRoles,
-  volunteerRoleOptions,
   type GetInvolvedFormState,
   type InvolvementRole,
 } from '@/lib/get-involved'
+import {
+  defaultGetInvolvedFormCopy,
+  loadGetInvolvedFormCopy,
+  type GetInvolvedFormCopy,
+} from '@/lib/get-involved-form-config'
 const defaultInputClass =
   'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
 const defaultLabelClass = 'block text-sm md:text-base font-light text-gray-700 mb-2'
@@ -62,6 +65,17 @@ export default function GetInvolvedForm({
   const [submitViaApi, setSubmitViaApi] = useState(false)
   const [sheetSubmitUrl, setSheetSubmitUrl] = useState('')
   const [configLoaded, setConfigLoaded] = useState(false)
+  const [formCopy, setFormCopy] = useState<GetInvolvedFormCopy>(defaultGetInvolvedFormCopy())
+
+  useEffect(() => {
+    let cancelled = false
+    loadGetInvolvedFormCopy().then((copy) => {
+      if (!cancelled) setFormCopy(copy)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   useEffect(() => {
     let cancelled = false
@@ -149,7 +163,9 @@ export default function GetInvolvedForm({
     setErrorMessage('')
 
     try {
-      const body = new URLSearchParams(buildGetInvolvedSubmitPayload(form, { sourcePage }))
+      const body = new URLSearchParams(
+        buildGetInvolvedSubmitPayload(form, { sourcePage }, formCopy.roles)
+      )
       const submitEndpoint = submitViaApi ? '/api/get-involved-submit' : sheetSubmitUrl
       const res = await fetch(submitEndpoint, {
         method: 'POST',
@@ -187,10 +203,8 @@ export default function GetInvolvedForm({
   if (submitStatus === 'success') {
     return (
       <div className={`${shellClass} text-center`}>
-        <h2 className="text-2xl font-light text-gray-900">Thank you</h2>
-        <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">
-          We received your sign-up. A volunteer will follow up by email when we can match you locally.
-        </p>
+        <h2 className="text-2xl font-light text-gray-900">{formCopy.successTitle}</h2>
+        <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">{formCopy.successBody}</p>
         {lastSubmittedRole === 'yard-sign' && (
           <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
             Haven&apos;t paid yet? Pay $10 per sign on{' '}
@@ -218,9 +232,9 @@ export default function GetInvolvedForm({
   return (
     <form onSubmit={handleSubmit} className={shellClass}>
       <fieldset className="space-y-4">
-        <legend className={labelClass}>How do you want to get involved? *</legend>
+        <legend className={labelClass}>{formCopy.rolesQuestion}</legend>
         <div className="space-y-3">
-          {involvementRoles.map((item) => (
+          {formCopy.roles.map((item) => (
             <label
               key={item.id}
               className={`flex gap-3 p-4 rounded-xl border cursor-pointer transition-colors ${
@@ -502,7 +516,7 @@ export default function GetInvolvedForm({
               <div>
                 <span className={labelClass}>What can you help with? *</span>
                 <div className="space-y-2">
-                  {volunteerRoleOptions.map((opt) => (
+                  {formCopy.volunteerOptions.map((opt) => (
                     <label key={opt.id} className="flex items-start gap-2 text-sm font-light text-gray-700">
                       <input
                         type="checkbox"
@@ -596,10 +610,7 @@ export default function GetInvolvedForm({
               className="mt-1 shrink-0"
               required
             />
-            <span>
-              I agree that Protect Ontario volunteers may contact me about this sign-up. My details are used only for
-              organizing—not sold to third parties. *
-            </span>
+            <span>{formCopy.consentText}</span>
           </label>
         </>
       )}
@@ -615,13 +626,13 @@ export default function GetInvolvedForm({
         disabled={isSubmitting || !form.role || !configLoaded}
         className={submitButtonClass}
       >
-        {isSubmitting ? 'Sending…' : 'Submit sign-up'}
+        {isSubmitting ? 'Sending…' : formCopy.submitButton}
       </button>
 
       <p className="text-xs text-gray-500 font-light text-center leading-relaxed">
-        Rallies and corrections: use the{' '}
+        {formCopy.footerPrefix}{' '}
         <Link href="/about#contact" className={linkClass}>
-          About contact form
+          {formCopy.footerLinkLabel}
         </Link>
         .
       </p>

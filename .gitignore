@@ -70,6 +70,7 @@ htmlcov/
 !ledger/public/data/healthcare_costs.json
 !ledger/public/data/
 !ledger/public/data/protests.json
+!ledger/public/data/get-involved-form.json
 data/
 # Allow Ledger data used by admin/protests pages
 ledger/data/*

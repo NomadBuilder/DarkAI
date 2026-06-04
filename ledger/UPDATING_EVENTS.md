@@ -7,17 +7,17 @@ Protect Ontario does **not** use logins or per-group editor accounts. Events are
 - To suggest a rally: use the **contact form on [/about](https://protectont.ca/about)** with title, date, location, and event link.
 - You do not need access to `/admin-events`.
 
-## For site maintainers (auto-save)
+## For site maintainers (live save)
 
-1. On Render (or local `.env`), set **`PROTECTONT_EVENTS_ADMIN_TOKEN`** to a long random secret.
-2. Open **`/admin-events`** on protectont.ca.
-3. Enter that secret under **Publish key** and tap **Remember key** (stored in your browser only).
-4. Add, edit, or remove events and tap **Save** — changes publish to the live site immediately (no download step).
-5. Banner and “last updated” fields auto-save after you stop typing.
+1. Open **`/admin-events`** on protectont.ca (keep the URL private among your team).
+2. Add, edit, or remove events and tap **Save** — changes go live for **all visitors** immediately.
+3. Banner and “last updated” fields auto-save after you stop typing.
+
+No Render env var or browser key is required. Optional: set **`PROTECTONT_EVENTS_DISABLE_SAVE=1`** on the server to block writes in an emergency.
 
 Optional: **Download backup** exports a JSON copy for git or disaster recovery.
 
-If auto-save is unavailable (token not set on the server), use **Download backup** and deploy via git:
+If live save is unavailable, use **Download backup** and deploy via git:
 
 ```bash
 # Save backup to ledger/public/data/protests.json, then:

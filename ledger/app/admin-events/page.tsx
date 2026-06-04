@@ -114,10 +114,8 @@ export default function AdminEventsPage() {
   const [loadStatus, setLoadStatus] = useState<'loading' | 'ok' | 'empty' | 'error'>('loading')
   const [form, setForm] = useState<EventForm>(emptyForm())
   const [editingId, setEditingId] = useState<string | null>(null)
-  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error' | 'needs-key'>('idle')
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle')
   const [saveError, setSaveError] = useState('')
-  const [autoSaveEnabled, setAutoSaveEnabled] = useState(false)
-  const [adminToken, setAdminToken] = useState('')
   const [addFormOpen, setAddFormOpen] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -153,40 +151,27 @@ export default function AdminEventsPage() {
     }
   }, [])
 
-  useEffect(() => {
-    fetch('/api/protectont-config', { cache: 'no-store' })
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((cfg) => setAutoSaveEnabled(!!cfg.eventsSaveEnabled))
-      .catch(() => setAutoSaveEnabled(false))
-    const stored = typeof window !== 'undefined' ? sessionStorage.getItem('protectont-events-admin-token') : null
-    if (stored) setAdminToken(stored)
-  }, [])
-
   const persistToServer = async (file: ProtestsFile) => {
-    if (!autoSaveEnabled) {
-      setSaveStatus('needs-key')
-      return
-    }
-    const token = adminToken.trim()
-    if (!token) {
-      setSaveStatus('needs-key')
-      return
-    }
     setSaveStatus('saving')
     setSaveError('')
     try {
       const res = await fetch('/api/protectont/protests', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: serializeProtestsFile(file),
       })
       const body = await res.json().catch(() => ({}))
       if (!res.ok) {
         setSaveStatus('error')
-        setSaveError((body as { error?: string }).error || `Save failed (${res.status})`)
+        const err = (body as { error?: string; message?: string }).error
+        const msg = (body as { message?: string }).message
+        if (res.status === 503) {
+          setSaveError(msg || 'Live save is disabled on the server.')
+        } else if (res.status === 403) {
+          setSaveError(msg || 'Save must be sent from protectont.ca/admin-events.')
+        } else {
+          setSaveError(err || `Save failed (${res.status})`)
+        }
         return
       }
       setSaveStatus('saved')
@@ -438,35 +423,11 @@ export default function AdminEventsPage() {
           </div>
         )}
 
-        {autoSaveEnabled && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-5 mb-6 shadow-sm">
-            <p className="text-sm font-medium text-slate-900 mb-2">Publish key</p>
-            <p className="text-xs text-slate-500 font-light mb-3">
-              Saves go live on protectont.ca automatically. Enter the same secret as{' '}
-              <code className="text-slate-700 bg-slate-100 px-1 rounded">PROTECTONT_EVENTS_ADMIN_TOKEN</code> on
-              the server (stored in this browser only).
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <input
-                type="password"
-                value={adminToken}
-                onChange={(e) => setAdminToken(e.target.value)}
-                placeholder="Admin key"
-                className={`${inputClass} max-w-md flex-1 min-w-[12rem]`}
-                autoComplete="off"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  sessionStorage.setItem('protectont-events-admin-token', adminToken.trim())
-                  setSaveStatus('idle')
-                }}
-                className="text-sm py-2.5 px-4 border border-slate-200 rounded-xl text-slate-700 hover:bg-slate-50 font-light"
-              >
-                Remember key
-              </button>
-            </div>
-          </div>
+        {loadStatus === 'ok' && (
+          <p className="text-sm text-slate-600 font-light mb-6">
+            Anyone who can open this page can publish changes for all visitors on protectont.ca. Edit an event
+            and tap <strong className="font-normal">Save</strong>.
+          </p>
         )}
 
         {saveStatus === 'saving' && (
@@ -479,19 +440,7 @@ export default function AdminEventsPage() {
         )}
         {saveStatus === 'error' && (
           <p className="text-sm text-red-700 font-light mb-4 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
-            {saveError || 'Could not save. Check your admin key and try again.'}
-          </p>
-        )}
-        {saveStatus === 'needs-key' && autoSaveEnabled && !adminToken.trim() && (
-          <p className="text-sm text-amber-800 font-light mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-            Enter your publish key above so saves can go live.
-          </p>
-        )}
-        {!autoSaveEnabled && loadStatus === 'ok' && (
-          <p className="text-sm text-amber-900 font-light mb-4 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
-            Auto-save is off on this server. Use <strong className="font-normal">Download backup</strong> and
-            deploy via git, or set <code className="bg-amber-100/80 px-1 rounded">PROTECTONT_EVENTS_ADMIN_TOKEN</code>{' '}
-            in Render.
+            {saveError || 'Could not save. Try again or use Download backup.'}
           </p>
         )}
 
