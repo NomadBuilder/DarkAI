@@ -1,4 +1,12 @@
-import { SOCIAL_POST_IDEAS, type SocialPlatform, type SocialPostIdea } from './social-post-ideas'
+import {
+  ISSUE_LABELS,
+  SOCIAL_IDEAS_VERSION,
+  SOCIAL_POST_IDEAS,
+  cap,
+  postTextWithoutHashtag,
+  type SocialPlatform,
+  type SocialPostIdea,
+} from './social-post-ideas'
 
 const VALID_PLATFORMS = new Set<string>([
   'instagram',
@@ -10,14 +18,58 @@ const VALID_PLATFORMS = new Set<string>([
 ])
 
 export type SocialPostIdeasFile = {
-  version: 1
+  version: number
   ideas: SocialPostIdea[]
 }
 
 export function defaultSocialPostIdeasFile(): SocialPostIdeasFile {
   return {
-    version: 1,
+    version: SOCIAL_IDEAS_VERSION,
     ideas: SOCIAL_POST_IDEAS.map((i) => ({ ...i })),
+  }
+}
+
+const DIRECTION_PATTERNS =
+  /^(short loop|swipe carousel|meme format|side-by-side|story sticker|no image needed|15 sec|screenshot-style|scrolling ticker|real photo|drake-style|pick one issue|animation:|bold headline on|classic meme|split screen|full-screen green|standard drake|template:|text-on-screen|fake document|black bar|user-generated|n\/a —)/i
+
+function looksLikeDirections(text: string): boolean {
+  const t = text.trim()
+  if (!t) return false
+  if (DIRECTION_PATTERNS.test(t)) return true
+  if (t.length > 120 && /purple \(#|1080×|canva|slide \d|export png/i.test(t)) return true
+  return false
+}
+
+/** Turn old visual-brief bullets into readable post copy when possible */
+function briefToPost(brief: string): string {
+  let t = brief
+    .replace(/^Animation:\s*/i, '')
+    .replace(/^Slide \d+[^:]*:\s*/gi, '')
+    .trim()
+  t = t.replace(/→/g, '. ').replace(/\s+/g, ' ').trim()
+  if (t.length > 280) t = `${t.slice(0, 277)}…`
+  return cap(t)
+}
+
+function migrateIdea(raw: SocialPostIdea): SocialPostIdea {
+  const byId = SOCIAL_POST_IDEAS.find((d) => d.id === raw.id)
+  if (byId && looksLikeDirections(raw.caption)) {
+    return { ...byId, platforms: raw.platforms.length ? raw.platforms : byId.platforms }
+  }
+
+  let caption = raw.caption
+  if (looksLikeDirections(caption) && raw.visualBrief?.trim()) {
+    caption = briefToPost(raw.visualBrief)
+  } else if (looksLikeDirections(caption)) {
+    caption = cap(postTextWithoutHashtag(raw.headline || raw.title || 'Share if you agree.'))
+  }
+
+  return {
+    ...raw,
+    title: ISSUE_LABELS[raw.issue] ?? raw.title,
+    caption: cap(caption),
+    visualBrief: undefined,
+    designTips: undefined,
   }
 }
 
@@ -33,33 +85,55 @@ function normalizeIdea(raw: unknown, index: number): SocialPostIdea | null {
     ? o.platforms.filter((p): p is SocialPlatform => typeof p === 'string' && VALID_PLATFORMS.has(p))
     : ['instagram', 'facebook']
 
-  return {
+  const idea: SocialPostIdea = {
     id,
-    title: typeof o.title === 'string' ? o.title : 'Untitled idea',
+    title: typeof o.title === 'string' ? o.title : 'Post',
     issue: issue as SocialPostIdea['issue'],
     format: format as SocialPostIdea['format'],
     platforms: platforms.length ? platforms : ['instagram'],
     caption: typeof o.caption === 'string' ? o.caption : '',
-    visualBrief: typeof o.visualBrief === 'string' ? o.visualBrief : '',
-    designTips: typeof o.designTips === 'string' ? o.designTips : '',
     headline: typeof o.headline === 'string' ? o.headline : undefined,
     imageUrl: typeof o.imageUrl === 'string' ? o.imageUrl : undefined,
+    visualBrief: typeof o.visualBrief === 'string' ? o.visualBrief : undefined,
+    designTips: typeof o.designTips === 'string' ? o.designTips : undefined,
   }
+
+  return migrateIdea(idea)
 }
 
 export function parseSocialPostIdeasFile(data: unknown): SocialPostIdeasFile {
   const base = defaultSocialPostIdeasFile()
   if (!data || typeof data !== 'object') return base
   const d = data as Record<string, unknown>
+  const version = typeof d.version === 'number' ? d.version : 0
   if (!Array.isArray(d.ideas)) return base
+
   const ideas = d.ideas
     .map((item, i) => normalizeIdea(item, i))
     .filter((x): x is SocialPostIdea => x !== null)
-  return { version: 1, ideas: ideas.length ? ideas : base.ideas }
+
+  if (version < SOCIAL_IDEAS_VERSION) {
+    return { version: SOCIAL_IDEAS_VERSION, ideas: ideas.length ? ideas.map(migrateIdea) : base.ideas }
+  }
+
+  return { version: SOCIAL_IDEAS_VERSION, ideas: ideas.length ? ideas : base.ideas }
 }
 
 export function serializeSocialPostIdeasFile(file: SocialPostIdeasFile): string {
-  return JSON.stringify(file, null, 2) + '\n'
+  const clean: SocialPostIdeasFile = {
+    version: SOCIAL_IDEAS_VERSION,
+    ideas: file.ideas.map((i) => ({
+      id: i.id,
+      title: i.title,
+      issue: i.issue,
+      format: i.format,
+      platforms: i.platforms,
+      caption: i.caption,
+      headline: i.headline,
+      imageUrl: i.imageUrl,
+    })),
+  }
+  return JSON.stringify(clean, null, 2) + '\n'
 }
 
 export async function loadSocialPostIdeasFile(): Promise<SocialPostIdeasFile> {

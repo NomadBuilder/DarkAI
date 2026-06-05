@@ -7,12 +7,11 @@ import { FF_COLORS, FF_PAGE_GRADIENT } from '../../lib/ff-get-involved'
 import { generateSocialPostIdea } from '../../lib/social-post-ideas-generate'
 import {
   FIGHT_FORD_HASHTAG,
-  FORMAT_LABELS,
   ISSUE_LABELS,
   PLATFORM_LABELS,
   buildShareableCaption,
+  postTextWithoutHashtag,
   type FordIssue,
-  type PostFormat,
   type SocialPlatform,
   type SocialPostIdea,
 } from '../../lib/social-post-ideas'
@@ -25,14 +24,14 @@ import {
 
 type PlatformFilter = 'all' | SocialPlatform
 type IssueFilter = 'all' | FordIssue
-type FormatFilter = 'all' | PostFormat
-
 const fieldClass =
   'w-full px-3 py-2 rounded-lg border border-white/20 bg-black/30 text-[#f9e04c] text-sm font-light focus:outline-none focus:ring-2 focus:ring-[#ff9a3c]/50'
 const labelClass = 'block text-xs uppercase tracking-wider text-[#f9e04c]/60 mb-1'
 
 function IdeaPreview({ idea }: { idea: SocialPostIdea }) {
-  const displayHeadline = idea.headline?.trim() || idea.title
+  const body = postTextWithoutHashtag(idea.caption)
+  const headline = idea.headline?.trim()
+
   return (
     <div
       className="mb-4 rounded-xl overflow-hidden border border-[#f9e04c]/30 aspect-[4/5] max-h-64 relative flex flex-col"
@@ -43,13 +42,19 @@ function IdeaPreview({ idea }: { idea: SocialPostIdea }) {
         <img src={idea.imageUrl} alt="" className="absolute inset-0 w-full h-full object-cover opacity-40" />
       ) : null}
       <div className="relative z-10 flex flex-1 flex-col justify-center p-4 text-center">
+        {headline ? (
+          <p
+            className="text-sm sm:text-base font-bold uppercase tracking-wide leading-tight px-2"
+            style={{ color: FF_COLORS.headingBg }}
+          >
+            {headline}
+          </p>
+        ) : null}
         <p
-          className="text-sm sm:text-base font-bold uppercase tracking-wide leading-tight px-2"
-          style={{ color: FF_COLORS.headingBg }}
+          className={`${headline ? 'mt-3 text-xs' : 'text-sm sm:text-base font-medium'} text-[#f9e04c]/95 font-light leading-snug px-3 line-clamp-6`}
         >
-          {displayHeadline}
+          {body}
         </p>
-        <p className="mt-2 text-[10px] text-[#f9e04c]/70">{ISSUE_LABELS[idea.issue]}</p>
       </div>
       <div
         className="relative z-10 py-1.5 text-center text-[10px] font-semibold"
@@ -61,26 +66,15 @@ function IdeaPreview({ idea }: { idea: SocialPostIdea }) {
   )
 }
 
-function IdeaSummary({ idea, className = '' }: { idea: SocialPostIdea; className?: string }) {
-  const caption = buildShareableCaption(idea)
+function IdeaSummary({ idea }: { idea: SocialPostIdea }) {
+  const post = buildShareableCaption(idea)
   return (
-    <div className={`space-y-3 text-sm mb-4 ${className}`}>
-      <div className="flex flex-wrap gap-2">
-        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#f9e04c]/20 text-[#f9e04c]">
-          {ISSUE_LABELS[idea.issue]}
-        </span>
-        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#ff9a3c]/25 text-[#ffb366]">
-          {FORMAT_LABELS[idea.format]}
-        </span>
-      </div>
-      <h2 className="text-lg font-semibold text-[#f9e04c]">{idea.title}</h2>
+    <div className="space-y-3 text-sm mb-4">
       <p className="text-xs text-[#f9e04c]/65">
-        Best on: {idea.platforms.map((p) => PLATFORM_LABELS[p] ?? p).join(' · ')}
+        {ISSUE_LABELS[idea.issue]} · {idea.platforms.map((p) => PLATFORM_LABELS[p] ?? p).join(' · ')}
       </p>
-      <p className="text-[#f9e04c]/90 font-light leading-relaxed line-clamp-2">{idea.visualBrief}</p>
-      <div className="rounded-xl bg-black/25 border border-white/10 p-3">
-        <p className="text-xs text-[#f9e04c]/50 mb-1">Caption</p>
-        <p className="text-[#f9e04c] font-light whitespace-pre-wrap text-sm line-clamp-3">{caption}</p>
+      <div className="rounded-xl bg-black/25 border border-white/10 p-4">
+        <p className="text-[#f9e04c] font-light whitespace-pre-wrap text-sm leading-relaxed">{post}</p>
       </div>
     </div>
   )
@@ -97,7 +91,7 @@ function CollapsibleDetails({
 }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="mb-4 flex-1">
+    <div className="mb-4">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -129,41 +123,41 @@ function IdeaCard({
   copiedId: string | null
   onCopy: (id: string, text: string) => void
 }) {
-  const caption = buildShareableCaption(idea)
+  const post = buildShareableCaption(idea)
   const platformStr = idea.platforms.join(', ')
 
   return (
     <article className="rounded-2xl border border-[#f9e04c]/20 bg-gradient-to-br from-white/[0.12] via-white/[0.06] to-transparent p-5 sm:p-6 shadow-lg flex flex-col">
       <IdeaPreview idea={idea} />
+      <IdeaSummary idea={idea} />
 
-      {editing ? (
-        <>
-          <IdeaSummary idea={idea} />
-          <CollapsibleDetails title="Edit details">
+      {editing && (
+        <CollapsibleDetails title="Edit post">
           <div>
-            <span className={labelClass}>Title</span>
-            <input
-              className={fieldClass}
-              value={idea.title}
-              onChange={(e) => onChange({ ...idea, title: e.target.value })}
+            <span className={labelClass}>Post (paste into Facebook / Instagram)</span>
+            <textarea
+              rows={5}
+              className={`${fieldClass} resize-y`}
+              value={idea.caption}
+              onChange={(e) => onChange({ ...idea, caption: e.target.value })}
             />
           </div>
           <div>
-            <span className={labelClass}>On-image headline</span>
+            <span className={labelClass}>Short line on graphic (optional)</span>
             <input
               className={fieldClass}
               value={idea.headline ?? ''}
-              onChange={(e) => onChange({ ...idea, headline: e.target.value })}
-              placeholder="Large text on the graphic"
+              onChange={(e) => onChange({ ...idea, headline: e.target.value || undefined })}
+              placeholder="e.g. FUND OUR SCHOOLS"
             />
           </div>
           <div>
-            <span className={labelClass}>Background image (URL or upload)</span>
+            <span className={labelClass}>Photo for post (URL or upload, optional)</span>
             <input
               className={fieldClass}
               value={idea.imageUrl?.startsWith('data:') ? '' : idea.imageUrl ?? ''}
               onChange={(e) => onChange({ ...idea, imageUrl: e.target.value || undefined })}
-              placeholder="https://… or upload below"
+              placeholder="https://…"
             />
             <input
               type="file"
@@ -187,33 +181,6 @@ function IdeaCard({
             />
           </div>
           <div>
-            <span className={labelClass}>Visual / meme description</span>
-            <textarea
-              rows={3}
-              className={`${fieldClass} resize-y`}
-              value={idea.visualBrief}
-              onChange={(e) => onChange({ ...idea, visualBrief: e.target.value })}
-            />
-          </div>
-          <div>
-            <span className={labelClass}>Caption</span>
-            <textarea
-              rows={4}
-              className={`${fieldClass} resize-y`}
-              value={idea.caption}
-              onChange={(e) => onChange({ ...idea, caption: e.target.value })}
-            />
-          </div>
-          <div>
-            <span className={labelClass}>Design tips</span>
-            <textarea
-              rows={2}
-              className={`${fieldClass} resize-y`}
-              value={idea.designTips}
-              onChange={(e) => onChange({ ...idea, designTips: e.target.value })}
-            />
-          </div>
-          <div>
             <span className={labelClass}>Platforms (comma-separated)</span>
             <input
               className={fieldClass}
@@ -229,16 +196,13 @@ function IdeaCard({
               }
             />
           </div>
-          </CollapsibleDetails>
-        </>
-      ) : (
-        <IdeaSummary idea={idea} />
+        </CollapsibleDetails>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mt-auto">
         <button
           type="button"
-          onClick={() => onCopy(idea.id, caption)}
+          onClick={() => onCopy(idea.id, post)}
           className="flex-1 min-w-[8rem] py-2.5 rounded-xl text-sm font-semibold"
           style={{
             backgroundColor: copiedId === idea.id ? '#2f2260' : FF_COLORS.background,
@@ -246,7 +210,7 @@ function IdeaCard({
             border: `1px solid ${FF_COLORS.link}`,
           }}
         >
-          {copiedId === idea.id ? 'Copied!' : 'Copy caption'}
+          {copiedId === idea.id ? 'Copied!' : 'Copy post'}
         </button>
         <button
           type="button"
@@ -266,7 +230,6 @@ export default function SocialIdeasPage() {
   const [editMode, setEditMode] = useState(true)
   const [platform, setPlatform] = useState<PlatformFilter>('all')
   const [issue, setIssue] = useState<IssueFilter>('all')
-  const [format, setFormat] = useState<FormatFilter>('all')
   const [query, setQuery] = useState('')
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [publishStatus, setPublishStatus] = useState<'idle' | 'publishing' | 'published' | 'error'>('idle')
@@ -297,15 +260,12 @@ export default function SocialIdeasPage() {
   }, [])
 
   const removeIdea = useCallback((id: string) => {
-    if (!window.confirm('Remove this idea from the list?')) return
+    if (!window.confirm('Remove this post idea?')) return
     setFile((f) => ({ ...f, ideas: f.ideas.filter((i) => i.id !== id) }))
   }, [])
 
   const handleGenerate = () => {
-    const prefs =
-      issue !== 'all' || format !== 'all'
-        ? { issue: issue !== 'all' ? issue : undefined, format: format !== 'all' ? format : undefined }
-        : {}
+    const prefs = issue !== 'all' ? { issue } : {}
     const idea = generateSocialPostIdea(prefs)
     setFile((f) => ({ ...f, ideas: [idea, ...f.ideas] }))
   }
@@ -336,25 +296,14 @@ export default function SocialIdeasPage() {
     const q = query.trim().toLowerCase()
     return file.ideas.filter((idea) => {
       if (issue !== 'all' && idea.issue !== issue) return false
-      if (format !== 'all' && idea.format !== format) return false
       if (platform !== 'all' && !idea.platforms.includes(platform)) return false
       if (!q) return true
-      const hay = [
-        idea.title,
-        idea.caption,
-        idea.visualBrief,
-        idea.designTips,
-        idea.headline ?? '',
-        ISSUE_LABELS[idea.issue],
-        FORMAT_LABELS[idea.format],
-      ]
-        .join(' ')
-        .toLowerCase()
+      const hay = [idea.caption, idea.headline ?? '', ISSUE_LABELS[idea.issue]].join(' ').toLowerCase()
       return hay.includes(q)
     })
-  }, [file.ideas, platform, issue, format, query])
+  }, [file.ideas, platform, issue, query])
 
-  const copyCaption = async (id: string, text: string) => {
+  const copyPost = async (id: string, text: string) => {
     try {
       await navigator.clipboard.writeText(text)
       setCopiedId(id)
@@ -379,8 +328,8 @@ export default function SocialIdeasPage() {
             Social post ideas
           </h1>
           <p className="mt-4 text-[#f9e04c]/90 font-light max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
-            Generate new post concepts, edit headlines and captions, preview the graphic, then publish for everyone.
-            Always use <span className="font-semibold text-[#ff9a3c]">{FIGHT_FORD_HASHTAG}</span>.
+            Ready-to-share posts for Facebook, Instagram, and more. Tap <strong className="font-normal">Copy post</strong>
+            — always includes <span className="font-semibold text-[#ff9a3c]">{FIGHT_FORD_HASHTAG}</span>.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <button
@@ -389,14 +338,14 @@ export default function SocialIdeasPage() {
               className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-semibold transition-colors"
               style={{ backgroundColor: FF_COLORS.headingBg, color: FF_COLORS.headingText }}
             >
-              Generate new idea
+              Generate new post
             </button>
             <button
               type="button"
               onClick={() => setEditMode((v) => !v)}
               className="inline-flex items-center rounded-full px-5 py-2.5 text-sm font-medium border border-[#f9e04c]/40 text-[#f9e04c] hover:bg-white/10"
             >
-              {editMode ? 'Preview mode' : 'Edit mode'}
+              {editMode ? 'Hide editing' : 'Edit posts'}
             </button>
             <Link
               href="/join"
@@ -408,12 +357,12 @@ export default function SocialIdeasPage() {
         </header>
 
         {loadStatus === 'loading' && (
-          <p className="text-center text-[#f9e04c]/70 animate-pulse mb-6">Loading ideas…</p>
+          <p className="text-center text-[#f9e04c]/70 animate-pulse mb-6">Loading posts…</p>
         )}
 
         {publishStatus === 'published' && (
           <p className="text-sm text-emerald-200 font-light mb-6 bg-emerald-950/50 border border-emerald-500/40 rounded-xl px-4 py-3 text-center">
-            Published — everyone on this page sees your updated ideas.
+            Published — everyone on this page sees your updated posts.
           </p>
         )}
         {publishStatus === 'error' && (
@@ -423,7 +372,7 @@ export default function SocialIdeasPage() {
         )}
 
         <section className="rounded-2xl border border-[#f9e04c]/25 bg-black/20 backdrop-blur-sm p-5 sm:p-6 mb-8">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <label className="text-sm text-[#f9e04c]/80 font-light">
               Platform
               <select
@@ -440,23 +389,12 @@ export default function SocialIdeasPage() {
               </select>
             </label>
             <label className="text-sm text-[#f9e04c]/80 font-light">
-              Ford issue
+              Topic
               <select value={issue} onChange={(e) => setIssue(e.target.value as IssueFilter)} className={selectClass}>
-                <option value="all">All issues</option>
+                <option value="all">All topics</option>
                 {(Object.keys(ISSUE_LABELS) as FordIssue[]).map((i) => (
                   <option key={i} value={i}>
                     {ISSUE_LABELS[i]}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label className="text-sm text-[#f9e04c]/80 font-light">
-              Format
-              <select value={format} onChange={(e) => setFormat(e.target.value as FormatFilter)} className={selectClass}>
-                <option value="all">All formats</option>
-                {(Object.keys(FORMAT_LABELS) as PostFormat[]).map((f) => (
-                  <option key={f} value={f}>
-                    {FORMAT_LABELS[f]}
                   </option>
                 ))}
               </select>
@@ -466,20 +404,19 @@ export default function SocialIdeasPage() {
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="meme, carousel, water…"
+                placeholder="Search posts…"
                 className={inputClass}
               />
             </label>
           </div>
           <p className="mt-4 text-xs text-[#f9e04c]/60 font-light">
-            Showing {filtered.length} of {file.ideas.length} ideas
-            {issue !== 'all' || format !== 'all' ? ' — Generate uses your issue/format filters when set' : ''}
+            {filtered.length} of {file.ideas.length} posts
           </p>
         </section>
 
         {filtered.length === 0 ? (
           <p className="text-center text-[#f9e04c]/70 font-light py-12">
-            No ideas match—tap <strong className="font-normal">Generate new idea</strong> or clear filters.
+            No posts match—tap <strong className="font-normal">Generate new post</strong> or clear filters.
           </p>
         ) : (
           <section className="grid gap-6 md:grid-cols-2">
@@ -491,7 +428,7 @@ export default function SocialIdeasPage() {
                 onChange={(next) => updateIdea(idea.id, next)}
                 onRemove={() => removeIdea(idea.id)}
                 copiedId={copiedId}
-                onCopy={copyCaption}
+                onCopy={copyPost}
               />
             ))}
           </section>
@@ -501,9 +438,7 @@ export default function SocialIdeasPage() {
       <div className="fixed bottom-0 inset-x-0 z-20 border-t border-[#f9e04c]/25 bg-[#2a1f58]/95 backdrop-blur-sm px-4 py-4">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
           <p className="text-xs text-[#f9e04c]/70 font-light sm:max-w-lg">
-            Publish saves the full idea list to the live site. Commit{' '}
-            <code className="text-[#f9e04c]/90">static/protectont/data/social-post-ideas.json</code> to git after big
-            changes.
+            Publish saves posts for everyone on protectont.ca/social-ideas.
           </p>
           <button
             type="button"
