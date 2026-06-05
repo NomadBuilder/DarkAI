@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react'
 import TopNavigation from '../../components/TopNavigation'
 import { FF_COLORS, FF_PAGE_GRADIENT } from '../../lib/ff-get-involved'
 import { generateSocialPostIdea } from '../../lib/social-post-ideas-generate'
@@ -61,6 +61,59 @@ function IdeaPreview({ idea }: { idea: SocialPostIdea }) {
   )
 }
 
+function IdeaSummary({ idea, className = '' }: { idea: SocialPostIdea; className?: string }) {
+  const caption = buildShareableCaption(idea)
+  return (
+    <div className={`space-y-3 text-sm mb-4 ${className}`}>
+      <div className="flex flex-wrap gap-2">
+        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#f9e04c]/20 text-[#f9e04c]">
+          {ISSUE_LABELS[idea.issue]}
+        </span>
+        <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#ff9a3c]/25 text-[#ffb366]">
+          {FORMAT_LABELS[idea.format]}
+        </span>
+      </div>
+      <h2 className="text-lg font-semibold text-[#f9e04c]">{idea.title}</h2>
+      <p className="text-xs text-[#f9e04c]/65">
+        Best on: {idea.platforms.map((p) => PLATFORM_LABELS[p] ?? p).join(' · ')}
+      </p>
+      <p className="text-[#f9e04c]/90 font-light leading-relaxed line-clamp-2">{idea.visualBrief}</p>
+      <div className="rounded-xl bg-black/25 border border-white/10 p-3">
+        <p className="text-xs text-[#f9e04c]/50 mb-1">Caption</p>
+        <p className="text-[#f9e04c] font-light whitespace-pre-wrap text-sm line-clamp-3">{caption}</p>
+      </div>
+    </div>
+  )
+}
+
+function CollapsibleDetails({
+  title,
+  children,
+  defaultOpen = false,
+}: {
+  title: string
+  children: ReactNode
+  defaultOpen?: boolean
+}) {
+  const [open, setOpen] = useState(defaultOpen)
+  return (
+    <div className="mb-4 flex-1">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-3 py-2.5 px-3 rounded-xl border border-[#f9e04c]/25 bg-black/20 text-left hover:bg-black/30 transition-colors"
+        aria-expanded={open}
+      >
+        <span className="text-sm font-medium text-[#f9e04c]">{title}</span>
+        <span className="text-[#f9e04c]/60 text-lg shrink-0" aria-hidden>
+          {open ? '−' : '+'}
+        </span>
+      </button>
+      {open && <div className="space-y-3 mt-3">{children}</div>}
+    </div>
+  )
+}
+
 function IdeaCard({
   idea,
   editing,
@@ -84,7 +137,9 @@ function IdeaCard({
       <IdeaPreview idea={idea} />
 
       {editing ? (
-        <div className="space-y-3 mb-4 flex-1">
+        <>
+          <IdeaSummary idea={idea} />
+          <CollapsibleDetails title="Edit details">
           <div>
             <span className={labelClass}>Title</span>
             <input
@@ -174,27 +229,10 @@ function IdeaCard({
               }
             />
           </div>
-        </div>
+          </CollapsibleDetails>
+        </>
       ) : (
-        <div className="space-y-4 flex-1 text-sm mb-4">
-          <div className="flex flex-wrap gap-2">
-            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#f9e04c]/20 text-[#f9e04c]">
-              {ISSUE_LABELS[idea.issue]}
-            </span>
-            <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#ff9a3c]/25 text-[#ffb366]">
-              {FORMAT_LABELS[idea.format]}
-            </span>
-          </div>
-          <h2 className="text-lg font-semibold text-[#f9e04c]">{idea.title}</h2>
-          <p className="text-xs text-[#f9e04c]/65">
-            Best on: {idea.platforms.map((p) => PLATFORM_LABELS[p] ?? p).join(' · ')}
-          </p>
-          <p className="text-[#f9e04c]/90 font-light leading-relaxed">{idea.visualBrief}</p>
-          <div className="rounded-xl bg-black/25 border border-white/10 p-3">
-            <p className="text-xs text-[#f9e04c]/50 mb-2">Caption</p>
-            <p className="text-[#f9e04c] font-light whitespace-pre-wrap text-sm">{caption}</p>
-          </div>
-        </div>
+        <IdeaSummary idea={idea} />
       )}
 
       <div className="flex flex-wrap gap-2">
