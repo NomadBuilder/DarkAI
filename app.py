@@ -354,6 +354,50 @@ def api_protectont_get_involved_form():
     return jsonify({"success": True}), 200
 
 
+@app.route('/api/protectont/social-post-ideas', methods=['GET', 'POST', 'OPTIONS'])
+def api_protectont_social_post_ideas():
+    """GET/POST social post idea library for /social-ideas."""
+    from protectont_social_ideas import (
+        read_social_post_ideas_json,
+        save_from_social_ideas_page,
+        social_ideas_save_enabled,
+        write_social_post_ideas_json,
+    )
+
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    if request.method == 'GET':
+        data, err = read_social_post_ideas_json()
+        if err:
+            return jsonify({"error": err}), 404
+        return jsonify(data), 200
+
+    if not social_ideas_save_enabled():
+        return jsonify({
+            "error": "Server save disabled",
+            "message": "Unset PROTECTONT_SOCIAL_IDEAS_DISABLE_SAVE to allow saves from /social-ideas",
+        }), 503
+
+    origin = request.headers.get("Origin", "")
+    referer = request.headers.get("Referer", "")
+    if not save_from_social_ideas_page(origin, referer):
+        return jsonify({
+            "error": "Forbidden",
+            "message": "Saves are only accepted from protectont.ca/social-ideas",
+        }), 403
+
+    raw = request.get_data(as_text=True)
+    if not raw:
+        return jsonify({"error": "Empty body"}), 400
+
+    ok, err = write_social_post_ideas_json(raw)
+    if not ok:
+        return jsonify({"error": err or "Save failed"}), 400
+
+    return jsonify({"success": True}), 200
+
+
 @app.route('/api/get-involved-submit', methods=['POST', 'OPTIONS'])
 def get_involved_submit_route():
     """Save get-involved sign-up to Google Sheet and email organizers via Resend."""

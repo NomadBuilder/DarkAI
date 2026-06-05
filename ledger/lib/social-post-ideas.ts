@@ -20,6 +20,8 @@ export type SocialPostIdea = {
   designTips: string
   /** Suggested on-image headline (large type) */
   headline?: string
+  /** Optional reference image URL for the graphic */
+  imageUrl?: string
 }
 
 export const FIGHT_FORD_HASHTAG = '#FightFord'
