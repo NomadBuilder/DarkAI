@@ -1,5 +1,5 @@
 {
-  "lastUpdated": "2026-06-02",
+  "lastUpdated": "2026-06-06",
   "featuredCampaign": {
     "enabled": true,
     "label": "Province-wide protest Saturday June 27, 2026 — find your city and join in",
@@ -1027,11 +1027,29 @@
       "address": "12 Perry St"
     },
     {
+      "id": "fight-ford-2026-06-27-ancaster",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Ancaster, ON",
+      "description": "Sobeys, 977 Golf Links Rd.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "977 Golf Links Rd"
+    },
+    {
       "id": "fight-ford-2026-06-27-angus",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 1:00 PM",
       "location": "Angus, ON",
       "description": "Peacekeepers Park, 12 Commerce Rd.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1046,6 +1064,8 @@
       "date": "Jun 27, 2026 · 1:00 PM",
       "location": "Barrie, ON",
       "description": "Sadlon Arena, 555 Bayview Dr.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1055,11 +1075,44 @@
       "address": "555 Bayview Dr"
     },
     {
+      "id": "fight-ford-2026-06-27-belleville",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 10:00 AM",
+      "location": "Belleville, ON",
+      "description": "Bell Front Shopping Centre, Bell Blvd & Front Street N.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-blyth",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Blyth, ON",
+      "description": "408 Queen St. MPP Lisa Thompson's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "408 Queen St"
+    },
+    {
       "id": "fight-ford-2026-06-27-bowmanville",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 2:00 PM",
       "location": "Bowmanville, ON",
-      "description": "23 King St W. Target: MPP Todd McCarthy's office.",
+      "description": "23 King St W. MPP Todd McCarthy's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1069,11 +1122,45 @@
       "address": "23 King St W"
     },
     {
+      "id": "fight-ford-2026-06-27-bracebridge",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Bracebridge, ON",
+      "description": "230 Manitoba St. MPP Graydon Smith's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "230 Manitoba St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-bradford",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Bradford, ON",
+      "description": "Bradford West Gwillimbury Public Library, 425 Holland St W.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "425 Holland St W"
+    },
+    {
       "id": "fight-ford-2026-06-27-brantford",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 12:00 PM",
       "location": "Brantford, ON",
-      "description": "96 Nelson St. Target: MPP Will Bouma's office.",
+      "description": "96 Nelson St. MPP Will Bouma's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1083,11 +1170,45 @@
       "address": "96 Nelson St"
     },
     {
+      "id": "fight-ford-2026-06-27-cambridge",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 11:00 AM",
+      "location": "Cambridge, ON",
+      "description": "73 Water St. MPP Brian Riddell's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "73 Water St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-chatham",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Chatham, ON",
+      "description": "111 Heritage Rd. MPP Trevor Jones' Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "111 Heritage Rd"
+    },
+    {
       "id": "fight-ford-2026-06-27-cornwall",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 1:00 PM",
       "location": "Cornwall, ON",
-      "description": "120 2nd St W. Target: MPP Nolan Quinn's office.",
+      "description": "120 2nd St W. MPP Nolan Quinn's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1097,11 +1218,122 @@
       "address": "120 2nd St W"
     },
     {
+      "id": "fight-ford-2026-06-27-elmira",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "Elmira, ON",
+      "description": "63 Arthur St S. MPP Mike Harris's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "63 Arthur St S"
+    },
+    {
+      "id": "fight-ford-2026-06-27-etobicoke-weston",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:30 PM",
+      "location": "Etobicoke, ON",
+      "description": "End of Doug Ford's Street, Weston Wood Rd & Royal York Rd.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-etobicoke-albion",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "Etobicoke, ON",
+      "description": "Doug Ford's Office, 964 Albion Rd.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "964 Albion Rd"
+    },
+    {
       "id": "fight-ford-2026-06-27-guelph",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 12:00 PM",
       "location": "Guelph, ON",
       "description": "Wellington Plaza, Gordon St & Wellington St E.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-hamilton",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "Hamilton, ON",
+      "description": "Location to be announced.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-kincardine",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:30 PM",
+      "location": "Kincardine, ON",
+      "description": "807 Queen St. MPP Lisa Thompson's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "807 Queen St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-kingston",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026",
+      "location": "Kingston, ON",
+      "description": "Confederation Park, 225 Ontario St.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "225 Ontario St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-lindsay",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 11:00 AM",
+      "location": "Lindsay, ON",
+      "description": "Lindsay Square Mall, St. Joseph Rd & Kent St W.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1114,7 +1346,56 @@
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 1:00 PM",
       "location": "London, ON",
-      "description": "Victoria Park northwest corner, Central Ave.",
+      "description": "Victoria Park Northwest Corner, Central Ave.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "Central Ave"
+    },
+    {
+      "id": "fight-ford-2026-06-27-markham-thornhill",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:30 PM",
+      "location": "Markham-Thornhill, ON",
+      "description": "7380 McCowan Rd. MPP Logan Kanapathi's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "7380 McCowan Rd"
+    },
+    {
+      "id": "fight-ford-2026-06-27-milton",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "Milton, ON",
+      "description": "Ontario St North/South, Main St & Ontario St.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-newmarket",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Newmarket, ON",
+      "description": "Yonge St & Sawmill Valley Dr. MPP Dawn Gallagher Murphy's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1128,6 +1409,8 @@
       "date": "Jun 27, 2026 · 10:00 AM",
       "location": "New Liskeard, ON",
       "description": "Canada Post, 83 Whitewood Ave.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1137,11 +1420,172 @@
       "address": "83 Whitewood Ave"
     },
     {
+      "id": "fight-ford-2026-06-27-north-bay",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "North Bay, ON",
+      "description": "219 Main St E. MPP Vic Fedeli's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "219 Main St E"
+    },
+    {
+      "id": "fight-ford-2026-06-27-oakville",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026",
+      "location": "Oakville, ON",
+      "description": "2525 Old Bronte Rd. MPP Effie Triantafilopoulos' Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "2525 Old Bronte Rd"
+    },
+    {
+      "id": "fight-ford-2026-06-27-orangeville",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Orangeville, ON",
+      "description": "180 Broadway Ave. MPP Sylvia Jones' Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "180 Broadway Ave"
+    },
+    {
+      "id": "fight-ford-2026-06-27-orillia",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Orillia, ON",
+      "description": "Orillia Opera House, 1 West St N.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "1 West St N"
+    },
+    {
+      "id": "fight-ford-2026-06-27-owen-sound",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 9:00 AM",
+      "location": "Owen Sound, ON",
+      "description": "345 8th St E. MPP Paul Vickers' Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "345 8th St E"
+    },
+    {
+      "id": "fight-ford-2026-06-27-pembroke",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Pembroke, ON",
+      "description": "Location to be announced.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true
+    },
+    {
+      "id": "fight-ford-2026-06-27-peterborough",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Peterborough, ON",
+      "description": "864 Chemong Rd. MPP Dave Smith's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "864 Chemong Rd"
+    },
+    {
+      "id": "fight-ford-2026-06-27-pickering",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 11:00 AM",
+      "location": "Pickering, ON",
+      "description": "1550 Kingston Rd. MPP Peter Bethlenfalvy's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "1550 Kingston Rd"
+    },
+    {
+      "id": "fight-ford-2026-06-27-port-hope",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Port Hope, ON",
+      "description": "117 Peter St. MPP David Piccini's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "117 Peter St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-sarnia",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Sarnia, ON",
+      "description": "800 Christina St N. MPP Bob Bailey's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "800 Christina St N"
+    },
+    {
       "id": "fight-ford-2026-06-27-simcoe",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 12:00 PM",
       "location": "Simcoe, ON",
       "description": "Wellington Park, 50 Bonnie Dr.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1156,6 +1600,8 @@
       "date": "Jun 27, 2026 · 11:00 AM",
       "location": "St. Catharines, ON",
       "description": "Pen Centre, Tremont Dr & Glendale Ave.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1164,11 +1610,29 @@
       "featured": true
     },
     {
+      "id": "fight-ford-2026-06-27-st-thomas",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 2:00 PM",
+      "location": "St. Thomas, ON",
+      "description": "750 Talbot St. MPP Robert Flack's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "750 Talbot St"
+    },
+    {
       "id": "fight-ford-2026-06-27-stayner",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 2:00 PM",
       "location": "Stayner, ON",
-      "description": "7317 Highway 26 E. Target: MPP Brian Saunderson's office.",
+      "description": "7317 Highway 26 E. MPP Brian Saunderson's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1178,11 +1642,29 @@
       "address": "7317 Highway 26 E"
     },
     {
+      "id": "fight-ford-2026-06-27-stouffville",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Stouffville, ON",
+      "description": "37 Sandiford Dr. MPP Paul Calandra's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "37 Sandiford Dr"
+    },
+    {
       "id": "fight-ford-2026-06-27-stratford",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 10:00 AM",
       "location": "Stratford, ON",
-      "description": "55 Lorne Ave E. Target: MPP Matthew Rae's office.",
+      "description": "55 Lorne Ave E. MPP Matthew Rae's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1192,11 +1674,45 @@
       "address": "55 Lorne Ave E"
     },
     {
+      "id": "fight-ford-2026-06-27-thunder-bay",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 11:00 AM",
+      "location": "Thunder Bay, ON",
+      "description": "774 James St N. MPP Kevin Holland's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "774 James St N"
+    },
+    {
+      "id": "fight-ford-2026-06-27-toronto-queens-park",
+      "title": "Fight Ford Protests (June 29)",
+      "date": "Jun 29, 2026 · 7:00 PM",
+      "location": "Toronto, ON",
+      "description": "Queen's Park (Monday, June 29), 111 Wellesley St W.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "111 Wellesley St W"
+    },
+    {
       "id": "fight-ford-2026-06-27-wallaceburg",
       "title": "Fight Ford Protests (June 27)",
-      "date": "Jun 27, 2026",
+      "date": "Jun 27, 2026 · 12:00 PM",
       "location": "Wallaceburg, ON",
-      "description": "60 McNaughton Ave. Target: MPP Steve Pinsonneault's office.",
+      "description": "60 McNaughton Ave. MPP Steve Pinsonneault's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
@@ -1206,11 +1722,61 @@
       "address": "60 McNaughton Ave"
     },
     {
+      "id": "fight-ford-2026-06-27-waterloo",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Waterloo, ON",
+      "description": "William Street West/South, 136 King St S.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "136 King St S"
+    },
+    {
+      "id": "fight-ford-2026-06-27-whitby",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 12:00 PM",
+      "location": "Whitby, ON",
+      "description": "3000 Garden St. MPP Lorne Coe's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "3000 Garden St"
+    },
+    {
+      "id": "fight-ford-2026-06-27-windsor",
+      "title": "Fight Ford Protests (June 27)",
+      "date": "Jun 27, 2026 · 1:00 PM",
+      "location": "Windsor, ON",
+      "description": "5452 Tecumseh Rd E. MPP Andrew Dowie's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
+      "status": "confirmed",
+      "topics": [
+        "accountability"
+      ],
+      "campaignId": "june-27-2026",
+      "featured": true,
+      "address": "5452 Tecumseh Rd E"
+    },
+    {
       "id": "fight-ford-2026-06-27-woodstock",
       "title": "Fight Ford Protests (June 27)",
       "date": "Jun 27, 2026 · 1:00 PM",
       "location": "Woodstock, ON",
-      "description": "12 Perry St. Target: MPP Ernie Hardeman's office.",
+      "description": "12 Perry St. MPP Ernie Hardeman's Office.",
+      "link": "https://protestdougford.com/june-27th-protest-locations/",
+      "organizer": "Fight Ford Province-Wide Protests",
       "status": "confirmed",
       "topics": [
         "accountability"
