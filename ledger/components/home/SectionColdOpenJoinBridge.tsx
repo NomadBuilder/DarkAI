@@ -74,7 +74,7 @@ export default function SectionColdOpenJoinBridge() {
             href="/join"
             className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg bg-[#f9e04c] px-8 py-3.5 text-sm font-semibold text-[#1a1a1a] shadow-md transition-colors hover:bg-[#f5d84a] sm:w-auto"
           >
-            Get involved
+            Join us
           </Link>
           <a
             href="#timeline"

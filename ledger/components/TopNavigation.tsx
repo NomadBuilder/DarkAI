@@ -39,11 +39,11 @@ interface TopNavigationProps {
   onMethodologyClick?: () => void
   /** Purple/yellow nav bar while over the join-styled hero (home preview) */
   navOnDark?: boolean
-  /** Override the primary CTA (defaults to Take Action → /join) */
+  /** Override the primary CTA (defaults to Join us → /join) */
   primaryCta?: { label: string; href: string }
 }
 
-const DEFAULT_PRIMARY_CTA = { label: 'Take Action', href: '/join' } as const
+const DEFAULT_PRIMARY_CTA = { label: 'Join us', href: '/join' } as const
 
 const issuesDropdownItems: NavItem[] = [
   { id: 'healthcare', label: 'Healthcare', href: '/healthcare' },
@@ -60,31 +60,19 @@ const aboutDropdownItems: NavItem[] = [
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
-const resourcesDropdownGroups: { label?: string; items: NavItem[] }[] = [
-  {
-    items: [
-      { id: 'stories', label: 'Your stories', href: '/stories' },
-      { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
-      { id: 'social-ideas', label: 'Social post ideas', href: '/social-ideas' },
-      { id: 'chants', label: 'Chant Bank', href: '/chants' },
-    ],
-  },
-  {
-    label: 'Create',
-    items: [
-      { id: 'shirts', label: 'Shirts', href: '/shirts' },
-      { id: 'signs', label: 'Signs', href: '/signs' },
-      { id: 'stickers', label: 'Stickers', href: '/stickers' },
-    ],
-  },
+const resourcesDropdownItems: NavItem[] = [
+  { id: 'stories', label: 'Your stories', href: '/stories' },
+  { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
+  { id: 'social-ideas', label: 'Social post ideas', href: '/social-ideas' },
+  { id: 'chants', label: 'Chant Bank', href: '/chants' },
+  { id: 'materials', label: 'Materials', href: '/materials' },
 ]
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'The Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
+  { id: 'protests', label: 'Protests', href: '/protests' },
+  { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
   { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
-  { id: 'resources', label: 'Resources', isDropdown: true, dropdownGroups: resourcesDropdownGroups },
-  { id: 'products', label: 'Products', href: '/products' },
-  { id: 'events', label: 'Events', href: '/protests' },
 ]
 
 const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
@@ -238,7 +226,7 @@ export default function TopNavigation({
                   </Link>
                 </div>
 
-                {/* Navigation Items + Take Action CTA */}
+                {/* Navigation Items + Join CTA */}
                 <div className="hidden md:flex items-center flex-1 justify-end gap-1 lg:gap-2 xl:gap-3 max-w-6xl mx-4">
                   {navItems.map((item) => {
                     if (item.isDropdown && (item.dropdownItems || item.dropdownGroups)) {
@@ -303,10 +291,8 @@ export default function TopNavigation({
                     href={DONATE_STRIPE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={`ml-2 lg:ml-3 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium rounded-lg transition-colors whitespace-nowrap ${
-                      navOnDark
-                        ? 'border-2 border-[#f9e04c]/50 text-[#f9e04c] hover:bg-[#f9e04c]/10'
-                        : 'text-[#2E4A6B] border-2 border-[#2E4A6B] hover:bg-[#2E4A6B] hover:text-white'
+                    className={`ml-2 lg:ml-3 px-2 py-2 text-sm lg:text-base font-light underline-offset-4 hover:underline transition-colors whitespace-nowrap ${
+                      navOnDark ? 'text-[#f9e04c]/80 hover:text-[#f9e04c]' : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     Donate
@@ -497,15 +483,6 @@ function MobileMenu({
                       })}
                       <div className="pt-4 mt-4 border-t border-gray-200 space-y-3">
                         <a
-                          href={DONATE_STRIPE_URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => setIsOpen(false)}
-                          className="block w-full text-center px-4 py-4 text-lg font-medium text-[#2E4A6B] border-2 border-[#2E4A6B] rounded-lg hover:bg-[#2E4A6B] hover:text-white transition-colors"
-                        >
-                          Donate
-                        </a>
-                        <a
                           href={getNavHref(primaryCta?.href ?? DEFAULT_PRIMARY_CTA.href, basePath)}
                           onClick={() => setIsOpen(false)}
                           className={`block w-full text-center px-4 py-4 text-lg font-medium rounded-lg transition-colors ${
@@ -515,6 +492,15 @@ function MobileMenu({
                           }`}
                         >
                           {primaryCta?.label ?? DEFAULT_PRIMARY_CTA.label}
+                        </a>
+                        <a
+                          href={DONATE_STRIPE_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setIsOpen(false)}
+                          className="block w-full text-center px-4 py-3 text-base font-light text-gray-600 hover:text-gray-900 transition-colors"
+                        >
+                          Donate
                         </a>
                       </div>
                     </div>

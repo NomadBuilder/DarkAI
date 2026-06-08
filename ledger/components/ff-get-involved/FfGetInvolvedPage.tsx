@@ -352,6 +352,18 @@ export default function FfGetInvolvedPage() {
               </p>
             ))}
           </div>
+
+          <div className="mx-auto mt-8 max-w-2xl rounded-2xl border border-[#f9e04c]/30 bg-[#f9e04c]/10 px-5 py-5 text-center sm:mt-10 sm:px-6 sm:py-6">
+            <p className="text-lg font-bold text-[#f9e04c] sm:text-xl">Going to a protest?</p>
+            <p className="mt-2 text-sm text-[#f9e04c]/85 sm:text-base">
+              Grab a free sign download or order a printed yard sign before you head out.
+            </p>
+            <div className="mt-4 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap sm:gap-4">
+              <AccentLink onClick={() => scrollToSection('download-a-sign')}>Get a sign →</AccentLink>
+              <AccentLink href="/materials">More materials →</AccentLink>
+              <AccentLink href="/products#yard-signs">Order a printed yard sign ($10) →</AccentLink>
+            </div>
+          </div>
         </header>
 
         {/* Quick actions — desktop grid */}
@@ -438,16 +450,22 @@ export default function FfGetInvolvedPage() {
               </p>
               <ul className="grid gap-3 sm:gap-4">
                 <SignOptionCard step="1">
-                  <AccentLink onClick={() => goToForm('yard-sign')}>Order a sign from us</AccentLink>
+                  <AccentLink href="/products#yard-signs">Order a printed yard sign ($10)</AccentLink>
+                  {' — or '}
+                  <AccentLink onClick={() => goToForm('yard-sign')}>request delivery via the form</AccentLink>
                 </SignOptionCard>
                 <SignOptionCard step="2">
                   <button
                     type="button"
                     onClick={() => scrollToSection('download-a-sign')}
-                    className="text-left"
+                    className="text-left font-semibold underline decoration-2 underline-offset-[3px]"
+                    style={{ color: FF_COLORS.link }}
                   >
                     Download a sign
                   </button>
+                </SignOptionCard>
+                <SignOptionCard step="3">
+                  <AccentLink href="/materials">Shirts, stickers &amp; more materials</AccentLink>
                 </SignOptionCard>
               </ul>
               <div id="download-a-sign" className="scroll-mt-28 sm:scroll-mt-32">

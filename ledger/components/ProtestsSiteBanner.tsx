@@ -28,17 +28,23 @@ export default function ProtestsSiteBanner({ basePath = '' }: { basePath?: strin
   const protestsHref = getNavHref('/protests', basePath)
   const hash = campaign.href?.startsWith('#') ? campaign.href : '#event-list'
   const bannerHref = `${protestsHref}${hash}`
+  const signHref = `${getNavHref('/join', basePath)}#download-a-sign`
 
   return (
     <div className="w-full bg-[#9f1239] text-white border-b border-white/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <a
-          href={bannerHref}
-          className="flex min-h-[40px] items-center justify-center text-center text-xs sm:text-sm font-medium leading-snug tracking-wide hover:underline underline-offset-4 px-2 py-2"
-        >
-          {campaign.label}
-          <span className="hidden sm:inline"> — View events</span>
-        </a>
+        <div className="flex min-h-[40px] flex-wrap items-center justify-center gap-x-3 gap-y-1 py-2 text-center text-xs sm:text-sm font-medium leading-snug tracking-wide">
+          <a href={bannerHref} className="hover:underline underline-offset-4">
+            {campaign.label}
+            <span className="hidden sm:inline"> — Find your city</span>
+          </a>
+          <span className="text-white/50" aria-hidden>
+            ·
+          </span>
+          <a href={signHref} className="text-white/90 hover:text-white hover:underline underline-offset-4">
+            Get a sign
+          </a>
+        </div>
       </div>
     </div>
   )

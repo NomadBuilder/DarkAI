@@ -27,13 +27,19 @@ export default function SectionJoinCtaBridge() {
           href="/join"
           className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg bg-white px-8 py-3.5 text-sm font-medium text-slate-900 shadow-sm transition-colors hover:bg-gray-100 sm:w-auto"
         >
-          Get involved
+          Join us
+        </Link>
+        <Link
+          href="/protests"
+          className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg border-2 border-white/40 px-8 py-3.5 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10 sm:w-auto"
+        >
+          Find a protest
         </Link>
         <Link
           href="/take-action"
           className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg border-2 border-white/40 px-8 py-3.5 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10 sm:w-auto"
         >
-          Contact your MPP & more
+          Contact your MPP
         </Link>
       </motion.div>
     </section>

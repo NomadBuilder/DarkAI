@@ -27,8 +27,8 @@ export default function ProductsPage() {
           </p>
           <p className="mt-4 text-sm text-slate-300/90 font-light">
             Looking for DIY builders?{' '}
-            <Link href="/support" className="text-white underline-offset-4 hover:underline">
-              Visit support materials
+            <Link href="/materials" className="text-white underline-offset-4 hover:underline">
+              Visit materials
             </Link>
             {' '}for posters, shirts, stickers, and print-at-home signs.
           </p>

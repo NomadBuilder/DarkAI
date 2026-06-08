@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import JoinSiteChrome from '@/components/join/JoinSiteChrome'
 
 export const metadata: Metadata = {
-  title: 'Get involved',
+  title: 'Join us — Protect Ontario',
   description:
     'Order signs, host a pickup hub, volunteer, donate, or share ideas. Grassroots sign-up for Ontario.',
   robots: { index: false, follow: false },
