@@ -66,6 +66,7 @@ export const viewport: Viewport = {
 }
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || ''
+const GA_MEASUREMENT_ID = 'G-8BG6J9ZMF7'
 
 export default function RootLayout({
   children,
@@ -75,6 +76,22 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body className="antialiased" suppressHydrationWarning>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script
+          id="ga4-gtag"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_MEASUREMENT_ID}');
+            `,
+          }}
+        />
         {GTM_ID && (
           <>
             <Script
