@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
 function shouldHideFooter(pathname: string): boolean {
-  if (/^\/(join|get-involved|flyer-admin)\/?$/.test(pathname)) return true
+  if (/^\/(join|get-involved|flyer-admin|form-admin|admin-events|admin)\/?$/.test(pathname)) return true
   return pathname.startsWith('/flyer')
 }
 

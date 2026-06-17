@@ -25,7 +25,7 @@ def save_from_form_admin(origin: str, referer: str) -> bool:
     if not save_request_allowed(origin, referer):
         return False
     ref = (referer or "").strip()
-    return "form-admin" in ref
+    return "form-admin" in ref or "/admin" in ref
 
 
 def read_form_config_json() -> Tuple[Optional[dict], Optional[str]]:

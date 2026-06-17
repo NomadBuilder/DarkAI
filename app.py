@@ -281,7 +281,7 @@ def api_protectont_protests():
     if not events_save_enabled():
         return jsonify({
             "error": "Server save disabled",
-            "message": "Unset PROTECTONT_EVENTS_DISABLE_SAVE to allow saves from /admin-events",
+            "message": "Unset PROTECTONT_EVENTS_DISABLE_SAVE to allow saves from /admin",
         }), 503
 
     origin = request.headers.get("Origin", "")
@@ -296,7 +296,7 @@ def api_protectont_protests():
         else:
             return jsonify({
                 "error": "Forbidden",
-                "message": "Saves are only accepted from the ProtectOnt admin-events page",
+                "message": "Saves are only accepted from the ProtectOnt admin page",
             }), 403
 
     raw = request.get_data(as_text=True)
@@ -312,7 +312,7 @@ def api_protectont_protests():
 
 @app.route('/api/protectont/get-involved-form', methods=['GET', 'POST', 'OPTIONS'])
 def api_protectont_get_involved_form():
-    """GET/POST join form copy for /join and /form-admin."""
+    """GET/POST join form copy for /join and /admin."""
     from protectont_form_config import (
         form_save_enabled,
         read_form_config_json,
@@ -332,7 +332,7 @@ def api_protectont_get_involved_form():
     if not form_save_enabled():
         return jsonify({
             "error": "Server save disabled",
-            "message": "Unset PROTECTONT_FORM_DISABLE_SAVE to allow saves from /form-admin",
+            "message": "Unset PROTECTONT_FORM_DISABLE_SAVE to allow saves from /admin",
         }), 503
 
     origin = request.headers.get("Origin", "")
@@ -340,7 +340,7 @@ def api_protectont_get_involved_form():
     if not save_from_form_admin(origin, referer):
         return jsonify({
             "error": "Forbidden",
-            "message": "Saves are only accepted from protectont.ca/form-admin",
+            "message": "Saves are only accepted from protectont.ca/admin",
         }), 403
 
     raw = request.get_data(as_text=True)
@@ -356,7 +356,7 @@ def api_protectont_get_involved_form():
 
 @app.route('/api/protectont/flyers', methods=['GET', 'POST', 'OPTIONS'])
 def api_protectont_flyers():
-    """GET/POST printable flyers for /flyer and /flyer-admin."""
+    """GET/POST printable flyers for /flyer and /admin."""
     from protectont_flyers import (
         flyers_save_enabled,
         read_flyers_json,
@@ -376,7 +376,7 @@ def api_protectont_flyers():
     if not flyers_save_enabled():
         return jsonify({
             "error": "Server save disabled",
-            "message": "Unset PROTECTONT_FLYERS_DISABLE_SAVE to allow saves from /flyer-admin",
+            "message": "Unset PROTECTONT_FLYERS_DISABLE_SAVE to allow saves from /admin",
         }), 503
 
     origin = request.headers.get("Origin", "")
@@ -384,7 +384,7 @@ def api_protectont_flyers():
     if not save_from_flyer_admin(origin, referer):
         return jsonify({
             "error": "Forbidden",
-            "message": "Saves are only accepted from protectont.ca/flyer-admin",
+            "message": "Saves are only accepted from protectont.ca/admin",
         }), 403
 
     raw = request.get_data(as_text=True)

@@ -25,7 +25,7 @@ def flyers_save_enabled() -> bool:
 def save_from_flyer_admin(origin: str, referer: str) -> bool:
     if not save_request_allowed(origin, referer):
         return False
-    return "flyer-admin" in (referer or "")
+    return "flyer-admin" in (referer or "") or "/admin" in (referer or "")
 
 
 def read_flyers_json() -> Tuple[Optional[dict], Optional[str]]:
