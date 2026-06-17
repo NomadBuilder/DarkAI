@@ -10,36 +10,66 @@ export function FlyerPrintStyles() {
         html,
         body {
           background: white !important;
+          margin: 0 !important;
+          padding: 0 !important;
           -webkit-print-color-adjust: exact;
           print-color-adjust: exact;
+        }
+        body > footer {
+          display: none !important;
         }
         .flyer-no-print {
           display: none !important;
         }
+        .flyer-print-chrome {
+          background: white !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          min-height: 0 !important;
+          display: block !important;
+        }
         .flyer-sheet {
+          box-sizing: border-box !important;
           box-shadow: none !important;
           margin: 0 auto !important;
-          width: 100% !important;
-          max-width: none !important;
+          width: 7.75in !important;
+          max-width: 7.75in !important;
+          min-height: 10.25in !important;
+          border: 3pt solid #1a1a1a !important;
           border-radius: 0 !important;
+          overflow: hidden !important;
+          background: white !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+          box-decoration-break: clone;
+          -webkit-box-decoration-break: clone;
+        }
+        .flyer-sheet header,
+        .flyer-sheet footer {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
         .flyer-body-text {
-          font-size: 11pt !important;
-          line-height: 1.45 !important;
+          font-size: 10pt !important;
+          line-height: 1.4 !important;
         }
         .flyer-section-title {
-          font-size: 13pt !important;
+          font-size: 12pt !important;
         }
         .flyer-headline {
-          font-size: 28pt !important;
+          font-size: 26pt !important;
         }
         .flyer-subhead {
-          font-size: 20pt !important;
+          font-size: 18pt !important;
+        }
+        .flyer-sheet section {
+          break-inside: avoid;
+          page-break-inside: avoid;
         }
       }
       @page {
-        size: letter;
-        margin: 0.4in;
+        size: letter portrait;
+        margin: 0.375in;
       }
     `}</style>
   )
@@ -65,7 +95,7 @@ export default function FlyerPrintView({
     <>
       <FlyerPrintStyles />
 
-      <div className="flyer-no-print min-h-screen bg-gradient-to-b from-[#3d2b7a] to-[#2a1f58] py-6 px-3 sm:py-10 sm:px-6">
+      <div className="flyer-print-chrome min-h-screen bg-gradient-to-b from-[#3d2b7a] to-[#2a1f58] py-6 px-3 sm:py-10 sm:px-6">
         {showToolbar && (
           <div className="flyer-no-print mx-auto mb-6 flex w-full max-w-[8.5in] flex-wrap items-center justify-between gap-3">
             <Link
@@ -90,7 +120,7 @@ export default function FlyerPrintView({
         )}
 
         <article
-          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md bg-white shadow-2xl print:shadow-none print:min-h-0"
+          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md border-2 border-transparent bg-white shadow-2xl print:border-[#1a1a1a] print:shadow-none"
           aria-label={`Protect Ontario printable flyer: ${flyer.title} ${flyer.subtitle}`}
         >
           {/* Header — poster scale */}
@@ -251,9 +281,9 @@ export default function FlyerPrintView({
         </article>
 
         {showToolbar && (
-          <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light">
-            Full letter-size flyer — use &quot;Save as PDF&quot; or print on 8.5″×11″ paper. Issue flyers may print on
-            two pages; that is normal.
+          <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light leading-relaxed">
+            Letter paper (8.5″×11″): turn off browser headers/footers, enable background graphics, then print or
+            save as PDF. Cut along the black border.
           </p>
         )}
       </div>

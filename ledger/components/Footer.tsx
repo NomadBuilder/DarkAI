@@ -3,11 +3,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const HIDE_FOOTER_PATHS = /^\/(join|get-involved|flyer|flyer-admin)\/?$/
+function shouldHideFooter(pathname: string): boolean {
+  if (/^\/(join|get-involved|flyer-admin)\/?$/.test(pathname)) return true
+  return pathname.startsWith('/flyer')
+}
 
 export default function Footer() {
   const pathname = usePathname()
-  if (pathname && HIDE_FOOTER_PATHS.test(pathname)) {
+  if (pathname && shouldHideFooter(pathname)) {
     return null
   }
 
