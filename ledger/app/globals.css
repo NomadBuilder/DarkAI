@@ -163,9 +163,16 @@ body:has(.flyer-route) > footer {
 
   .flyer-print-chrome {
     background: white !important;
-    padding: 0 !important;
     margin: 0 !important;
     min-height: 0 !important;
+  }
+
+  body:has(.flyer-route) .flyer-print-chrome {
+    padding: 0.375in !important;
+  }
+
+  body:not(:has(.flyer-route)) .flyer-print-chrome {
+    padding: 0 !important;
   }
 
   .flyer-sheet {
@@ -209,7 +216,7 @@ body:has(.flyer-route) > footer {
 
 @page {
   size: letter portrait;
-  margin: 0.375in;
+  margin: 0;
 }
 
 /* Reduce motion for users who prefer it */

@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
+import { useEffect } from 'react'
 import type { Flyer, FlyerShared } from '@/lib/flyers'
+import { bindFlyerPrintTitleCleanup, printFlyerSheet } from '@/lib/print-flyer'
 
 type FlyerPrintViewProps = {
   flyer: Flyer
@@ -16,7 +18,9 @@ export default function FlyerPrintView({
   backHref = '/flyer',
   showToolbar = true,
 }: FlyerPrintViewProps) {
-  const handlePrint = () => window.print()
+  useEffect(() => bindFlyerPrintTitleCleanup(), [])
+
+  const handlePrint = () => printFlyerSheet()
   const useGridLayout = flyer.slug === 'overview'
   const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
 
@@ -237,8 +241,9 @@ export default function FlyerPrintView({
 
         {showToolbar && (
           <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light leading-relaxed">
-            Letter paper (8.5″×11″): turn off browser headers/footers, enable background graphics, then print or
-            save as PDF. Cut along the black border.
+            In the print dialog: turn <strong className="font-normal">off</strong> &quot;Headers and footers&quot;,
+            turn <strong className="font-normal">on</strong> background graphics, then print or save as PDF. Cut along
+            the black border.
           </p>
         )}
       </div>
