@@ -89,7 +89,8 @@ export default function FlyerPrintView({
   showToolbar = true,
 }: FlyerPrintViewProps) {
   const handlePrint = () => window.print()
-  const isOverview = flyer.sections.length > 2
+  const useGridLayout = flyer.slug === 'overview'
+  const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
 
   return (
     <>
@@ -194,7 +195,7 @@ export default function FlyerPrintView({
           {flyer.sections.length > 0 && (
             <div
               className={
-                isOverview
+                useGridLayout
                   ? 'grid gap-0 sm:grid-cols-2'
                   : 'flex flex-col divide-y divide-slate-200'
               }
@@ -203,8 +204,8 @@ export default function FlyerPrintView({
                 <section
                   key={`${block.title}-${i}`}
                   className={`px-8 py-6 sm:px-10 sm:py-7 ${
-                    isOverview && i % 2 === 0 ? 'sm:border-r border-slate-200' : ''
-                  } ${isOverview && i < 2 ? 'border-b border-slate-200' : ''}`}
+                    useGridLayout && i % 2 === 0 ? 'sm:border-r border-slate-200' : ''
+                  } ${useGridLayout && i < 2 ? 'border-b border-slate-200' : ''}`}
                 >
                   {block.title && (
                     <h2 className="flyer-section-title text-lg sm:text-xl font-black uppercase tracking-wide text-[#3d2b7a] border-b-2 border-[#9f1239] pb-2 inline-block">
@@ -235,7 +236,7 @@ export default function FlyerPrintView({
             </div>
           )}
 
-          {(flyer.calloutTitle || flyer.calloutBody) && (
+          {(flyer.calloutTitle || flyer.calloutBody || calloutActions.length > 0) && (
             <section className="border-t-4 border-[#3d2b7a] bg-[#f9e04c]/15 px-8 py-6 sm:px-10 sm:py-8">
               {flyer.calloutTitle && (
                 <h2 className="text-lg sm:text-xl font-black uppercase tracking-wide text-[#3d2b7a]">
@@ -243,9 +244,38 @@ export default function FlyerPrintView({
                 </h2>
               )}
               {flyer.calloutBody && (
-                <p className="flyer-body-text mt-3 text-base sm:text-lg leading-relaxed text-slate-800 font-medium">
+                <p
+                  className={`flyer-body-text text-base sm:text-lg leading-relaxed text-slate-800 font-medium ${
+                    flyer.calloutTitle ? 'mt-3' : ''
+                  } ${calloutActions.length > 0 ? 'mb-1' : ''}`}
+                >
                   {flyer.calloutBody}
                 </p>
+              )}
+              {calloutActions.length > 0 && (
+                <div
+                  className={`grid gap-3 ${
+                    calloutActions.length >= 4
+                      ? 'sm:grid-cols-2'
+                      : calloutActions.length === 3
+                        ? 'sm:grid-cols-3'
+                        : calloutActions.length === 2
+                          ? 'sm:grid-cols-2'
+                          : ''
+                  } ${flyer.calloutTitle || flyer.calloutBody ? 'mt-4' : ''}`}
+                >
+                  {calloutActions.map((action) => (
+                    <div
+                      key={`${action.label}-${action.text}`}
+                      className="rounded-lg border-2 border-[#3d2b7a]/20 bg-white px-4 py-3 text-center sm:text-left"
+                    >
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-[#9f1239]">
+                        {action.label}
+                      </p>
+                      <p className="mt-1 text-sm sm:text-base font-bold text-[#3d2b7a]">{action.text}</p>
+                    </div>
+                  ))}
+                </div>
               )}
             </section>
           )}

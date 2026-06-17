@@ -24,6 +24,24 @@ function textToBullets(text: string): string[] {
     .filter(Boolean)
 }
 
+function actionsToText(actions: Flyer['calloutActions']): string {
+  return (actions ?? []).map((a) => `${a.label} | ${a.text}`).join('\n')
+}
+
+function textToActions(text: string): Flyer['calloutActions'] {
+  return text
+    .split('\n')
+    .map((line) => {
+      const pipe = line.indexOf('|')
+      if (pipe === -1) return { label: line.trim(), text: '' }
+      return {
+        label: line.slice(0, pipe).trim(),
+        text: line.slice(pipe + 1).trim(),
+      }
+    })
+    .filter((a) => a.label || a.text)
+}
+
 function FlyerEditor({
   flyer,
   index,
@@ -164,11 +182,19 @@ function FlyerEditor({
 
       <TextField label="Callout title" value={flyer.calloutTitle} onChange={(calloutTitle) => onChange({ ...flyer, calloutTitle })} />
       <TextField
-        label="Callout body"
+        label="Callout body (optional intro)"
         value={flyer.calloutBody}
         onChange={(calloutBody) => onChange({ ...flyer, calloutBody })}
         multiline
-        rows={3}
+        rows={2}
+      />
+      <TextField
+        label="Callout actions (one per line: Label | protectont.ca/path)"
+        value={actionsToText(flyer.calloutActions)}
+        onChange={(text) => onChange({ ...flyer, calloutActions: textToActions(text) })}
+        multiline
+        rows={4}
+        hint="Shown as a grid of action cards under the callout title."
       />
     </CollapsibleSection>
   )
@@ -221,6 +247,7 @@ export default function FlyerAdminPage() {
           sections: [{ title: 'Key points', lead: '', bullets: ['First point'] }],
           calloutTitle: '',
           calloutBody: '',
+          calloutActions: [],
           published: false,
         },
       ],

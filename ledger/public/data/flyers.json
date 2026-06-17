@@ -127,7 +127,25 @@
         }
       ],
       "calloutTitle": "What you can do",
-      "calloutBody": "Tell your MPP you want public dollars in public hospitals — protectont.ca/take-action. Find a rally: protectont.ca/protests. Request a sign or volunteer: protectont.ca/join. Full healthcare data: protectont.ca/healthcare",
+      "calloutBody": "",
+      "calloutActions": [
+        {
+          "label": "Tell your MPP",
+          "text": "protectont.ca/take-action"
+        },
+        {
+          "label": "Find a rally",
+          "text": "protectont.ca/protests"
+        },
+        {
+          "label": "Request a sign",
+          "text": "protectont.ca/join"
+        },
+        {
+          "label": "Healthcare data",
+          "text": "protectont.ca/healthcare"
+        }
+      ],
       "published": true
     },
     {
@@ -178,7 +196,17 @@
         }
       ],
       "calloutTitle": "Dig deeper",
-      "calloutBody": "Interactive analysis, legislation links, and sources at protectont.ca/water · Contact your MPP at protectont.ca/take-action",
+      "calloutBody": "Interactive analysis, legislation links, and documented sources.",
+      "calloutActions": [
+        {
+          "label": "Water issue page",
+          "text": "protectont.ca/water"
+        },
+        {
+          "label": "Contact your MPP",
+          "text": "protectont.ca/take-action"
+        }
+      ],
       "published": true
     },
     {
@@ -228,7 +256,21 @@
         }
       ],
       "calloutTitle": "See the receipts",
-      "calloutBody": "Timelines, sources, and land policy context: protectont.ca/public-land and protectont.ca/receipts · protectont.ca/greenbelt",
+      "calloutBody": "Timelines, sources, and land policy context.",
+      "calloutActions": [
+        {
+          "label": "Public land",
+          "text": "protectont.ca/public-land"
+        },
+        {
+          "label": "Receipts",
+          "text": "protectont.ca/receipts"
+        },
+        {
+          "label": "Greenbelt",
+          "text": "protectont.ca/greenbelt"
+        }
+      ],
       "published": true
     },
     {
@@ -277,7 +319,13 @@
         }
       ],
       "calloutTitle": "Take action",
-      "calloutBody": "Sign petitions linked at protectont.ca/take-action · Ontario Nature & David Suzuki Foundation campaigns · Share this flyer",
+      "calloutBody": "Ontario Nature and David Suzuki Foundation campaigns — share this flyer.",
+      "calloutActions": [
+        {
+          "label": "Petitions & MPP",
+          "text": "protectont.ca/take-action"
+        }
+      ],
       "published": true
     },
     {
@@ -327,7 +375,21 @@
         }
       ],
       "calloutTitle": "Learn & organize",
-      "calloutBody": "protectont.ca/indigenous-rights · protectont.ca/join · protectont.ca/take-action",
+      "calloutBody": "",
+      "calloutActions": [
+        {
+          "label": "Indigenous rights",
+          "text": "protectont.ca/indigenous-rights"
+        },
+        {
+          "label": "Join",
+          "text": "protectont.ca/join"
+        },
+        {
+          "label": "Take action",
+          "text": "protectont.ca/take-action"
+        }
+      ],
       "published": true
     },
     {
@@ -376,7 +438,21 @@
         }
       ],
       "calloutTitle": "Explore the data",
-      "calloutBody": "protectont.ca · protectont.ca/methodology · protectont.ca/receipts — print this flyer, post it, talk about it.",
+      "calloutBody": "Print this flyer, post it, talk about it with neighbours.",
+      "calloutActions": [
+        {
+          "label": "Home",
+          "text": "protectont.ca"
+        },
+        {
+          "label": "Methodology",
+          "text": "protectont.ca/methodology"
+        },
+        {
+          "label": "Receipts",
+          "text": "protectont.ca/receipts"
+        }
+      ],
       "published": true
     },
     {
@@ -423,7 +499,21 @@
         }
       ],
       "calloutTitle": "Order or volunteer",
-      "calloutBody": "protectont.ca/products · protectont.ca/join · protectont.ca/protests — put a sign up before the next rally.",
+      "calloutBody": "Put a sign up before the next rally.",
+      "calloutActions": [
+        {
+          "label": "Order sign",
+          "text": "protectont.ca/products"
+        },
+        {
+          "label": "Join",
+          "text": "protectont.ca/join"
+        },
+        {
+          "label": "Protests",
+          "text": "protectont.ca/protests"
+        }
+      ],
       "published": true
     },
     {
@@ -461,7 +551,13 @@
         }
       ],
       "calloutTitle": "Get the sign",
-      "calloutBody": "Ford Failed You yard sign — $10 with stand · protectont.ca/products · Download artwork on the product page",
+      "calloutBody": "Ford Failed You yard sign — $10 with stand. Download artwork on the product page.",
+      "calloutActions": [
+        {
+          "label": "Order",
+          "text": "protectont.ca/products"
+        }
+      ],
       "published": true
     },
     {
@@ -508,7 +604,21 @@
         }
       ],
       "calloutTitle": "Find a protest",
-      "calloutBody": "protectont.ca/protests · protectont.ca/join · Order the yard sign at protectont.ca/products",
+      "calloutBody": "",
+      "calloutActions": [
+        {
+          "label": "Protest calendar",
+          "text": "protectont.ca/protests"
+        },
+        {
+          "label": "Join",
+          "text": "protectont.ca/join"
+        },
+        {
+          "label": "Order yard sign",
+          "text": "protectont.ca/products"
+        }
+      ],
       "published": true
     }
   ]

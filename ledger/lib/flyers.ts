@@ -30,6 +30,8 @@ export type Flyer = {
   sections: FlyerSection[]
   calloutTitle: string
   calloutBody: string
+  /** Optional action chips (label + URL) shown in a grid under the callout */
+  calloutActions?: FlyerCta[]
   published: boolean
 }
 
@@ -95,6 +97,7 @@ function parseFlyer(raw: unknown): Flyer | null {
     sections: parseSections(o.sections),
     calloutTitle: String(o.calloutTitle ?? '').trim(),
     calloutBody: String(o.calloutBody ?? '').trim(),
+    calloutActions: parseCtas(o.calloutActions),
     published: o.published !== false,
   }
 }
