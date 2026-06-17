@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-const HIDE_FOOTER_PATHS = /^\/(join|get-involved|flyer)\/?$/
+const HIDE_FOOTER_PATHS = /^\/(join|get-involved|flyer|flyer-admin)\/?$/
 
 export default function Footer() {
   const pathname = usePathname()

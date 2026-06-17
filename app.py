@@ -354,6 +354,50 @@ def api_protectont_get_involved_form():
     return jsonify({"success": True}), 200
 
 
+@app.route('/api/protectont/flyers', methods=['GET', 'POST', 'OPTIONS'])
+def api_protectont_flyers():
+    """GET/POST printable flyers for /flyer and /flyer-admin."""
+    from protectont_flyers import (
+        flyers_save_enabled,
+        read_flyers_json,
+        save_from_flyer_admin,
+        write_flyers_json,
+    )
+
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    if request.method == 'GET':
+        data, err = read_flyers_json()
+        if err:
+            return jsonify({"error": err}), 404
+        return jsonify(data), 200
+
+    if not flyers_save_enabled():
+        return jsonify({
+            "error": "Server save disabled",
+            "message": "Unset PROTECTONT_FLYERS_DISABLE_SAVE to allow saves from /flyer-admin",
+        }), 503
+
+    origin = request.headers.get("Origin", "")
+    referer = request.headers.get("Referer", "")
+    if not save_from_flyer_admin(origin, referer):
+        return jsonify({
+            "error": "Forbidden",
+            "message": "Saves are only accepted from protectont.ca/flyer-admin",
+        }), 403
+
+    raw = request.get_data(as_text=True)
+    if not raw:
+        return jsonify({"error": "Empty body"}), 400
+
+    ok, err = write_flyers_json(raw)
+    if not ok:
+        return jsonify({"error": err or "Save failed"}), 400
+
+    return jsonify({"success": True}), 200
+
+
 @app.route('/api/protectont/social-post-ideas', methods=['GET', 'POST', 'OPTIONS'])
 def api_protectont_social_post_ideas():
     """GET/POST social post idea library for /social-ideas."""
