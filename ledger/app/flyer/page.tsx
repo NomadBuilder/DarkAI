@@ -35,8 +35,10 @@ export default function FlyerIndexPage() {
         <h1 className="mt-6 text-3xl sm:text-4xl font-light text-[#f9e04c] tracking-tight">
           Printable awareness flyers
         </h1>
-        <p className="mt-3 text-[#f9e04c]/85 font-light leading-relaxed max-w-xl">
-          Issue-focused flyers for community boards, doorsteps, and events. Open any flyer, then print or save as PDF.
+        <p className="mt-3 text-[#f9e04c]/85 font-light leading-relaxed max-w-xl text-base sm:text-lg">
+          Full letter-size (8.5″×11″) posters for community boards, doors, and events — including yard-sign
+          promos with product artwork. Each issue flyer includes detailed bullets and sources — open one, then
+          print or save as PDF.
         </p>
 
         {loading ? (
@@ -52,7 +54,7 @@ export default function FlyerIndexPage() {
                   className="group flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 rounded-xl border border-[#f9e04c]/25 bg-white/10 px-5 py-4 hover:border-[#f9e04c]/50 hover:bg-white/15 transition-colors"
                 >
                   <div>
-                    <p className="text-lg font-medium text-[#f9e04c] group-hover:text-white transition-colors">
+                    <p className="text-xl sm:text-2xl font-semibold text-[#f9e04c] group-hover:text-white transition-colors">
                       {f.title} {f.subtitle}
                     </p>
                     {f.intro && (

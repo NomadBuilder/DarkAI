@@ -91,7 +91,16 @@ function FlyerEditor({
       </div>
       <TextField label="Headline (line 1)" value={flyer.title} onChange={(title) => onChange({ ...flyer, title })} />
       <TextField label="Headline (line 2)" value={flyer.subtitle} onChange={(subtitle) => onChange({ ...flyer, subtitle })} />
-      <TextField label="Intro" value={flyer.intro} onChange={(intro) => onChange({ ...flyer, intro })} multiline rows={3} />
+      <TextField label="Intro" value={flyer.intro} onChange={(intro) => onChange({ ...flyer, intro })} multiline rows={4} />
+
+      <TextField
+        label="Highlight tags (one per line)"
+        value={bulletsToText(flyer.highlights)}
+        onChange={(text) => onChange({ ...flyer, highlights: textToBullets(text) })}
+        multiline
+        rows={3}
+        hint="Short bold labels under the headline — e.g. “Bill 60” or “Billions to agencies”"
+      />
 
       <TextField
         label="Hero image URL"
@@ -136,11 +145,18 @@ function FlyerEditor({
               )}
             </div>
             <TextField
+              label="Section lead (optional paragraph)"
+              value={section.lead ?? ''}
+              onChange={(lead) => updateSection(si, { lead })}
+              multiline
+              rows={3}
+            />
+            <TextField
               label="Bullet points (one per line)"
               value={bulletsToText(section.bullets)}
               onChange={(text) => updateSection(si, { bullets: textToBullets(text) })}
               multiline
-              rows={5}
+              rows={8}
             />
           </div>
         ))}
@@ -201,7 +217,8 @@ export default function FlyerAdminPage() {
           subtitle: 'Subtitle here',
           intro: '',
           heroImageUrl: '',
-          sections: [{ title: 'Key points', bullets: ['First point'] }],
+          highlights: [],
+          sections: [{ title: 'Key points', lead: '', bullets: ['First point'] }],
           calloutTitle: '',
           calloutBody: '',
           published: false,
