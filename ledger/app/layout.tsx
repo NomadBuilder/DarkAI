@@ -67,6 +67,7 @@ export const viewport: Viewport = {
 
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || ''
 const GA_MEASUREMENT_ID = 'G-8BG6J9ZMF7'
+const CLARITY_PROJECT_ID = 'x8hmusnmmu'
 
 export default function RootLayout({
   children,
@@ -89,6 +90,19 @@ export default function RootLayout({
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
               gtag('config', '${GA_MEASUREMENT_ID}');
+            `,
+          }}
+        />
+        <Script
+          id="clarity-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+              })(window, document, "clarity", "script", "${CLARITY_PROJECT_ID}");
             `,
           }}
         />
