@@ -11,7 +11,14 @@ import {
   type FlyersFile,
   type FlyerSection,
 } from '@/lib/flyers'
-import { CollapsibleSection, TextField } from '@/app/form-admin/FormFields'
+import {
+  DEFAULT_FLYER_THEME,
+  resolveFlyerTheme,
+  slugifyFlyerTitle,
+  uniqueFlyerSlug,
+  type FlyerTheme,
+} from '@/lib/flyer-theme'
+import { CollapsibleSection, ColorField, TextField } from '@/app/form-admin/FormFields'
 
 function bulletsToText(bullets: string[]): string {
   return bullets.join('\n')
@@ -40,6 +47,134 @@ function textToActions(text: string): Flyer['calloutActions'] {
       }
     })
     .filter((a) => a.label || a.text)
+}
+
+function FlyerThemeEditor({
+  theme,
+  onChange,
+  onReset,
+}: {
+  theme: Partial<FlyerTheme> | undefined
+  onChange: (next: Partial<FlyerTheme>) => void
+  onReset: () => void
+}) {
+  const resolved = resolveFlyerTheme(theme)
+  const set = (key: keyof FlyerTheme, value: string) => {
+    onChange({ ...theme, [key]: value })
+  }
+
+  return (
+    <div className="space-y-5 rounded-xl border border-violet-100 bg-violet-50/40 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm font-semibold text-slate-800">Colors &amp; backgrounds</p>
+        <button
+          type="button"
+          onClick={onReset}
+          className="text-xs text-violet-700 hover:text-violet-900 font-medium"
+        >
+          Reset to defaults
+        </button>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ColorField
+          label="Header background (top)"
+          value={resolved.headerColorTop}
+          onChange={(v) => set('headerColorTop', v)}
+          hint="Top of the purple header band"
+        />
+        <ColorField
+          label="Header background (bottom)"
+          value={resolved.headerColorBottom}
+          onChange={(v) => set('headerColorBottom', v)}
+          hint="Bottom of the header gradient"
+        />
+        <ColorField
+          label="Footer background (top)"
+          value={resolved.footerColorTop}
+          onChange={(v) => set('footerColorTop', v)}
+        />
+        <ColorField
+          label="Footer background (bottom)"
+          value={resolved.footerColorBottom}
+          onChange={(v) => set('footerColorBottom', v)}
+        />
+        <ColorField
+          label="Body background"
+          value={resolved.bodyBackground}
+          onChange={(v) => set('bodyBackground', v)}
+          hint="Main white area behind sections"
+        />
+        <ColorField
+          label="Callout background"
+          value={resolved.calloutBackground}
+          onChange={(v) => set('calloutBackground', v)}
+          allowAlpha
+          hint="Supports rgba for transparency"
+        />
+      </div>
+
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 pt-1">Brand &amp; accents</p>
+      <div className="grid gap-4 sm:grid-cols-3">
+        <ColorField
+          label="Primary (purple)"
+          value={resolved.primaryColor}
+          onChange={(v) => set('primaryColor', v)}
+          hint="Section titles, borders"
+        />
+        <ColorField
+          label="Accent (red)"
+          value={resolved.accentColor}
+          onChange={(v) => set('accentColor', v)}
+          hint="Stripe, bullet dots"
+        />
+        <ColorField
+          label="Highlight (yellow)"
+          value={resolved.highlightColor}
+          onChange={(v) => set('highlightColor', v)}
+          hint="Tags, eyebrows"
+        />
+      </div>
+
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 pt-1">Text colors</p>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <ColorField label="Headline" value={resolved.headlineColor} onChange={(v) => set('headlineColor', v)} />
+        <ColorField label="Subtitle" value={resolved.subtitleColor} onChange={(v) => set('subtitleColor', v)} />
+        <ColorField label="Intro paragraph" value={resolved.introColor} onChange={(v) => set('introColor', v)} />
+        <ColorField
+          label="Section titles"
+          value={resolved.sectionTitleColor}
+          onChange={(v) => set('sectionTitleColor', v)}
+        />
+        <ColorField label="Body text" value={resolved.bodyTextColor} onChange={(v) => set('bodyTextColor', v)} />
+        <ColorField
+          label="Highlight tag text"
+          value={resolved.highlightTagTextColor}
+          onChange={(v) => set('highlightTagTextColor', v)}
+        />
+        <ColorField
+          label="Callout title"
+          value={resolved.calloutTitleColor}
+          onChange={(v) => set('calloutTitleColor', v)}
+        />
+        <ColorField
+          label="Footer heading"
+          value={resolved.footerHeadingColor}
+          onChange={(v) => set('footerHeadingColor', v)}
+        />
+        <ColorField
+          label="Footer link text"
+          value={resolved.footerCtaTextColor}
+          onChange={(v) => set('footerCtaTextColor', v)}
+        />
+      </div>
+
+      <p className="text-xs text-slate-500 font-light">
+        Defaults: primary {DEFAULT_FLYER_THEME.primaryColor}, accent {DEFAULT_FLYER_THEME.accentColor},{' '}
+        highlight {DEFAULT_FLYER_THEME.highlightColor}. Leave unchanged to keep the standard ProtectOnt look.
+      </p>
+    </div>
+  )
 }
 
 function FlyerEditor({
@@ -71,60 +206,80 @@ function FlyerEditor({
 
   return (
     <CollapsibleSection
-      title={`${flyer.title || 'Untitled'} ${flyer.subtitle}`.trim()}
-      subtitle={`/flyer/${flyer.slug || '…'} · ${flyer.published ? 'Published' : 'Draft'}`}
+      title={`${flyer.title || 'Untitled'}${flyer.subtitle ? ` — ${flyer.subtitle}` : ''}`}
+      subtitle={flyer.published ? 'Published · visible on the flyers page' : 'Draft · hidden from visitors'}
       accent="violet"
       defaultOpen={index === 0}
     >
-      <div className="flex flex-wrap gap-3 pb-2">
-        <Link
-          href={flyer.slug ? `/flyer/${flyer.slug}` : '#'}
-          target="_blank"
-          className="text-sm text-violet-700 underline hover:text-violet-900"
-        >
-          Preview flyer →
-        </Link>
+      <div className="flex flex-wrap items-center gap-3 pb-2">
+        {flyer.slug && flyer.published && (
+          <Link
+            href={`/flyer/${flyer.slug}`}
+            target="_blank"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-violet-100 px-3 py-1.5 text-sm font-medium text-violet-800 hover:bg-violet-200 transition-colors"
+          >
+            Open preview ↗
+          </Link>
+        )}
+        {flyer.slug && !flyer.published && (
+          <span className="text-sm text-slate-500 font-light">
+            Publish this flyer to enable preview.
+          </span>
+        )}
         <button
           type="button"
           onClick={onRemove}
-          className="text-sm text-red-600 hover:text-red-800"
+          className="text-sm text-red-600 hover:text-red-800 ml-auto"
         >
-          Remove flyer
+          Delete flyer
         </button>
       </div>
 
-      <label className="flex items-center gap-2 text-sm text-slate-700">
+      <label className="flex items-center gap-2.5 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 cursor-pointer">
         <input
           type="checkbox"
           checked={flyer.published}
           onChange={(e) => onChange({ ...flyer, published: e.target.checked })}
-          className="rounded border-slate-300"
+          className="rounded border-slate-300 text-violet-600 focus:ring-violet-500"
         />
-        Published (visible on /flyer)
+        <span>
+          <span className="font-medium">Published</span>
+          <span className="block text-xs text-slate-500 font-light mt-0.5">
+            Show on the public flyers list and allow printing
+          </span>
+        </span>
       </label>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <TextField label="Slug (URL)" value={flyer.slug} onChange={(slug) => onChange({ ...flyer, slug, id: slug })} hint="/flyer/your-slug" />
-        <TextField label="ID" value={flyer.id} onChange={(id) => onChange({ ...flyer, id })} />
-      </div>
-      <TextField label="Headline (line 1)" value={flyer.title} onChange={(title) => onChange({ ...flyer, title })} />
-      <TextField label="Headline (line 2)" value={flyer.subtitle} onChange={(subtitle) => onChange({ ...flyer, subtitle })} />
-      <TextField label="Intro" value={flyer.intro} onChange={(intro) => onChange({ ...flyer, intro })} multiline rows={4} />
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 pt-1">Headlines</p>
+      <TextField label="Main headline" value={flyer.title} onChange={(title) => onChange({ ...flyer, title })} />
+      <TextField label="Second line" value={flyer.subtitle} onChange={(subtitle) => onChange({ ...flyer, subtitle })} />
+      <TextField label="Intro paragraph" value={flyer.intro} onChange={(intro) => onChange({ ...flyer, intro })} multiline rows={4} />
 
       <TextField
-        label="Highlight tags (one per line)"
+        label="Key tags (one per line)"
         value={bulletsToText(flyer.highlights)}
         onChange={(text) => onChange({ ...flyer, highlights: textToBullets(text) })}
         multiline
         rows={3}
-        hint="Short bold labels under the headline — e.g. “Bill 60” or “Billions to agencies”"
+        hint='Short bold labels under the headline — e.g. "Bill 60" or "Billions to agencies"'
       />
 
+      <CollapsibleSection title="Look & colors" subtitle="Backgrounds, accents, and text colors" accent="blue" defaultOpen={false}>
+        <FlyerThemeEditor
+          theme={flyer.theme}
+          onChange={(theme) => onChange({ ...flyer, theme })}
+          onReset={() => {
+            const { theme: _removed, ...rest } = flyer
+            onChange(rest)
+          }}
+        />
+      </CollapsibleSection>
+
       <TextField
-        label="Hero image URL"
+        label="Header image"
         value={flyer.heroImageUrl}
         onChange={(heroImageUrl) => onChange({ ...flyer, heroImageUrl })}
-        hint="Path like /products/yard-signs/ford-failed-you.png or full https:// URL. Leave blank for none."
+        hint="Upload to the site or use a path like /products/yard-signs/ford-failed-you.png. Leave blank for text-only."
       />
       {flyer.heroImageUrl && (
         <div className="rounded-lg border border-slate-200 bg-slate-50 p-3">
@@ -189,12 +344,12 @@ function FlyerEditor({
         rows={2}
       />
       <TextField
-        label="Callout actions (one per line: Label | protectont.ca/path)"
+        label="Action links (one per line: Label | protectont.ca/path)"
         value={actionsToText(flyer.calloutActions)}
         onChange={(text) => onChange({ ...flyer, calloutActions: textToActions(text) })}
         multiline
         rows={4}
-        hint="Shown as a grid of action cards under the callout title."
+        hint="Shown as a grid of cards under the callout."
       />
     </CollapsibleSection>
   )
@@ -231,27 +386,30 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
   }, [])
 
   const addFlyer = () => {
-    const slug = `flyer-${Date.now()}`
-    setFile((f) => ({
-      ...f,
-      flyers: [
-        ...f.flyers,
-        {
-          id: slug,
-          slug,
-          title: 'New flyer:',
-          subtitle: 'Subtitle here',
-          intro: '',
-          heroImageUrl: '',
-          highlights: [],
-          sections: [{ title: 'Key points', lead: '', bullets: ['First point'] }],
-          calloutTitle: '',
-          calloutBody: '',
-          calloutActions: [],
-          published: false,
-        },
-      ],
-    }))
+    setFile((f) => {
+      const existing = f.flyers.map((flyer) => flyer.slug)
+      const slug = uniqueFlyerSlug(slugifyFlyerTitle('new-flyer'), existing)
+      return {
+        ...f,
+        flyers: [
+          ...f.flyers,
+          {
+            id: slug,
+            slug,
+            title: 'New flyer headline',
+            subtitle: 'Second line here',
+            intro: '',
+            heroImageUrl: '',
+            highlights: [],
+            sections: [{ title: 'Key points', lead: '', bullets: ['First point'] }],
+            calloutTitle: '',
+            calloutBody: '',
+            calloutActions: [],
+            published: false,
+          },
+        ],
+      }
+    })
   }
 
   const removeFlyer = (index: number) => {
@@ -292,12 +450,7 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
           </p>
         )}
 
-        <CollapsibleSection title="Shared footer (all flyers)" subtitle="Header eyebrow, CTAs, fine print" accent="blue">
-          <TextField
-            label="Header eyebrow"
-            value={shared.headerEyebrow}
-            onChange={(headerEyebrow) => setFile((f) => ({ ...f, shared: { ...f.shared, headerEyebrow } }))}
-          />
+        <CollapsibleSection title="Shared footer (all flyers)" subtitle="CTAs and fine print" accent="blue">
           <TextField
             label="Footer heading"
             value={shared.footerHeading}
@@ -369,7 +522,7 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
             {publishStatus === 'error' && <p className="mt-2 text-sm text-red-600">{publishMessage}</p>}
           </div>
           <p className="text-xs text-slate-500 font-light max-w-sm">
-            New slugs need a site rebuild to get their own URL; existing slugs update immediately after publish.
+            Changes go live after publish. Brand-new flyers may need a site update before their preview link works.
           </p>
         </div>
 

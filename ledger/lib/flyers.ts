@@ -10,8 +10,10 @@ export type FlyerCta = {
   text: string
 }
 
+import type { FlyerTheme } from './flyer-theme'
+import { parseFlyerTheme } from './flyer-theme'
+
 export type FlyerShared = {
-  headerEyebrow: string
   footerHeading: string
   footerFinePrint: string
   ctas: FlyerCta[]
@@ -33,6 +35,8 @@ export type Flyer = {
   /** Optional action chips (label + URL) shown in a grid under the callout */
   calloutActions?: FlyerCta[]
   published: boolean
+  /** Optional per-flyer colors; unset fields use ProtectOnt defaults */
+  theme?: Partial<FlyerTheme>
 }
 
 export type FlyersFile = {
@@ -99,12 +103,12 @@ function parseFlyer(raw: unknown): Flyer | null {
     calloutBody: String(o.calloutBody ?? '').trim(),
     calloutActions: parseCtas(o.calloutActions),
     published: o.published !== false,
+    theme: parseFlyerTheme(o.theme),
   }
 }
 
 export function defaultFlyersFile(): FlyersFile {
   const shared: FlyerShared = {
-    headerEyebrow: 'Public data · Ontario · Printable flyer',
     footerHeading: 'Take the next step',
     footerFinePrint:
       'Sources: Ontario Public Accounts, Auditor General reports, legislation, and documented journalism. See protectont.ca/methodology · Post freely · Print letter-size for community boards, doors & events',
@@ -129,7 +133,6 @@ export function parseFlyersFile(raw: unknown): FlyersFile {
     const s = sharedRaw as Record<string, unknown>
     const ctas = parseCtas(s.ctas)
     shared = {
-      headerEyebrow: String(s.headerEyebrow ?? defaults.shared.headerEyebrow).trim(),
       footerHeading: String(s.footerHeading ?? defaults.shared.footerHeading).trim(),
       footerFinePrint: String(s.footerFinePrint ?? defaults.shared.footerFinePrint).trim(),
       ctas: ctas.length > 0 ? ctas : defaults.shared.ctas,

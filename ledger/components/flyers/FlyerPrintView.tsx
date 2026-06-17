@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 import type { Flyer, FlyerShared } from '@/lib/flyers'
+import { footerGradient, headerGradient, resolveFlyerTheme } from '@/lib/flyer-theme'
 import { bindFlyerPrintTitleCleanup, printFlyerSheet } from '@/lib/print-flyer'
 
 type FlyerPrintViewProps = {
@@ -21,6 +22,7 @@ export default function FlyerPrintView({
   useEffect(() => bindFlyerPrintTitleCleanup(), [])
 
   const handlePrint = () => printFlyerSheet()
+  const theme = resolveFlyerTheme(flyer.theme)
   const useGridLayout = flyer.slug === 'overview'
   const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
 
@@ -50,18 +52,16 @@ export default function FlyerPrintView({
         )}
 
         <article
-          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md border-2 border-transparent bg-white shadow-2xl print:border-[#1a1a1a] print:shadow-none"
+          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md border-2 border-transparent shadow-2xl print:border-[#1a1a1a] print:shadow-none"
+          style={{ background: theme.bodyBackground }}
           aria-label={`Protect Ontario printable flyer: ${flyer.title} ${flyer.subtitle}`}
         >
           {/* Header — poster scale */}
           <header
             className="flyer-sheet-header px-8 pt-8 pb-7 sm:px-10 sm:pt-10 sm:pb-8"
-            style={{
-              background: 'linear-gradient(135deg, #3d2b7a 0%, #2E4A6B 50%, #1e3a5f 100%)',
-            }}
+            style={{ background: headerGradient(theme) }}
           >
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-              <div className="flex items-center gap-3" aria-label="ProtectOnt.ca">
+            <div className="flex items-center gap-3" aria-label="ProtectOnt.ca">
                 {/* Shield is pure SVG — logo-icon-text.svg embeds a PNG that inverts to a white block */}
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="/favicon.svg" alt="" className="h-11 w-11 shrink-0 sm:h-12 sm:w-12" />
@@ -71,23 +71,28 @@ export default function FlyerPrintView({
                   <span className="text-white">.ca</span>
                 </span>
               </div>
-              <p className="text-right text-xs font-bold uppercase tracking-[0.25em] text-[#f9e04c] sm:text-sm">
-                {shared.headerEyebrow}
-              </p>
-            </div>
 
             <div className={flyer.heroImageUrl ? 'mt-6 flex flex-col gap-6 lg:flex-row lg:items-start' : 'mt-6'}>
               <div className="min-w-0 flex-1">
-                <h1 className="flyer-headline text-[2rem] sm:text-[2.75rem] font-black leading-[1.05] tracking-tight text-[#f9e04c] uppercase">
+                <h1
+                  className="flyer-headline text-[2rem] sm:text-[2.75rem] font-black leading-[1.05] tracking-tight uppercase"
+                  style={{ color: theme.headlineColor }}
+                >
                   {flyer.title}
                 </h1>
                 {flyer.subtitle && (
-                  <p className="flyer-subhead mt-2 text-[1.5rem] sm:text-[2rem] font-bold leading-tight text-white uppercase tracking-tight">
+                  <p
+                    className="flyer-subhead mt-2 text-[1.5rem] sm:text-[2rem] font-bold leading-tight uppercase tracking-tight"
+                    style={{ color: theme.subtitleColor }}
+                  >
                     {flyer.subtitle}
                   </p>
                 )}
                 {flyer.intro && (
-                  <p className="flyer-body-text mt-5 text-base sm:text-lg leading-relaxed text-white/95 font-medium">
+                  <p
+                    className="flyer-body-text mt-5 text-base sm:text-lg leading-relaxed font-medium"
+                    style={{ color: theme.introColor }}
+                  >
                     {flyer.intro}
                   </p>
                 )}
@@ -98,7 +103,8 @@ export default function FlyerPrintView({
                   <img
                     src={flyer.heroImageUrl}
                     alt=""
-                    className="w-full rounded-lg border-2 border-[#f9e04c]/40 object-contain bg-black/20"
+                    className="w-full rounded-lg border-2 object-contain bg-black/20"
+                    style={{ borderColor: `${theme.highlightColor}66` }}
                   />
                 </div>
               )}
@@ -109,7 +115,8 @@ export default function FlyerPrintView({
                 {flyer.highlights.map((h) => (
                   <span
                     key={h}
-                    className="rounded-md bg-[#f9e04c] px-3 py-2 text-xs sm:text-sm font-bold uppercase tracking-wide text-[#1a1a1a]"
+                    className="rounded-md px-3 py-2 text-xs sm:text-sm font-bold uppercase tracking-wide"
+                    style={{ background: theme.highlightColor, color: theme.highlightTagTextColor }}
                   >
                     {h}
                   </span>
@@ -118,7 +125,7 @@ export default function FlyerPrintView({
             )}
           </header>
 
-          <div className="h-2 bg-[#9f1239]" aria-hidden />
+          <div className="h-2" style={{ background: theme.accentColor }} aria-hidden />
 
           {/* Body sections */}
           {flyer.sections.length > 0 && (
@@ -137,12 +144,18 @@ export default function FlyerPrintView({
                   } ${useGridLayout && i < 2 ? 'border-b border-slate-200' : ''}`}
                 >
                   {block.title && (
-                    <h2 className="flyer-section-title text-lg sm:text-xl font-black uppercase tracking-wide text-[#3d2b7a] border-b-2 border-[#9f1239] pb-2 inline-block">
+                    <h2
+                      className="flyer-section-title text-lg sm:text-xl font-black uppercase tracking-wide pb-2 inline-block border-b-2"
+                      style={{ color: theme.sectionTitleColor, borderColor: theme.accentColor }}
+                    >
                       {block.title}
                     </h2>
                   )}
                   {block.lead && (
-                    <p className="flyer-body-text mt-3 text-base sm:text-[17px] leading-relaxed text-slate-700 font-medium">
+                    <p
+                      className="flyer-body-text mt-3 text-base sm:text-[17px] leading-relaxed font-medium opacity-80"
+                      style={{ color: theme.bodyTextColor }}
+                    >
                       {block.lead}
                     </p>
                   )}
@@ -150,10 +163,12 @@ export default function FlyerPrintView({
                     {block.bullets.map((bullet) => (
                       <li
                         key={bullet.slice(0, 56)}
-                        className="flyer-body-text flex gap-3 text-[15px] sm:text-base leading-snug text-slate-900"
+                        className="flyer-body-text flex gap-3 text-[15px] sm:text-base leading-snug"
+                        style={{ color: theme.bodyTextColor }}
                       >
                         <span
-                          className="mt-2 h-2.5 w-2.5 shrink-0 rounded-sm bg-[#9f1239]"
+                          className="mt-2 h-2.5 w-2.5 shrink-0 rounded-sm"
+                          style={{ background: theme.accentColor }}
                           aria-hidden
                         />
                         <span>{bullet}</span>
@@ -166,17 +181,24 @@ export default function FlyerPrintView({
           )}
 
           {(flyer.calloutTitle || flyer.calloutBody || calloutActions.length > 0) && (
-            <section className="border-t-4 border-[#3d2b7a] bg-[#f9e04c]/15 px-8 py-6 sm:px-10 sm:py-8">
+            <section
+              className="border-t-4 px-8 py-6 sm:px-10 sm:py-8"
+              style={{ borderColor: theme.primaryColor, background: theme.calloutBackground }}
+            >
               {flyer.calloutTitle && (
-                <h2 className="text-lg sm:text-xl font-black uppercase tracking-wide text-[#3d2b7a]">
+                <h2
+                  className="text-lg sm:text-xl font-black uppercase tracking-wide"
+                  style={{ color: theme.calloutTitleColor }}
+                >
                   {flyer.calloutTitle}
                 </h2>
               )}
               {flyer.calloutBody && (
                 <p
-                  className={`flyer-body-text text-base sm:text-lg leading-relaxed text-slate-800 font-medium ${
+                  className={`flyer-body-text text-base sm:text-lg leading-relaxed font-medium opacity-90 ${
                     flyer.calloutTitle ? 'mt-3' : ''
                   } ${calloutActions.length > 0 ? 'mb-1' : ''}`}
+                  style={{ color: theme.bodyTextColor }}
                 >
                   {flyer.calloutBody}
                 </p>
@@ -196,12 +218,21 @@ export default function FlyerPrintView({
                   {calloutActions.map((action) => (
                     <div
                       key={`${action.label}-${action.text}`}
-                      className="rounded-lg border-2 border-[#3d2b7a]/20 bg-white px-4 py-3 text-center sm:text-left"
+                      className="rounded-lg border-2 bg-white px-4 py-3 text-center sm:text-left"
+                      style={{ borderColor: `${theme.primaryColor}33` }}
                     >
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-[#9f1239]">
+                      <p
+                        className="text-[11px] font-bold uppercase tracking-wider"
+                        style={{ color: theme.accentColor }}
+                      >
                         {action.label}
                       </p>
-                      <p className="mt-1 text-sm sm:text-base font-bold text-[#3d2b7a]">{action.text}</p>
+                      <p
+                        className="mt-1 text-sm sm:text-base font-bold"
+                        style={{ color: theme.primaryColor }}
+                      >
+                        {action.text}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -211,9 +242,12 @@ export default function FlyerPrintView({
 
           <footer
             className="flyer-sheet-footer px-8 py-7 sm:px-10 sm:py-9"
-            style={{ background: 'linear-gradient(168deg, #5c4899 0%, #3d2b7a 50%, #2a1f58 100%)' }}
+            style={{ background: footerGradient(theme) }}
           >
-            <p className="text-center text-sm sm:text-base font-black uppercase tracking-[0.2em] text-[#f9e04c]">
+            <p
+              className="text-center text-sm sm:text-base font-black uppercase tracking-[0.2em]"
+              style={{ color: theme.footerHeadingColor }}
+            >
               {shared.footerHeading}
             </p>
             <div
@@ -224,15 +258,29 @@ export default function FlyerPrintView({
               {shared.ctas.map((cta) => (
                 <div
                   key={cta.label}
-                  className="rounded-lg border-2 border-[#f9e04c]/40 bg-white/10 px-4 py-4"
+                  className="rounded-lg border-2 bg-white/10 px-4 py-4"
+                  style={{ borderColor: `${theme.footerHeadingColor}66` }}
                 >
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#f9e04c]">{cta.label}</p>
-                  <p className="mt-1.5 text-base sm:text-lg font-black text-white">{cta.text}</p>
+                  <p
+                    className="text-xs font-bold uppercase tracking-wider"
+                    style={{ color: theme.footerHeadingColor }}
+                  >
+                    {cta.label}
+                  </p>
+                  <p
+                    className="mt-1.5 text-base sm:text-lg font-black"
+                    style={{ color: theme.footerCtaTextColor }}
+                  >
+                    {cta.text}
+                  </p>
                 </div>
               ))}
             </div>
             {shared.footerFinePrint && (
-              <p className="mt-5 text-center text-[11px] sm:text-xs leading-relaxed text-white/70">
+              <p
+                className="mt-5 text-center text-[11px] sm:text-xs leading-relaxed opacity-70"
+                style={{ color: theme.footerCtaTextColor }}
+              >
                 {shared.footerFinePrint}
               </p>
             )}

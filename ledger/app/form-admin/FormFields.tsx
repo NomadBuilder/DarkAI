@@ -7,6 +7,58 @@ export const inputClass =
   'w-full px-4 py-2.5 border border-slate-200 rounded-xl text-sm font-light focus:outline-none focus:ring-2 focus:ring-violet-500/40 focus:border-violet-400'
 export const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5'
 
+function normalizeHexColor(value: string, fallback: string): string {
+  const v = value.trim()
+  if (/^#[0-9A-Fa-f]{6}$/.test(v)) return v
+  if (/^#[0-9A-Fa-f]{3}$/.test(v)) {
+    return `#${v[1]}${v[1]}${v[2]}${v[2]}${v[3]}${v[3]}`
+  }
+  return fallback
+}
+
+export function ColorField({
+  label,
+  value,
+  onChange,
+  hint,
+  allowAlpha = false,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  hint?: string
+  /** When true, only show a text field (for rgba / hex with alpha). */
+  allowAlpha?: boolean
+}) {
+  const pickerFallback = '#3d2b7a'
+  const pickerValue = normalizeHexColor(value, pickerFallback)
+
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+      {hint && <p className="text-xs text-slate-500 font-light mb-1.5">{hint}</p>}
+      <div className="flex gap-2 items-center">
+        {!allowAlpha && (
+          <input
+            type="color"
+            value={pickerValue}
+            onChange={(e) => onChange(e.target.value)}
+            className="h-10 w-14 shrink-0 cursor-pointer rounded-lg border border-slate-200 bg-white p-1"
+            aria-label={`${label} picker`}
+          />
+        )}
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className={`${inputClass} font-mono text-xs`}
+          placeholder={allowAlpha ? 'rgba(…)' : '#3d2b7a'}
+        />
+      </div>
+    </div>
+  )
+}
+
 export function TextField({
   label,
   value,
