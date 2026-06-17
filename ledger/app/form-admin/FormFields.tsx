@@ -96,16 +96,27 @@ export function CollapsibleSection({
   title,
   subtitle,
   defaultOpen = false,
+  open: controlledOpen,
+  onOpenChange,
   accent = 'slate',
   children,
 }: {
   title: string
   subtitle?: string
   defaultOpen?: boolean
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   accent?: 'slate' | 'violet' | 'blue'
   children: React.ReactNode
 }) {
-  const [open, setOpen] = useState(defaultOpen)
+  const [internalOpen, setInternalOpen] = useState(defaultOpen)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+
+  const setOpen = (next: boolean) => {
+    if (!isControlled) setInternalOpen(next)
+    onOpenChange?.(next)
+  }
 
   const accentBorder =
     accent === 'violet' ? 'border-violet-200' : accent === 'blue' ? 'border-blue-200' : 'border-slate-200'
@@ -116,7 +127,7 @@ export function CollapsibleSection({
     <div className={`rounded-2xl border ${accentBorder} ${accentBg} shadow-sm overflow-hidden mb-6`}>
       <button
         type="button"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => setOpen(!open)}
         className="w-full flex items-start justify-between gap-4 px-5 py-4 sm:px-6 text-left hover:bg-white/60 transition-colors"
         aria-expanded={open}
       >

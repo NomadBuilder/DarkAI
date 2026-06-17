@@ -18,7 +18,7 @@ import {
   uniqueFlyerSlug,
   type FlyerTheme,
 } from '@/lib/flyer-theme'
-import { CollapsibleSection, ColorField, TextField } from '@/app/form-admin/FormFields'
+import { CollapsibleSection, ColorField, TextField, inputClass, labelClass } from '@/app/form-admin/FormFields'
 
 function bulletsToText(bullets: string[]): string {
   return bullets.join('\n')
@@ -47,6 +47,54 @@ function textToActions(text: string): Flyer['calloutActions'] {
       }
     })
     .filter((a) => a.label || a.text)
+}
+
+const BLANK_FLYER_DRAFT = {
+  title: '',
+  subtitle: '',
+  copyFromSlug: '',
+}
+
+function blankFlyerTemplate(title: string, subtitle: string, slug: string): Flyer {
+  return {
+    id: slug,
+    slug,
+    title: title.trim() || 'New flyer headline',
+    subtitle: subtitle.trim() || 'Second line here',
+    intro: '',
+    heroImageUrl: '',
+    highlights: [],
+    sections: [{ title: 'Key points', lead: '', bullets: ['First point'] }],
+    calloutTitle: '',
+    calloutBody: '',
+    calloutActions: [],
+    published: false,
+  }
+}
+
+function duplicateFlyerAsNew(source: Flyer, title: string, subtitle: string, slug: string): Flyer {
+  const copy = JSON.parse(JSON.stringify(source)) as Flyer
+  return {
+    ...copy,
+    id: slug,
+    slug,
+    title: title.trim() || `${source.title} (copy)`,
+    subtitle: subtitle.trim() || source.subtitle,
+    published: false,
+  }
+}
+
+function buildNewFlyer(
+  file: FlyersFile,
+  draft: { title: string; subtitle: string; copyFromSlug: string }
+): Flyer {
+  const existing = file.flyers.map((flyer) => flyer.slug)
+  const slug = uniqueFlyerSlug(slugifyFlyerTitle(draft.title || 'new-flyer'), existing)
+  if (draft.copyFromSlug) {
+    const source = file.flyers.find((f) => f.slug === draft.copyFromSlug)
+    if (source) return duplicateFlyerAsNew(source, draft.title, draft.subtitle, slug)
+  }
+  return blankFlyerTemplate(draft.title, draft.subtitle, slug)
 }
 
 function FlyerThemeEditor({
@@ -180,13 +228,19 @@ function FlyerThemeEditor({
 function FlyerEditor({
   flyer,
   index,
+  open,
+  onOpenChange,
   onChange,
   onRemove,
+  onDuplicate,
 }: {
   flyer: Flyer
   index: number
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
   onChange: (next: Flyer) => void
   onRemove: () => void
+  onDuplicate: () => void
 }) {
   const updateSection = (sectionIndex: number, patch: Partial<FlyerSection>) => {
     const sections = flyer.sections.map((s, i) => (i === sectionIndex ? { ...s, ...patch } : s))
@@ -209,6 +263,8 @@ function FlyerEditor({
       title={`${flyer.title || 'Untitled'}${flyer.subtitle ? ` — ${flyer.subtitle}` : ''}`}
       subtitle={flyer.published ? 'Published · visible on the flyers page' : 'Draft · hidden from visitors'}
       accent="violet"
+      open={open}
+      onOpenChange={onOpenChange}
       defaultOpen={index === 0}
     >
       <div className="flex flex-wrap items-center gap-3 pb-2">
@@ -226,6 +282,13 @@ function FlyerEditor({
             Publish this flyer to enable preview.
           </span>
         )}
+        <button
+          type="button"
+          onClick={onDuplicate}
+          className="text-sm text-violet-700 hover:text-violet-900 font-medium"
+        >
+          Duplicate as new
+        </button>
         <button
           type="button"
           onClick={onRemove}
@@ -360,6 +423,9 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
   const [loadStatus, setLoadStatus] = useState<'loading' | 'ok' | 'error'>('loading')
   const [publishStatus, setPublishStatus] = useState<'idle' | 'publishing' | 'published' | 'error'>('idle')
   const [publishMessage, setPublishMessage] = useState('')
+  const [createOpen, setCreateOpen] = useState(false)
+  const [createDraft, setCreateDraft] = useState(BLANK_FLYER_DRAFT)
+  const [expandedFlyerIndex, setExpandedFlyerIndex] = useState<number | null>(null)
 
   useEffect(() => {
     let cancelled = false
@@ -385,36 +451,49 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
     }))
   }, [])
 
-  const addFlyer = () => {
+  const addFlyer = (draft = createDraft) => {
+    let newIndex = 0
     setFile((f) => {
-      const existing = f.flyers.map((flyer) => flyer.slug)
-      const slug = uniqueFlyerSlug(slugifyFlyerTitle('new-flyer'), existing)
-      return {
-        ...f,
-        flyers: [
-          ...f.flyers,
-          {
-            id: slug,
-            slug,
-            title: 'New flyer headline',
-            subtitle: 'Second line here',
-            intro: '',
-            heroImageUrl: '',
-            highlights: [],
-            sections: [{ title: 'Key points', lead: '', bullets: ['First point'] }],
-            calloutTitle: '',
-            calloutBody: '',
-            calloutActions: [],
-            published: false,
-          },
-        ],
-      }
+      const flyer = buildNewFlyer(f, draft)
+      newIndex = f.flyers.length
+      return { ...f, flyers: [...f.flyers, flyer] }
     })
+    setExpandedFlyerIndex(newIndex)
+    setCreateOpen(false)
+    setCreateDraft(BLANK_FLYER_DRAFT)
+    window.setTimeout(() => {
+      document.getElementById(`flyer-editor-${newIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
+  }
+
+  const duplicateFlyer = (index: number) => {
+    const source = file.flyers[index]
+    if (!source) return
+    let newIndex = 0
+    setFile((f) => {
+      const flyer = buildNewFlyer(f, {
+        title: `${source.title} (copy)`,
+        subtitle: source.subtitle,
+        copyFromSlug: source.slug,
+      })
+      newIndex = f.flyers.length
+      return { ...f, flyers: [...f.flyers, flyer] }
+    })
+    setExpandedFlyerIndex(newIndex)
+    window.setTimeout(() => {
+      document.getElementById(`flyer-editor-${newIndex}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
   }
 
   const removeFlyer = (index: number) => {
     if (!window.confirm('Remove this flyer?')) return
     setFile((f) => ({ ...f, flyers: f.flyers.filter((_, i) => i !== index) }))
+    setExpandedFlyerIndex((current) => {
+      if (current === null) return null
+      if (current === index) return null
+      if (current > index) return current - 1
+      return current
+    })
   }
 
   const publish = async () => {
@@ -485,26 +564,106 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
           ))}
         </CollapsibleSection>
 
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-medium text-slate-900">{file.flyers.length} flyers</h2>
+        <CollapsibleSection
+          title="Create new flyer"
+          subtitle="Start blank or copy an existing flyer as a template"
+          accent="blue"
+          open={createOpen}
+          onOpenChange={setCreateOpen}
+        >
+          <div className="space-y-4 pt-1">
+            <TextField
+              label="Main headline"
+              value={createDraft.title}
+              onChange={(title) => setCreateDraft((d) => ({ ...d, title }))}
+              hint="Required — this becomes the flyer title"
+            />
+            <TextField
+              label="Second line"
+              value={createDraft.subtitle}
+              onChange={(subtitle) => setCreateDraft((d) => ({ ...d, subtitle }))}
+            />
+            <div>
+              <label className={labelClass}>Start from</label>
+              <p className="text-xs text-slate-500 font-light mb-1.5">
+                Blank starts with one section. Copy keeps text, colors, and layout from another flyer.
+              </p>
+              <select
+                value={createDraft.copyFromSlug}
+                onChange={(e) => setCreateDraft((d) => ({ ...d, copyFromSlug: e.target.value }))}
+                className={inputClass}
+              >
+                <option value="">Blank flyer</option>
+                {file.flyers.map((flyer) => (
+                  <option key={flyer.slug} value={flyer.slug}>
+                    Copy from: {flyer.title || 'Untitled'}
+                    {flyer.subtitle ? ` — ${flyer.subtitle}` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <button
+              type="button"
+              onClick={() => addFlyer()}
+              disabled={!createDraft.title.trim()}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#3d2b7a] text-white text-sm font-medium hover:bg-[#2a1f58] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              Create flyer
+            </button>
+            {!createDraft.title.trim() && (
+              <p className="text-xs text-slate-500 font-light">Enter a headline to create the flyer.</p>
+            )}
+          </div>
+        </CollapsibleSection>
+
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-lg font-medium text-slate-900">{file.flyers.length} flyers</h2>
+            <p className="text-xs text-slate-500 font-light mt-0.5">Tap a flyer to edit · new flyers start as drafts</p>
+          </div>
           <button
             type="button"
-            onClick={addFlyer}
-            className="text-sm font-medium text-violet-700 hover:text-violet-900"
+            onClick={() => setCreateOpen(true)}
+            className="inline-flex items-center gap-1.5 rounded-full bg-violet-100 hover:bg-violet-200 border border-violet-200 px-4 py-2 text-sm font-medium text-violet-900 transition-colors"
           >
-            + Add flyer
+            + Create flyer
           </button>
         </div>
 
+        {file.flyers.length === 0 && (
+          <p className="text-sm text-slate-600 font-light mb-6 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-center">
+            No flyers yet — use <strong className="font-normal">Create new flyer</strong> above to add your first one.
+          </p>
+        )}
+
         {file.flyers.map((flyer, index) => (
-          <FlyerEditor
-            key={`${flyer.id}-${index}`}
-            flyer={flyer}
-            index={index}
-            onChange={(next) => updateFlyer(index, next)}
-            onRemove={() => removeFlyer(index)}
-          />
+          <div key={`${flyer.id}-${index}`} id={`flyer-editor-${index}`}>
+            <FlyerEditor
+              flyer={flyer}
+              index={index}
+              open={expandedFlyerIndex === index ? true : expandedFlyerIndex === null ? undefined : false}
+              onOpenChange={(open) => {
+                if (open) setExpandedFlyerIndex(index)
+                else if (expandedFlyerIndex === index) setExpandedFlyerIndex(null)
+              }}
+              onChange={(next) => updateFlyer(index, next)}
+              onRemove={() => removeFlyer(index)}
+              onDuplicate={() => duplicateFlyer(index)}
+            />
+          </div>
         ))}
+
+        {file.flyers.length > 0 && (
+          <div className="flex justify-center pb-4">
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="text-sm font-medium text-violet-700 hover:text-violet-900"
+            >
+              + Create another flyer
+            </button>
+          </div>
+        )}
 
         <div className="sticky bottom-4 mt-8 rounded-2xl border border-slate-200 bg-white/95 backdrop-blur shadow-lg p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
