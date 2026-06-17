@@ -3,78 +3,6 @@
 import Link from 'next/link'
 import type { Flyer, FlyerShared } from '@/lib/flyers'
 
-export function FlyerPrintStyles() {
-  return (
-    <style jsx global>{`
-      @media print {
-        html,
-        body {
-          background: white !important;
-          margin: 0 !important;
-          padding: 0 !important;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-        body > footer {
-          display: none !important;
-        }
-        .flyer-no-print {
-          display: none !important;
-        }
-        .flyer-print-chrome {
-          background: white !important;
-          padding: 0 !important;
-          margin: 0 !important;
-          min-height: 0 !important;
-          display: block !important;
-        }
-        .flyer-sheet {
-          box-sizing: border-box !important;
-          box-shadow: none !important;
-          margin: 0 auto !important;
-          width: 7.75in !important;
-          max-width: 7.75in !important;
-          min-height: 10.25in !important;
-          border: 3pt solid #1a1a1a !important;
-          border-radius: 0 !important;
-          overflow: hidden !important;
-          background: white !important;
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-          box-decoration-break: clone;
-          -webkit-box-decoration-break: clone;
-        }
-        .flyer-sheet header,
-        .flyer-sheet footer {
-          -webkit-print-color-adjust: exact;
-          print-color-adjust: exact;
-        }
-        .flyer-body-text {
-          font-size: 10pt !important;
-          line-height: 1.4 !important;
-        }
-        .flyer-section-title {
-          font-size: 12pt !important;
-        }
-        .flyer-headline {
-          font-size: 26pt !important;
-        }
-        .flyer-subhead {
-          font-size: 18pt !important;
-        }
-        .flyer-sheet section {
-          break-inside: avoid;
-          page-break-inside: avoid;
-        }
-      }
-      @page {
-        size: letter portrait;
-        margin: 0.375in;
-      }
-    `}</style>
-  )
-}
-
 type FlyerPrintViewProps = {
   flyer: Flyer
   shared: FlyerShared
@@ -93,9 +21,6 @@ export default function FlyerPrintView({
   const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
 
   return (
-    <>
-      <FlyerPrintStyles />
-
       <div className="flyer-print-chrome min-h-screen bg-gradient-to-b from-[#3d2b7a] to-[#2a1f58] py-6 px-3 sm:py-10 sm:px-6">
         {showToolbar && (
           <div className="flyer-no-print mx-auto mb-6 flex w-full max-w-[8.5in] flex-wrap items-center justify-between gap-3">
@@ -126,7 +51,7 @@ export default function FlyerPrintView({
         >
           {/* Header — poster scale */}
           <header
-            className="px-8 pt-8 pb-7 sm:px-10 sm:pt-10 sm:pb-8"
+            className="flyer-sheet-header px-8 pt-8 pb-7 sm:px-10 sm:pt-10 sm:pb-8"
             style={{
               background: 'linear-gradient(135deg, #3d2b7a 0%, #2E4A6B 50%, #1e3a5f 100%)',
             }}
@@ -281,7 +206,7 @@ export default function FlyerPrintView({
           )}
 
           <footer
-            className="px-8 py-7 sm:px-10 sm:py-9"
+            className="flyer-sheet-footer px-8 py-7 sm:px-10 sm:py-9"
             style={{ background: 'linear-gradient(168deg, #5c4899 0%, #3d2b7a 50%, #2a1f58 100%)' }}
           >
             <p className="text-center text-sm sm:text-base font-black uppercase tracking-[0.2em] text-[#f9e04c]">
@@ -317,6 +242,5 @@ export default function FlyerPrintView({
           </p>
         )}
       </div>
-    </>
   )
 }

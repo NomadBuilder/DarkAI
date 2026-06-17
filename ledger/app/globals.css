@@ -138,6 +138,80 @@ body:has(.join-route) footer {
   display: none;
 }
 
+/* Flyer pages: hide site footer (screen + print) */
+body:has(.flyer-route) > footer {
+  display: none;
+}
+
+@media print {
+  html,
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  body:has(.flyer-route) > footer {
+    display: none !important;
+  }
+
+  .flyer-no-print {
+    display: none !important;
+  }
+
+  .flyer-print-chrome {
+    background: white !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+  }
+
+  .flyer-sheet {
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    width: 7.75in !important;
+    max-width: 7.75in !important;
+    min-height: auto !important;
+    border: 3pt solid #1a1a1a !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .flyer-sheet .flyer-sheet-header,
+  .flyer-sheet .flyer-sheet-footer {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .flyer-body-text {
+    font-size: 10pt !important;
+    line-height: 1.4 !important;
+  }
+
+  .flyer-section-title {
+    font-size: 12pt !important;
+  }
+
+  .flyer-headline {
+    font-size: 26pt !important;
+  }
+
+  .flyer-subhead {
+    font-size: 18pt !important;
+  }
+}
+
+@page {
+  size: letter portrait;
+  margin: 0.375in;
+}
+
 /* Reduce motion for users who prefer it */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 }
 
 export default function FlyerLayout({ children }: { children: React.ReactNode }) {
-  return children
+  return <div className="flyer-route">{children}</div>
 }
