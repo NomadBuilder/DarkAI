@@ -6,6 +6,9 @@ import type { Flyer, FlyerShared } from '@/lib/flyers'
 import { footerGradient, headerGradient, resolveFlyerTheme } from '@/lib/flyer-theme'
 import { bindFlyerPrintTitleCleanup, printFlyerSheet } from '@/lib/print-flyer'
 
+const FLYER_QR_IMAGE = '/flyers/protectont-qr.png'
+const FLYER_QR_URL = 'https://protectont.ca/'
+
 type FlyerPrintViewProps = {
   flyer: Flyer
   shared: FlyerShared
@@ -244,46 +247,79 @@ export default function FlyerPrintView({
             className="flyer-sheet-footer px-8 py-7 sm:px-10 sm:py-9"
             style={{ background: footerGradient(theme) }}
           >
-            <p
-              className="text-center text-sm sm:text-base font-black uppercase tracking-[0.2em]"
-              style={{ color: theme.footerHeadingColor }}
-            >
-              {shared.footerHeading}
-            </p>
-            <div
-              className={`mt-5 grid gap-4 text-center ${
-                shared.ctas.length >= 3 ? 'sm:grid-cols-3' : shared.ctas.length === 2 ? 'sm:grid-cols-2' : ''
-              }`}
-            >
-              {shared.ctas.map((cta) => (
-                <div
-                  key={cta.label}
-                  className="rounded-lg border-2 bg-white/10 px-4 py-4"
-                  style={{ borderColor: `${theme.footerHeadingColor}66` }}
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+              <div className="min-w-0 flex-1">
+                <p
+                  className="text-center sm:text-left text-sm sm:text-base font-black uppercase tracking-[0.2em]"
+                  style={{ color: theme.footerHeadingColor }}
                 >
+                  {shared.footerHeading}
+                </p>
+                <div
+                  className={`mt-5 grid gap-4 text-center sm:text-left ${
+                    shared.ctas.length >= 3 ? 'sm:grid-cols-3' : shared.ctas.length === 2 ? 'sm:grid-cols-2' : ''
+                  }`}
+                >
+                  {shared.ctas.map((cta) => (
+                    <div
+                      key={cta.label}
+                      className="rounded-lg border-2 bg-white/10 px-4 py-4"
+                      style={{ borderColor: `${theme.footerHeadingColor}66` }}
+                    >
+                      <p
+                        className="text-xs font-bold uppercase tracking-wider"
+                        style={{ color: theme.footerHeadingColor }}
+                      >
+                        {cta.label}
+                      </p>
+                      <p
+                        className="mt-1.5 text-base sm:text-lg font-black"
+                        style={{ color: theme.footerCtaTextColor }}
+                      >
+                        {cta.text}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {shared.footerFinePrint && (
                   <p
-                    className="text-xs font-bold uppercase tracking-wider"
-                    style={{ color: theme.footerHeadingColor }}
-                  >
-                    {cta.label}
-                  </p>
-                  <p
-                    className="mt-1.5 text-base sm:text-lg font-black"
+                    className="mt-5 text-center sm:text-left text-[11px] sm:text-xs leading-relaxed opacity-70"
                     style={{ color: theme.footerCtaTextColor }}
                   >
-                    {cta.text}
+                    {shared.footerFinePrint}
                   </p>
-                </div>
-              ))}
-            </div>
-            {shared.footerFinePrint && (
-              <p
-                className="mt-5 text-center text-[11px] sm:text-xs leading-relaxed opacity-70"
-                style={{ color: theme.footerCtaTextColor }}
+                )}
+              </div>
+
+              <a
+                href={FLYER_QR_URL}
+                className="flyer-qr-block mx-auto shrink-0 flex flex-col items-center text-center sm:mx-0 sm:pt-1"
+                aria-label="Visit protectont.ca — scan QR code or open link"
               >
-                {shared.footerFinePrint}
-              </p>
-            )}
+                <div
+                  className="rounded-xl border-2 bg-white p-2 shadow-md"
+                  style={{ borderColor: `${theme.footerHeadingColor}88` }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={FLYER_QR_IMAGE}
+                    alt=""
+                    width={96}
+                    height={96}
+                    className="h-[4.5rem] w-[4.5rem] sm:h-24 sm:w-24 object-contain"
+                  />
+                </div>
+                <p
+                  className="mt-2 text-[10px] font-bold uppercase tracking-[0.15em]"
+                  style={{ color: theme.footerHeadingColor }}
+                >
+                  Scan for more
+                </p>
+                <p className="mt-0.5 text-sm sm:text-base font-black" style={{ color: theme.footerCtaTextColor }}>
+                  protectont.ca
+                </p>
+              </a>
+            </div>
           </footer>
         </article>
 

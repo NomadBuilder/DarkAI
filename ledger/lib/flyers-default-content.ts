@@ -565,19 +565,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Verify the sources',
-    calloutBody: 'Bill text and independent analysis — read before you share.',
-    calloutActions: [
-      { label: 'Bill 97 (OLA)', text: 'ola.org/en/legislative-business/bills/parliament-44/session-1/bill-97' },
-      {
-        label: 'IPC statement',
-        text: 'ipc.on.ca/en/media-centre/news-releases/statement-on-proposed-fippa-changes-march-24',
-      },
-      {
-        label: 'CCLA analysis',
-        text: 'ccla.org/fundamental-freedoms/freedoms-expression/access-to-information/ontarios-bill-97-threatens-government-accountability-and-privacy',
-      },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -635,16 +624,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Read the court decision',
-    calloutBody: 'Primary sources for Bill 212, Bill 56, and the Charter challenge.',
-    calloutActions: [
-      { label: 'Bill 212 (OLA)', text: 'ola.org/en/legislative-business/bills/parliament-44/session-1/bill-212' },
-      { label: 'Bill 56 (OLA)', text: 'ola.org/en/legislative-business/bills/parliament-44/session-1/bill-56' },
-      {
-        label: 'Court ruling (PDF)',
-        text: 'ecojustice.ca/wp-content/uploads/2025/07/Cycle-Toronto-v.-AGO-Reasons-for-Judgment-PBS-July-30-2025.pdf',
-      },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
 ]
