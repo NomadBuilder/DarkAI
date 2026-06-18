@@ -8,12 +8,13 @@ export const defaultFlyerEntries: Flyer[] = [
     title: "DOUG FORD'S ONTARIO",
     subtitle: "WHAT'S BEING SOLD OFF?",
     intro:
-      'Ontario is shifting public money, land, water, and environmental protections toward private profit — while accountability is weakened. This flyer summarizes the pattern documented in public accounts, legislation, and independent reporting. Share it. Print it. Talk about it with neighbours.',
+      'Ontario is shifting public money, land, water, and environmental protections toward private profit — while accountability is weakened. That includes rolling back freedom-of-information access and overriding evidence-based street safety policy. This flyer summarizes the pattern documented in public accounts, legislation, and independent reporting. Share it. Print it. Talk about it with neighbours.',
     heroImageUrl: '',
     highlights: [
       'Public $ → private delivery',
       'Greenbelt & waterfront opened up',
       'Bills 5, 60 & weakened oversight',
+      'FOI rollback · street safety',
     ],
     sections: [
       {
@@ -351,6 +352,7 @@ export const defaultFlyerEntries: Flyer[] = [
         lead: 'Bills that change ownership of water, land, and healthcare pass with limited debate time.',
         bullets: [
           'Omnibus bills bundle unrelated changes — making scrutiny harder for MPPs and the public.',
+          'Bill 97 (2026) excludes premier and ministerial records from Ontario\'s Freedom of Information and Protection of Privacy Act (FIPPA), with retroactive effect — see protectont.ca/flyer/freedom-of-information.',
           'Auditor General reports on Greenbelt and other files documented process failures.',
           'Integrity Commissioner and lobbying registers exist but require journalists and citizens to connect dots.',
           'Weakened environmental and Indigenous participation rules reduce formal opposition channels.',
@@ -508,6 +510,140 @@ export const defaultFlyerEntries: Flyer[] = [
       { label: 'Protest calendar', text: 'protectont.ca/protests' },
       { label: 'Join', text: 'protectont.ca/join' },
       { label: 'Order yard sign', text: 'protectont.ca/products' },
+    ],
+    published: true,
+  },
+  {
+    id: 'freedom-of-information',
+    slug: 'freedom-of-information',
+    title: 'FREEDOM OF INFORMATION',
+    subtitle: 'SHUTTING THE FILES',
+    intro:
+      'Ontario\'s freedom-of-information laws let residents, journalists, and researchers request government records. Bill 97 — passed in 2026 as part of the Plan to Protect Ontario Act — rolls back that right for the premier, cabinet ministers, and their political staff, and weakens oversight in other ways. Civil liberties groups and Ontario\'s Information and Privacy Commissioner warned these changes undermine transparency Ontarians have relied on for decades.',
+    heroImageUrl: '',
+    highlights: ['Bill 97 · FIPPA', 'Ministerial records exempt', 'Retroactive to 1988'],
+    sections: [
+      {
+        title: 'What Bill 97 changes',
+        lead: 'Source: Legislative Assembly of Ontario — Bill 97, Schedule 7 (FIPPA amendments); received Royal Assent in 2026.',
+        bullets: [
+          'FIPPA will no longer apply to records in the custody or control of a minister, a minister\'s office, or a parliamentary assistant — unless the same record is also held by a government institution.',
+          'That exclusion covers the premier, every cabinet minister, parliamentary assistants, and their political staff — the offices where many high-stakes decisions are made.',
+          'The standard deadline to answer an access request increases from 30 calendar days to 45 business days — a longer wait for public answers.',
+          'Certain cybersecurity records prepared under the Enhancing Digital Security and Trust Act, 2024 are also carved out of access laws.',
+        ],
+      },
+      {
+        title: 'Retroactive secrecy',
+        lead: 'Source: Bill 97 transitional provisions (Ontario.ca/ola); Canadian Civil Liberties Association analysis.',
+        bullets: [
+          'Ministerial-record exclusions are deemed to have come into force on January 1, 1988 — not just for future requests.',
+          'Transitional rules can invalidate existing disclosure orders and court decisions that conflict with the new exclusions.',
+          'Records that were already ordered released may be pulled back behind the new wall of secrecy.',
+          'CCLA warned this lets the government avoid accountability for decisions already under scrutiny.',
+        ],
+      },
+      {
+        title: 'Why independent voices objected',
+        lead: 'Source: Information and Privacy Commissioner of Ontario (ipc.on.ca), March 2026; CCLA (ccla.org).',
+        bullets: [
+          'The IPC said excluding the highest levels of government "diminish[es] the public\'s right to information" and that retroactivity "raises serious concerns."',
+          'The Commissioner argued modernizing FOI should mean faster disclosure and proactive release — not rolling back rights.',
+          'CCLA called the ministerial carve-out one of the most troubling elements of Bill 97 and warned cybersecurity exemptions could hide evaluations that pose no security risk.',
+          'When ministers\' records leave FIPPA, statutory privacy and security safeguards for those records are weakened too — the IPC flagged increased cybersecurity risk.',
+        ],
+      },
+      {
+        title: 'Questions to ask locally',
+        lead: 'Use this flyer at doors, community boards, and MPP offices.',
+        bullets: [
+          'Why hide ministerial records now — after Greenbelt, Ontario Place, and healthcare privatization debates?',
+          'What requests or court orders does this retroactive change affect?',
+          'Will your MPP vote to restore FIPPA coverage for ministerial offices?',
+          'Ask for proactive disclosure of contracts, lobbying contacts, and land-use decisions — not less access.',
+          'More context: protectont.ca/flyer/accountability · protectont.ca/take-action',
+        ],
+      },
+    ],
+    calloutTitle: 'Verify the sources',
+    calloutBody: 'Bill text and independent analysis — read before you share.',
+    calloutActions: [
+      { label: 'Bill 97 (OLA)', text: 'ola.org/en/legislative-business/bills/parliament-44/session-1/bill-97' },
+      {
+        label: 'IPC statement',
+        text: 'ipc.on.ca/en/media-centre/news-releases/statement-on-proposed-fippa-changes-march-24',
+      },
+      {
+        label: 'CCLA analysis',
+        text: 'ccla.org/fundamental-freedoms/freedoms-expression/access-to-information/ontarios-bill-97-threatens-government-accountability-and-privacy',
+      },
+    ],
+    published: true,
+  },
+  {
+    id: 'bike-lanes-safety',
+    slug: 'bike-lanes-safety',
+    title: 'BIKE LANES & SPEED CAMERAS',
+    subtitle: 'SAFETY CUTS · LAWSUIT SHIELDS',
+    intro:
+      'The Ford government has overridden Toronto on protected bike lanes, banned municipal automated speed enforcement cameras province-wide, and passed legislation that blocks lawsuits when those changes hurt people. A Superior Court judge found the targeted Toronto bike-lane removals arbitrary — they would not reduce congestion and would put cyclists at greater risk — yet the province appealed. These are shallow populist moves that sacrifice road safety for drivers-first messaging.',
+    heroImageUrl: '',
+    highlights: ['Bill 212 · Toronto lanes', 'Bill 56 · speed cameras', 'Lawsuit immunity'],
+    sections: [
+      {
+        title: 'Toronto bike lanes — Bill 212',
+        lead: 'Source: Bill 212, Reducing Gridlock, Saving You Time Act, 2024 (ola.org); Cycle Toronto et al. v. Attorney General of Ontario, 2025 ONSC 4397.',
+        bullets: [
+          'Bill 212 amended the Highway Traffic Act to require removal of protected bike lanes on Bloor Street, University Avenue, and Yonge Street in Toronto — restoring motor-vehicle lanes.',
+          'A last-minute amendment added ss. 195.10–195.14: no lawsuits against the government, municipalities, or contractors for collisions, injuries, or deaths resulting from removing those lanes.',
+          'In July 2025, Justice Schabas ruled s. 195.6 unconstitutional: removal would increase harm to cyclists without achieving the stated goal of reducing congestion.',
+          'The judge found the law arbitrary and grossly disproportionate under Section 7 of the Charter; internal advice to government had already said removals would not fix gridlock.',
+          'The province appealed; a Court of Appeal hearing was held in January 2026 — decision pending as of print date.',
+        ],
+      },
+      {
+        title: 'Speed cameras — Bill 56',
+        lead: 'Source: Bill 56, Building a More Competitive Economy Act, 2025 (ola.org); CBC and Global News reporting, November 2025.',
+        bullets: [
+          'Bill 56 repealed Part XIV.1 of the Highway Traffic Act — ending municipal automated speed enforcement (ASE) cameras in school zones and community safety zones.',
+          'Royal Assent November 3, 2025; municipalities were required to remove cameras by November 14, 2025 — before permanent traffic-calming replacements were in place.',
+          'Premier Ford called the cameras a "tax grab"; police associations and many municipalities had documented their effectiveness at slowing drivers.',
+          'Section 206.6 extinguishes certain lawsuits against the Crown and municipalities tied to repealing speed-camera contracts.',
+          'Temporary signage was promised, but ripping out working enforcement first trades proven safety tools for political optics.',
+        ],
+      },
+      {
+        title: 'Future bike lanes — Bill 60',
+        lead: 'Source: Bill 60, Fighting Delays, Building Faster Act, 2025 (ola.org); Environmental Registry of Ontario notice 025-1071.',
+        bullets: [
+          'Bill 60 prohibits municipalities from reducing motor-vehicle lanes when installing new bicycle lanes — unless a regulation exempts the project.',
+          'Passed November 24, 2025; Ottawa and other cities reported planned bike projects cancelled or redesigned because of the lane-reduction ban.',
+          'The province says cities can still build bike lanes that do not remove a car lane — but on many arterial roads, safe separated lanes require rebalancing space.',
+          'Bill 60 stacks on Bill 212: remove existing protected infrastructure in Toronto, then restrict how other cities build safer alternatives.',
+          'This does not fix induced demand — more car lanes tend to fill with more cars, not less congestion.',
+        ],
+      },
+      {
+        title: 'What this means for commuters',
+        lead: 'Pedestrians, cyclists, children, and low-income residents who rely on bikes bear the highest risk.',
+        bullets: [
+          'Protected bike lanes separate people from traffic — removing them increases injury and death risk, according to the court record and city data cited in Cycle Toronto v. AG.',
+          'Speed cameras enforce limits 24/7 in school zones; removing them shifts enforcement back to sporadic police presence.',
+          'Lawsuit-immunity clauses signal the government expects harm — then blocks accountability.',
+          'Congestion is a regional problem; scapegoating bike lanes ignores transit, induced demand, and sprawl policy.',
+          'Talk to neighbours: protectont.ca/flyer · protectont.ca/protests · protectont.ca/take-action',
+        ],
+      },
+    ],
+    calloutTitle: 'Read the court decision',
+    calloutBody: 'Primary sources for Bill 212, Bill 56, and the Charter challenge.',
+    calloutActions: [
+      { label: 'Bill 212 (OLA)', text: 'ola.org/en/legislative-business/bills/parliament-44/session-1/bill-212' },
+      { label: 'Bill 56 (OLA)', text: 'ola.org/en/legislative-business/bills/parliament-44/session-1/bill-56' },
+      {
+        label: 'Court ruling (PDF)',
+        text: 'ecojustice.ca/wp-content/uploads/2025/07/Cycle-Toronto-v.-AGO-Reasons-for-Judgment-PBS-July-30-2025.pdf',
+      },
     ],
     published: true,
   },
