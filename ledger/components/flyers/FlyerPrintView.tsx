@@ -28,6 +28,12 @@ export default function FlyerPrintView({
   const theme = resolveFlyerTheme(flyer.theme)
   const useGridLayout = flyer.slug === 'overview'
   const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
+  const printDensityClass =
+    flyer.sections.length >= 4
+      ? 'flyer-print-dense'
+      : flyer.sections.length >= 3
+        ? 'flyer-print-compact'
+        : ''
 
   return (
       <div className="flyer-print-chrome min-h-screen bg-gradient-to-b from-[#3d2b7a] to-[#2a1f58] py-6 px-3 sm:py-10 sm:px-6">
@@ -54,9 +60,9 @@ export default function FlyerPrintView({
           </div>
         )}
 
-        <div className="flyer-print-page mx-auto w-full max-w-[8.5in] print:max-h-[11in]">
+        <div className="flyer-print-page mx-auto w-full max-w-[8.5in]">
         <article
-          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md border-2 border-transparent shadow-2xl print:min-h-0 print:border-[#1a1a1a] print:shadow-none"
+          className={`flyer-sheet mx-auto w-full max-w-[8.5in] overflow-hidden rounded-md border-2 border-transparent shadow-2xl print:flex print:flex-col print:h-[11in] print:max-h-[11in] print:min-h-0 print:border-[#1a1a1a] print:shadow-none ${printDensityClass}`}
           style={{ background: theme.bodyBackground }}
           aria-label={`Protect Ontario printable flyer: ${flyer.title} ${flyer.subtitle}`}
         >
@@ -134,11 +140,9 @@ export default function FlyerPrintView({
           {/* Body sections */}
           {flyer.sections.length > 0 && (
             <div
-              className={
-                useGridLayout
-                  ? 'grid gap-0 sm:grid-cols-2'
-                  : 'flex flex-col divide-y divide-slate-200'
-              }
+              className={`flyer-sheet-body ${
+                useGridLayout ? 'flyer-sheet-body--grid grid gap-0 sm:grid-cols-2' : 'flex flex-col divide-y divide-slate-200'
+              }`}
             >
               {flyer.sections.map((block, i) => (
                 <section
@@ -327,9 +331,9 @@ export default function FlyerPrintView({
 
         {showToolbar && (
           <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light leading-relaxed">
-            In the print dialog: turn <strong className="font-normal">off</strong> &quot;Headers and footers&quot;,
-            turn <strong className="font-normal">on</strong> background graphics, then print or save as PDF. Cut along
-            the black border.
+            In the print dialog: set <strong className="font-normal">Margins to None</strong>, turn{' '}
+            <strong className="font-normal">off</strong> &quot;Headers and footers&quot;, turn{' '}
+            <strong className="font-normal">on</strong> background graphics, then print or save as PDF.
           </p>
         )}
       </div>

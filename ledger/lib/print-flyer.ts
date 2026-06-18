@@ -1,11 +1,10 @@
 /** Print only the flyer poster — blank document title, no site chrome. */
 import { FLYER_PRINT_CSS } from './flyer-print-styles'
-import { fitFlyerSheetToPage, fitFlyerSheetToPageWhenReady, resetFlyerSheetFit } from './flyer-print-fit'
 
 export function printFlyerSheet(): void {
   if (typeof window === 'undefined') return
 
-  const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
+  const sheet = document.querySelector('.flyer-sheet')
   if (!sheet) {
     window.print()
     return
@@ -47,29 +46,19 @@ export function printFlyerSheet(): void {
   printWindow.document.close()
 
   const runPrint = () => {
-    const docSheet = printWindow.document.querySelector('.flyer-sheet') as HTMLElement | null
-    if (docSheet) {
-      fitFlyerSheetToPageWhenReady(docSheet)
-      window.setTimeout(() => {
-        printWindow.focus()
-        printWindow.print()
-        printWindow.close()
-      }, 80)
-      return
-    }
     printWindow.focus()
     printWindow.print()
     printWindow.close()
   }
 
   if (printWindow.document.readyState === 'complete') {
-    window.setTimeout(runPrint, 250)
+    window.setTimeout(runPrint, 300)
   } else {
-    printWindow.onload = () => window.setTimeout(runPrint, 250)
+    printWindow.onload = () => window.setTimeout(runPrint, 300)
   }
 }
 
-/** Blank page title during Cmd+P; scale flyer to one page when printing. */
+/** Blank page title during Cmd+P so the browser header line stays empty. */
 export function bindFlyerPrintTitleCleanup(): () => void {
   if (typeof window === 'undefined') return () => {}
 
@@ -78,13 +67,9 @@ export function bindFlyerPrintTitleCleanup(): () => void {
   const onBeforePrint = () => {
     savedTitle = document.title
     document.title = ' '
-    const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
-    if (sheet) fitFlyerSheetToPageWhenReady(sheet)
   }
   const onAfterPrint = () => {
     document.title = savedTitle
-    const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
-    if (sheet) resetFlyerSheetFit(sheet)
   }
 
   window.addEventListener('beforeprint', onBeforePrint)
