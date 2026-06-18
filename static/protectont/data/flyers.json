@@ -71,8 +71,8 @@
           ]
         }
       ],
-      "calloutTitle": "See the full picture",
-      "calloutBody": "ProtectOnt.ca maps spending, policy, and land decisions using only public sources — interactive timelines, issue pages, and methodology you can verify. No logins. No spin. Just the pattern in the data.",
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -122,26 +122,8 @@
           ]
         }
       ],
-      "calloutTitle": "What you can do",
+      "calloutTitle": "",
       "calloutBody": "",
-      "calloutActions": [
-        {
-          "label": "Tell your MPP",
-          "text": "protectont.ca/take-action"
-        },
-        {
-          "label": "Find a rally",
-          "text": "protectont.ca/protests"
-        },
-        {
-          "label": "Request a sign",
-          "text": "protectont.ca/join"
-        },
-        {
-          "label": "Healthcare data",
-          "text": "protectont.ca/healthcare"
-        }
-      ],
       "published": true
     },
     {
@@ -191,18 +173,8 @@
           ]
         }
       ],
-      "calloutTitle": "Dig deeper",
-      "calloutBody": "Interactive analysis, legislation links, and documented sources.",
-      "calloutActions": [
-        {
-          "label": "Water issue page",
-          "text": "protectont.ca/water"
-        },
-        {
-          "label": "Contact your MPP",
-          "text": "protectont.ca/take-action"
-        }
-      ],
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -251,22 +223,8 @@
           ]
         }
       ],
-      "calloutTitle": "See the receipts",
-      "calloutBody": "Timelines, sources, and land policy context.",
-      "calloutActions": [
-        {
-          "label": "Public land",
-          "text": "protectont.ca/public-land"
-        },
-        {
-          "label": "Receipts",
-          "text": "protectont.ca/receipts"
-        },
-        {
-          "label": "Greenbelt",
-          "text": "protectont.ca/greenbelt"
-        }
-      ],
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -314,14 +272,8 @@
           ]
         }
       ],
-      "calloutTitle": "Take action",
-      "calloutBody": "Ontario Nature and David Suzuki Foundation campaigns — share this flyer.",
-      "calloutActions": [
-        {
-          "label": "Petitions & MPP",
-          "text": "protectont.ca/take-action"
-        }
-      ],
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -370,22 +322,8 @@
           ]
         }
       ],
-      "calloutTitle": "Learn & organize",
+      "calloutTitle": "",
       "calloutBody": "",
-      "calloutActions": [
-        {
-          "label": "Indigenous rights",
-          "text": "protectont.ca/indigenous-rights"
-        },
-        {
-          "label": "Join",
-          "text": "protectont.ca/join"
-        },
-        {
-          "label": "Take action",
-          "text": "protectont.ca/take-action"
-        }
-      ],
       "published": true
     },
     {
@@ -434,22 +372,8 @@
           ]
         }
       ],
-      "calloutTitle": "Explore the data",
-      "calloutBody": "Print this flyer, post it, talk about it with neighbours.",
-      "calloutActions": [
-        {
-          "label": "Home",
-          "text": "protectont.ca"
-        },
-        {
-          "label": "Methodology",
-          "text": "protectont.ca/methodology"
-        },
-        {
-          "label": "Receipts",
-          "text": "protectont.ca/receipts"
-        }
-      ],
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -495,22 +419,8 @@
           ]
         }
       ],
-      "calloutTitle": "Order or volunteer",
-      "calloutBody": "Put a sign up before the next rally.",
-      "calloutActions": [
-        {
-          "label": "Order sign",
-          "text": "protectont.ca/products"
-        },
-        {
-          "label": "Join",
-          "text": "protectont.ca/join"
-        },
-        {
-          "label": "Protests",
-          "text": "protectont.ca/protests"
-        }
-      ],
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -547,14 +457,8 @@
           ]
         }
       ],
-      "calloutTitle": "Get the sign",
-      "calloutBody": "Ford Failed You yard sign — $10 with stand. Download artwork on the product page.",
-      "calloutActions": [
-        {
-          "label": "Order",
-          "text": "protectont.ca/products"
-        }
-      ],
+      "calloutTitle": "",
+      "calloutBody": "",
       "published": true
     },
     {
@@ -600,22 +504,8 @@
           ]
         }
       ],
-      "calloutTitle": "Find a protest",
+      "calloutTitle": "",
       "calloutBody": "",
-      "calloutActions": [
-        {
-          "label": "Protest calendar",
-          "text": "protectont.ca/protests"
-        },
-        {
-          "label": "Join",
-          "text": "protectont.ca/join"
-        },
-        {
-          "label": "Order yard sign",
-          "text": "protectont.ca/products"
-        }
-      ],
       "published": true
     },
     {

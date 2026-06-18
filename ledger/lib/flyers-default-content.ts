@@ -59,67 +59,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'See the full picture',
-    calloutBody:
-      'ProtectOnt.ca maps spending, policy, and land decisions using only public sources — interactive timelines, issue pages, and methodology you can verify. No logins. No spin. Just the pattern in the data.',
-    published: true,
-  },
-  {
-    id: 'healthcare',
-    slug: 'healthcare',
-    title: 'HEALTHCARE UNDER FORD',
-    subtitle: 'PUBLIC CARE · PRIVATE PROFIT',
-    intro:
-      'Ontario\'s universal public healthcare system is being hollowed out. Public hospitals face deficits and long waits while private staffing agencies, for-profit clinics, and corporate operators capture more publicly funded capacity — often at higher cost.',
-    heroImageUrl: '/products/yard-signs/ford-failed-you.png',
-    highlights: [
-      'Billions to staffing agencies',
-      'Bill 124 wage caps',
-      'For-profit clinics expand',
-    ],
-    sections: [
-      {
-        title: 'Private staffing agencies',
-        lead: 'CCPA\'s "Hollowed Out" report and Ontario Public Accounts document the shift of hospital budgets to temp agencies.',
-        bullets: [
-          'Hospital spending on private staffing agencies has surged year over year while full-time public staffing struggles to keep pace.',
-          'Agency nurses and workers often cost far more per hour than equivalent public employees — the public pays the premium.',
-          'Bill 124 (2019) capped compensation for many public-sector workers, including healthcare staff, while agency use increased.',
-          'Agency reliance is a policy choice: it transfers public money to private intermediaries instead of building stable public capacity.',
-          'Rural and understaffed hospitals feel this pressure most acutely — closures and reduced services follow funding gaps.',
-        ],
-      },
-      {
-        title: 'For-profit clinics & Bill 60',
-        lead: 'Private surgical and diagnostic clinics are expanding with public funding — sometimes paid more than hospitals for the same work.',
-        bullets: [
-          'Bill 60 and related policies expand for-profit delivery of publicly insured services.',
-          'CBC reporting documented cases where for-profit clinics were paid more per procedure than public hospitals.',
-          'Every dollar to for-profit clinics is a dollar not rebuilding public hospital capacity and staffing.',
-          'Wait-list optics may improve for some procedures while the system becomes more fragmented and expensive.',
-          'American-style two-tier pressure grows when public capacity is deliberately constrained.',
-        ],
-      },
-      {
-        title: 'Hospitals, ER waits & long-term care',
-        lead: 'Ontarians still face hallway medicine, closed ERs, and LTC decisions that favour private beds.',
-        bullets: [
-          'Emergency department wait times and hallway medicine remain defining crises across the province.',
-          'Ontario ranks poorly on per-capita acute care beds compared to other provinces (CIHI data).',
-          'Long-term care bed allocations have repeatedly favoured for-profit operators in licensing rounds.',
-          'Ontario Health Coalition and other groups have documented the tilt toward corporate LTC chains.',
-          'Underfunding public capacity while expanding private delivery is a political choice — not an inevitability.',
-        ],
-      },
-    ],
-    calloutTitle: 'What you can do',
+    calloutTitle: '',
     calloutBody: '',
-    calloutActions: [
-      { label: 'Tell your MPP', text: 'protectont.ca/take-action' },
-      { label: 'Find a rally', text: 'protectont.ca/protests' },
-      { label: 'Request a sign', text: 'protectont.ca/join' },
-      { label: 'Healthcare data', text: 'protectont.ca/healthcare' },
-    ],
     published: true,
   },
   {
@@ -166,12 +107,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Dig deeper',
-    calloutBody: 'Interactive analysis, legislation links, and documented sources.',
-    calloutActions: [
-      { label: 'Water issue page', text: 'protectont.ca/water' },
-      { label: 'Contact your MPP', text: 'protectont.ca/take-action' },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -217,13 +154,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'See the receipts',
-    calloutBody: 'Timelines, sources, and land policy context.',
-    calloutActions: [
-      { label: 'Public land', text: 'protectont.ca/public-land' },
-      { label: 'Receipts', text: 'protectont.ca/receipts' },
-      { label: 'Greenbelt', text: 'protectont.ca/greenbelt' },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -268,11 +200,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Take action',
-    calloutBody: 'Ontario Nature and David Suzuki Foundation campaigns — share this flyer.',
-    calloutActions: [
-      { label: 'Petitions & MPP', text: 'protectont.ca/take-action' },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -318,13 +247,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Learn & organize',
+    calloutTitle: '',
     calloutBody: '',
-    calloutActions: [
-      { label: 'Indigenous rights', text: 'protectont.ca/indigenous-rights' },
-      { label: 'Join', text: 'protectont.ca/join' },
-      { label: 'Take action', text: 'protectont.ca/take-action' },
-    ],
     published: true,
   },
   {
@@ -370,13 +294,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Explore the data',
-    calloutBody: 'Print this flyer, post it, talk about it with neighbours.',
-    calloutActions: [
-      { label: 'Home', text: 'protectont.ca' },
-      { label: 'Methodology', text: 'protectont.ca/methodology' },
-      { label: 'Receipts', text: 'protectont.ca/receipts' },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -419,13 +338,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Order or volunteer',
-    calloutBody: 'Put a sign up before the next rally.',
-    calloutActions: [
-      { label: 'Order sign', text: 'protectont.ca/products' },
-      { label: 'Join', text: 'protectont.ca/join' },
-      { label: 'Protests', text: 'protectont.ca/protests' },
-    ],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -459,9 +373,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Get the sign',
-    calloutBody: 'Ford Failed You yard sign — $10 with stand. Download artwork on the product page.',
-    calloutActions: [{ label: 'Order', text: 'protectont.ca/products' }],
+    calloutTitle: '',
+    calloutBody: '',
     published: true,
   },
   {
@@ -504,13 +417,8 @@ export const defaultFlyerEntries: Flyer[] = [
         ],
       },
     ],
-    calloutTitle: 'Find a protest',
+    calloutTitle: '',
     calloutBody: '',
-    calloutActions: [
-      { label: 'Protest calendar', text: 'protectont.ca/protests' },
-      { label: 'Join', text: 'protectont.ca/join' },
-      { label: 'Order yard sign', text: 'protectont.ca/products' },
-    ],
     published: true,
   },
   {
