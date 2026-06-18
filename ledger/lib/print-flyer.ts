@@ -1,6 +1,6 @@
 /** Print only the flyer poster — blank document title, no site chrome. */
 import { FLYER_PRINT_CSS } from './flyer-print-styles'
-import { fitFlyerSheetToPage, resetFlyerSheetFit } from './flyer-print-fit'
+import { fitFlyerSheetToPage, fitFlyerSheetToPageWhenReady, resetFlyerSheetFit } from './flyer-print-fit'
 
 export function printFlyerSheet(): void {
   if (typeof window === 'undefined') return
@@ -48,7 +48,15 @@ export function printFlyerSheet(): void {
 
   const runPrint = () => {
     const docSheet = printWindow.document.querySelector('.flyer-sheet') as HTMLElement | null
-    if (docSheet) fitFlyerSheetToPage(docSheet)
+    if (docSheet) {
+      fitFlyerSheetToPageWhenReady(docSheet)
+      window.setTimeout(() => {
+        printWindow.focus()
+        printWindow.print()
+        printWindow.close()
+      }, 80)
+      return
+    }
     printWindow.focus()
     printWindow.print()
     printWindow.close()
@@ -71,7 +79,7 @@ export function bindFlyerPrintTitleCleanup(): () => void {
     savedTitle = document.title
     document.title = ' '
     const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
-    if (sheet) fitFlyerSheetToPage(sheet)
+    if (sheet) fitFlyerSheetToPageWhenReady(sheet)
   }
   const onAfterPrint = () => {
     document.title = savedTitle

@@ -9,6 +9,8 @@ export function resetFlyerSheetFit(sheet: HTMLElement): void {
   sheet.style.transform = ''
   sheet.style.transformOrigin = ''
   sheet.style.marginBottom = ''
+  sheet.style.width = ''
+  sheet.style.maxWidth = ''
   delete sheet.dataset.flyerFitScale
   const page = sheet.closest('.flyer-print-page') as HTMLElement | null
   if (page) {
@@ -19,8 +21,8 @@ export function resetFlyerSheetFit(sheet: HTMLElement): void {
 }
 
 /**
- * Scale the flyer down if content exceeds one letter page (8.5″×11″).
- * Call on beforeprint; reset on afterprint.
+ * Scale down only when content is taller than one letter page.
+ * Height-only — never shrink width (that caused tiny top-left previews).
  */
 export function fitFlyerSheetToPage(sheet: HTMLElement): void {
   resetFlyerSheetFit(sheet)
@@ -34,16 +36,26 @@ export function fitFlyerSheetToPage(sheet: HTMLElement): void {
     page.style.overflow = 'hidden'
   }
 
-  const naturalH = sheet.scrollHeight
-  const naturalW = sheet.scrollWidth
-  if (naturalH <= 0 || naturalW <= 0) return
+  sheet.style.width = `${pageW}px`
+  sheet.style.maxWidth = `${pageW}px`
+  sheet.style.minHeight = '0'
 
-  const scale = Math.min(1, pageH / naturalH, pageW / naturalW)
-  if (scale >= 0.999) return
+  const naturalH = sheet.scrollHeight
+  if (naturalH <= 0 || naturalH <= pageH + 2) return
+
+  const scale = pageH / naturalH
+  if (scale >= 0.995) return
 
   sheet.dataset.flyerFitScale = String(scale)
   sheet.style.transformOrigin = 'top center'
   sheet.style.transform = `scale(${scale})`
-  // Collapse extra layout height so the browser does not add a second page.
   sheet.style.marginBottom = `${naturalH * (scale - 1)}px`
+}
+
+/** Wait for print styles/layout before measuring (beforeprint can run too early). */
+export function fitFlyerSheetToPageWhenReady(sheet: HTMLElement): void {
+  resetFlyerSheetFit(sheet)
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => fitFlyerSheetToPage(sheet))
+  })
 }
