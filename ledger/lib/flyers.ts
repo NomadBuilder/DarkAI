@@ -115,7 +115,6 @@ export function defaultFlyersFile(): FlyersFile {
     ctas: [
       { label: 'Learn', text: 'protectont.ca' },
       { label: 'Join', text: 'protectont.ca/join' },
-      { label: 'Protest', text: 'protectont.ca/protests' },
     ],
   }
 

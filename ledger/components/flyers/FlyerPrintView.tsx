@@ -247,8 +247,8 @@ export default function FlyerPrintView({
             className="flyer-sheet-footer px-8 py-7 sm:px-10 sm:py-9"
             style={{ background: footerGradient(theme) }}
           >
-            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-              <div className="min-w-0 flex-1">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-10">
+              <div className="min-w-0 flex-1 sm:max-w-[70%]">
                 <p
                   className="text-center sm:text-left text-sm sm:text-base font-black uppercase tracking-[0.2em]"
                   style={{ color: theme.footerHeadingColor }}
