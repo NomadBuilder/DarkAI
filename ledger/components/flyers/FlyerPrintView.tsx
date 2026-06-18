@@ -54,8 +54,9 @@ export default function FlyerPrintView({
           </div>
         )}
 
+        <div className="flyer-print-page mx-auto w-full max-w-[8.5in] print:max-h-[11in]">
         <article
-          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md border-2 border-transparent shadow-2xl print:border-[#1a1a1a] print:shadow-none"
+          className="flyer-sheet mx-auto w-full max-w-[8.5in] min-h-[11in] overflow-hidden rounded-md border-2 border-transparent shadow-2xl print:min-h-0 print:border-[#1a1a1a] print:shadow-none"
           style={{ background: theme.bodyBackground }}
           aria-label={`Protect Ontario printable flyer: ${flyer.title} ${flyer.subtitle}`}
         >
@@ -322,6 +323,7 @@ export default function FlyerPrintView({
             </div>
           </footer>
         </article>
+        </div>
 
         {showToolbar && (
           <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light leading-relaxed">

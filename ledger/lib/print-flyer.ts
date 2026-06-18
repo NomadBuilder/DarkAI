@@ -1,15 +1,27 @@
 /** Print only the flyer poster — blank document title, no site chrome. */
+import { FLYER_PRINT_CSS } from './flyer-print-styles'
+import { fitFlyerSheetToPage, resetFlyerSheetFit } from './flyer-print-fit'
+
 export function printFlyerSheet(): void {
   if (typeof window === 'undefined') return
 
-  const sheet = document.querySelector('.flyer-sheet')
+  const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
   if (!sheet) {
     window.print()
     return
   }
 
-  const clone = sheet.cloneNode(true) as HTMLElement
-  clone.querySelectorAll('img').forEach((img) => {
+  const page = sheet.closest('.flyer-print-page')
+  let cloneRoot: HTMLElement
+  if (page) {
+    cloneRoot = page.cloneNode(true) as HTMLElement
+  } else {
+    cloneRoot = document.createElement('div')
+    cloneRoot.className = 'flyer-print-page'
+    cloneRoot.appendChild(sheet.cloneNode(true))
+  }
+
+  cloneRoot.querySelectorAll('img').forEach((img) => {
     const src = img.getAttribute('src')
     if (src?.startsWith('/')) {
       img.setAttribute('src', `${window.location.origin}${src}`)
@@ -22,43 +34,21 @@ export function printFlyerSheet(): void {
     return
   }
 
-  const styles = `
-    @page { size: letter portrait; margin: 0; }
-    html, body {
-      margin: 0;
-      padding: 0.375in;
-      background: white;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    .flyer-sheet {
-      box-sizing: border-box;
-      width: 7.75in;
-      max-width: 100%;
-      margin: 0 auto;
-      border: 3pt solid #1a1a1a;
-      overflow: hidden;
-      background: white;
-    }
-    .flyer-body-text { font-size: 10pt; line-height: 1.4; }
-    .flyer-section-title { font-size: 12pt; }
-    .flyer-headline { font-size: 26pt; }
-    .flyer-subhead { font-size: 18pt; }
-  `
-
   printWindow.document.open()
   printWindow.document.write(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <title> </title>
-  <style>${styles}</style>
+  <style>${FLYER_PRINT_CSS}</style>
 </head>
-<body>${clone.outerHTML}</body>
+<body>${cloneRoot.outerHTML}</body>
 </html>`)
   printWindow.document.close()
 
   const runPrint = () => {
+    const docSheet = printWindow.document.querySelector('.flyer-sheet') as HTMLElement | null
+    if (docSheet) fitFlyerSheetToPage(docSheet)
     printWindow.focus()
     printWindow.print()
     printWindow.close()
@@ -71,7 +61,7 @@ export function printFlyerSheet(): void {
   }
 }
 
-/** Blank page title during Cmd+P so the browser header line stays empty. */
+/** Blank page title during Cmd+P; scale flyer to one page when printing. */
 export function bindFlyerPrintTitleCleanup(): () => void {
   if (typeof window === 'undefined') return () => {}
 
@@ -80,9 +70,13 @@ export function bindFlyerPrintTitleCleanup(): () => void {
   const onBeforePrint = () => {
     savedTitle = document.title
     document.title = ' '
+    const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
+    if (sheet) fitFlyerSheetToPage(sheet)
   }
   const onAfterPrint = () => {
     document.title = savedTitle
+    const sheet = document.querySelector('.flyer-sheet') as HTMLElement | null
+    if (sheet) resetFlyerSheetFit(sheet)
   }
 
   window.addEventListener('beforeprint', onBeforePrint)

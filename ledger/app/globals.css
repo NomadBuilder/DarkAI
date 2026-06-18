@@ -149,6 +149,9 @@ body:has(.flyer-route) > footer {
     background: white !important;
     margin: 0 !important;
     padding: 0 !important;
+    width: 8.5in !important;
+    height: 11in !important;
+    overflow: hidden !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -165,27 +168,33 @@ body:has(.flyer-route) > footer {
     background: white !important;
     margin: 0 !important;
     min-height: 0 !important;
-  }
-
-  body:has(.flyer-route) .flyer-print-chrome {
-    padding: 0.375in !important;
-  }
-
-  body:not(:has(.flyer-route)) .flyer-print-chrome {
     padding: 0 !important;
+  }
+
+  .flyer-print-page {
+    box-sizing: border-box !important;
+    width: 8.5in !important;
+    height: 11in !important;
+    max-height: 11in !important;
+    margin: 0 auto !important;
+    overflow: hidden !important;
+    page-break-after: avoid !important;
+    break-after: avoid-page !important;
   }
 
   .flyer-sheet {
     box-sizing: border-box !important;
     box-shadow: none !important;
     margin: 0 auto !important;
-    width: 7.75in !important;
-    max-width: 7.75in !important;
-    min-height: auto !important;
+    width: 8.5in !important;
+    max-width: 8.5in !important;
+    min-height: 0 !important;
     border: 3pt solid #1a1a1a !important;
     border-radius: 0 !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     background: white !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid-page !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
@@ -196,21 +205,135 @@ body:has(.flyer-route) > footer {
     print-color-adjust: exact;
   }
 
+  .flyer-sheet-header {
+    padding: 0.26in 0.34in 0.2in !important;
+  }
+
+  .flyer-sheet-footer {
+    padding: 0.16in 0.34in 0.18in !important;
+  }
+
+  .flyer-sheet-header .text-xl,
+  .flyer-sheet-header .sm\:text-2xl {
+    font-size: 11pt !important;
+  }
+
+  .flyer-sheet-header img.h-11,
+  .flyer-sheet-header img.sm\:h-12 {
+    height: 0.34in !important;
+    width: 0.34in !important;
+  }
+
   .flyer-body-text {
-    font-size: 10pt !important;
-    line-height: 1.4 !important;
+    font-size: 7.25pt !important;
+    line-height: 1.22 !important;
+  }
+
+  .flyer-sheet-header .flyer-body-text {
+    font-size: 7.5pt !important;
+    line-height: 1.25 !important;
+    margin-top: 5pt !important;
   }
 
   .flyer-section-title {
-    font-size: 12pt !important;
+    font-size: 8.5pt !important;
+    padding-bottom: 1pt !important;
   }
 
   .flyer-headline {
-    font-size: 26pt !important;
+    font-size: 16pt !important;
+    line-height: 1.05 !important;
   }
 
   .flyer-subhead {
-    font-size: 18pt !important;
+    font-size: 11pt !important;
+    line-height: 1.1 !important;
+    margin-top: 2pt !important;
+  }
+
+  .flyer-sheet-header .mt-6 {
+    margin-top: 0.12in !important;
+  }
+
+  .flyer-sheet-header .rounded-md {
+    padding: 2pt 5pt !important;
+    font-size: 6.5pt !important;
+  }
+
+  .flyer-sheet-header .shrink-0 img {
+    max-height: 0.85in !important;
+  }
+
+  .flyer-sheet .h-2 {
+    height: 3pt !important;
+  }
+
+  .flyer-sheet section.px-8,
+  .flyer-sheet section.sm\:px-10 {
+    padding-left: 0.34in !important;
+    padding-right: 0.34in !important;
+  }
+
+  .flyer-sheet section.py-6,
+  .flyer-sheet section.sm\:py-7 {
+    padding-top: 0.12in !important;
+    padding-bottom: 0.12in !important;
+  }
+
+  .flyer-sheet ul.space-y-3 > li {
+    margin-top: 2pt !important;
+  }
+
+  .flyer-sheet ul.space-y-3 > li span.h-2\.5 {
+    height: 5pt !important;
+    width: 5pt !important;
+    margin-top: 2pt !important;
+  }
+
+  .flyer-sheet-footer .text-sm,
+  .flyer-sheet-footer .sm\:text-base {
+    font-size: 7pt !important;
+  }
+
+  .flyer-sheet-footer .text-base,
+  .flyer-sheet-footer .sm\:text-lg {
+    font-size: 8pt !important;
+  }
+
+  .flyer-sheet-footer .text-xs {
+    font-size: 6pt !important;
+  }
+
+  .flyer-sheet-footer .mt-5 {
+    margin-top: 0.1in !important;
+  }
+
+  .flyer-sheet-footer .rounded-lg {
+    padding: 0.08in 0.1in !important;
+  }
+
+  .flyer-qr-block img {
+    height: 0.62in !important;
+    width: 0.62in !important;
+  }
+
+  .flyer-qr-block .rounded-xl {
+    padding: 2pt !important;
+  }
+
+  .flyer-qr-block .mt-2 {
+    margin-top: 3pt !important;
+  }
+
+  .flyer-qr-block .text-\[10px\] {
+    font-size: 5.5pt !important;
+  }
+
+  .flyer-sheet-footer .text-\[11px\],
+  .flyer-sheet-footer .sm\:text-xs {
+    font-size: 5.5pt !important;
+    line-height: 1.25 !important;
+    margin-top: 0.08in !important;
   }
 }
 
