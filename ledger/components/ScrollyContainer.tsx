@@ -14,6 +14,7 @@ import DataSourcesDrawer from './DataSourcesDrawer'
 import TopNavigation from './TopNavigation'
 import SectionColdOpenJoinBridge from './home/SectionColdOpenJoinBridge'
 import SectionJoinCtaBridge from './home/SectionJoinCtaBridge'
+import PartnerOrganizationsSection from './home/PartnerOrganizationsCarousel'
 
 export default function ScrollyContainer() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -104,6 +105,7 @@ export default function ScrollyContainer() {
       />
       <div className="relative z-10 w-full">
         <SectionColdOpenJoinBridge />
+        <PartnerOrganizationsSection />
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>
