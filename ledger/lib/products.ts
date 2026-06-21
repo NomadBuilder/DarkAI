@@ -95,13 +95,17 @@ export const catalogProducts: CatalogProduct[] = [
   },
 ]
 
-/** Legacy slugs — redirect to the current product */
-export const legacyProductSlugRedirects: Record<string, string> = {
-  'ford-sucks': 'fight-ford-t-shirt',
+export const legacyYardSignSlugRedirects: Record<string, string> = {
   'ford-design-1': 'ford-failed-you',
   'ford-design-2': 'ford-failed-you',
   'ford-yard-sign-1': 'ford-failed-you',
   'ford-yard-sign-2': 'ford-failed-you',
+}
+
+/** Legacy /products/[slug] URLs → current product slug (includes yard-sign aliases). */
+export const legacyProductSlugRedirects: Record<string, string> = {
+  'ford-sucks': 'fight-ford-t-shirt',
+  ...legacyYardSignSlugRedirects,
 }
 
 export function getProductBySlug(slug: string): CatalogProduct | undefined {
