@@ -53,7 +53,7 @@ export const productCategories: ProductCategory[] = [
 
 export const catalogProducts: CatalogProduct[] = [
   {
-    slug: 'ford-sucks',
+    slug: 'fight-ford-t-shirt',
     name: 'Ford Sucks T-shirt',
     categoryId: 'apparel',
     categoryLabel: 'T-shirt',
@@ -95,8 +95,9 @@ export const catalogProducts: CatalogProduct[] = [
   },
 ]
 
-/** Legacy slugs — redirect to the current yard sign product */
+/** Legacy slugs — redirect to the current product */
 export const legacyProductSlugRedirects: Record<string, string> = {
+  'ford-sucks': 'fight-ford-t-shirt',
   'ford-design-1': 'ford-failed-you',
   'ford-design-2': 'ford-failed-you',
   'ford-yard-sign-1': 'ford-failed-you',
