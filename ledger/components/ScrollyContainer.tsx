@@ -105,7 +105,6 @@ export default function ScrollyContainer() {
       />
       <div className="relative z-10 w-full">
         <SectionColdOpenJoinBridge />
-        <PartnerOrganizationsSection />
         <section id="timeline">
           <SectionPolicyTimeline />
         </section>
@@ -118,6 +117,7 @@ export default function ScrollyContainer() {
           <SectionKeyFindings />
         </section>
         <SectionLoss />
+        <PartnerOrganizationsSection />
         <SectionJoinCtaBridge />
         <section id="sources" className="border-t border-slate-100 bg-white px-4 py-12 sm:px-6 md:px-8 md:py-16">
           <div className="mx-auto max-w-4xl">
