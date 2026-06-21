@@ -1,9 +1,9 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import TopNavigation from '../../../components/TopNavigation'
+import ProductImageCarousel from '../../../components/products/ProductImageCarousel'
 import ProductOrder from '../../../components/products/ProductOrder'
 import type { CatalogProduct } from '@/lib/products'
 import { getRelatedProducts } from '@/lib/products'
@@ -14,6 +14,10 @@ type Props = {
 
 export default function ProductDetail({ product }: Props) {
   const related = getRelatedProducts(product)
+  const carouselImages = [
+    { src: product.image, alt: product.name },
+    ...(product.galleryImages ?? []).map((src) => ({ src, alt: '' })),
+  ]
 
   return (
     <motion.div className="min-h-screen bg-slate-50 text-slate-900">
@@ -41,36 +45,7 @@ export default function ProductDetail({ product }: Props) {
           transition={{ duration: 0.45 }}
           className="grid gap-10 lg:grid-cols-2 lg:gap-14 items-start"
         >
-          <div className="space-y-4">
-            <div className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-md shadow-slate-900/5">
-              <div className="relative aspect-[4/3] bg-slate-100">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  className="object-contain p-2 sm:p-3"
-                  sizes="(max-width: 1024px) 100vw, 50vw"
-                  priority
-                />
-              </div>
-            </div>
-            {product.galleryImages?.map((src) => (
-              <div
-                key={src}
-                className="rounded-3xl border border-slate-200 bg-white overflow-hidden shadow-md shadow-slate-900/5"
-              >
-                <div className="relative aspect-[4/3] bg-slate-100">
-                  <Image
-                    src={src}
-                    alt=""
-                    fill
-                    className="object-contain p-2 sm:p-3"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
+          <ProductImageCarousel images={carouselImages} />
 
           <div className="space-y-8">
             <section>
