@@ -4,6 +4,7 @@ export type LatLng = { lat: number; lng: number }
 
 /** Keys: lowercase city name with spaces (matches getCityFromLocation output). */
 export const PROTEST_CITY_COORDINATES: Record<string, LatLng> = {
+  ancaster: { lat: 43.2186, lng: -79.9879 },
   angus: { lat: 44.3167, lng: -79.8833 },
   barrie: { lat: 44.3894, lng: -79.6903 },
   belleville: { lat: 44.1628, lng: -77.3832 },
@@ -16,6 +17,7 @@ export const PROTEST_CITY_COORDINATES: Record<string, LatLng> = {
   brockville: { lat: 44.5897, lng: -75.6841 },
   burlington: { lat: 43.3255, lng: -79.799 },
   cambridge: { lat: 43.3616, lng: -80.3144 },
+  chatham: { lat: 42.4048, lng: -82.191 },
   cornwall: { lat: 45.0181, lng: -74.7282 },
   'elliot lake': { lat: 46.1834, lng: -82.6542 },
   elmira: { lat: 43.4039, lng: -80.5558 },
@@ -24,10 +26,12 @@ export const PROTEST_CITY_COORDINATES: Record<string, LatLng> = {
   georgetown: { lat: 43.6487, lng: -79.9173 },
   guelph: { lat: 43.5448, lng: -80.2482 },
   hamilton: { lat: 43.2557, lng: -79.8711 },
+  kanata: { lat: 45.3088, lng: -75.8986 },
   kincardine: { lat: 44.175, lng: -81.633 },
   'king city': { lat: 43.928, lng: -79.526 },
   kingston: { lat: 44.2312, lng: -76.486 },
   lindsay: { lat: 44.3531, lng: -78.7359 },
+  listowel: { lat: 43.7328, lng: -80.9509 },
   london: { lat: 42.9849, lng: -81.2453 },
   'markham-thornhill': { lat: 43.8561, lng: -79.337 },
   meaford: { lat: 44.606, lng: -80.5927 },
@@ -37,6 +41,7 @@ export const PROTEST_CITY_COORDINATES: Record<string, LatLng> = {
   'north bay': { lat: 46.3092, lng: -79.4608 },
   oakville: { lat: 43.4675, lng: -79.6877 },
   orangeville: { lat: 43.919, lng: -80.0943 },
+  orillia: { lat: 44.6082, lng: -79.4207 },
   ottawa: { lat: 45.4215, lng: -75.6972 },
   'owen sound': { lat: 44.567, lng: -80.9435 },
   pembroke: { lat: 45.8267, lng: -77.1109 },
