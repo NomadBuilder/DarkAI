@@ -71,6 +71,7 @@ const resourcesDropdownItems: NavItem[] = [
 const navItems: NavItem[] = [
   { id: 'issues', label: 'The Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
   { id: 'protests', label: 'Protests', href: '/protests' },
+  { id: 'products', label: 'Products', href: '/products' },
   { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
   { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]

@@ -37,7 +37,9 @@ export default function ProductCard({ product, index = 0 }: Props) {
       <div className="p-5 md:p-6 flex flex-col flex-grow">
         <p className="text-xs uppercase tracking-[0.2em] text-slate-400 mb-2">{product.categoryLabel}</p>
         <h3 className="text-2xl font-light text-slate-900 mb-2">{product.name}</h3>
-        <p className="text-sm text-[#2E4A6B] font-medium mb-3">${product.minPriceCad} CAD</p>
+        <p className="text-sm text-[#2E4A6B] font-medium mb-3">
+          {product.comingSoon ? 'Coming soon' : `$${product.minPriceCad} CAD`}
+        </p>
         <p className="text-sm text-slate-600 font-light leading-relaxed mb-4">{product.summary}</p>
         <Link
           href={`/products/${product.slug}`}

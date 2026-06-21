@@ -22,8 +22,8 @@ export default function ProductsPage() {
             Materials you can order
           </h1>
           <p className="text-lg text-slate-200/95 font-light max-w-2xl leading-relaxed">
-            Ready-made protest materials, fulfilled by organizers and volunteers. Yard signs are $10—every dollar
-            supports printing, stands, and local delivery.
+            Ready-made protest materials and apparel, fulfilled by organizers and volunteers. Yard signs are $10—every
+            dollar supports printing, stands, and local delivery.
           </p>
           <p className="mt-4 text-sm text-slate-300/90 font-light">
             Looking for DIY builders?{' '}

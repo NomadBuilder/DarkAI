@@ -1,4 +1,4 @@
-export type ProductCategoryId = 'yard-signs'
+export type ProductCategoryId = 'yard-signs' | 'apparel'
 
 export type ProductCategory = {
   id: ProductCategoryId
@@ -22,6 +22,12 @@ export type CatalogProduct = {
   stripeCheckoutUrl: string | null
   /** Extra copy below the checkout button */
   checkoutHint?: string
+  /** Show “Coming soon” instead of Stripe checkout */
+  comingSoon?: boolean
+  /** Email for pre-orders when comingSoon is true */
+  contactEmail?: string
+  /** Additional product photos on the detail page */
+  galleryImages?: string[]
   sortOrder: number
 }
 
@@ -32,6 +38,12 @@ export const YARD_SIGN_SIZES = ['24" × 18"', '18" × 12"'] as const
 
 export const productCategories: ProductCategory[] = [
   {
+    id: 'apparel',
+    label: 'Apparel',
+    description:
+      'Wear your message. White crew-neck tee with a bold halftone graphic—unisex sizing. Email us to reserve yours while online checkout is being set up.',
+  },
+  {
     id: 'yard-signs',
     label: 'Yard signs',
     description:
@@ -40,6 +52,27 @@ export const productCategories: ProductCategory[] = [
 ]
 
 export const catalogProducts: CatalogProduct[] = [
+  {
+    slug: 'ford-sucks',
+    name: 'Ford Sucks T-shirt',
+    categoryId: 'apparel',
+    categoryLabel: 'T-shirt',
+    image: '/products/t-shirts/ford-sucks.png',
+    galleryImages: ['/products/t-shirts/ford-sucks-group.png'],
+    summary:
+      'White unisex crew-neck tee with a halftone portrait graphic and bold “SUCKS” type. Coming soon—email to reserve yours.',
+    specs: [
+      'White short-sleeve crew-neck T-shirt',
+      'Halftone portrait graphic with “SUCKS” in bold type',
+      'Unisex fit — available in common adult sizes (confirm when you email)',
+      'Pickup or delivery coordinated after you order',
+    ],
+    minPriceCad: 0,
+    stripeCheckoutUrl: null,
+    comingSoon: true,
+    contactEmail: 'ford_sucks_tee@proton.me',
+    sortOrder: 0,
+  },
   {
     slug: 'ford-failed-you',
     name: 'Ford Failed You — Protest Yard Sign',
