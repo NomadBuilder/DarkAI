@@ -29,31 +29,14 @@ SIGNUP_SHEETS = (
     "Host a drop-off - pickup point",
 )
 
-HEADER_TO_FIELD: dict[str, str] = {
-    "submitted at": "submitted_at",
-    "submitted_at": "submitted_at",
-    "request": "role_label",
-    "name": "name",
-    "email": "email",
-    "phone": "phone",
-    "city": "city",
-    "postal code": "postal_code",
-    "postal_code": "postal_code",
-    "yard sign design": "yard_sign_design",
-    "yard sign quantity": "yard_sign_quantity",
-    "yard sign payment status": "yard_sign_payment_status",
-    "yard sign notes": "yard_sign_notes",
-    "drop-off location": "dropoff_location",
-    "drop-off availability": "dropoff_availability",
-    "drop-off capacity": "dropoff_capacity",
-    "list drop-off publicly": "dropoff_list_publicly",
-    "volunteer roles": "volunteer_roles",
-    "volunteer availability": "volunteer_availability",
-    "volunteer has vehicle": "volunteer_has_vehicle",
-    "update topics": "updates_topics",
-    "additional notes": "additional_notes",
-    "source page": "source_page",
-    "source_page": "source_page",
+PAYMENTS_SHEET = "Payments"
+
+PAYMENTS_HEADER_MAP: dict[str, str] = {
+    "created date": "created",
+    "customer name": "customerName",
+    "customer email": "customerEmail",
+    "amount": "amount",
+    "quantity": "quantity",
 }
 
 
@@ -71,8 +54,18 @@ def _import_marker_path() -> Path:
     return d / ".historical_signups_imported"
 
 
+def _payments_import_marker_path() -> Path:
+    d = _repo_root() / "instance"
+    d.mkdir(parents=True, exist_ok=True)
+    return d / ".historical_payments_imported"
+
+
 def historical_import_done() -> bool:
     return _import_marker_path().exists()
+
+
+def historical_payments_import_done() -> bool:
+    return _payments_import_marker_path().exists()
 
 
 def _cell(values: list[str], index: int) -> str:
@@ -168,6 +161,42 @@ def rows_from_sheet(path: Path, sheet_name: str) -> list[dict[str, Any]]:
     return out
 
 
+def rows_from_payments_sheet(path: Path, sheet_name: str = PAYMENTS_SHEET) -> list[dict[str, Any]]:
+    from payments_store import normalize_sheet_payment
+
+    table = read_xlsx_sheet(path, sheet_name)
+    if len(table) < 2:
+        return []
+
+    headers = [str(h or "").strip() for h in table[0]]
+    out: list[dict[str, Any]] = []
+
+    for values in table[1:]:
+        mapped: dict[str, str] = {}
+        custom: dict[str, str] = {}
+        for i, header in enumerate(headers):
+            if not header:
+                continue
+            val = _cell(values, i)
+            key = PAYMENTS_HEADER_MAP.get(header.lower())
+            if key:
+                mapped[key] = val
+            else:
+                custom[header] = val
+
+        record = normalize_sheet_payment(
+            created=mapped.get("created", ""),
+            customer_name=mapped.get("customerName", ""),
+            customer_email=mapped.get("customerEmail", ""),
+            amount=mapped.get("amount", ""),
+            quantity=mapped.get("quantity", ""),
+            custom_fields=custom,
+        )
+        if record:
+            out.append(record)
+    return out
+
+
 def import_signups_from_xlsx(
     path: Path,
     *,
@@ -210,6 +239,42 @@ def import_signups_from_xlsx(
     return result
 
 
+def import_payments_from_xlsx(
+    path: Path,
+    *,
+    sheet: str = PAYMENTS_SHEET,
+    mark_complete: bool = True,
+) -> dict[str, Any]:
+    from payments_store import bulk_import_payments
+
+    path = path.resolve()
+    if not path.is_file():
+        raise FileNotFoundError(str(path))
+
+    if sheet not in set(list_xlsx_sheets(path)):
+        raise ValueError(f"Sheet not found: {sheet}")
+
+    records = rows_from_payments_sheet(path, sheet)
+    added, skipped = bulk_import_payments(records)
+
+    result = {
+        "path": str(path),
+        "sheet": sheet,
+        "parsed": len(records),
+        "added": added,
+        "skippedDuplicates": skipped,
+        "importedAt": datetime.now(timezone.utc).isoformat(),
+    }
+
+    if mark_complete:
+        _payments_import_marker_path().write_text(
+            f"{result['importedAt']} added={added} skipped={skipped} parsed={len(records)}\n",
+            encoding="utf-8",
+        )
+
+    return result
+
+
 def ensure_historical_import(path: Path | None = None) -> dict[str, Any] | None:
     """Run once per server if the bundled xlsx exists and import has not run."""
     if historical_import_done():
@@ -221,4 +286,18 @@ def ensure_historical_import(path: Path | None = None) -> dict[str, Any] | None:
         return import_signups_from_xlsx(xlsx)
     except Exception:
         logger.exception("Historical sign-up import failed")
+        return None
+
+
+def ensure_historical_payments_import(path: Path | None = None) -> dict[str, Any] | None:
+    """Run once per server: import Payments tab from bundled xlsx."""
+    if historical_payments_import_done():
+        return None
+    xlsx = path or default_historical_xlsx_path()
+    if not xlsx.is_file():
+        return None
+    try:
+        return import_payments_from_xlsx(xlsx)
+    except Exception:
+        logger.exception("Historical payments import failed")
         return None

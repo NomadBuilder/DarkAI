@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 from get_involved_import import (  # noqa: E402
     SIGNUP_SHEETS,
     default_historical_xlsx_path,
+    import_payments_from_xlsx,
     import_signups_from_xlsx,
 )
 
@@ -32,15 +33,32 @@ def main() -> int:
         action="store_true",
         help="Import even if a previous historical import marker exists",
     )
+    parser.add_argument(
+        "--payments-only",
+        action="store_true",
+        help="Import only the Payments tab",
+    )
+    parser.add_argument(
+        "--signups-only",
+        action="store_true",
+        help="Import only sign-up tabs",
+    )
     args = parser.parse_args()
 
     if args.force:
         marker = ROOT / "instance" / ".historical_signups_imported"
         if marker.exists():
             marker.unlink()
+        pay_marker = ROOT / "instance" / ".historical_payments_imported"
+        if pay_marker.exists():
+            pay_marker.unlink()
 
-    result = import_signups_from_xlsx(args.xlsx.resolve())
-    print(json.dumps(result, indent=2))
+    results: dict[str, object] = {}
+    if not args.payments_only:
+        results["signups"] = import_signups_from_xlsx(args.xlsx.resolve())
+    if not args.signups_only:
+        results["payments"] = import_payments_from_xlsx(args.xlsx.resolve())
+    print(json.dumps(results, indent=2))
     return 0
 
 

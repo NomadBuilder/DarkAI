@@ -29,6 +29,7 @@ type SignupRow = {
 
 type PaymentRow = {
   id: string
+  source?: 'stripe' | 'sheet'
   createdAt?: string
   customerName?: string
   customerEmail?: string
@@ -312,7 +313,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
           <div className="mb-2">
             <h2 className="text-lg font-medium text-slate-900">Sign-ups & orders</h2>
             <p className="text-sm text-slate-600 font-light mt-1">
-              Join form sign-ups (saved on server), Stripe checkout payments, and poster/shirt fulfillment.
+              Join form sign-ups, Stripe + sheet payment history, and poster/shirt fulfillment.
             </p>
           </div>
         ) : null}
@@ -349,7 +350,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
             {(data?.errors?.signups || data?.errors?.payments) && (
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 space-y-1">
                 {data.errors.signups ? <p>Sign-ups: {data.errors.signups}</p> : null}
-                {data.errors.payments ? <p>Stripe: {data.errors.payments}</p> : null}
+                {data.errors.payments ? <p>Payments: {data.errors.payments}</p> : null}
               </div>
             )}
 
@@ -357,7 +358,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <SummaryCard label="Sign-ups" value={summary.signupsTotal ?? 0} sub={`${summary.signupsThisMonth ?? 0} this month`} />
                 <SummaryCard
-                  label="Stripe payments"
+                  label="Payments"
                   value={summary.paymentsTotal ?? 0}
                   sub={`${summary.paymentsThisMonth ?? 0} this month`}
                 />
@@ -379,7 +380,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
                 {(
                   [
                     ['signups', `Sign-ups (${data?.signups?.length ?? 0})`],
-                    ['payments', `Stripe (${data?.payments?.length ?? 0})`],
+                    ['payments', `Payments (${data?.payments?.length ?? 0})`],
                     ['print', `Print (${data?.printOrders?.length ?? 0})`],
                   ] as const
                 ).map(([id, label]) => (
@@ -460,16 +461,28 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
               <DataTable
                 headers={[
                   { key: 'when', label: 'Date' },
+                  { key: 'source', label: 'Source' },
                   { key: 'customer', label: 'Customer' },
                   { key: 'amount', label: 'Amount' },
                   { key: 'qty', label: 'Qty' },
                   ...customFieldLabels.map((label) => ({ key: label, label })),
                 ]}
-                emptyMessage="No paid Stripe checkout sessions found."
+                emptyMessage="No payments found."
                 rows={payments.map((row) => ({
                   key: row.id,
                   cells: {
                     when: <span className="whitespace-nowrap">{formatDate(row.createdAt)}</span>,
+                    source: (
+                      <span
+                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${
+                          row.source === 'sheet'
+                            ? 'bg-sky-100 text-sky-900 border-sky-200'
+                            : 'bg-violet-100 text-violet-900 border-violet-200'
+                        }`}
+                      >
+                        {row.source === 'sheet' ? 'Sheet' : 'Stripe'}
+                      </span>
+                    ),
                     customer: (
                       <div>
                         <p className="font-medium text-slate-900">{row.customerName || '—'}</p>

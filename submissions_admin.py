@@ -82,6 +82,30 @@ def _session_quantity(session: Any) -> int | None:
     return total or None
 
 
+def load_all_payments() -> tuple[list[dict[str, Any]], str | None]:
+    try:
+        from get_involved_import import ensure_historical_payments_import
+
+        ensure_historical_payments_import()
+    except Exception:
+        logger.exception("Historical payments import failed")
+
+    stripe_rows, stripe_error = fetch_stripe_payments()
+    try:
+        from payments_store import list_imported_payments, merge_payment_lists
+
+        sheet_rows = list_imported_payments()
+        merged = merge_payment_lists(stripe_rows, sheet_rows)
+        if stripe_error and sheet_rows:
+            return merged, None
+        if merged:
+            return merged, stripe_error
+        return merged, stripe_error
+    except OSError as exc:
+        logger.exception("Imported payments read failed")
+        return stripe_rows, stripe_error or str(exc)
+
+
 def fetch_stripe_payments() -> tuple[list[dict[str, Any]], str | None]:
     secret = os.getenv("STRIPE_SECRET_KEY", "").strip()
     if not secret:
@@ -130,6 +154,7 @@ def fetch_stripe_payments() -> tuple[list[dict[str, Any]], str | None]:
             payments.append(
                 {
                     "id": session.id,
+                    "source": "stripe",
                     "createdAt": datetime.fromtimestamp(created_ts, tz=timezone.utc).isoformat(),
                     "customerName": (session.customer_details.name if session.customer_details else "") or "",
                     "customerEmail": (session.customer_details.email if session.customer_details else "") or "",
@@ -240,7 +265,7 @@ def register_submissions_admin_routes(app) -> None:
             return jsonify({"error": "Unauthorized"}), 401
 
         signups, signups_error = load_local_signups()
-        payments, payments_error = fetch_stripe_payments()
+        payments, payments_error = load_all_payments()
         print_orders = build_print_orders()
 
         return jsonify(
