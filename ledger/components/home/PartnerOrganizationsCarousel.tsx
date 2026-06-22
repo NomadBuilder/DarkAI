@@ -50,9 +50,8 @@ export default function PartnerOrganizationsSection() {
           >
             Allied Organizations Fighting for Ontario
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-relaxed text-slate-600 sm:text-base">
-            Explore organizations working to protect public services, strengthen democracy, and build a better
-            Ontario.
+          <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-relaxed text-slate-600 sm:max-w-3xl sm:text-base lg:max-w-none">
+            Explore organizations working to protect public services, strengthen democracy, and build a better Ontario.
           </p>
         </motion.div>
 
