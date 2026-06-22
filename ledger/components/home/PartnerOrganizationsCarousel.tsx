@@ -5,8 +5,6 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { partnerOrganizations } from '@/lib/partner-organizations'
 
-const LOGO_HEIGHT_PX = 64
-
 export default function PartnerOrganizationsSection() {
   const trackRef = useRef<HTMLDivElement>(null)
   const [canScrollPrev, setCanScrollPrev] = useState(false)
@@ -29,8 +27,7 @@ export default function PartnerOrganizationsSection() {
   const scrollByPage = (direction: -1 | 1) => {
     const el = trackRef.current
     if (!el) return
-    const amount = Math.max(el.clientWidth * 0.85, 240) * direction
-    el.scrollBy({ left: amount, behavior: 'smooth' })
+    el.scrollBy({ left: el.clientWidth * direction, behavior: 'smooth' })
   }
 
   return (
@@ -51,7 +48,7 @@ export default function PartnerOrganizationsSection() {
             id="partner-organizations-heading"
             className="text-2xl font-light tracking-tight text-slate-900 sm:text-3xl"
           >
-            Organizations Fighting for Ontario
+            Allied Organizations
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-relaxed text-slate-600 sm:text-base">
             Explore organizations working to protect public services, strengthen democracy, and build a better
@@ -59,15 +56,15 @@ export default function PartnerOrganizationsSection() {
           </p>
         </motion.div>
 
-        <div className="relative">
+        <div className="relative px-11 sm:px-12">
           <button
             type="button"
             onClick={() => scrollByPage(-1)}
             disabled={!canScrollPrev}
-            aria-label="Previous organizations"
-            className="absolute left-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition enabled:hover:bg-slate-50 disabled:cursor-default disabled:opacity-30 sm:block"
+            aria-label="Previous organization"
+            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-3 text-slate-700 shadow-md transition enabled:hover:bg-slate-50 disabled:cursor-default disabled:opacity-30 sm:p-2"
           >
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <svg className="h-6 w-6 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
               <path
                 fillRule="evenodd"
                 d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
@@ -79,7 +76,7 @@ export default function PartnerOrganizationsSection() {
           <div
             ref={trackRef}
             onScroll={updateScrollState}
-            className="flex snap-x snap-mandatory gap-6 overflow-x-auto scroll-smooth px-1 pb-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-8 sm:px-12 [&::-webkit-scrollbar]:hidden"
+            className="flex snap-x snap-mandatory gap-0 overflow-x-auto scroll-smooth [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-8 [&::-webkit-scrollbar]:hidden"
           >
             {partnerOrganizations.map((org) => (
               <a
@@ -87,18 +84,15 @@ export default function PartnerOrganizationsSection() {
                 href={org.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex min-w-[min(100%,220px)] shrink-0 snap-center flex-col items-center justify-center rounded-xl border border-slate-200 bg-white px-6 py-5 shadow-sm transition hover:border-slate-300 hover:shadow-md sm:min-w-[240px]"
+                className="group flex flex-[0_0_100%] shrink-0 snap-center flex-col items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-6 shadow-sm transition hover:border-slate-300 hover:shadow-md sm:flex-[0_0_240px] sm:py-5 sm:px-6"
               >
                 <span className="sr-only">{org.name}</span>
-                <span
-                  className="relative flex w-full max-w-[200px] items-center justify-center"
-                  style={{ height: LOGO_HEIGHT_PX }}
-                >
+                <span className="relative flex h-[72px] w-full max-w-[240px] items-center justify-center sm:h-16 sm:max-w-[200px]">
                   <Image
                     src={org.logoSrc}
                     alt=""
-                    width={200}
-                    height={LOGO_HEIGHT_PX}
+                    width={240}
+                    height={72}
                     className="max-h-full w-auto max-w-full object-contain object-center"
                   />
                 </span>
@@ -110,10 +104,10 @@ export default function PartnerOrganizationsSection() {
             type="button"
             onClick={() => scrollByPage(1)}
             disabled={!canScrollNext}
-            aria-label="Next organizations"
-            className="absolute right-0 top-1/2 z-10 hidden -translate-y-1/2 rounded-full border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition enabled:hover:bg-slate-50 disabled:cursor-default disabled:opacity-30 sm:block"
+            aria-label="Next organization"
+            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full border border-slate-200 bg-white p-3 text-slate-700 shadow-md transition enabled:hover:bg-slate-50 disabled:cursor-default disabled:opacity-30 sm:p-2"
           >
-            <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+            <svg className="h-6 w-6 sm:h-5 sm:w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
               <path
                 fillRule="evenodd"
                 d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"

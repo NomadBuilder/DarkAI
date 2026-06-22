@@ -31,13 +31,13 @@ export default function ProtestsSiteBanner({ basePath = '' }: { basePath?: strin
 
   return (
     <div className="w-full bg-[#9f1239] text-white border-b border-white/20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center py-2.5 text-center text-xs sm:text-sm font-medium leading-none tracking-wide">
-          <a href={bannerHref} className="hover:underline underline-offset-4">
-            {campaign.label}
-            <span className="hidden sm:inline"> — Find your city</span>
-          </a>
-        </div>
+      <div className="max-w-7xl mx-auto">
+        <a
+          href={bannerHref}
+          className="flex h-10 items-center justify-center px-4 text-center text-xs font-medium leading-tight tracking-wide hover:underline underline-offset-2 sm:h-11 sm:text-sm"
+        >
+          {campaign.label}
+        </a>
       </div>
     </div>
   )
