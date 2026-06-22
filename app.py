@@ -27,6 +27,9 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-pro
 from poster_fulfillment import register_poster_routes  # noqa: E402
 register_poster_routes(app)
 
+from submissions_admin import register_submissions_admin_routes  # noqa: E402
+register_submissions_admin_routes(app)
+
 from stories_routes import register_stories_routes  # noqa: E402
 register_stories_routes(app)
 

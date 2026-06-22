@@ -211,6 +211,65 @@ Roles on the form: `yard-sign` (I want a sign), `dropoff`, `volunteer`, `other` 
 
 ---
 
+## Admin dashboard: read sign-ups from the sheet
+
+The **Sign-ups & orders** tab at `/admin?section=submissions` loads join form rows via a **read-only `doGet`** on the same Apps Script deployment.
+
+1. Add a shared secret at the top of `Code.gs` (pick a long random string):
+
+```javascript
+var SHEET_READ_TOKEN = 'paste-a-long-random-secret-here';
+```
+
+2. Add this function (keep your existing `doPost`, `jsonResponse`, etc.):
+
+```javascript
+function doGet(e) {
+  try {
+    var token = (e && e.parameter && e.parameter.token) || '';
+    if (!SHEET_READ_TOKEN || token !== SHEET_READ_TOKEN) {
+      return jsonResponse({ success: false, error: 'Unauthorized' });
+    }
+    var sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      throw new Error('Missing tab: ' + SHEET_NAME);
+    }
+    var values = sheet.getDataRange().getValues();
+    if (!values.length) {
+      return jsonResponse({ success: true, headers: [], rows: [] });
+    }
+    var headers = values[0].map(function (h) { return String(h || ''); });
+    var rows = values.slice(1).map(function (row) {
+      var obj = {};
+      for (var i = 0; i < headers.length; i++) {
+        if (headers[i]) {
+          obj[headers[i]] = row[i] != null ? String(row[i]) : '';
+        }
+      }
+      return obj;
+    });
+    return jsonResponse({ success: true, headers: headers, rows: rows });
+  } catch (err) {
+    return jsonResponse({ success: false, error: String(err) });
+  }
+}
+```
+
+3. **Deploy → Manage deployments → Edit → New version → Deploy** (same web app URL as `doPost`).
+
+4. On Render, set:
+
+```bash
+SUBMISSIONS_ADMIN_TOKEN=your-admin-bearer-token
+GET_INVOLVED_SHEET_READ_URL=https://script.google.com/macros/s/…………/exec
+GET_INVOLVED_SHEET_READ_TOKEN=paste-a-long-random-secret-here
+STRIPE_SECRET_KEY=sk_live_...   # already required for poster checkout
+```
+
+Open `/admin?section=submissions`, enter `SUBMISSIONS_ADMIN_TOKEN` (or reuse `POSTER_ADMIN_TOKEN`), and click **Refresh**.
+
+---
+
 ## Field reference
 
 | Column | Filled for |
