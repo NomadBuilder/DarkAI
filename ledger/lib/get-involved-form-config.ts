@@ -1,4 +1,10 @@
 import { involvementRoles, volunteerRoleOptions, type InvolvementRole } from './get-involved'
+import {
+  defaultSuccessYardSignHtml,
+  defaultYardSignIntroHtml,
+  legacySuccessYardSignHtml,
+  legacyYardSignIntroHtml,
+} from './form-html'
 
 export type FormRoleCopy = {
   id: InvolvementRole
@@ -35,11 +41,8 @@ export type ContactCopy = {
 
 export type YardSignCopy = {
   sectionTitle: string
-  introPrefix: string
-  productsLinkLabel: string
-  introMiddle: string
-  paymentEmail: string
-  introSuffix: string
+  /** HTML intro with links — use &lt;a href="/products"&gt; and mailto: links */
+  introHtml: string
   deliveryAddressLabel: string
   deliveryAddressPlaceholder: string
   quantityLabel: string
@@ -80,7 +83,7 @@ export type VolunteerSectionCopy = {
 
 export type OtherSectionCopy = {
   sectionTitle: string
-  intro: string
+  introHtml: string
   detailsLabel: string
   detailsPlaceholder: string
 }
@@ -93,11 +96,7 @@ export type SharedCopy = {
 }
 
 export type SuccessYardSignCopy = {
-  prefix: string
-  productsLinkLabel: string
-  middle: string
-  paymentEmail: string
-  suffix: string
+  bodyHtml: string
 }
 
 export type ValidationCopy = {
@@ -127,7 +126,7 @@ export type ErrorsCopy = {
 }
 
 export type GetInvolvedFormCopy = {
-  version: 2
+  version: 3
   rolesQuestion: string
   submitButton: string
   footerPrefix: string
@@ -168,7 +167,7 @@ function mergeSelectOptions(value: unknown, fallback: SelectOptionCopy[]): Selec
 }
 
 export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
-  version: 2,
+  version: 3,
   rolesQuestion: 'How do you want to get involved? *',
   submitButton: 'Submit sign-up',
   footerPrefix: 'Rallies and corrections: use the',
@@ -202,11 +201,7 @@ export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
   },
   yardSign: {
     sectionTitle: 'Sign request',
-    introPrefix: '$10 per sign, delivered by volunteers—not shipped by mail. Pay on ',
-    productsLinkLabel: 'Products',
-    introMiddle: ' or via e-transfer to ',
-    paymentEmail: 'FIGHT_FORD_SIGNS@outlook.com',
-    introSuffix: " (preferred) when you're ready.",
+    introHtml: defaultYardSignIntroHtml,
     deliveryAddressLabel: 'Where you live / delivery address *',
     deliveryAddressPlaceholder: 'Street address, intersection, or clear directions for drop-off',
     quantityLabel: 'How many signs? *',
@@ -254,7 +249,8 @@ export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
   },
   other: {
     sectionTitle: 'Something else',
-    intro: "Weird idea? Partnership? Something we didn't list? Put it here—we read everything.",
+    introHtml:
+      "<p>Weird idea? Partnership? Something we didn't list? Put it here—we read everything.</p>",
     detailsLabel: 'What do you need? *',
     detailsPlaceholder: 'Describe your request in a few sentences…',
   },
@@ -265,11 +261,7 @@ export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
     sendingLabel: 'Sending…',
   },
   successYardSign: {
-    prefix: "Haven't paid yet? Pay $10 per sign on ",
-    productsLinkLabel: 'Products',
-    middle: ', Stripe checkout, or e-transfer to ',
-    paymentEmail: 'FIGHT_FORD_SIGNS@outlook.com',
-    suffix: " when you're ready.",
+    bodyHtml: defaultSuccessYardSignHtml,
   },
   validation: {
     chooseRole: 'Please choose how you want to get involved.',
@@ -349,14 +341,24 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
   }
 
   const ys = d.yardSign
+  const ysObj = ys && typeof ys === 'object' ? (ys as Record<string, unknown>) : {}
+  const introHtml =
+    typeof ysObj.introHtml === 'string' && ysObj.introHtml.trim()
+      ? ysObj.introHtml.trim()
+      : legacyYardSignIntroHtml({
+          introPrefix: mergeStr(
+            ysObj.introPrefix,
+            '$10 per sign, delivered by volunteers—not shipped by mail. Pay on '
+          ),
+          productsLinkLabel: mergeStr(ysObj.productsLinkLabel, 'Products'),
+          introMiddle: mergeStr(ysObj.introMiddle, ' or via e-transfer to '),
+          paymentEmail: mergeStr(ysObj.paymentEmail, 'FIGHT_FORD_SIGNS@outlook.com'),
+          introSuffix: mergeStr(ysObj.introSuffix, " (preferred) when you're ready."),
+        })
+
   const yardSign: YardSignCopy = {
     ...mergeSection(ys, base.yardSign, [
       'sectionTitle',
-      'introPrefix',
-      'productsLinkLabel',
-      'introMiddle',
-      'paymentEmail',
-      'introSuffix',
       'deliveryAddressLabel',
       'deliveryAddressPlaceholder',
       'quantityLabel',
@@ -369,6 +371,7 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
       'deliveryNotesLabel',
       'deliveryNotesPlaceholder',
     ] as (keyof YardSignCopy)[]),
+    introHtml,
     quantityOptions: mergeSelectOptions(
       ys && typeof ys === 'object' ? (ys as { quantityOptions?: unknown }).quantityOptions : undefined,
       base.yardSign.quantityOptions
@@ -379,8 +382,30 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
     ),
   }
 
+  const otherRaw = d.other
+  const otherObj = otherRaw && typeof otherRaw === 'object' ? (otherRaw as Record<string, unknown>) : {}
+  const otherIntroHtml =
+    typeof otherObj.introHtml === 'string' && otherObj.introHtml.trim()
+      ? otherObj.introHtml.trim()
+      : typeof otherObj.intro === 'string' && otherObj.intro.trim()
+        ? `<p>${otherObj.intro.trim()}</p>`
+        : base.other.introHtml
+
+  const sy = d.successYardSign
+  const syObj = sy && typeof sy === 'object' ? (sy as Record<string, unknown>) : {}
+  const successBodyHtml =
+    typeof syObj.bodyHtml === 'string' && syObj.bodyHtml.trim()
+      ? syObj.bodyHtml.trim()
+      : legacySuccessYardSignHtml({
+          prefix: mergeStr(syObj.prefix, ''),
+          productsLinkLabel: mergeStr(syObj.productsLinkLabel, 'Products'),
+          middle: mergeStr(syObj.middle, ', Stripe checkout, or e-transfer to '),
+          paymentEmail: mergeStr(syObj.paymentEmail, 'FIGHT_FORD_SIGNS@outlook.com'),
+          suffix: mergeStr(syObj.suffix, " when you're ready."),
+        })
+
   return {
-    version: 2,
+    version: 3,
     rolesQuestion: mergeStr(d.rolesQuestion, base.rolesQuestion),
     submitButton: mergeStr(d.submitButton, base.submitButton),
     footerPrefix: mergeStr(d.footerPrefix, base.footerPrefix),
@@ -398,13 +423,16 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
       base.volunteer,
       Object.keys(base.volunteer) as (keyof VolunteerSectionCopy)[]
     ),
-    other: mergeSection(d.other, base.other, Object.keys(base.other) as (keyof OtherSectionCopy)[]),
+    other: {
+      ...mergeSection(otherRaw, base.other, [
+        'sectionTitle',
+        'detailsLabel',
+        'detailsPlaceholder',
+      ] as (keyof OtherSectionCopy)[]),
+      introHtml: otherIntroHtml,
+    },
     shared: mergeSection(d.shared, base.shared, Object.keys(base.shared) as (keyof SharedCopy)[]),
-    successYardSign: mergeSection(
-      d.successYardSign,
-      base.successYardSign,
-      Object.keys(base.successYardSign) as (keyof SuccessYardSignCopy)[]
-    ),
+    successYardSign: { bodyHtml: successBodyHtml },
     validation: mergeSection(
       d.validation,
       base.validation,

@@ -11,6 +11,7 @@ import {
   type GetInvolvedFormCopy,
 } from '@/lib/get-involved-form-config'
 import { CollapsibleSection, SelectOptionsEditor, TextField } from '@/app/form-admin/FormFields'
+import RichTextField from '@/app/form-admin/RichTextField'
 
 function RoleEditor({
   role,
@@ -150,115 +151,95 @@ export default function FormAdminPage({ embedded = false }: { embedded?: boolean
         </CollapsibleSection>
 
         <CollapsibleSection title="Contact fields" subtitle="Shown after someone picks an option">
-          {(
-            [
-              ['detailsTitleSign', 'Section title (sign request)'],
-              ['detailsTitleOther', 'Section title (other paths)'],
-              ['nameLabel', 'Full name label'],
-              ['namePlaceholder', 'Full name placeholder'],
-              ['emailLabel', 'Email label'],
-              ['emailPlaceholder', 'Email placeholder'],
-              ['phoneLabel', 'Phone label (before * or recommended)'],
-              ['phoneRecommended', 'Phone “recommended” suffix'],
-              ['phonePlaceholderSign', 'Phone placeholder (sign request)'],
-              ['phonePlaceholderOther', 'Phone placeholder (other)'],
-              ['cityLabel', 'City label'],
-              ['cityPlaceholder', 'City placeholder'],
-              ['postalLabel', 'Postal code label'],
-              ['postalPlaceholder', 'Postal code placeholder'],
-            ] as const
-          ).map(([key, label]) => (
-            <TextField
-              key={key}
-              label={label}
-              value={copy.contact[key]}
-              onChange={(v) => patchNested(setCopy, 'contact', { [key]: v })}
-            />
-          ))}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              [
+                ['detailsTitleSign', 'Section title (sign request)'],
+                ['detailsTitleOther', 'Section title (other paths)'],
+                ['nameLabel', 'Full name label'],
+                ['namePlaceholder', 'Full name placeholder'],
+                ['emailLabel', 'Email label'],
+                ['emailPlaceholder', 'Email placeholder'],
+                ['phoneLabel', 'Phone label (before * or recommended)'],
+                ['phoneRecommended', 'Phone “recommended” suffix'],
+                ['phonePlaceholderSign', 'Phone placeholder (sign request)'],
+                ['phonePlaceholderOther', 'Phone placeholder (other)'],
+                ['cityLabel', 'City label'],
+                ['cityPlaceholder', 'City placeholder'],
+                ['postalLabel', 'Postal code label'],
+                ['postalPlaceholder', 'Postal code placeholder'],
+              ] as const
+            ).map(([key, label]) => (
+              <TextField
+                key={key}
+                label={label}
+                value={copy.contact[key]}
+                onChange={(v) => patchNested(setCopy, 'contact', { [key]: v })}
+              />
+            ))}
+          </div>
         </CollapsibleSection>
 
-        <CollapsibleSection title="Sign request" subtitle="Yard sign path — pricing blurb, delivery, payment" accent="violet">
+        <CollapsibleSection title="Sign request" subtitle="Yard sign path — intro copy and form labels" accent="violet">
           <TextField
             label="Section title"
             value={ys.sectionTitle}
             onChange={(sectionTitle) => patchNested(setCopy, 'yardSign', { sectionTitle })}
           />
-          <TextField
-            label="Intro — before Products link"
-            value={ys.introPrefix}
-            onChange={(introPrefix) => patchNested(setCopy, 'yardSign', { introPrefix })}
-            multiline
+          <RichTextField
+            label="Section copy"
+            hint='Use the Link button for /products and mailto: addresses. Spaces around links are preserved in HTML.'
+            value={ys.introHtml}
+            onChange={(introHtml) => patchNested(setCopy, 'yardSign', { introHtml })}
+            rows={5}
           />
-          <TextField
-            label="Products link text"
-            value={ys.productsLinkLabel}
-            onChange={(productsLinkLabel) => patchNested(setCopy, 'yardSign', { productsLinkLabel })}
-          />
-          <TextField
-            label="Intro — between link and email"
-            value={ys.introMiddle}
-            onChange={(introMiddle) => patchNested(setCopy, 'yardSign', { introMiddle })}
-          />
-          <TextField
-            label="Payment email (also used in mailto link)"
-            value={ys.paymentEmail}
-            onChange={(paymentEmail) => patchNested(setCopy, 'yardSign', { paymentEmail })}
-          />
-          <TextField
-            label="Intro — after email"
-            value={ys.introSuffix}
-            onChange={(introSuffix) => patchNested(setCopy, 'yardSign', { introSuffix })}
-          />
-          <TextField
-            label="Delivery address label"
-            value={ys.deliveryAddressLabel}
-            onChange={(deliveryAddressLabel) => patchNested(setCopy, 'yardSign', { deliveryAddressLabel })}
-          />
-          <TextField
-            label="Delivery address placeholder"
-            value={ys.deliveryAddressPlaceholder}
-            onChange={(deliveryAddressPlaceholder) =>
-              patchNested(setCopy, 'yardSign', { deliveryAddressPlaceholder })
-            }
-            multiline
-          />
-          <TextField
-            label="Quantity label"
-            value={ys.quantityLabel}
-            onChange={(quantityLabel) => patchNested(setCopy, 'yardSign', { quantityLabel })}
-          />
-          <TextField
-            label="Quantity dropdown placeholder"
-            value={ys.quantityPlaceholder}
-            onChange={(quantityPlaceholder) => patchNested(setCopy, 'yardSign', { quantityPlaceholder })}
-          />
-          <SelectOptionsEditor
-            label="Quantity options"
-            hint="Left code is sent to the sheet (do not change unless you know why)."
-            options={ys.quantityOptions}
-            onChange={(quantityOptions) => patchNested(setCopy, 'yardSign', { quantityOptions })}
-          />
-          <TextField
-            label="Size label"
-            value={ys.sizeLabel}
-            onChange={(sizeLabel) => patchNested(setCopy, 'yardSign', { sizeLabel })}
-          />
-          <TextField
-            label="Size dropdown placeholder"
-            value={ys.sizePlaceholder}
-            onChange={(sizePlaceholder) => patchNested(setCopy, 'yardSign', { sizePlaceholder })}
-          />
-          <SelectOptionsEditor
-            label="Size options"
-            hint="Values 24x18, 18x12, and any match the order system."
-            options={ys.sizeOptions}
-            onChange={(sizeOptions) => patchNested(setCopy, 'yardSign', { sizeOptions })}
-          />
-          <TextField
-            label="Payment section label"
-            value={ys.paymentLabel}
-            onChange={(paymentLabel) => patchNested(setCopy, 'yardSign', { paymentLabel })}
-          />
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 pt-2 border-t border-slate-100">
+            Form field labels
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <TextField
+              label="Delivery address label"
+              value={ys.deliveryAddressLabel}
+              onChange={(deliveryAddressLabel) => patchNested(setCopy, 'yardSign', { deliveryAddressLabel })}
+            />
+            <TextField
+              label="Delivery address placeholder"
+              value={ys.deliveryAddressPlaceholder}
+              onChange={(deliveryAddressPlaceholder) =>
+                patchNested(setCopy, 'yardSign', { deliveryAddressPlaceholder })
+              }
+            />
+            <TextField
+              label="Quantity label"
+              value={ys.quantityLabel}
+              onChange={(quantityLabel) => patchNested(setCopy, 'yardSign', { quantityLabel })}
+            />
+            <TextField
+              label="Quantity placeholder"
+              value={ys.quantityPlaceholder}
+              onChange={(quantityPlaceholder) => patchNested(setCopy, 'yardSign', { quantityPlaceholder })}
+            />
+            <TextField
+              label="Size label"
+              value={ys.sizeLabel}
+              onChange={(sizeLabel) => patchNested(setCopy, 'yardSign', { sizeLabel })}
+            />
+            <TextField
+              label="Size placeholder"
+              value={ys.sizePlaceholder}
+              onChange={(sizePlaceholder) => patchNested(setCopy, 'yardSign', { sizePlaceholder })}
+            />
+            <TextField
+              label="Payment section label"
+              value={ys.paymentLabel}
+              onChange={(paymentLabel) => patchNested(setCopy, 'yardSign', { paymentLabel })}
+            />
+            <TextField
+              label="Delivery notes label"
+              value={ys.deliveryNotesLabel}
+              onChange={(deliveryNotesLabel) => patchNested(setCopy, 'yardSign', { deliveryNotesLabel })}
+            />
+          </div>
           <TextField
             label="Already paid option"
             value={ys.paymentPaidLabel}
@@ -272,45 +253,56 @@ export default function FormAdminPage({ embedded = false }: { embedded?: boolean
             multiline
           />
           <TextField
-            label="Delivery notes label"
-            value={ys.deliveryNotesLabel}
-            onChange={(deliveryNotesLabel) => patchNested(setCopy, 'yardSign', { deliveryNotesLabel })}
-          />
-          <TextField
             label="Delivery notes placeholder"
             value={ys.deliveryNotesPlaceholder}
             onChange={(deliveryNotesPlaceholder) =>
               patchNested(setCopy, 'yardSign', { deliveryNotesPlaceholder })
             }
           />
+          <SelectOptionsEditor
+            label="Quantity options"
+            hint="Left code is sent to the sheet (do not change unless you know why)."
+            options={ys.quantityOptions}
+            onChange={(quantityOptions) => patchNested(setCopy, 'yardSign', { quantityOptions })}
+          />
+          <SelectOptionsEditor
+            label="Size options"
+            hint="Values 24x18, 18x12, and any match the order system."
+            options={ys.sizeOptions}
+            onChange={(sizeOptions) => patchNested(setCopy, 'yardSign', { sizeOptions })}
+          />
         </CollapsibleSection>
 
         <CollapsibleSection title="Pickup hub" subtitle="Drop-off / pickup point path">
-          {(
-            Object.keys(copy.dropoff) as (keyof typeof copy.dropoff)[]
-          ).map((key) => (
-            <TextField
-              key={key}
-              label={key}
-              value={copy.dropoff[key]}
-              onChange={(v) => patchNested(setCopy, 'dropoff', { [key]: v })}
-              multiline={key.includes('Placeholder') || key === 'listPubliclyYes'}
-            />
-          ))}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              Object.keys(copy.dropoff) as (keyof typeof copy.dropoff)[]
+            ).map((key) => (
+              <TextField
+                key={key}
+                label={key}
+                value={copy.dropoff[key]}
+                onChange={(v) => patchNested(setCopy, 'dropoff', { [key]: v })}
+                multiline={key.includes('Placeholder') || key === 'listPubliclyYes'}
+              />
+            ))}
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Volunteer" subtitle="Volunteer path + checkbox list">
-          {(
-            Object.keys(copy.volunteer) as (keyof typeof copy.volunteer)[]
-          ).map((key) => (
-            <TextField
-              key={key}
-              label={key}
-              value={copy.volunteer[key]}
-              onChange={(v) => patchNested(setCopy, 'volunteer', { [key]: v })}
-              multiline={key.includes('Placeholder')}
-            />
-          ))}
+          <div className="grid gap-3 sm:grid-cols-2">
+            {(
+              Object.keys(copy.volunteer) as (keyof typeof copy.volunteer)[]
+            ).map((key) => (
+              <TextField
+                key={key}
+                label={key}
+                value={copy.volunteer[key]}
+                onChange={(v) => patchNested(setCopy, 'volunteer', { [key]: v })}
+                multiline={key.includes('Placeholder')}
+              />
+            ))}
+          </div>
           <p className="text-sm font-medium text-slate-800 pt-2">Volunteer role checkboxes</p>
           {copy.volunteerOptions.map((opt, i) => (
             <TextField
@@ -328,72 +320,78 @@ export default function FormAdminPage({ embedded = false }: { embedded?: boolean
         </CollapsibleSection>
 
         <CollapsibleSection title="Something else" subtitle="Other path">
-          {(
-            Object.keys(copy.other) as (keyof typeof copy.other)[]
-          ).map((key) => (
+          <TextField
+            label="Section title"
+            value={copy.other.sectionTitle}
+            onChange={(sectionTitle) => patchNested(setCopy, 'other', { sectionTitle })}
+          />
+          <RichTextField
+            label="Section copy"
+            value={copy.other.introHtml}
+            onChange={(introHtml) => patchNested(setCopy, 'other', { introHtml })}
+            rows={4}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
             <TextField
-              key={key}
-              label={key}
-              value={copy.other[key]}
-              onChange={(v) => patchNested(setCopy, 'other', { [key]: v })}
-              multiline
+              label="Details label"
+              value={copy.other.detailsLabel}
+              onChange={(detailsLabel) => patchNested(setCopy, 'other', { detailsLabel })}
             />
-          ))}
+            <TextField
+              label="Details placeholder"
+              value={copy.other.detailsPlaceholder}
+              onChange={(detailsPlaceholder) => patchNested(setCopy, 'other', { detailsPlaceholder })}
+            />
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Shared & thank-you" subtitle="Consent, extras, success messages">
-          <TextField
+          <RichTextField
             label="Consent checkbox"
             value={copy.consentText}
             onChange={(consentText) => patchCopy(setCopy, 'consentText', consentText)}
-            multiline
             rows={3}
-          />
-          <TextField
-            label="Anything else label"
-            value={copy.shared.anythingElseLabel}
-            onChange={(anythingElseLabel) => patchNested(setCopy, 'shared', { anythingElseLabel })}
-          />
-          <TextField
-            label="Anything else placeholder"
-            value={copy.shared.anythingElsePlaceholder}
-            onChange={(anythingElsePlaceholder) => patchNested(setCopy, 'shared', { anythingElsePlaceholder })}
-          />
-          <TextField
-            label="Sending button text"
-            value={copy.shared.sendingLabel}
-            onChange={(sendingLabel) => patchNested(setCopy, 'shared', { sendingLabel })}
-          />
-          <TextField
-            label="Submit another sign-up"
-            value={copy.shared.submitAnotherLabel}
-            onChange={(submitAnotherLabel) => patchNested(setCopy, 'shared', { submitAnotherLabel })}
           />
           <TextField
             label="Thank-you title"
             value={copy.successTitle}
             onChange={(successTitle) => patchCopy(setCopy, 'successTitle', successTitle)}
           />
-          <TextField
+          <RichTextField
             label="Thank-you body"
             value={copy.successBody}
             onChange={(successBody) => patchCopy(setCopy, 'successBody', successBody)}
-            multiline
             rows={3}
           />
-          <p className="text-xs text-slate-500 font-light border-t border-slate-100 pt-3">
-            Extra thank-you line after a sign request (links to Products + email)
-          </p>
-          {(
-            Object.keys(copy.successYardSign) as (keyof typeof copy.successYardSign)[]
-          ).map((key) => (
+          <RichTextField
+            label="Extra thank-you line (sign requests)"
+            hint="Shown after a yard-sign submission with payment links."
+            value={copy.successYardSign.bodyHtml}
+            onChange={(bodyHtml) => patchNested(setCopy, 'successYardSign', { bodyHtml })}
+            rows={4}
+          />
+          <div className="grid gap-3 sm:grid-cols-2">
             <TextField
-              key={key}
-              label={`successYardSign.${key}`}
-              value={copy.successYardSign[key]}
-              onChange={(v) => patchNested(setCopy, 'successYardSign', { [key]: v })}
+              label="Anything else label"
+              value={copy.shared.anythingElseLabel}
+              onChange={(anythingElseLabel) => patchNested(setCopy, 'shared', { anythingElseLabel })}
             />
-          ))}
+            <TextField
+              label="Anything else placeholder"
+              value={copy.shared.anythingElsePlaceholder}
+              onChange={(anythingElsePlaceholder) => patchNested(setCopy, 'shared', { anythingElsePlaceholder })}
+            />
+            <TextField
+              label="Sending button text"
+              value={copy.shared.sendingLabel}
+              onChange={(sendingLabel) => patchNested(setCopy, 'shared', { sendingLabel })}
+            />
+            <TextField
+              label="Submit another sign-up"
+              value={copy.shared.submitAnotherLabel}
+              onChange={(submitAnotherLabel) => patchNested(setCopy, 'shared', { submitAnotherLabel })}
+            />
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Validation & errors" subtitle="Messages when something is missing or fails" defaultOpen={false}>

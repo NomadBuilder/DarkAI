@@ -14,6 +14,7 @@ import {
   loadGetInvolvedFormCopy,
   type GetInvolvedFormCopy,
 } from '@/lib/get-involved-form-config'
+import FormHtml from '@/components/FormHtml'
 
 const defaultInputClass =
   'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm md:text-base font-light focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent'
@@ -55,6 +56,9 @@ export default function GetInvolvedForm({
   const linkClass = isFf
     ? 'text-[#ff9a3c] underline underline-offset-2 hover:text-[#ffb366]'
     : 'text-blue-600 underline underline-offset-2 hover:text-blue-700'
+  const formHtmlLinkClass = isFf
+    ? '[&_a]:text-[#ff9a3c] [&_a]:underline [&_a]:underline-offset-2 [&_a]:hover:text-[#ffb366]'
+    : '[&_a]:text-blue-600 [&_a]:underline [&_a]:underline-offset-2 [&_a]:hover:text-blue-700'
 
   const [form, setForm] = useState<GetInvolvedFormState>(emptyGetInvolvedFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -200,17 +204,11 @@ export default function GetInvolvedForm({
         <h2 className="text-2xl font-light text-gray-900">{formCopy.successTitle}</h2>
         <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">{formCopy.successBody}</p>
         {lastSubmittedRole === 'yard-sign' && (
-          <p className="text-sm text-gray-500 font-light max-w-md mx-auto">
-            {sy.prefix}
-            <Link href="/products" className={linkClass}>
-              {sy.productsLinkLabel}
-            </Link>
-            {sy.middle}
-            <a href={`mailto:${ys.paymentEmail}`} className={linkClass}>
-              {sy.paymentEmail}
-            </a>
-            {sy.suffix}
-          </p>
+          <FormHtml
+            html={sy.bodyHtml}
+            className="text-sm text-gray-500 font-light max-w-md mx-auto"
+            linkClassName={formHtmlLinkClass}
+          />
         )}
         <button
           type="button"
@@ -349,17 +347,11 @@ export default function GetInvolvedForm({
           {role === 'yard-sign' && (
             <div className="border-t border-gray-100 pt-8 space-y-6">
               <h3 className="text-lg font-light text-gray-900">{ys.sectionTitle}</h3>
-              <p className="text-sm text-gray-600 font-light -mt-4">
-                {ys.introPrefix}
-                <Link href="/products" className={linkClass}>
-                  {ys.productsLinkLabel}
-                </Link>
-                {ys.introMiddle}
-                <a href={`mailto:${ys.paymentEmail}`} className={linkClass}>
-                  {ys.paymentEmail}
-                </a>
-                {ys.introSuffix}
-              </p>
+              <FormHtml
+                html={ys.introHtml}
+                className="text-sm text-gray-600 font-light -mt-4"
+                linkClassName={formHtmlLinkClass}
+              />
               <div className="sm:col-span-2">
                 <label htmlFor="gi-delivery-addr" className={labelClass}>
                   {ys.deliveryAddressLabel}
@@ -586,7 +578,11 @@ export default function GetInvolvedForm({
           {role === 'other' && (
             <div className="border-t border-gray-100 pt-8 space-y-4">
               <h3 className="text-lg font-light text-gray-900">{oth.sectionTitle}</h3>
-              <p className="text-sm text-gray-600 font-light -mt-2">{oth.intro}</p>
+              <FormHtml
+                html={oth.introHtml}
+                className="text-sm text-gray-600 font-light -mt-2"
+                linkClassName={formHtmlLinkClass}
+              />
               <div>
                 <label htmlFor="gi-other" className={labelClass}>
                   {oth.detailsLabel}
