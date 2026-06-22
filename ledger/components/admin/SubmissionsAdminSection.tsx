@@ -366,7 +366,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
           <div className="mb-2">
             <h2 className="text-lg font-medium text-slate-900">Sign-ups & orders</h2>
             <p className="text-sm text-slate-600 font-light mt-1">
-              Join form sign-ups (Google Sheet), Stripe checkout payments, and poster/shirt fulfillment.
+              Join form sign-ups (saved on server), Stripe checkout payments, and poster/shirt fulfillment.
             </p>
           </div>
         ) : null}

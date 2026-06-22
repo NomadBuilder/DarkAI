@@ -1,4 +1,4 @@
-"""ProtectOnt get-involved: forward to Google Sheet + Resend alert email."""
+"""ProtectOnt get-involved: save locally + optional Google Sheet forward + alert email."""
 
 from __future__ import annotations
 
@@ -274,11 +274,21 @@ def process_get_involved_submission(data: dict[str, Any]) -> tuple[bool, str | N
     if not role or not name or not email:
         return False, "Name, email, and sign-up type are required."
 
-    sheet_ok, sheet_err = forward_to_google_sheet(data)
-    if not sheet_ok:
-        return False, sheet_err or "Could not save to spreadsheet."
+    from get_involved_store import append_submission
+
+    try:
+        append_submission(data)
+    except OSError as exc:
+        logger.exception("Get-involved local save failed")
+        return False, f"Could not save sign-up: {exc}"
+
+    sheet_url = _sheet_submit_url()
+    if sheet_url:
+        sheet_ok, sheet_err = forward_to_google_sheet(data)
+        if not sheet_ok:
+            logger.warning("Get-involved saved locally but sheet forward failed: %s", sheet_err)
 
     if _use_resend_for_alerts() and not send_get_involved_alert(data):
-        logger.warning("Get-involved saved to sheet but Resend alert email failed.")
+        logger.warning("Get-involved saved but Resend alert email failed.")
 
     return True, None

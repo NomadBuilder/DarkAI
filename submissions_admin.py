@@ -1,4 +1,4 @@
-"""ProtectOnt admin: sign-ups (Google Sheet), Stripe payments, print fulfillment."""
+"""ProtectOnt admin: sign-ups (local store), Stripe payments, print fulfillment."""
 
 from __future__ import annotations
 
@@ -7,52 +7,7 @@ import os
 from datetime import datetime, timezone
 from typing import Any
 
-import requests
-
 logger = logging.getLogger(__name__)
-
-SIGNUP_FIELD_ALIASES: dict[str, str] = {
-    "submitted_at": "submittedAt",
-    "submitted at": "submittedAt",
-    "role": "roleId",
-    "request": "request",
-    "role_label": "request",
-    "name": "name",
-    "email": "email",
-    "phone": "phone",
-    "city": "city",
-    "postal_code": "postalCode",
-    "postal code": "postalCode",
-    "yard_sign_design": "yardSignDesign",
-    "yard sign design": "yardSignDesign",
-    "yard_sign_size": "yardSignDesign",
-    "yard_sign_quantity": "yardSignQuantity",
-    "yard sign quantity": "yardSignQuantity",
-    "yard_sign_payment_status": "yardSignPaymentStatus",
-    "yard sign payment status": "yardSignPaymentStatus",
-    "yard_sign_notes": "yardSignNotes",
-    "yard sign notes": "yardSignNotes",
-    "dropoff_location": "dropoffLocation",
-    "drop-off location": "dropoffLocation",
-    "dropoff_availability": "dropoffAvailability",
-    "drop-off availability": "dropoffAvailability",
-    "dropoff_capacity": "dropoffCapacity",
-    "drop-off capacity": "dropoffCapacity",
-    "dropoff_list_publicly": "dropoffListPublicly",
-    "list drop-off publicly": "dropoffListPublicly",
-    "volunteer_roles": "volunteerRoles",
-    "volunteer roles": "volunteerRoles",
-    "volunteer_availability": "volunteerAvailability",
-    "volunteer availability": "volunteerAvailability",
-    "volunteer_has_vehicle": "volunteerHasVehicle",
-    "volunteer has vehicle": "volunteerHasVehicle",
-    "updates_topics": "updatesTopics",
-    "update topics": "updatesTopics",
-    "additional_notes": "additionalNotes",
-    "additional notes": "additionalNotes",
-    "source_page": "sourcePage",
-    "source page": "sourcePage",
-}
 
 
 def _admin_token() -> str:
@@ -76,64 +31,14 @@ def submissions_admin_authorized() -> bool:
     return False
 
 
-def _normalize_signup_row(raw: dict[str, Any]) -> dict[str, Any]:
-    out: dict[str, Any] = {}
-    for key, value in raw.items():
-        norm_key = SIGNUP_FIELD_ALIASES.get(str(key).strip().lower())
-        if not norm_key:
-            continue
-        text = "" if value is None else str(value).strip()
-        if text and norm_key not in out:
-            out[norm_key] = text
-    if not out.get("request") and out.get("roleId"):
-        out["request"] = out["roleId"]
-    return out
-
-
-def fetch_sheet_signups() -> tuple[list[dict[str, Any]], str | None]:
-    """Read sign-ups via Google Apps Script doGet (see GET_INVOLVED_GOOGLE_SHEET.md)."""
-    base_url = (
-        os.getenv("GET_INVOLVED_SHEET_READ_URL", "").strip()
-        or os.getenv("GET_INVOLVED_SUBMIT_URL", "").strip()
-        or os.getenv("NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL", "").strip()
-    )
-    if not base_url:
-        return [], "Sheet read URL is not configured (GET_INVOLVED_SHEET_READ_URL)."
-
-    token = os.getenv("GET_INVOLVED_SHEET_READ_TOKEN", "").strip()
-    params: dict[str, str] = {}
-    if token:
-        params["token"] = token
-
+def load_local_signups() -> tuple[list[dict[str, Any]], str | None]:
     try:
-        resp = requests.get(base_url, params=params, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-    except requests.RequestException as exc:
-        logger.exception("Sheet read request failed")
-        return [], f"Could not read Google Sheet: {exc}"
-    except ValueError:
-        return [], "Google Sheet read endpoint returned invalid JSON."
+        from get_involved_store import list_submissions
 
-    if not data.get("success"):
-        return [], str(data.get("error") or "Sheet read failed.")
-
-    rows = data.get("rows") or []
-    if isinstance(rows, list) and rows and isinstance(rows[0], list):
-        headers = [str(h) for h in (data.get("headers") or [])]
-        mapped: list[dict[str, Any]] = []
-        for row in rows:
-            raw_row = {
-                headers[i]: row[i] if i < len(row) else ""
-                for i in range(len(headers))
-            }
-            mapped.append(_normalize_signup_row(raw_row))
-        return mapped, None
-
-    if isinstance(rows, list):
-        return [_normalize_signup_row(r) for r in rows if isinstance(r, dict)], None
-
-    return [], "Unexpected sheet response shape."
+        return list_submissions(), None
+    except OSError as exc:
+        logger.exception("Local sign-ups read failed")
+        return [], f"Could not read sign-ups: {exc}"
 
 
 def _custom_field_value(field: dict[str, Any]) -> str:
@@ -319,7 +224,7 @@ def register_submissions_admin_routes(app) -> None:
         if not submissions_admin_authorized():
             return jsonify({"error": "Unauthorized"}), 401
 
-        signups, signups_error = fetch_sheet_signups()
+        signups, signups_error = load_local_signups()
         payments, payments_error = fetch_stripe_payments()
         print_orders = build_print_orders()
 
