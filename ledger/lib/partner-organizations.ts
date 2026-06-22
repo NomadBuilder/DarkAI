@@ -34,4 +34,10 @@ export const partnerOrganizations: PartnerOrganization[] = [
     href: 'https://democracywatch.ca/',
     logoSrc: '/partners/democracy-watch.png',
   },
+  {
+    id: 'dark-ai',
+    name: 'Dark AI',
+    href: 'https://darkai.ca/',
+    logoSrc: '/partners/dark-ai.png',
+  },
 ]
