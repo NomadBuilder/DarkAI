@@ -29,7 +29,8 @@ type SignupRow = {
 
 type PaymentRow = {
   id: string
-  source?: 'stripe' | 'sheet'
+  source?: 'stripe' | 'sheet' | 'etransfer'
+  historicalOnly?: boolean
   createdAt?: string
   customerName?: string
   customerEmail?: string
@@ -92,6 +93,28 @@ function formatDate(iso?: string) {
 function formatMoney(amount?: number, currency = 'CAD') {
   if (amount == null) return '—'
   return new Intl.NumberFormat('en-CA', { style: 'currency', currency }).format(amount)
+}
+
+function paymentSourceBadge(row: PaymentRow) {
+  if (row.source === 'etransfer') {
+    return (
+      <span className="inline-flex rounded-full border px-2 py-0.5 text-xs font-medium bg-amber-100 text-amber-950 border-amber-200">
+        E-transfer · historical
+      </span>
+    )
+  }
+  if (row.source === 'sheet' || row.historicalOnly) {
+    return (
+      <span className="inline-flex rounded-full border px-2 py-0.5 text-xs font-medium bg-sky-100 text-sky-900 border-sky-200">
+        Sheet · historical
+      </span>
+    )
+  }
+  return (
+    <span className="inline-flex rounded-full border px-2 py-0.5 text-xs font-medium bg-violet-100 text-violet-900 border-violet-200">
+      Stripe · live
+    </span>
+  )
 }
 
 function requestBadgeClass(request?: string) {
@@ -313,7 +336,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
           <div className="mb-2">
             <h2 className="text-lg font-medium text-slate-900">Sign-ups & orders</h2>
             <p className="text-sm text-slate-600 font-light mt-1">
-              Join form sign-ups, Stripe + sheet payment history, and poster/shirt fulfillment.
+              Join form sign-ups, payments (live Stripe + historical sheet/e-transfer), and print fulfillment.
             </p>
           </div>
         ) : null}
@@ -458,6 +481,12 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
             )}
 
             {tab === 'payments' && (
+              <p className="text-xs text-slate-500 font-light -mt-2">
+                Stripe rows refresh from the API. Sheet and e-transfer rows are historical imports from the spreadsheet only.
+              </p>
+            )}
+
+            {tab === 'payments' && (
               <DataTable
                 headers={[
                   { key: 'when', label: 'Date' },
@@ -472,21 +501,15 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
                   key: row.id,
                   cells: {
                     when: <span className="whitespace-nowrap">{formatDate(row.createdAt)}</span>,
-                    source: (
-                      <span
-                        className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-medium ${
-                          row.source === 'sheet'
-                            ? 'bg-sky-100 text-sky-900 border-sky-200'
-                            : 'bg-violet-100 text-violet-900 border-violet-200'
-                        }`}
-                      >
-                        {row.source === 'sheet' ? 'Sheet' : 'Stripe'}
-                      </span>
-                    ),
+                    source: paymentSourceBadge(row),
                     customer: (
                       <div>
                         <p className="font-medium text-slate-900">{row.customerName || '—'}</p>
-                        <p className="text-slate-600">{row.customerEmail || '—'}</p>
+                        {row.customerEmail ? (
+                          <p className="text-slate-600">{row.customerEmail}</p>
+                        ) : row.source === 'etransfer' ? (
+                          <p className="text-slate-500 text-xs">No email on file (e-transfer log)</p>
+                        ) : null}
                       </div>
                     ),
                     amount: (

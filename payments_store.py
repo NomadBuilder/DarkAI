@@ -36,10 +36,14 @@ def excel_serial_to_iso(value: str) -> str:
 
 
 def payment_dedupe_key(record: dict[str, Any]) -> str:
-    email = (record.get("customerEmail") or "").strip().lower()
+    source = (record.get("source") or "sheet").strip().lower()
     amount = round(float(record.get("amount") or 0), 2)
     created = (record.get("createdAt") or "")[:10]
-    return f"{created}|{email}|{amount}"
+    if source == "etransfer":
+        name = (record.get("customerName") or "").strip().lower()
+        return f"etransfer|{created}|{name}|{amount}"
+    email = (record.get("customerEmail") or "").strip().lower()
+    return f"{source}|{created}|{email}|{amount}"
 
 
 def normalize_sheet_payment(
@@ -75,6 +79,7 @@ def normalize_sheet_payment(
     return {
         "id": f"sheet-{dedupe.replace('|', '-')}",
         "source": "sheet",
+        "historicalOnly": True,
         "createdAt": created_iso,
         "customerName": customer_name.strip(),
         "customerEmail": email,
@@ -83,6 +88,56 @@ def normalize_sheet_payment(
         "quantity": qty,
         "paymentStatus": "paid",
         "customFields": {k: v for k, v in custom_fields.items() if v},
+    }
+
+
+def normalize_etransfer_payment(
+    *,
+    created: str,
+    customer_name: str,
+    amount: str,
+    notes: str,
+    extra_fields: dict[str, str],
+) -> dict[str, Any] | None:
+    name = customer_name.strip()
+    if not name or name.lower() in {"total", "name"}:
+        return None
+    try:
+        amount_num = round(float(amount or 0), 2)
+    except ValueError:
+        return None
+    if amount_num <= 0:
+        return None
+
+    created_iso = excel_serial_to_iso(created)
+    dedupe = payment_dedupe_key(
+        {
+            "source": "etransfer",
+            "customerName": name,
+            "amount": amount_num,
+            "createdAt": created_iso,
+        }
+    )
+
+    custom: dict[str, str] = {}
+    if notes:
+        custom["Notes"] = notes
+    for key, value in extra_fields.items():
+        if value:
+            custom[key] = value
+
+    return {
+        "id": dedupe.replace("|", "-"),
+        "source": "etransfer",
+        "historicalOnly": True,
+        "createdAt": created_iso,
+        "customerName": name,
+        "customerEmail": "",
+        "amount": amount_num,
+        "currency": "CAD",
+        "quantity": None,
+        "paymentStatus": "paid",
+        "customFields": custom,
     }
 
 
@@ -99,8 +154,11 @@ def bulk_import_payments(rows: list[dict[str, Any]]) -> tuple[int, int]:
                 skipped += 1
                 continue
             record = dict(record)
-            record.setdefault("id", f"sheet-{uuid.uuid4().hex[:12]}")
-            record.setdefault("source", "sheet")
+            record.setdefault("id", f"import-{uuid.uuid4().hex[:12]}")
+            if record.get("source") == "etransfer":
+                record.setdefault("historicalOnly", True)
+            elif record.get("source") == "sheet":
+                record.setdefault("historicalOnly", True)
             f.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
             seen.add(key)
             added += 1

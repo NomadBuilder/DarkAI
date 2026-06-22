@@ -30,6 +30,7 @@ SIGNUP_SHEETS = (
 )
 
 PAYMENTS_SHEET = "Payments"
+ETRANSFER_SHEET = "etransfer payments made"
 
 PAYMENTS_HEADER_MAP: dict[str, str] = {
     "created date": "created",
@@ -60,12 +61,22 @@ def _payments_import_marker_path() -> Path:
     return d / ".historical_payments_imported"
 
 
+def _etransfer_import_marker_path() -> Path:
+    d = _repo_root() / "instance"
+    d.mkdir(parents=True, exist_ok=True)
+    return d / ".historical_etransfer_imported"
+
+
 def historical_import_done() -> bool:
     return _import_marker_path().exists()
 
 
 def historical_payments_import_done() -> bool:
     return _payments_import_marker_path().exists()
+
+
+def historical_etransfer_import_done() -> bool:
+    return _etransfer_import_marker_path().exists()
 
 
 def _cell(values: list[str], index: int) -> str:
@@ -197,6 +208,43 @@ def rows_from_payments_sheet(path: Path, sheet_name: str = PAYMENTS_SHEET) -> li
     return out
 
 
+def rows_from_etransfer_sheet(path: Path, sheet_name: str = ETRANSFER_SHEET) -> list[dict[str, Any]]:
+    from payments_store import normalize_etransfer_payment
+
+    table = read_xlsx_sheet(path, sheet_name)
+    if len(table) < 2:
+        return []
+
+    headers = [str(h or "").strip() for h in table[0]]
+    out: list[dict[str, Any]] = []
+
+    for values in table[1:]:
+        name = _cell(values, 0)
+        amount = _cell(values, 1)
+        date = _cell(values, 2)
+        notes = ""
+        extra: dict[str, str] = {}
+        for i, header in enumerate(headers):
+            if i < 3 or not header:
+                continue
+            val = _cell(values, i)
+            if header.upper() == "NOTES":
+                notes = val or notes
+            elif val:
+                extra[header] = val
+
+        record = normalize_etransfer_payment(
+            created=date,
+            customer_name=name,
+            amount=amount,
+            notes=notes,
+            extra_fields=extra,
+        )
+        if record:
+            out.append(record)
+    return out
+
+
 def import_signups_from_xlsx(
     path: Path,
     *,
@@ -275,6 +323,42 @@ def import_payments_from_xlsx(
     return result
 
 
+def import_etransfer_from_xlsx(
+    path: Path,
+    *,
+    sheet: str = ETRANSFER_SHEET,
+    mark_complete: bool = True,
+) -> dict[str, Any]:
+    from payments_store import bulk_import_payments
+
+    path = path.resolve()
+    if not path.is_file():
+        raise FileNotFoundError(str(path))
+
+    if sheet not in set(list_xlsx_sheets(path)):
+        raise ValueError(f"Sheet not found: {sheet}")
+
+    records = rows_from_etransfer_sheet(path, sheet)
+    added, skipped = bulk_import_payments(records)
+
+    result = {
+        "path": str(path),
+        "sheet": sheet,
+        "parsed": len(records),
+        "added": added,
+        "skippedDuplicates": skipped,
+        "importedAt": datetime.now(timezone.utc).isoformat(),
+    }
+
+    if mark_complete:
+        _etransfer_import_marker_path().write_text(
+            f"{result['importedAt']} added={added} skipped={skipped} parsed={len(records)}\n",
+            encoding="utf-8",
+        )
+
+    return result
+
+
 def ensure_historical_import(path: Path | None = None) -> dict[str, Any] | None:
     """Run once per server if the bundled xlsx exists and import has not run."""
     if historical_import_done():
@@ -290,14 +374,19 @@ def ensure_historical_import(path: Path | None = None) -> dict[str, Any] | None:
 
 
 def ensure_historical_payments_import(path: Path | None = None) -> dict[str, Any] | None:
-    """Run once per server: import Payments tab from bundled xlsx."""
-    if historical_payments_import_done():
-        return None
+    """Run once per server: import Payments + e-transfer tabs from bundled xlsx."""
     xlsx = path or default_historical_xlsx_path()
     if not xlsx.is_file():
         return None
+
+    results: dict[str, Any] = {}
     try:
-        return import_payments_from_xlsx(xlsx)
+        if not historical_payments_import_done():
+            results["payments"] = import_payments_from_xlsx(xlsx)
+        if not historical_etransfer_import_done():
+            results["etransfer"] = import_etransfer_from_xlsx(xlsx)
     except Exception:
         logger.exception("Historical payments import failed")
         return None
+
+    return results or None

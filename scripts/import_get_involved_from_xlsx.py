@@ -14,6 +14,7 @@ sys.path.insert(0, str(ROOT))
 from get_involved_import import (  # noqa: E402
     SIGNUP_SHEETS,
     default_historical_xlsx_path,
+    import_etransfer_from_xlsx,
     import_payments_from_xlsx,
     import_signups_from_xlsx,
 )
@@ -43,6 +44,11 @@ def main() -> int:
         action="store_true",
         help="Import only sign-up tabs",
     )
+    parser.add_argument(
+        "--etransfer-only",
+        action="store_true",
+        help="Import only the e-transfer payments tab",
+    )
     args = parser.parse_args()
 
     if args.force:
@@ -52,12 +58,17 @@ def main() -> int:
         pay_marker = ROOT / "instance" / ".historical_payments_imported"
         if pay_marker.exists():
             pay_marker.unlink()
+        et_marker = ROOT / "instance" / ".historical_etransfer_imported"
+        if et_marker.exists():
+            et_marker.unlink()
 
     results: dict[str, object] = {}
-    if not args.payments_only:
+    if not args.payments_only and not args.etransfer_only:
         results["signups"] = import_signups_from_xlsx(args.xlsx.resolve())
-    if not args.signups_only:
+    if not args.signups_only and not args.etransfer_only:
         results["payments"] = import_payments_from_xlsx(args.xlsx.resolve())
+    if not args.signups_only and not args.payments_only:
+        results["etransfer"] = import_etransfer_from_xlsx(args.xlsx.resolve())
     print(json.dumps(results, indent=2))
     return 0
 
