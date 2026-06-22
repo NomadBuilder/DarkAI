@@ -53,6 +53,54 @@ def normalize_submission(data: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _dedupe_key(record: dict[str, Any]) -> str:
+    email = (record.get("email") or "").strip().lower()
+    submitted = (record.get("submittedAt") or record.get("submitted_at") or "")[:19]
+    role = (record.get("roleId") or record.get("role") or "").strip().lower()
+    name = (record.get("name") or "").strip().lower()
+    return f"{submitted}|{email}|{role}|{name}"
+
+
+def _existing_dedupe_keys() -> set[str]:
+    return {_dedupe_key(row) for row in list_submissions()}
+
+
+def bulk_import_submissions(
+    rows: list[dict[str, Any]],
+    *,
+    source: str = "import",
+) -> tuple[int, int]:
+    """Append normalized rows, skipping duplicates. Returns (added, skipped)."""
+    seen = _existing_dedupe_keys()
+    added = 0
+    skipped = 0
+    path = _store_path()
+
+    with open(path, "a", encoding="utf-8") as f:
+        for raw in rows:
+            if "submittedAt" in raw and "roleId" in raw:
+                record = dict(raw)
+                if not record.get("sourcePage"):
+                    record["sourcePage"] = source
+            else:
+                payload = dict(raw)
+                if not payload.get("source_page"):
+                    payload["source_page"] = source
+                record = normalize_submission(payload)
+
+            key = _dedupe_key(record)
+            if key in seen:
+                skipped += 1
+                continue
+
+            record["id"] = str(uuid.uuid4())
+            f.write(json.dumps(record, ensure_ascii=False, default=str) + "\n")
+            seen.add(key)
+            added += 1
+
+    return added, skipped
+
+
 def append_submission(data: dict[str, Any]) -> dict[str, Any]:
     """Persist one sign-up; returns stored record with id."""
     record = normalize_submission(data)

@@ -52,6 +52,9 @@ def submissions_admin_authorized() -> bool:
 
 def load_local_signups() -> tuple[list[dict[str, Any]], str | None]:
     try:
+        from get_involved_import import ensure_historical_import
+
+        ensure_historical_import()
         from get_involved_store import list_submissions
 
         return list_submissions(), None
