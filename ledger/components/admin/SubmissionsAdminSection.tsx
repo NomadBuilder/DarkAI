@@ -2,8 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
-const TOKEN_STORAGE_KEY = 'protectont_submissions_admin_token'
-
 type SignupRow = {
   submittedAt?: string
   request?: string
@@ -133,44 +131,6 @@ function SummaryCard({ label, value, sub }: { label: string; value: string | num
   )
 }
 
-function TokenGate({
-  token,
-  onSave,
-}: {
-  token: string
-  onSave: (token: string) => void
-}) {
-  const [draft, setDraft] = useState(token)
-
-  return (
-    <div className="rounded-2xl border border-violet-200 bg-violet-50/80 p-5 sm:p-6">
-      <h3 className="text-base font-medium text-slate-900">Admin access token</h3>
-      <p className="mt-1 text-sm text-slate-600 font-light">
-        Use your Render <code className="text-xs bg-white/80 px-1 rounded">SECRET_KEY</code> (already on the server), or{' '}
-        <code className="text-xs bg-white/80 px-1 rounded">SUBMISSIONS_ADMIN_TOKEN</code> /{' '}
-        <code className="text-xs bg-white/80 px-1 rounded">POSTER_ADMIN_TOKEN</code> if set. Stored in this browser only.
-      </p>
-      <div className="mt-4 flex flex-col sm:flex-row gap-2">
-        <input
-          type="password"
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          placeholder="Bearer token"
-          className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-violet-400"
-        />
-        <button
-          type="button"
-          onClick={() => onSave(draft.trim())}
-          disabled={!draft.trim()}
-          className="rounded-xl bg-[#3d2b7a] px-4 py-2 text-sm font-medium text-white hover:bg-[#2a1f58] disabled:opacity-50"
-        >
-          Unlock dashboard
-        </button>
-      </div>
-    </div>
-  )
-}
-
 function DataTable({
   headers,
   rows,
@@ -222,32 +182,17 @@ function DataTable({
 }
 
 export default function SubmissionsAdminSection({ embedded = false }: { embedded?: boolean }) {
-  const [token, setToken] = useState('')
   const [tab, setTab] = useState<TabId>('signups')
   const [query, setQuery] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [data, setData] = useState<DashboardPayload | null>(null)
 
-  useEffect(() => {
-    const saved = sessionStorage.getItem(TOKEN_STORAGE_KEY)
-    if (saved) setToken(saved)
-  }, [])
-
-  const saveToken = (value: string) => {
-    setToken(value)
-    if (value) sessionStorage.setItem(TOKEN_STORAGE_KEY, value)
-    else sessionStorage.removeItem(TOKEN_STORAGE_KEY)
-  }
-
   const load = useCallback(async () => {
-    if (!token) return
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch('/api/admin/submissions-dashboard', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await fetch('/api/admin/submissions-dashboard')
       const body = (await res.json()) as DashboardPayload & { error?: string; message?: string }
       if (!res.ok) {
         throw new Error(body.message || body.error || `Request failed (${res.status})`)
@@ -259,11 +204,11 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
     } finally {
       setLoading(false)
     }
-  }, [token])
+  }, [])
 
   useEffect(() => {
-    if (token) load()
-  }, [token, load])
+    load()
+  }, [load])
 
   const signups = useMemo(() => {
     const rows = data?.signups || []
@@ -371,44 +316,33 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
             </p>
           </div>
         ) : null}
-        {!token ? (
-          <TokenGate token={token} onSave={saveToken} />
-        ) : (
-          <>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs text-slate-500">
-                  Last refreshed {data?.fetchedAt ? formatDate(data.fetchedAt) : '—'}
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => saveToken('')}
-                  className="rounded-full border border-slate-300 bg-white px-3 py-1.5 text-xs text-slate-600 hover:bg-slate-50"
-                >
-                  Lock
-                </button>
-                <button
-                  type="button"
-                  onClick={load}
-                  disabled={loading}
-                  className="rounded-full bg-[#3d2b7a] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#2a1f58] disabled:opacity-60"
-                >
-                  {loading ? 'Refreshing…' : 'Refresh'}
-                </button>
-                <button
-                  type="button"
-                  onClick={exportCsv}
-                  disabled={!data}
-                  className="rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-xs font-medium text-[#3d2b7a] hover:bg-violet-100 disabled:opacity-50"
-                >
-                  Export CSV
-                </button>
-              </div>
-            </div>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <p className="text-xs text-slate-500">
+              Last refreshed {data?.fetchedAt ? formatDate(data.fetchedAt) : loading ? '…' : '—'}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={load}
+              disabled={loading}
+              className="rounded-full bg-[#3d2b7a] px-4 py-1.5 text-xs font-medium text-white hover:bg-[#2a1f58] disabled:opacity-60"
+            >
+              {loading ? 'Refreshing…' : 'Refresh'}
+            </button>
+            <button
+              type="button"
+              onClick={exportCsv}
+              disabled={!data}
+              className="rounded-full border border-violet-200 bg-violet-50 px-4 py-1.5 text-xs font-medium text-[#3d2b7a] hover:bg-violet-100 disabled:opacity-50"
+            >
+              Export CSV
+            </button>
+          </div>
+        </div>
 
-            {error ? (
+        {error ? (
               <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">{error}</div>
             ) : null}
 
@@ -613,8 +547,6 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
                 }))}
               />
             )}
-          </>
-        )}
       </div>
     </div>
   )

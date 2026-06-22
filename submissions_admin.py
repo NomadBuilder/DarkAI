@@ -23,18 +23,31 @@ def _admin_token() -> str:
     return protectont_admin_token()
 
 
+def _admin_page_request(origin: str, referer: str) -> bool:
+    """Same model as events/flyers admin: private URL on protectont.ca, not a pasted key."""
+    from protectont_events import save_request_allowed
+
+    if not save_request_allowed(origin, referer):
+        return False
+    ref = (referer or "").strip()
+    return "/admin" in ref
+
+
 def submissions_admin_authorized() -> bool:
     from flask import request
 
-    token = _admin_token()
-    if not token:
-        return False
-    auth = (request.headers.get("Authorization") or "").strip()
-    if auth.lower().startswith("bearer ") and auth[7:].strip() == token:
-        return True
-    if (request.headers.get("X-Submissions-Admin-Token") or "").strip() == token:
-        return True
-    return False
+    token = protectont_admin_token()
+    if token:
+        auth = (request.headers.get("Authorization") or "").strip()
+        if auth.lower().startswith("bearer ") and auth[7:].strip() == token:
+            return True
+        if (request.headers.get("X-Submissions-Admin-Token") or "").strip() == token:
+            return True
+
+    return _admin_page_request(
+        request.headers.get("Origin", ""),
+        request.headers.get("Referer", ""),
+    )
 
 
 def load_local_signups() -> tuple[list[dict[str, Any]], str | None]:
@@ -220,13 +233,6 @@ def register_submissions_admin_routes(app) -> None:
         if request.method == "OPTIONS":
             return "", 204
 
-        if not _admin_token():
-            return jsonify(
-                {
-                    "error": "Not configured",
-                    "message": "Set SUBMISSIONS_ADMIN_TOKEN, POSTER_ADMIN_TOKEN, or SECRET_KEY on the server.",
-                }
-            ), 503
         if not submissions_admin_authorized():
             return jsonify({"error": "Unauthorized"}), 401
 
