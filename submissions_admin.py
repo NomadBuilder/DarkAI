@@ -10,11 +10,17 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 
-def _admin_token() -> str:
+def protectont_admin_token() -> str:
+    """Bearer token for ProtectOnt admin APIs (Render already sets SECRET_KEY)."""
     return (
         os.getenv("SUBMISSIONS_ADMIN_TOKEN", "").strip()
         or os.getenv("POSTER_ADMIN_TOKEN", "").strip()
+        or os.getenv("SECRET_KEY", "").strip()
     )
+
+
+def _admin_token() -> str:
+    return protectont_admin_token()
 
 
 def submissions_admin_authorized() -> bool:
@@ -218,7 +224,7 @@ def register_submissions_admin_routes(app) -> None:
             return jsonify(
                 {
                     "error": "Not configured",
-                    "message": "Set SUBMISSIONS_ADMIN_TOKEN (or POSTER_ADMIN_TOKEN) on the server.",
+                    "message": "Set SUBMISSIONS_ADMIN_TOKEN, POSTER_ADMIN_TOKEN, or SECRET_KEY on the server.",
                 }
             ), 503
         if not submissions_admin_authorized():

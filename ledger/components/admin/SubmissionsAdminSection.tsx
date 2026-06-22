@@ -146,8 +146,9 @@ function TokenGate({
     <div className="rounded-2xl border border-violet-200 bg-violet-50/80 p-5 sm:p-6">
       <h3 className="text-base font-medium text-slate-900">Admin access token</h3>
       <p className="mt-1 text-sm text-slate-600 font-light">
-        Enter the server token (<code className="text-xs bg-white/80 px-1 rounded">SUBMISSIONS_ADMIN_TOKEN</code> or{' '}
-        <code className="text-xs bg-white/80 px-1 rounded">POSTER_ADMIN_TOKEN</code>). Stored in this browser only.
+        Use your Render <code className="text-xs bg-white/80 px-1 rounded">SECRET_KEY</code> (already on the server), or{' '}
+        <code className="text-xs bg-white/80 px-1 rounded">SUBMISSIONS_ADMIN_TOKEN</code> /{' '}
+        <code className="text-xs bg-white/80 px-1 rounded">POSTER_ADMIN_TOKEN</code> if set. Stored in this browser only.
       </p>
       <div className="mt-4 flex flex-col sm:flex-row gap-2">
         <input

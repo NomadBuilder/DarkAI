@@ -148,7 +148,9 @@ def write_pending_order(session_id: str, payload: dict, *, send_alert: bool = Tr
 def _poster_admin_authorized() -> bool:
     from flask import request
 
-    token = os.getenv("POSTER_ADMIN_TOKEN", "").strip()
+    from submissions_admin import protectont_admin_token
+
+    token = protectont_admin_token()
     if not token:
         return False
     auth = (request.headers.get("Authorization") or "").strip()
@@ -733,8 +735,10 @@ def register_poster_routes(app):
 
         from flask import Response, jsonify, request
 
-        if not os.getenv("POSTER_ADMIN_TOKEN", "").strip():
-            return jsonify({"error": "POSTER_ADMIN_TOKEN not configured on server"}), 503
+        from submissions_admin import protectont_admin_token
+
+        if not protectont_admin_token():
+            return jsonify({"error": "Admin token not configured on server"}), 503
         if not _poster_admin_authorized():
             return jsonify({"error": "Unauthorized"}), 401
 
