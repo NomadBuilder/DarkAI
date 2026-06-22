@@ -3,6 +3,8 @@ export type PartnerOrganization = {
   name: string
   href: string
   logoSrc: string
+  /** Optional label above the logo within the same fixed height slot */
+  logoCaption?: string
 }
 
 /** Homepage partner carousel — add entries here to show more logos. */
@@ -24,6 +26,7 @@ export const partnerOrganizations: PartnerOrganization[] = [
     name: 'Fighting Ford',
     href: 'https://www.facebook.com/groups/999677935818616/',
     logoSrc: '/partners/fighting-ford.png',
+    logoCaption: 'Fighting Ford',
   },
   {
     id: 'democracy-watch',

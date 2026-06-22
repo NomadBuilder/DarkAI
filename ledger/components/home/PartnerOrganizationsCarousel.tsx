@@ -86,14 +86,21 @@ export default function PartnerOrganizationsSection() {
                 className="group flex flex-[0_0_100%] shrink-0 snap-center flex-col items-center justify-center rounded-xl border border-slate-200 bg-white px-8 py-6 shadow-sm transition hover:border-slate-300 hover:shadow-md sm:flex-[0_0_240px] sm:py-5 sm:px-6"
               >
                 <span className="sr-only">{org.name}</span>
-                <span className="relative flex h-[72px] w-full max-w-[240px] items-center justify-center sm:h-16 sm:max-w-[200px]">
-                  <Image
-                    src={org.logoSrc}
-                    alt=""
-                    width={240}
-                    height={72}
-                    className="max-h-full w-auto max-w-full object-contain object-center"
-                  />
+                <span className="relative flex h-[72px] w-full max-w-[240px] flex-col items-center justify-center sm:h-16 sm:max-w-[200px]">
+                  {org.logoCaption ? (
+                    <span className="mb-1 shrink-0 text-[11px] font-semibold leading-none tracking-wide text-slate-900 sm:text-xs">
+                      {org.logoCaption}
+                    </span>
+                  ) : null}
+                  <span className="flex min-h-0 flex-1 items-center justify-center">
+                    <Image
+                      src={org.logoSrc}
+                      alt=""
+                      width={240}
+                      height={72}
+                      className="max-h-full w-auto max-w-full object-contain object-center"
+                    />
+                  </span>
                 </span>
               </a>
             ))}
