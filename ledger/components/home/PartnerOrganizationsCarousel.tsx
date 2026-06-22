@@ -48,7 +48,7 @@ export default function PartnerOrganizationsSection() {
             id="partner-organizations-heading"
             className="text-2xl font-light tracking-tight text-slate-900 sm:text-3xl"
           >
-            Allied Organizations
+            Allied Organizations Fighting for Ontario
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-relaxed text-slate-600 sm:text-base">
             Explore organizations working to protect public services, strengthen democracy, and build a better
