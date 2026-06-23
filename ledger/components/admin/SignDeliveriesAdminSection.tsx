@@ -476,9 +476,7 @@ export default function SignDeliveriesAdminSection({ embedded = false }: { embed
         ) : (
           <>
             {summary ? (
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
-                <SummaryCard label="Total requests" value={summary.total || 0} />
-                <SummaryCard label="Waiting" value={summary.new || 0} />
+              <div className="grid grid-cols-2 gap-3 mb-6 max-w-md">
                 <SummaryCard label="Paid" value={summary.paid || 0} />
                 <SummaryCard label="Delivered" value={summary.delivered || 0} />
               </div>
