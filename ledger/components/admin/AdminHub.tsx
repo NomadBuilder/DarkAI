@@ -19,7 +19,7 @@ export const ADMIN_SECTIONS = [
   {
     id: 'flyers',
     label: 'Printable flyers',
-    blurb: 'Create and edit letter-size issue flyers and yard-sign promos.',
+    blurb: 'Create and edit letter-size issue flyers.',
     viewHref: '/flyer',
     viewLabel: 'View /flyer',
   },

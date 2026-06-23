@@ -36,9 +36,8 @@ export default function FlyerIndexPage() {
           Printable awareness flyers
         </h1>
         <p className="mt-3 text-[#f9e04c]/85 font-light leading-relaxed max-w-xl text-base sm:text-lg">
-          Full letter-size (8.5″×11″) posters for community boards, doors, and events — including yard-sign
-          promos with product artwork. Each issue flyer includes detailed bullets and sources — open one, then
-          print or save as PDF.
+          Full letter-size (8.5″×11″) posters for community boards, doors, and events. Each issue
+          flyer includes detailed bullets and sources — open one, then print or save as PDF.
         </p>
 
         {loading ? (
