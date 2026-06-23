@@ -102,6 +102,52 @@ def register_sign_delivery_routes(app) -> None:
             }
         )
 
+    @app.route("/api/admin/sign-deliveries/leads/<lead_id>", methods=["PATCH", "OPTIONS"])
+    def admin_sign_deliveries_lead_email(lead_id: str):
+        if request.method == "OPTIONS":
+            return "", 204
+        if not submissions_admin_authorized():
+            return jsonify({"error": "Unauthorized"}), 401
+
+        from sign_routing import build_territory_structure, save_lead_email
+
+        payload = request.get_json(silent=True) or {}
+        email = str(payload.get("email") or "").strip()
+        ok, err = save_lead_email(lead_id, email)
+        if not ok:
+            return jsonify({"error": err or "Could not save email"}), 400
+
+        structure = build_territory_structure()
+        lead = next((row for row in structure if row.get("id") == lead_id), None)
+        return jsonify({"success": True, "lead": lead, "territoryStructure": structure})
+
+    @app.route("/api/admin/sign-deliveries/territories/<territory_id>", methods=["PATCH", "OPTIONS"])
+    def admin_sign_deliveries_territory_hub(territory_id: str):
+        if request.method == "OPTIONS":
+            return "", 204
+        if not submissions_admin_authorized():
+            return jsonify({"error": "Unauthorized"}), 401
+
+        from sign_routing import build_territory_structure, save_territory_hub
+
+        payload = request.get_json(silent=True) or {}
+        hub_name = str(payload.get("hubName") or "").strip()
+        hub_phone = str(payload.get("hubPhone") or "").strip()
+        ok, err = save_territory_hub(territory_id, hub_name=hub_name, hub_phone=hub_phone)
+        if not ok:
+            return jsonify({"error": err or "Could not save local contact"}), 400
+
+        structure = build_territory_structure()
+        area = None
+        for lead in structure:
+            for row in lead.get("areas", []):
+                if row.get("id") == territory_id:
+                    area = row
+                    break
+            if area:
+                break
+        return jsonify({"success": True, "area": area, "territoryStructure": structure})
+
     @app.route("/api/admin/sign-deliveries/<submission_id>", methods=["PATCH", "OPTIONS"])
     def admin_sign_deliveries_update(submission_id: str):
         if request.method == "OPTIONS":
@@ -126,22 +172,3 @@ def register_sign_delivery_routes(app) -> None:
         if not updated:
             return jsonify({"error": "Not found"}), 404
         return jsonify({"success": True, "request": updated})
-
-    @app.route("/api/admin/sign-deliveries/leads/<lead_id>", methods=["PATCH", "OPTIONS"])
-    def admin_sign_deliveries_lead_email(lead_id: str):
-        if request.method == "OPTIONS":
-            return "", 204
-        if not submissions_admin_authorized():
-            return jsonify({"error": "Unauthorized"}), 401
-
-        from sign_routing import build_territory_structure, save_lead_email
-
-        payload = request.get_json(silent=True) or {}
-        email = str(payload.get("email") or "").strip()
-        ok, err = save_lead_email(lead_id, email)
-        if not ok:
-            return jsonify({"error": err or "Could not save email"}), 400
-
-        structure = build_territory_structure()
-        lead = next((row for row in structure if row.get("id") == lead_id), None)
-        return jsonify({"success": True, "lead": lead, "territoryStructure": structure})

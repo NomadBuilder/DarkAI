@@ -22,6 +22,46 @@ def _norm(text: str) -> str:
     return re.sub(r"\s+", " ", (text or "").strip().lower())
 
 
+def _hub_overrides_path() -> Path:
+    d = _repo_root() / "instance"
+    d.mkdir(parents=True, exist_ok=True)
+    return d / "sign-territory-hubs.json"
+
+
+def _load_hub_overrides() -> dict[str, dict[str, str]]:
+    path = _hub_overrides_path()
+    if not path.is_file():
+        return {}
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            return {}
+        out: dict[str, dict[str, str]] = {}
+        for key, value in data.items():
+            if isinstance(value, dict):
+                out[str(key)] = {
+                    "hubName": str(value.get("hubName") or "").strip(),
+                    "hubPhone": str(value.get("hubPhone") or "").strip(),
+                }
+        return out
+    except (json.JSONDecodeError, OSError):
+        pass
+    return {}
+
+
+def _known_territory_ids() -> set[str]:
+    return {str(t.get("id") or "") for t in load_territory_config().get("territories", [])}
+
+
+def _resolve_territory_hub(territory: dict[str, Any]) -> dict[str, str]:
+    territory_id = str(territory.get("id") or "")
+    overrides = _load_hub_overrides().get(territory_id, {})
+    return {
+        "hubName": overrides.get("hubName") or str(territory.get("hubName") or "").strip(),
+        "hubPhone": overrides.get("hubPhone") or str(territory.get("hubPhone") or "").strip(),
+    }
+
+
 def _email_overrides_path() -> Path:
     d = _repo_root() / "instance"
     d.mkdir(parents=True, exist_ok=True)
@@ -118,13 +158,14 @@ def route_sign_request(*, city: str, postal_code: str) -> dict[str, str]:
         }
 
     lead_id = str(best.get("leadId") or "")
+    hub = _resolve_territory_hub(best)
     return {
         "territoryId": str(best.get("id") or ""),
         "territoryArea": str(best.get("area") or ""),
         "regionalLeadId": lead_id,
         "regionalLeadName": lead_name(lead_id),
-        "hubName": str(best.get("hubName") or ""),
-        "hubPhone": str(best.get("hubPhone") or ""),
+        "hubName": hub["hubName"],
+        "hubPhone": hub["hubPhone"],
         "organizerEmail": _lead_email(lead_id),
     }
 
@@ -147,15 +188,19 @@ def build_territory_structure() -> list[dict[str, Any]]:
 
     for lead in config.get("leads", []):
         lead_id = str(lead.get("id") or "")
-        areas = [
-            {
-                "area": str(t.get("area") or ""),
-                "hubName": str(t.get("hubName") or ""),
-                "hubPhone": str(t.get("hubPhone") or ""),
-            }
-            for t in config.get("territories", [])
-            if str(t.get("leadId") or "") == lead_id
-        ]
+        areas = []
+        for t in config.get("territories", []):
+            if str(t.get("leadId") or "") != lead_id:
+                continue
+            hub = _resolve_territory_hub(t)
+            areas.append(
+                {
+                    "id": str(t.get("id") or ""),
+                    "area": str(t.get("area") or ""),
+                    "hubName": hub["hubName"],
+                    "hubPhone": hub["hubPhone"],
+                }
+            )
         areas.sort(key=lambda row: row["area"].lower())
         structure.append(
             {
@@ -184,6 +229,33 @@ def save_lead_email(lead_id: str, email: str) -> tuple[bool, str | None]:
     overrides = _load_email_overrides()
     overrides[lead_id] = email
     path = _email_overrides_path()
+    try:
+        path.write_text(json.dumps(overrides, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    except OSError as exc:
+        return False, str(exc)
+    return True, None
+
+
+def save_territory_hub(
+    territory_id: str,
+    *,
+    hub_name: str,
+    hub_phone: str = "",
+) -> tuple[bool, str | None]:
+    """Persist local hub contact for one area (survives redeploys via instance/)."""
+    territory_id = territory_id.strip()
+    hub_name = hub_name.strip()
+    hub_phone = hub_phone.strip()
+    if not territory_id:
+        return False, "Area id is required"
+    if not hub_name:
+        return False, "Local contact name is required"
+    if territory_id not in _known_territory_ids():
+        return False, "Unknown area"
+
+    overrides = _load_hub_overrides()
+    overrides[territory_id] = {"hubName": hub_name, "hubPhone": hub_phone}
+    path = _hub_overrides_path()
     try:
         path.write_text(json.dumps(overrides, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     except OSError as exc:

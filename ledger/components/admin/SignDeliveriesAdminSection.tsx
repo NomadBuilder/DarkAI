@@ -27,6 +27,7 @@ type SignRequest = {
 type Lead = { id: string; name: string; email?: string }
 
 type TerritoryArea = {
+  id: string
   area: string
   hubName: string
   hubPhone?: string
@@ -180,6 +181,90 @@ function LeadEmailEditor({
   )
 }
 
+function AreaHubEditor({
+  area,
+  onSaved,
+}: {
+  area: TerritoryArea
+  onSaved: (updated: TerritoryArea) => void
+}) {
+  const [hubName, setHubName] = useState(area.hubName)
+  const [hubPhone, setHubPhone] = useState(area.hubPhone || '')
+  const [saving, setSaving] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    setHubName(area.hubName)
+    setHubPhone(area.hubPhone || '')
+  }, [area.hubName, area.hubPhone])
+
+  const save = async () => {
+    setSaving(true)
+    setError(null)
+    setMessage(null)
+    try {
+      const res = await fetch(`/api/admin/sign-deliveries/territories/${area.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hubName, hubPhone }),
+      })
+      const body = (await res.json()) as { error?: string; area?: TerritoryArea }
+      if (!res.ok) {
+        throw new Error(body.error || `Save failed (${res.status})`)
+      }
+      if (body.area) {
+        onSaved(body.area)
+      }
+      setMessage('Saved.')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not save contact')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <li className="px-4 py-3 text-sm bg-slate-50/50 even:bg-white">
+      <p className="font-medium text-slate-900 mb-2">{area.area}</p>
+      <div className="grid sm:grid-cols-2 gap-2">
+        <div>
+          <label className="block text-xs text-slate-500 mb-1">Local contact name</label>
+          <input
+            type="text"
+            value={hubName}
+            onChange={(e) => setHubName(e.target.value)}
+            placeholder="Name"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-violet-300"
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-slate-500 mb-1">Phone (optional)</label>
+          <input
+            type="tel"
+            value={hubPhone}
+            onChange={(e) => setHubPhone(e.target.value)}
+            placeholder="416-555-0100"
+            className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-violet-300"
+          />
+        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={save}
+          disabled={saving || !hubName.trim() || !area.id}
+          className="rounded-lg border border-slate-300 bg-white text-slate-700 px-3 py-1.5 text-sm font-medium hover:bg-slate-50 disabled:opacity-50"
+        >
+          {saving ? 'Saving…' : 'Save contact'}
+        </button>
+        {message ? <span className="text-xs text-emerald-700">{message}</span> : null}
+        {error ? <span className="text-xs text-red-700">{error}</span> : null}
+      </div>
+    </li>
+  )
+}
+
 export default function SignDeliveriesAdminSection({ embedded = false }: { embedded?: boolean }) {
   const [view, setView] = useState<ViewId>('requests')
   const [loading, setLoading] = useState(false)
@@ -262,6 +347,17 @@ export default function SignDeliveriesAdminSection({ embedded = false }: { embed
         lead.id === updated.id ? { ...lead, email: updated.email } : lead
       )
       return { ...prev, territoryStructure, leads }
+    })
+  }
+
+  const handleAreaHubSaved = (updated: TerritoryArea) => {
+    setData((prev) => {
+      if (!prev?.territoryStructure) return prev
+      const territoryStructure = prev.territoryStructure.map((lead) => ({
+        ...lead,
+        areas: lead.areas.map((area) => (area.id === updated.id ? updated : area)),
+      }))
+      return { ...prev, territoryStructure }
     })
   }
 
@@ -349,7 +445,7 @@ export default function SignDeliveriesAdminSection({ embedded = false }: { embed
           <div className="space-y-6">
             <p className="text-sm text-slate-600 max-w-3xl">
               Each regional lead covers the areas listed below. Set their email so they receive an alert when someone
-              nearby requests a yard sign. Local hub contacts are who usually hands out signs in that community.
+              nearby requests a yard sign. Edit the local contact for each area — that is who usually hands out signs.
             </p>
             {!structure.length && !loading ? (
               <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-12 text-center text-sm text-slate-500">
@@ -370,20 +466,7 @@ export default function SignDeliveriesAdminSection({ embedded = false }: { embed
 
                   <ul className="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">
                     {lead.areas.map((area) => (
-                      <li key={`${lead.id}-${area.area}`} className="px-4 py-3 text-sm bg-slate-50/50 even:bg-white">
-                        <p className="font-medium text-slate-900">{area.area}</p>
-                        <p className="text-slate-600 mt-0.5">
-                          Local contact: {area.hubName || '—'}
-                          {area.hubPhone ? (
-                            <>
-                              {' · '}
-                              <a href={`tel:${area.hubPhone}`} className="text-[#3d2b7a] hover:underline">
-                                {area.hubPhone}
-                              </a>
-                            </>
-                          ) : null}
-                        </p>
-                      </li>
+                      <AreaHubEditor key={area.id || `${lead.id}-${area.area}`} area={area} onSaved={handleAreaHubSaved} />
                     ))}
                   </ul>
                 </section>
