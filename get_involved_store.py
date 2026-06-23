@@ -50,6 +50,14 @@ def normalize_submission(data: dict[str, Any]) -> dict[str, Any]:
         "updatesTopics": (data.get("updates_topics") or "").strip(),
         "additionalNotes": (data.get("additional_notes") or "").strip(),
         "sourcePage": (data.get("source_page") or "join").strip(),
+        "deliveryStatus": (data.get("deliveryStatus") or "new").strip() or "new",
+        "territoryId": (data.get("territoryId") or "").strip(),
+        "territoryArea": (data.get("territoryArea") or "").strip(),
+        "regionalLeadId": (data.get("regionalLeadId") or "").strip(),
+        "regionalLeadName": (data.get("regionalLeadName") or "").strip(),
+        "hubName": (data.get("hubName") or "").strip(),
+        "hubPhone": (data.get("hubPhone") or "").strip(),
+        "organizerEmail": (data.get("organizerEmail") or "").strip(),
     }
 
 
@@ -104,12 +112,65 @@ def bulk_import_submissions(
 def append_submission(data: dict[str, Any]) -> dict[str, Any]:
     """Persist one sign-up; returns stored record with id."""
     record = normalize_submission(data)
+    if record.get("roleId") == "yard-sign":
+        from sign_routing import route_sign_request
+
+        route = route_sign_request(
+            city=record.get("city", ""),
+            postal_code=record.get("postalCode", ""),
+        )
+        record.update(route)
+        record.setdefault("deliveryStatus", "new")
     record["id"] = str(uuid.uuid4())
     line = json.dumps(record, ensure_ascii=False, default=str)
     path = _store_path()
     with open(path, "a", encoding="utf-8") as f:
         f.write(line + "\n")
     return record
+
+
+def update_submission(submission_id: str, patch: dict[str, Any]) -> dict[str, Any] | None:
+    """Update one stored sign-up by id."""
+    rows = list_submissions()
+    updated: dict[str, Any] | None = None
+    for i, row in enumerate(rows):
+        if row.get("id") != submission_id:
+            continue
+        merged = dict(row)
+        for key, value in patch.items():
+            if value is not None:
+                merged[key] = value
+        merged["updatedAt"] = datetime.now(timezone.utc).isoformat()
+        rows[i] = merged
+        updated = merged
+        break
+
+    if not updated:
+        return None
+
+    path = _store_path()
+    with open(path, "w", encoding="utf-8") as f:
+        for row in rows:
+            f.write(json.dumps(row, ensure_ascii=False, default=str) + "\n")
+    return updated
+
+
+def list_yard_sign_requests() -> list[dict[str, Any]]:
+    from sign_routing import route_sign_request
+
+    rows: list[dict[str, Any]] = []
+    for row in list_submissions():
+        if row.get("roleId") != "yard-sign":
+            continue
+        if not row.get("regionalLeadId"):
+            route = route_sign_request(
+                city=row.get("city", ""),
+                postal_code=row.get("postalCode", ""),
+            )
+            row = {**row, **route}
+        row.setdefault("deliveryStatus", "new")
+        rows.append(row)
+    return rows
 
 
 def list_submissions() -> list[dict[str, Any]]:

@@ -1,0 +1,257 @@
+{
+  "leads": [
+    { "id": "dawn", "name": "Dawn", "email": "protectont@gmail.com" },
+    { "id": "mary-jane", "name": "Mary Jane", "email": "protectont@gmail.com" },
+    { "id": "martha", "name": "Martha", "email": "protectont@gmail.com" },
+    { "id": "emily", "name": "Emily", "email": "protectont@gmail.com" }
+  ],
+  "territories": [
+    {
+      "id": "aurora-newmarket",
+      "area": "Aurora / Newmarket / Keswick",
+      "leadId": "dawn",
+      "hubName": "James Eriksen",
+      "keywords": ["aurora", "newmarket", "keswick", "east gwillimbury"]
+    },
+    {
+      "id": "bradford",
+      "area": "Bradford",
+      "leadId": "dawn",
+      "hubName": "Laura Andrews",
+      "hubPhone": "416-462-3112",
+      "keywords": ["bradford"]
+    },
+    {
+      "id": "ottawa",
+      "area": "Ottawa / Orleans",
+      "leadId": "dawn",
+      "hubName": "Terry H Lambert",
+      "hubPhone": "613-720-0160",
+      "keywords": ["ottawa", "orleans", "carleton place", "carlton place", "kanata", "nepean"]
+    },
+    {
+      "id": "richmond-hill",
+      "area": "Richmond Hill",
+      "leadId": "dawn",
+      "hubName": "Kimberly Morrison",
+      "keywords": ["richmond hill"]
+    },
+    {
+      "id": "london",
+      "area": "London",
+      "leadId": "dawn",
+      "hubName": "Judy Finch",
+      "keywords": ["london"]
+    },
+    {
+      "id": "st-thomas",
+      "area": "St Thomas",
+      "leadId": "dawn",
+      "hubName": "Shari Bishop",
+      "keywords": ["st thomas", "st. thomas"]
+    },
+    {
+      "id": "sarnia",
+      "area": "Sarnia",
+      "leadId": "dawn",
+      "hubName": "Ray Devine",
+      "keywords": ["sarnia", "forest"]
+    },
+    {
+      "id": "strathroy",
+      "area": "Strathroy",
+      "leadId": "dawn",
+      "hubName": "April Graham",
+      "keywords": ["strathroy"]
+    },
+    {
+      "id": "scarborough",
+      "area": "Scarborough",
+      "leadId": "dawn",
+      "hubName": "Sue Brady",
+      "keywords": ["scarborough"]
+    },
+    {
+      "id": "toronto",
+      "area": "Toronto",
+      "leadId": "dawn",
+      "hubName": "Irene Troicky",
+      "keywords": ["toronto", "etobicoke", "north york", "east york", "annette", "keele", "dundas", "coxwell", "beaches"]
+    },
+    {
+      "id": "windsor",
+      "area": "Windsor",
+      "leadId": "dawn",
+      "hubName": "Maggie Maja",
+      "keywords": ["windsor"]
+    },
+    {
+      "id": "barrie",
+      "area": "Barrie",
+      "leadId": "dawn",
+      "hubName": "Jodie Waugh",
+      "keywords": ["barrie"]
+    },
+    {
+      "id": "orillia",
+      "area": "Orillia",
+      "leadId": "dawn",
+      "hubName": "Bonnie French",
+      "keywords": ["orillia"]
+    },
+    {
+      "id": "midland-muskoka",
+      "area": "Midland / Muskoka",
+      "leadId": "dawn",
+      "hubName": "Mary Brodeur",
+      "keywords": ["midland", "gravenhurst", "muskoka", "huntsville"]
+    },
+    {
+      "id": "georgian-bay",
+      "area": "Georgian Bay / Meaford / Collingwood",
+      "leadId": "dawn",
+      "hubName": "Dawn Smith",
+      "keywords": ["wasaga", "meaford", "collingwood", "georgian bay"]
+    },
+    {
+      "id": "wiarton",
+      "area": "Wiarton",
+      "leadId": "dawn",
+      "hubName": "Sharon",
+      "keywords": ["wiarton"]
+    },
+    {
+      "id": "goderich-huron",
+      "area": "Goderich / Huron County",
+      "leadId": "dawn",
+      "hubName": "Marty Bond",
+      "keywords": ["goderich", "blyth", "kincardine", "kinburn", "huron"]
+    },
+    {
+      "id": "port-hope",
+      "area": "Port Hope",
+      "leadId": "dawn",
+      "hubName": "Linda MacKenzie Nicholas",
+      "keywords": ["port hope"]
+    },
+    {
+      "id": "caledon",
+      "area": "Caledon",
+      "leadId": "dawn",
+      "hubName": "Unassigned — contact Dawn",
+      "keywords": ["caledon"]
+    },
+    {
+      "id": "peterborough",
+      "area": "Peterborough / Lindsay",
+      "leadId": "mary-jane",
+      "hubName": "Bonnie French",
+      "keywords": ["peterborough", "lindsay"]
+    },
+    {
+      "id": "guelph",
+      "area": "Guelph",
+      "leadId": "mary-jane",
+      "hubName": "Julie McCann",
+      "keywords": ["guelph"]
+    },
+    {
+      "id": "brampton",
+      "area": "Brampton",
+      "leadId": "mary-jane",
+      "hubName": "Laurie Lepp",
+      "keywords": ["brampton"]
+    },
+    {
+      "id": "owen-sound",
+      "area": "Owen Sound",
+      "leadId": "mary-jane",
+      "hubName": "Sharon / Lori Campbell",
+      "keywords": ["owen sound"]
+    },
+    {
+      "id": "oakville",
+      "area": "Oakville",
+      "leadId": "mary-jane",
+      "hubName": "Lynn Stafford",
+      "keywords": ["oakville"]
+    },
+    {
+      "id": "port-credit",
+      "area": "Port Credit / Mississauga",
+      "leadId": "mary-jane",
+      "hubName": "Mary Jane",
+      "keywords": ["port credit", "mississauga"]
+    },
+    {
+      "id": "caledonia-haldimand",
+      "area": "Caledonia / Haldimand",
+      "leadId": "mary-jane",
+      "hubName": "Julie Lopinski Lenko",
+      "keywords": ["caledonia", "haldimand"]
+    },
+    {
+      "id": "niagara-vineland",
+      "area": "Niagara / Vineland",
+      "leadId": "mary-jane",
+      "hubName": "Sue Hotte",
+      "keywords": ["niagara", "vineland", "st catharines", "st. catharines", "welland"]
+    },
+    {
+      "id": "hamilton",
+      "area": "Hamilton / Dundas",
+      "leadId": "martha",
+      "hubName": "Martha Howell",
+      "keywords": ["hamilton", "dundas", "ancaster", "stoney creek"]
+    },
+    {
+      "id": "kitchener",
+      "area": "Kitchener / Waterloo",
+      "leadId": "martha",
+      "hubName": "Lisa Mac",
+      "keywords": ["kitchener", "waterloo", "kitcheer"]
+    },
+    {
+      "id": "kemptville",
+      "area": "Kemptville",
+      "leadId": "emily",
+      "hubName": "Emily",
+      "keywords": ["kemptville"]
+    },
+    {
+      "id": "pickering",
+      "area": "Pickering",
+      "leadId": "emily",
+      "hubName": "Sue Palmer",
+      "keywords": ["pickering"]
+    },
+    {
+      "id": "bowmanville",
+      "area": "Bowmanville / Clarington",
+      "leadId": "emily",
+      "hubName": "Kristina Erin",
+      "keywords": ["bowmanville", "clarington"]
+    },
+    {
+      "id": "whitby",
+      "area": "Whitby / Oshawa",
+      "leadId": "emily",
+      "hubName": "Kate Campbell",
+      "keywords": ["whitby", "oshawa"]
+    },
+    {
+      "id": "picton",
+      "area": "Picton / Prince Edward County",
+      "leadId": "emily",
+      "hubName": "Penny Morrison",
+      "keywords": ["picton", "prince edward"]
+    },
+    {
+      "id": "kingston",
+      "area": "Kingston / Lansdowne",
+      "leadId": "emily",
+      "hubName": "Gaelyn",
+      "keywords": ["kingston", "landsdowne", "gananoque"]
+    }
+  ]
+}

@@ -78,6 +78,7 @@ ledger/data/*
 !ledger/data/
 !ledger/data/protests.ts
 !ledger/data/protest-submissions-historical.xlsx
+!ledger/data/sign-territories.json
 # Allow ProtectOnt pre-built data (receipts page needs /data/processed/*.json on protectont.ca)
 !static/protectont/data/
 !static/protectont/data/**

@@ -30,6 +30,9 @@ register_poster_routes(app)
 from submissions_admin import register_submissions_admin_routes  # noqa: E402
 register_submissions_admin_routes(app)
 
+from sign_delivery_admin import register_sign_delivery_routes  # noqa: E402
+register_sign_delivery_routes(app)
+
 from stories_routes import register_stories_routes  # noqa: E402
 register_stories_routes(app)
 

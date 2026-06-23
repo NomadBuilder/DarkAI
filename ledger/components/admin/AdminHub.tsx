@@ -7,6 +7,7 @@ import EventsAdminPage from '@/components/admin/EventsAdminSection'
 import FlyerAdminPage from '@/components/admin/FlyerAdminSection'
 import FormAdminPage from '@/components/admin/FormAdminSection'
 import SubmissionsAdminPage from '@/components/admin/SubmissionsAdminSection'
+import SignDeliveriesAdminPage from '@/components/admin/SignDeliveriesAdminSection'
 
 export const ADMIN_SECTIONS = [
   {
@@ -34,6 +35,13 @@ export const ADMIN_SECTIONS = [
     id: 'submissions',
     label: 'Sign-ups & orders',
     blurb: 'View join form sign-ups, Stripe payments, and print fulfillment.',
+    viewHref: '/join',
+    viewLabel: 'View /join',
+  },
+  {
+    id: 'sign-deliveries',
+    label: 'Sign deliveries',
+    blurb: 'Track yard sign requests — who to contact, paid, and delivered.',
     viewHref: '/join',
     viewLabel: 'View /join',
   },
@@ -107,10 +115,10 @@ function AdminHubInner() {
 
       <div
         className={`mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 ${
-          section === 'submissions' ? 'max-w-6xl' : 'max-w-3xl'
+          section === 'submissions' || section === 'sign-deliveries' ? 'max-w-6xl' : 'max-w-3xl'
         }`}
       >
-        {section !== 'submissions' && (
+        {section !== 'submissions' && section !== 'sign-deliveries' && (
           <div className="flex flex-wrap items-start justify-between gap-3 mb-6 pb-6 border-b border-slate-200">
             <div>
               <h2 className="text-lg font-medium text-slate-900">{active.label}</h2>
@@ -131,6 +139,7 @@ function AdminHubInner() {
         {section === 'flyers' && <FlyerAdminPage embedded />}
         {section === 'join-form' && <FormAdminPage embedded />}
         {section === 'submissions' && <SubmissionsAdminPage embedded />}
+        {section === 'sign-deliveries' && <SignDeliveriesAdminPage embedded />}
       </div>
     </div>
   )

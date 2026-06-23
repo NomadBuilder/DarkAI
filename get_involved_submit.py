@@ -277,10 +277,15 @@ def process_get_involved_submission(data: dict[str, Any]) -> tuple[bool, str | N
     from get_involved_store import append_submission
 
     try:
-        append_submission(data)
+        record = append_submission(data)
     except OSError as exc:
         logger.exception("Get-involved local save failed")
         return False, f"Could not save sign-up: {exc}"
+
+    if record.get("roleId") == "yard-sign":
+        from sign_delivery_admin import send_sign_delivery_alert
+
+        send_sign_delivery_alert(record)
 
     sheet_url = _sheet_submit_url()
     if sheet_url:
