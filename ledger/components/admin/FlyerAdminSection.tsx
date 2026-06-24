@@ -11,6 +11,7 @@ import {
   type FlyersFile,
   type FlyerSection,
 } from '@/lib/flyers'
+import { flyerPath } from '@/lib/flyer-routes'
 import {
   DEFAULT_FLYER_THEME,
   resolveFlyerTheme,
@@ -270,7 +271,7 @@ function FlyerEditor({
       <div className="flex flex-wrap items-center gap-3 pb-2">
         {flyer.slug && flyer.published && (
           <Link
-            href={`/flyer/${flyer.slug}`}
+            href={flyerPath(flyer.slug)}
             target="_blank"
             className="inline-flex items-center gap-1.5 rounded-lg bg-violet-100 px-3 py-1.5 text-sm font-medium text-violet-800 hover:bg-violet-200 transition-colors"
           >
@@ -716,15 +717,15 @@ export default function FlyerAdminPage({ embedded = false }: { embedded?: boolea
               <p className="text-xs uppercase tracking-[0.35em] text-violet-200/90 mb-2 font-medium">Flyer editor</p>
               <h1 className="text-2xl sm:text-3xl font-light tracking-tight">Printable flyers</h1>
               <p className="text-slate-300/95 font-light mt-2 max-w-lg text-sm sm:text-base">
-                Edit text and images for issue flyers at <strong className="font-normal">/flyer</strong>, then publish.
+                Edit text and images for issue flyers at <strong className="font-normal">/flyers</strong>, then publish.
               </p>
             </div>
             <Link
-              href="/flyer"
+              href={flyerPath()}
               target="_blank"
               className="text-sm text-violet-200 hover:text-white underline underline-offset-4"
             >
-              View /flyer →
+              View /flyers →
             </Link>
           </div>
         </div>

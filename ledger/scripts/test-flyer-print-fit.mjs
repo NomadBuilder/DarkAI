@@ -200,7 +200,7 @@ async function main() {
 
   try {
     for (const slug of slugs) {
-      const url = `${baseUrl}/flyer/${slug}/`
+      const url = `${baseUrl}/flyers/${slug}/`
       await page.goto(url, { waitUntil: 'domcontentloaded' })
       await page.waitForSelector('.flyer-sheet', { state: 'attached', timeout: 30000 })
       await page.waitForLoadState('networkidle').catch(() => {})

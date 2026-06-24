@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import type { Flyer } from '@/lib/flyers'
 import { toFlyerDisplayCase } from '@/lib/flyer-display'
+import { flyerPath } from '@/lib/flyer-routes'
 import FlyerCardPreview from '@/components/flyers/FlyerCardPreview'
 
 type Props = {
@@ -26,7 +27,7 @@ export default function FlyerCard({ flyer, index = 0, featured = false }: Props)
   return (
     <motion.div {...fade} transition={{ duration: 0.45, delay: index * 0.05 }}>
       <Link
-        href={`/flyer/${flyer.slug}`}
+        href={flyerPath(flyer.slug)}
         className={`group block h-full overflow-hidden rounded-2xl border bg-white transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9f1239] ${
           featured
             ? 'border-[#2E4A6B]/25 shadow-md shadow-slate-900/5 hover:border-[#2E4A6B]/40 hover:shadow-lg'

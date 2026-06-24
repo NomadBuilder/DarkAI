@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { flyerPath, flyerPublicIndexUrl } from '@/lib/flyer-routes'
 import type { ReactNode } from 'react'
 
 type Props = {
@@ -63,8 +64,8 @@ export default function MethodologyContent({ headingLevel = 'h2' }: Props) {
           <li>
             <strong className="font-normal">Printable flyers</strong> — letter-size community materials with
             sourced bullets on{' '}
-            <Link href="/flyer" className="text-blue-600 hover:text-blue-800 underline">
-              protectont.ca/flyer
+            <Link href={flyerPath()} className="text-blue-600 hover:text-blue-800 underline">
+              {flyerPublicIndexUrl().replace('https://', '')}
             </Link>
           </li>
           <li>

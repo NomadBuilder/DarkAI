@@ -21,8 +21,8 @@ export const ADMIN_SECTIONS = [
     id: 'flyers',
     label: 'Printable flyers',
     blurb: 'Create and edit letter-size issue flyers.',
-    viewHref: '/flyer',
-    viewLabel: 'View /flyer',
+    viewHref: '/flyers',
+    viewLabel: 'View /flyers',
   },
   {
     id: 'join-form',

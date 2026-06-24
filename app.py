@@ -502,6 +502,12 @@ def protect_ontario_and_ledger_redirect():
             tuple(f"{p}/" for p in legacy_join_paths)
         ):
             return redirect("https://protectont.ca/join/", code=301)
+        if path == "flyer" or path == "flyer/":
+            return redirect("https://protectont.ca/flyers/", code=301)
+        if path.startswith("flyer/"):
+            slug = path[6:].strip("/").split("/")[0]
+            if slug and not slug.startswith("_"):
+                return redirect(f"https://protectont.ca/flyers/{slug}/", code=301)
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")

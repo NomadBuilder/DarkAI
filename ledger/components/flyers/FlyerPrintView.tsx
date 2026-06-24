@@ -6,6 +6,7 @@ import type { Flyer, FlyerShared } from '@/lib/flyers'
 import FlyerSheetHeader from '@/components/flyers/FlyerSheetHeader'
 import FlyerShareActions from '@/components/flyers/FlyerShareActions'
 import { footerGradient, resolveFlyerTheme } from '@/lib/flyer-theme'
+import { FLYERS_INDEX_PATH } from '@/lib/flyer-routes'
 import { bindFlyerPrintTitleCleanup } from '@/lib/print-flyer'
 
 const FLYER_QR_IMAGE = '/flyers/protectont-qr.png'
@@ -21,7 +22,7 @@ type FlyerPrintViewProps = {
 export default function FlyerPrintView({
   flyer,
   shared,
-  backHref = '/flyer',
+  backHref = FLYERS_INDEX_PATH,
   showToolbar = true,
 }: FlyerPrintViewProps) {
   useEffect(() => bindFlyerPrintTitleCleanup(), [])
