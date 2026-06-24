@@ -413,4 +413,122 @@ export const defaultFlyerEntries: Flyer[] = [
     calloutBody: '',
     published: true,
   },
+  {
+    id: 'ontario-place',
+    slug: 'ontario-place',
+    title: 'ONTARIO PLACE',
+    subtitle: 'PUBLIC WATERFRONT · 95-YEAR PRIVATE LEASE',
+    intro:
+      'Ontario Place is provincially owned waterfront on Lake Ontario — not sold off, but leased to a private operator for generations. Unlike the reversed Greenbelt carve-out, this deal is still moving ahead: a commercial thermal spa and waterpark under a 95-year lease, with less public environmental scrutiny than similar-scale projects elsewhere.',
+    heroImageUrl: '',
+    highlights: ['95-year Therme lease', 'Bill 5 · less EBR scrutiny', 'Still moving ahead'],
+    sections: [
+      {
+        title: 'What is being proposed',
+        lead: 'Source: Ontario.ca final designs; CTV News on Ontario Place designs (2025).',
+        bullets: [
+          'Ontario Place remains provincially owned waterfront — public land handed to Therme Canada under a 95-year lease.',
+          'Therme would operate a large thermal spa and waterpark with paid day passes on a site many Torontonians treat as public waterfront.',
+          'The province promotes rebuilt free parkland on the West Island — beaches, trails, and open space — alongside the commercial complex.',
+          'A 2025 redesign roughly halved the spa footprint and lowered building heights; critics say the core lease structure is unchanged.',
+          'A generation-long private hold is hard to take back — far longer than most political cycles or council terms.',
+        ],
+      },
+      {
+        title: 'Bill 5 and the Environmental Bill of Rights',
+        lead: 'Source: Legislative Assembly of Ontario — Bill 5 (ola.org).',
+        bullets: [
+          'Ontario Place redevelopment is carved out from normal Environmental Bill of Rights participation requirements.',
+          'Residents get less notice and less recourse than for comparably large projects elsewhere in the province.',
+          'Bill 5 stacks with the lease model: streamline first, consult later — the same playbook critics tie to the Greenbelt scandal.',
+          'Weakened public participation makes it harder to challenge harms before construction locks in.',
+          'More on Bill 5 rollbacks: protectont.ca/wildlife · protectont.ca/public-land',
+        ],
+      },
+      {
+        title: 'Why this fight matters now',
+        lead: 'Unlike the Greenbelt, this deal has not been reversed — it is one of the most consequential live fights over public land in Ontario.',
+        bullets: [
+          'Public pressure reversed the Greenbelt carve-out in 2023; whether the same happens here depends on waterfront organizing.',
+          'Critics argue the public gets less waterfront control and less recourse than the scale of the project deserves.',
+          'Jobs and tourism talking points do not replace democratic accountability on public commons.',
+          'Waterfront land in Toronto belongs to the public — not a single term of government.',
+          'Full background: protectont.ca/public-land#ontario-place',
+        ],
+      },
+      {
+        title: 'Questions to ask locally',
+        lead: 'Use at community boards, council meetings, and MPP offices.',
+        bullets: [
+          'Who profits from a 95-year lease — and who pays maintenance and environmental costs?',
+          'What public access and cultural programming is guaranteed in writing for the full lease term?',
+          'Why exempt Ontario Place from normal Environmental Bill of Rights scrutiny?',
+          'Will your MPP support pausing the lease until independent public review is complete?',
+          'Take action: protectont.ca/take-action · protectont.ca/protests',
+        ],
+      },
+    ],
+    calloutTitle: '',
+    calloutBody: '',
+    published: true,
+  },
+  {
+    id: 'ring-of-fire',
+    slug: 'ring-of-fire',
+    title: 'RING OF FIRE',
+    subtitle: 'SPECIAL ECONOMIC ZONES · BILL 5',
+    intro:
+      'Bill 5 creates "special economic zones" where trusted proponents and designated projects can be exempt from environmental and municipal rules that normally apply. The first zone was declared in the Ring of Fire — peatlands and rivers on Treaty 9 territory where several First Nations have not consented to development at the pace or scale proposed.',
+    heroImageUrl: '',
+    highlights: ['Bill 5 SEZ Act', 'Treaty 9 territory', 'Mining & roads'],
+    sections: [
+      {
+        title: 'Special economic zones — what changed',
+        lead: 'Source: Legislative Assembly of Ontario — Bill 5 (ola.org); CBC on Ring of Fire SEZ (2025).',
+        bullets: [
+          'Bill 5\'s Special Economic Zones Act lets the province designate areas where projects can bypass rules that normally apply — including environmental and municipal requirements.',
+          'The first special economic zone was declared in the Ring of Fire, a region of peatlands and rivers on Treaty 9 territory.',
+          'SEZs are not empty land — they are home territories, traplines, burial sites, and watersheds.',
+          'Once a zone is declared, local democratic control and standard environmental review are permanently weakened.',
+          'Ontario Nature and the David Suzuki Foundation have called for repeal of Bill 5\'s environmental rollbacks.',
+        ],
+      },
+      {
+        title: 'Ring of Fire development',
+        lead: 'Source: CBC; The Canadian Encyclopedia — Ring of Fire; Bill 5 Mining Act amendments.',
+        bullets: [
+          'The Ring of Fire is promoted as a critical minerals hub — roads, power lines, and mines across the Far North.',
+          'Building infrastructure affects water flowing south, caribou habitat, and communities that depend on both.',
+          'Bill 5 changes the Mining Act to prioritize protecting "Ontario\'s economy" and to speed approvals.',
+          'The Crown has a legal duty to consult when Indigenous rights may be affected — consultation is not the same as consent.',
+          'Several First Nations have not consented to development at the current pace or scale.',
+        ],
+      },
+      {
+        title: 'Treaty rights and accountability',
+        lead: 'Source: UN Declaration on the Rights of Indigenous Peoples (UNDRIP); Ontario\'s Action Plan on UNDRIP.',
+        bullets: [
+          'Free, prior, and informed consent is a treaty obligation and human rights standard — not optional consultation after decisions are made.',
+          'Bill 5 extinguishes certain causes of action — limiting communities\' ability to seek redress when harmed.',
+          'Weakened species protection under Bill 5 compounds risks to caribou, wetlands, and northern river systems.',
+          'Water contamination risk in peatland watersheds affects downstream communities for generations.',
+          'Full background: protectont.ca/indigenous-rights · protectont.ca/wildlife',
+        ],
+      },
+      {
+        title: 'What you can do',
+        lead: 'Stand with Indigenous nations leading on their own terms.',
+        bullets: [
+          'Contact your MPP: demand repeal of Bill 5 and an end to special economic zones without consent.',
+          'Listen to and share statements from affected First Nations — follow their leadership, not provincial talking points.',
+          'Support nation-led environmental monitoring and treaty education in your community.',
+          'Join rallies where Indigenous nations and allies are making the demand visible: protectont.ca/protests',
+          'More: protectont.ca/take-action · protectont.ca/flyer/indigenous-rights',
+        ],
+      },
+    ],
+    calloutTitle: '',
+    calloutBody: '',
+    published: true,
+  },
 ]
