@@ -131,10 +131,7 @@ export default function FlyerIndexPage() {
           {...fade}
           className="rounded-2xl border border-[#2E4A6B]/25 bg-gradient-to-br from-slate-950 via-[#152a45] to-[#2E4A6B] p-8 sm:p-10 text-white shadow-lg"
         >
-          <h2 className="text-2xl sm:text-3xl font-light leading-tight mb-3">Ready to take action?</h2>
-          <p className="text-base sm:text-lg text-slate-200/95 font-light leading-relaxed max-w-2xl mb-8">
-            Download flyers and find a local protest.
-          </p>
+          <h2 className="text-2xl sm:text-3xl font-light leading-tight mb-8">Ready to take action?</h2>
           <div className="flex flex-wrap gap-3 sm:gap-4">
             <Link
               href="/protests#event-list"
