@@ -61,10 +61,11 @@ const aboutDropdownItems: NavItem[] = [
 ]
 
 const resourcesDropdownItems: NavItem[] = [
-  { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
-  { id: 'social-ideas', label: 'Social post ideas', href: '/social-ideas' },
-  { id: 'chants', label: 'Chant Bank', href: '/chants' },
+  { id: 'flyers', label: 'Printable flyers', href: '/flyers' },
   { id: 'materials', label: 'Materials', href: '/materials' },
+  { id: 'social-ideas', label: 'Social post ideas', href: '/social-ideas' },
+  { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
+  { id: 'chants', label: 'Chant Bank', href: '/chants' },
 ]
 
 const navItems: NavItem[] = [

@@ -113,7 +113,14 @@ export function parseSocialPostIdeasFile(data: unknown): SocialPostIdeasFile {
     .filter((x): x is SocialPostIdea => x !== null)
 
   if (version < SOCIAL_IDEAS_VERSION) {
-    return { version: SOCIAL_IDEAS_VERSION, ideas: ideas.length ? ideas.map(migrateIdea) : base.ideas }
+    const byId = new Map<string, SocialPostIdea>()
+    for (const item of ideas.length ? ideas.map(migrateIdea) : base.ideas) {
+      byId.set(item.id, item)
+    }
+    for (const d of SOCIAL_POST_IDEAS) {
+      if (!byId.has(d.id)) byId.set(d.id, { ...d })
+    }
+    return { version: SOCIAL_IDEAS_VERSION, ideas: [...byId.values()] }
   }
 
   return { version: SOCIAL_IDEAS_VERSION, ideas: ideas.length ? ideas : base.ideas }

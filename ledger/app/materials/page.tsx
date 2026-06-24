@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import TopNavigation from '../../components/TopNavigation'
+import ResourceNextSteps from '../../components/ResourceNextSteps'
 
 const fade = {
   initial: { opacity: 0, y: 20 },
@@ -53,11 +54,26 @@ const orderMaterials = [
   },
 ]
 
+const tablingAndDoors = [
+  {
+    title: 'Printable flyers',
+    description: 'Per-issue PDFs plus the Community Action Pack — print for doors, boards, and events.',
+    href: '/flyers',
+    cta: 'Browse flyers',
+  },
+  {
+    title: 'Social post ideas',
+    description: 'Copy-ready captions with #FightFord — pair with a flyer when you share online.',
+    href: '/social-ideas',
+    cta: 'Get post ideas',
+  },
+]
+
 const protestPrep = [
   { title: 'Free sign downloads', href: '/join#download-a-sign', cta: 'Download on Join' },
   { title: 'Message guide', href: '/message-guide', cta: 'Read guide' },
   { title: 'Chant bank', href: '/chants', cta: 'Browse chants' },
-  { title: 'June 27 protests', href: '/protests#event-list', cta: 'Find your city' },
+  { title: 'Find a protest', href: '/protests#event-list', cta: 'See events' },
 ]
 
 export default function MaterialsPage() {
@@ -85,6 +101,26 @@ export default function MaterialsPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 space-y-12">
+        <motion.section {...fade}>
+          <h2 className="text-2xl font-light text-slate-900 mb-2">Tabling &amp; door knocking</h2>
+          <p className="text-sm text-slate-600 font-light mb-5 max-w-2xl">
+            Start with a printable flyer or a ready-made social post — then bring signs and chants to the event.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {tablingAndDoors.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-[#2E4A6B]/30 hover:shadow-md transition-all"
+              >
+                <h3 className="text-lg font-light text-slate-900 group-hover:text-[#2E4A6B]">{item.title}</h3>
+                <p className="mt-2 flex-1 text-sm text-slate-600 font-light leading-relaxed">{item.description}</p>
+                <span className="mt-4 text-sm text-[#2E4A6B] font-medium">{item.cta} →</span>
+              </Link>
+            ))}
+          </div>
+        </motion.section>
+
         <motion.section {...fade}>
           <h2 className="text-2xl font-light text-slate-900 mb-2">Going to a protest?</h2>
           <p className="text-sm text-slate-600 font-light mb-5 max-w-2xl">
@@ -142,21 +178,7 @@ export default function MaterialsPage() {
           </div>
         </motion.section>
 
-        <motion.section
-          {...fade}
-          className="rounded-2xl border border-[#2E4A6B]/20 bg-gradient-to-br from-[#2E4A6B]/5 to-white p-6 sm:p-8 text-center"
-        >
-          <h2 className="text-xl font-light text-slate-900 mb-2">Want organizers to reach you?</h2>
-          <p className="text-sm text-slate-600 font-light mb-5 max-w-lg mx-auto">
-            Request a sign, host a pickup hub, or volunteer through one form.
-          </p>
-          <Link
-            href="/join"
-            className="inline-flex items-center justify-center rounded-lg bg-[#2E4A6B] px-6 py-3 text-sm font-medium text-white hover:bg-[#243d56] transition-colors"
-          >
-            Join us
-          </Link>
-        </motion.section>
+        <ResourceNextSteps />
       </main>
     </div>
   )

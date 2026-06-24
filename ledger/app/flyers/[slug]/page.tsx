@@ -3,10 +3,25 @@ import flyersData from '../../../public/data/flyers.json'
 import FlyerPrintView from '@/components/flyers/FlyerPrintView'
 import { flyerPath } from '@/lib/flyer-routes'
 import { getFlyerBySlug, getPublishedFlyers, parseFlyersFile } from '@/lib/flyers'
+import type { Metadata } from 'next'
+import { buildPageMetadata } from '@/lib/page-metadata'
 
 export function generateStaticParams() {
   const file = parseFlyersFile(flyersData)
   return getPublishedFlyers(file).map((f) => ({ slug: f.slug }))
+}
+
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+  const file = parseFlyersFile(flyersData)
+  const flyer = getFlyerBySlug(file, params.slug)
+  if (!flyer) {
+    return buildPageMetadata('Flyer not found — Protect Ontario', 'This printable flyer could not be found.')
+  }
+  const title = `${flyer.title} — Printable flyer | Protect Ontario`
+  const description =
+    flyer.intro?.trim().slice(0, 155) ||
+    `Print and share this Protect Ontario flyer on ${flyer.title.toLowerCase()}.`
+  return buildPageMetadata(title, description)
 }
 
 export default function FlyerSlugPage({ params }: { params: { slug: string } }) {

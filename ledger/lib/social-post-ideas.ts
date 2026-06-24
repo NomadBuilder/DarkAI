@@ -8,6 +8,10 @@ export type FordIssue =
   | 'water'
   | 'transparency'
   | 'accountability'
+  | 'ontario-place'
+  | 'ring-of-fire'
+  | 'foi'
+  | 'bike-lanes'
 
 export type SocialPostIdea = {
   id: string
@@ -27,7 +31,7 @@ export type SocialPostIdea = {
 }
 
 export const FIGHT_FORD_HASHTAG = '#FightFord'
-export const SOCIAL_IDEAS_VERSION = 2
+export const SOCIAL_IDEAS_VERSION = 3
 
 export const ISSUE_LABELS: Record<FordIssue, string> = {
   healthcare: 'Healthcare',
@@ -37,6 +41,10 @@ export const ISSUE_LABELS: Record<FordIssue, string> = {
   water: 'Water',
   transparency: 'Transparency & receipts',
   accountability: 'Accountability',
+  'ontario-place': 'Ontario Place',
+  'ring-of-fire': 'Ring of Fire',
+  foi: 'Freedom of information',
+  'bike-lanes': 'Bike lanes & street safety',
 }
 
 export const PLATFORM_LABELS: Record<SocialPlatform, string> = {
@@ -240,6 +248,92 @@ export const SOCIAL_POST_IDEAS: SocialPostIdea[] = [
     headline: 'ISSUE OF THE WEEK',
     caption: cap(
       'This week: healthcare waits are a policy choice—not bad luck. Share one fact with someone who votes in Ontario.'
+    ),
+  },
+  {
+    id: 'op-waterfront-graphic',
+    title: 'Ontario Place',
+    issue: 'ontario-place',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'PUBLIC WATERFRONT ≠ PRIVATE SPA',
+    caption: cap(
+      'Ontario Place belongs to all of us—not a closed-door lease to a private operator. Share if you want the waterfront kept public.'
+    ),
+  },
+  {
+    id: 'op-story-poll',
+    title: 'Ontario Place',
+    issue: 'ontario-place',
+    format: 'story',
+    platforms: ['instagram', 'facebook'],
+    caption: cap(
+      'Would you trade public waterfront for a private spa? Most Ontarians say no. Print the flyer and talk to a neighbour.'
+    ),
+  },
+  {
+    id: 'rof-carousel',
+    title: 'Ring of Fire',
+    issue: 'ring-of-fire',
+    format: 'carousel',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'CONSENT COMES FIRST',
+    caption: cap(
+      'Major mining roads through the Ring of Fire need free, prior, and informed consent—not a rush past community objections. Swipe for the facts.'
+    ),
+  },
+  {
+    id: 'rof-meme-map',
+    title: 'Ring of Fire',
+    issue: 'ring-of-fire',
+    format: 'meme',
+    platforms: ['facebook', 'instagram', 'x'],
+    headline: 'WHO BENEFITS?',
+    caption: cap(
+      'Billions in public infrastructure for northern mining—while communities ask who decided and who pays. Hold the process accountable.'
+    ),
+  },
+  {
+    id: 'foi-receipt-graphic',
+    title: 'FOI',
+    issue: 'foi',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'bluesky'],
+    headline: 'SHOW THE RECORDS',
+    caption: cap(
+      'Rolling back freedom-of-information access makes closed-door deals easier. Ontarians deserve public records—not spin. Share the FOI flyer.'
+    ),
+  },
+  {
+    id: 'foi-text-ask',
+    title: 'FOI',
+    issue: 'foi',
+    format: 'text',
+    platforms: ['threads', 'x', 'bluesky'],
+    caption: cap(
+      'When FOI fees go up and deadlines slip, accountability disappears. Ask your MPP: who decided to weaken public records?'
+    ),
+  },
+  {
+    id: 'bike-lanes-graphic',
+    title: 'Bike lanes',
+    issue: 'bike-lanes',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'EVIDENCE OVER OVERRIDES',
+    caption: cap(
+      'Street safety policy should follow evidence—not get overridden for politics. Bike lanes save lives. Share if your city deserves safer streets.'
+    ),
+  },
+  {
+    id: 'bike-lanes-reel',
+    title: 'Bike lanes',
+    issue: 'bike-lanes',
+    format: 'reel',
+    platforms: ['instagram', 'tiktok', 'facebook'],
+    headline: 'SAFER STREETS NOW',
+    caption: cap(
+      'One fact: protected bike lanes reduce serious injuries. One ask: tell your councillor and MPP to stop overriding safety policy.'
     ),
   },
 ]

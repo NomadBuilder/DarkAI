@@ -20,6 +20,10 @@ const HEADLINES: Record<FordIssue, string[]> = {
   water: ['CLEAN WATER NOW', 'BILLS ARE TOO HIGH', 'WATER IS A RIGHT'],
   transparency: ['SHOW THE RECEIPTS', 'WHO BENEFITED?', 'FOLLOW THE MONEY'],
   accountability: ['FORD FAILED YOU', 'HOLD THEM ACCOUNTABLE', 'ONTARIO DESERVES BETTER'],
+  'ontario-place': ['PUBLIC WATERFRONT', 'NOT FOR SALE', 'KEEP ONTARIO PLACE PUBLIC'],
+  'ring-of-fire': ['CONSENT COMES FIRST', 'WHO DECIDED?', 'COMMUNITY NOT CORPORATE'],
+  foi: ['SHOW THE RECORDS', 'OPEN THE BOOKS', 'FOI IS A RIGHT'],
+  'bike-lanes': ['SAFER STREETS NOW', 'EVIDENCE OVER POLITICS', 'PROTECT BIKE LANES'],
 }
 
 const POSTS: Record<FordIssue, string[]> = {
@@ -57,6 +61,26 @@ const POSTS: Record<FordIssue, string[]> = {
     'Ford failed you on healthcare, schools, and public land. Yard signs and shares add up.',
     'Grassroots pressure works when we stay visible—one share, one conversation.',
     'Tell a friend what is at stake in Ontario this year. Then tag #FightFord.',
+  ],
+  'ontario-place': [
+    'Ontario Place belongs to all of us—not a closed-door lease. Share if you want the waterfront kept public.',
+    'Public waterfront, public trust. Print the flyer and talk to a neighbour.',
+    'Would you trade public lakefront for a private spa? Most Ontarians say no.',
+  ],
+  'ring-of-fire': [
+    'Major mining roads need free, prior, and informed consent—not a rush past community objections.',
+    'Billions in public infrastructure for northern mining—ask who decided and who pays.',
+    'Indigenous rights are not optional. Hold the process accountable.',
+  ],
+  foi: [
+    'Rolling back freedom-of-information access makes closed-door deals easier. Demand public records.',
+    'When FOI fees go up and deadlines slip, accountability disappears. Ask your MPP why.',
+    'Show the records—not spin. Share the FOI flyer with someone who cares about transparency.',
+  ],
+  'bike-lanes': [
+    'Street safety policy should follow evidence—not get overridden for politics. Bike lanes save lives.',
+    'Protected bike lanes reduce serious injuries. Tell your councillor to stop overriding safety policy.',
+    'Safer streets are a public good. Share if your city deserves evidence-based policy.',
   ],
 }
 

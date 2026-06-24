@@ -11,7 +11,7 @@ import {
   type SocialPlatform,
   type SocialPostIdea,
 } from '@/lib/social-post-ideas'
-import { ISSUE_RESOURCE_LINKS, resolveSocialPostImage } from '@/lib/social-post-images'
+import { ISSUE_FLYER_LINKS, ISSUE_RESOURCE_LINKS, resolveSocialPostImage } from '@/lib/social-post-images'
 
 const fieldClass =
   'w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E4A6B]/30'
@@ -109,6 +109,7 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
   const post = buildShareableCaption(idea)
   const image = resolveSocialPostImage(idea)
   const resource = ISSUE_RESOURCE_LINKS[idea.issue]
+  const flyer = ISSUE_FLYER_LINKS[idea.issue]
   const platformStr = idea.platforms.join(', ')
 
   return (
@@ -228,6 +229,14 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
           >
             {resource.label} →
           </Link>
+          {flyer ? (
+            <Link
+              href={flyer.href}
+              className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/25 text-[#2E4A6B] hover:bg-[#2E4A6B]/5"
+            >
+              {flyer.label} →
+            </Link>
+          ) : null}
         </div>
       </div>
     </article>

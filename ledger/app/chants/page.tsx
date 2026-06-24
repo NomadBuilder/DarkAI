@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import TopNavigation from '../../components/TopNavigation'
+import ResourceNextSteps from '../../components/ResourceNextSteps'
 
 type Chant = {
   id: string
@@ -138,6 +139,8 @@ export default function ChantBankPage() {
             </article>
           ))}
         </section>
+
+        <ResourceNextSteps />
       </main>
     </div>
   )

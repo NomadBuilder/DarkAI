@@ -479,7 +479,7 @@ Allow: /
 User-agent: Facebot
 Allow: /
 
-Sitemap: https://protectont.ca/
+Sitemap: https://protectont.ca/sitemap.xml
 """
 
 
