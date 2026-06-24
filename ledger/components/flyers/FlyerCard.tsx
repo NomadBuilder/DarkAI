@@ -22,8 +22,6 @@ const fade = {
 export default function FlyerCard({ flyer, index = 0, featured = false }: Props) {
   const title = toFlyerDisplayCase(flyer.title)
   const subtitle = toFlyerDisplayCase(flyer.subtitle)
-  const sectionCount = flyer.sections.length
-  const topics = flyer.sections.slice(0, 3).map((s) => s.title)
 
   return (
     <motion.div {...fade} transition={{ duration: 0.45, delay: index * 0.05 }}>
@@ -51,23 +49,7 @@ export default function FlyerCard({ flyer, index = 0, featured = false }: Props)
             )}
           </div>
 
-          <div className="mt-auto flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
-            <p className="text-xs text-slate-500 font-light">
-              {sectionCount > 0 ? (
-                <>
-                  {sectionCount} {sectionCount === 1 ? 'section' : 'sections'}
-                  {topics.length > 0 && (
-                    <span className="hidden sm:inline">
-                      {' '}
-                      · {topics.join(' · ')}
-                      {flyer.sections.length > 3 ? ' · …' : ''}
-                    </span>
-                  )}
-                </>
-              ) : (
-                'Sources included'
-              )}
-            </p>
+          <div className="mt-auto flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
             <span className="text-sm font-medium text-[#2E4A6B] group-hover:underline underline-offset-4">
               Open &amp; print →
             </span>
