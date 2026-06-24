@@ -138,8 +138,8 @@ body:has(.join-route) footer {
   display: none;
 }
 
-/* Flyer pages: hide site footer (screen + print) */
-body:has(.flyer-route) > footer {
+/* Flyer print preview: hide site footer (screen + print) */
+body:has(.flyer-print-route) > footer {
   display: none;
 }
 
@@ -154,7 +154,7 @@ body:has(.flyer-route) > footer {
     print-color-adjust: exact;
   }
 
-  body:has(.flyer-route) > footer {
+  body:has(.flyer-print-route) > footer {
     display: none !important;
   }
 

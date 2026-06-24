@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 
 function shouldHideFooter(pathname: string): boolean {
   if (/^\/(join|get-involved|flyer-admin|form-admin|admin-events|admin)\/?$/.test(pathname)) return true
-  return pathname.startsWith('/flyer')
+  return /^\/flyer\/[^/]+/.test(pathname)
 }
 
 export default function Footer() {
