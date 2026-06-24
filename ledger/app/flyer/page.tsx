@@ -133,15 +133,9 @@ export default function FlyerIndexPage() {
         >
           <h2 className="text-2xl sm:text-3xl font-light leading-tight mb-3">Ready to take action?</h2>
           <p className="text-base sm:text-lg text-slate-200/95 font-light leading-relaxed max-w-2xl mb-8">
-            Download flyers, learn how to talk to neighbours, and find a local protest.
+            Download flyers and find a local protest.
           </p>
           <div className="flex flex-wrap gap-3 sm:gap-4">
-            <Link
-              href="/message-guide"
-              className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm sm:text-base font-medium text-white hover:bg-white/15 transition-colors"
-            >
-              Message guide
-            </Link>
             <Link
               href="/protests#event-list"
               className="inline-flex items-center justify-center rounded-xl bg-[#f9e04c] px-6 py-3 text-sm sm:text-base font-bold text-[#1a1a1a] hover:bg-[#f5d84a] transition-colors"
