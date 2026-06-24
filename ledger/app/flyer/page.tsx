@@ -1,14 +1,46 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
+import { useEffect, useMemo, useState } from 'react'
 import TopNavigation from '@/components/TopNavigation'
-import FlyerCard from '@/components/flyers/FlyerCard'
+import FlyerCard, { FlyerCardSkeleton } from '@/components/flyers/FlyerCard'
 import { getPublicDataFile } from '@/utils/dataPath'
-import { getPublishedFlyers, parseFlyersFile } from '@/lib/flyers'
+import { getPublishedFlyers, parseFlyersFile, type Flyer } from '@/lib/flyers'
+
+const fade = {
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-40px' },
+  transition: { duration: 0.5 },
+}
+
+const printSteps = [
+  {
+    step: '1',
+    title: 'Pick a topic',
+    body: 'Start with the overview flyer or choose an issue you care about.',
+  },
+  {
+    step: '2',
+    title: 'Print or save PDF',
+    body: 'Open the flyer and use Print / Save as PDF. Enable background graphics.',
+  },
+  {
+    step: '3',
+    title: 'Share locally',
+    body: 'Post on community boards, share at events, or talk with neighbours.',
+  },
+]
+
+function partitionFlyers(flyers: Flyer[]) {
+  const overview = flyers.find((f) => f.slug === 'overview')
+  const rest = flyers.filter((f) => f.slug !== 'overview')
+  return { overview, rest }
+}
 
 export default function FlyerIndexPage() {
-  const [flyers, setFlyers] = useState<ReturnType<typeof getPublishedFlyers>>([])
+  const [flyers, setFlyers] = useState<Flyer[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -28,6 +60,8 @@ export default function FlyerIndexPage() {
     }
   }, [])
 
+  const { overview, rest } = useMemo(() => partitionFlyers(flyers), [flyers])
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
       <TopNavigation />
@@ -41,8 +75,8 @@ export default function FlyerIndexPage() {
             Printable awareness flyers
           </h1>
           <p className="text-lg text-slate-200/95 font-light max-w-2xl leading-relaxed">
-            Full letter-size (8.5″×11″) posters for community boards, doors, and events. Each issue flyer includes
-            detailed bullets and sources — open one, then print or save as PDF.
+            Letter-size posters with sourced facts on Ford government cuts, privatization, and accountability — free to
+            print and share.
           </p>
           <p className="mt-4 text-sm text-slate-300/90 font-light">
             Need yard signs or apparel?{' '}
@@ -58,34 +92,91 @@ export default function FlyerIndexPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 space-y-10">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 space-y-12">
+        <motion.section {...fade} aria-label="How to use these flyers">
+          <div className="grid gap-4 sm:grid-cols-3">
+            {printSteps.map((item) => (
+              <div
+                key={item.step}
+                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
+                <p className="text-xs font-medium text-[#9f1239] mb-2">Step {item.step}</p>
+                <h2 className="text-base font-medium text-slate-900 mb-1">{item.title}</h2>
+                <p className="text-sm text-slate-600 font-light leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </motion.section>
+
         {loading ? (
-          <p className="text-slate-600 font-light">Loading flyers…</p>
+          <section className="space-y-8" aria-busy="true" aria-label="Loading flyers">
+            <FlyerCardSkeleton featured />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FlyerCardSkeleton />
+              <FlyerCardSkeleton />
+              <FlyerCardSkeleton />
+              <FlyerCardSkeleton />
+            </div>
+          </section>
         ) : flyers.length === 0 ? (
           <p className="text-slate-600 font-light">No flyers published yet. Check back soon.</p>
         ) : (
-          <section>
-            <h2 className="text-2xl sm:text-3xl font-light text-slate-900 mb-2">Issue flyers</h2>
-            <p className="text-sm text-slate-600 font-light leading-relaxed max-w-2xl mb-5">
-              Choose a topic, preview the full poster, then use your browser&apos;s print dialog to save as PDF or send
-              to a printer.
-            </p>
-            <div className="grid gap-6 sm:grid-cols-2">
-              {flyers.map((flyer, i) => (
-                <FlyerCard key={flyer.id} flyer={flyer} index={i} />
-              ))}
-            </div>
-          </section>
+          <>
+            {overview && (
+              <motion.section {...fade}>
+                <FlyerCard flyer={overview} featured index={0} />
+              </motion.section>
+            )}
+
+            {rest.length > 0 && (
+              <motion.section {...fade}>
+                <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 mb-5">
+                  <div>
+                    <h2 className="text-2xl font-light text-slate-900">Issue flyers</h2>
+                    <p className="text-sm text-slate-600 font-light mt-1">
+                      {rest.length} topic{rest.length === 1 ? '' : 's'} — each with bullets and sources for printing.
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {rest.map((flyer, i) => (
+                    <FlyerCard key={flyer.id} flyer={flyer} index={i} />
+                  ))}
+                </div>
+              </motion.section>
+            )}
+          </>
         )}
 
-        <section className="max-w-3xl rounded-2xl border border-slate-200 bg-white p-6 md:p-8">
-          <h2 className="text-lg font-medium text-slate-900 mb-3">How to print</h2>
-          <ul className="space-y-3 text-sm text-slate-600 font-light leading-relaxed list-disc pl-5">
-            <li>Open a flyer and click <strong className="font-medium text-slate-800">Print / Save as PDF</strong>.</li>
-            <li>Use letter size (8.5″×11″) and enable background graphics for best results.</li>
-            <li>Post on community boards, share at events, or leave with neighbours — sources are included on each flyer.</li>
-          </ul>
-        </section>
+        <motion.section
+          {...fade}
+          className="rounded-2xl border border-[#2E4A6B]/20 bg-gradient-to-br from-[#2E4A6B]/5 to-white p-6 sm:p-8"
+        >
+          <h2 className="text-xl font-light text-slate-900 mb-2">Going door to door or tabling?</h2>
+          <p className="text-sm text-slate-600 font-light leading-relaxed max-w-2xl mb-5">
+            Pair a flyer with our message guide and take-action tools so neighbours know what to do next.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/message-guide"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-800 hover:border-slate-300 transition-colors"
+            >
+              Message guide
+            </Link>
+            <Link
+              href="/take-action"
+              className="inline-flex items-center justify-center rounded-lg bg-[#2E4A6B] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#243d56] transition-colors"
+            >
+              Take action
+            </Link>
+            <Link
+              href="/join"
+              className="inline-flex items-center justify-center rounded-lg border border-[#2E4A6B]/30 px-5 py-2.5 text-sm font-medium text-[#2E4A6B] hover:bg-[#2E4A6B]/5 transition-colors"
+            >
+              Join us
+            </Link>
+          </div>
+        </motion.section>
       </main>
     </div>
   )
