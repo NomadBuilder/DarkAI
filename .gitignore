@@ -11,6 +11,10 @@ build/
 develop-eggs/
 dist/
 downloads/
+!ledger/public/downloads/
+!ledger/public/downloads/**
+!static/protectont/downloads/
+!static/protectont/downloads/**
 eggs/
 .eggs/
 lib/

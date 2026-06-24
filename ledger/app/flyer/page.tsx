@@ -5,6 +5,8 @@ import { motion } from 'framer-motion'
 import { useEffect, useMemo, useState } from 'react'
 import TopNavigation from '@/components/TopNavigation'
 import FlyerCard, { FlyerCardSkeleton } from '@/components/flyers/FlyerCard'
+import FlyerCredibilityCallout from '@/components/flyers/FlyerCredibilityCallout'
+import FlyerPrintPack from '@/components/flyers/FlyerPrintPack'
 import { getPublicDataFile } from '@/utils/dataPath'
 import { getPublishedFlyers, parseFlyersFile, type Flyer } from '@/lib/flyers'
 
@@ -75,6 +77,16 @@ export default function FlyerIndexPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 space-y-12">
+        {!( !loading && flyers.length === 0 ) && (
+          <motion.section {...fade}>
+            <FlyerPrintPack />
+          </motion.section>
+        )}
+
+        <motion.section {...fade}>
+          <FlyerCredibilityCallout />
+        </motion.section>
+
         {loading ? (
           <section className="space-y-8" aria-busy="true" aria-label="Loading flyers">
             <FlyerCardSkeleton featured />
@@ -117,28 +129,28 @@ export default function FlyerIndexPage() {
 
         <motion.section
           {...fade}
-          className="rounded-2xl border border-[#2E4A6B]/20 bg-gradient-to-br from-[#2E4A6B]/5 to-white p-6 sm:p-8"
+          className="rounded-2xl border border-[#2E4A6B]/25 bg-gradient-to-br from-slate-950 via-[#152a45] to-[#2E4A6B] p-8 sm:p-10 text-white shadow-lg"
         >
-          <h2 className="text-xl font-light text-slate-900 mb-2">Going door to door or tabling?</h2>
-          <p className="text-sm text-slate-600 font-light leading-relaxed max-w-2xl mb-5">
-            Pair a flyer with our message guide and take-action tools so neighbours know what to do next.
+          <h2 className="text-2xl sm:text-3xl font-light leading-tight mb-3">Ready to take action?</h2>
+          <p className="text-base sm:text-lg text-slate-200/95 font-light leading-relaxed max-w-2xl mb-8">
+            Download flyers, learn how to talk to neighbours, and find a local protest.
           </p>
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-3 sm:gap-4">
             <Link
               href="/message-guide"
-              className="inline-flex items-center justify-center rounded-lg border border-slate-200 bg-white px-5 py-2.5 text-sm font-medium text-slate-800 hover:border-slate-300 transition-colors"
+              className="inline-flex items-center justify-center rounded-xl border border-white/20 bg-white/10 px-6 py-3 text-sm sm:text-base font-medium text-white hover:bg-white/15 transition-colors"
             >
               Message guide
             </Link>
             <Link
-              href="/take-action"
-              className="inline-flex items-center justify-center rounded-lg bg-[#2E4A6B] px-5 py-2.5 text-sm font-medium text-white hover:bg-[#243d56] transition-colors"
+              href="/protests#event-list"
+              className="inline-flex items-center justify-center rounded-xl bg-[#f9e04c] px-6 py-3 text-sm sm:text-base font-bold text-[#1a1a1a] hover:bg-[#f5d84a] transition-colors"
             >
-              Take action
+              Find a protest
             </Link>
             <Link
               href="/join"
-              className="inline-flex items-center justify-center rounded-lg border border-[#2E4A6B]/30 px-5 py-2.5 text-sm font-medium text-[#2E4A6B] hover:bg-[#2E4A6B]/5 transition-colors"
+              className="inline-flex items-center justify-center rounded-xl border border-[#f9e04c]/40 px-6 py-3 text-sm sm:text-base font-medium text-[#f9e04c] hover:bg-[#f9e04c]/10 transition-colors"
             >
               Join us
             </Link>

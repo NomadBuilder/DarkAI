@@ -26,6 +26,16 @@ echo "   index.html: $(wc -c < static/protectont/index.html) bytes"
 
 echo ""
 echo "=========================================="
+echo "2b. Build Community Action Pack ZIP (5 PDFs)"
+echo "=========================================="
+if ./scripts/build-flyer-print-pack.sh; then
+  echo "✅ community-action-pack.zip ready"
+else
+  echo "⚠️  Print pack build skipped or failed (install Playwright: cd ledger && npx playwright install chromium)"
+fi
+
+echo ""
+echo "=========================================="
 echo "3. Verify _ledger_dir() would pick static/protectont"
 echo "=========================================="
 # Simulate app.py _ledger_dir(): check static/protectont first, then ledger/out

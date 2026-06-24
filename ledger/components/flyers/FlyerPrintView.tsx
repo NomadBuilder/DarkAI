@@ -3,8 +3,10 @@
 import Link from 'next/link'
 import { useEffect } from 'react'
 import type { Flyer, FlyerShared } from '@/lib/flyers'
-import { footerGradient, headerGradient, resolveFlyerTheme } from '@/lib/flyer-theme'
-import { bindFlyerPrintTitleCleanup, printFlyerSheet } from '@/lib/print-flyer'
+import FlyerSheetHeader from '@/components/flyers/FlyerSheetHeader'
+import FlyerShareActions from '@/components/flyers/FlyerShareActions'
+import { footerGradient, resolveFlyerTheme } from '@/lib/flyer-theme'
+import { bindFlyerPrintTitleCleanup } from '@/lib/print-flyer'
 
 const FLYER_QR_IMAGE = '/flyers/protectont-qr.png'
 const FLYER_QR_URL = 'https://protectont.ca/'
@@ -24,7 +26,6 @@ export default function FlyerPrintView({
 }: FlyerPrintViewProps) {
   useEffect(() => bindFlyerPrintTitleCleanup(), [])
 
-  const handlePrint = () => printFlyerSheet()
   const theme = resolveFlyerTheme(flyer.theme)
   const useGridLayout = flyer.slug === 'overview'
   const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
@@ -38,25 +39,19 @@ export default function FlyerPrintView({
   return (
       <div className="flyer-print-chrome min-h-screen bg-gradient-to-b from-[#3d2b7a] to-[#2a1f58] py-6 px-3 sm:py-10 sm:px-6">
         {showToolbar && (
-          <div className="flyer-no-print mx-auto mb-6 flex w-full max-w-[8.5in] flex-wrap items-center justify-between gap-3">
-            <Link
-              href={backHref}
-              className="text-sm font-light text-[#f9e04c]/90 hover:text-[#f9e04c] transition-colors"
-            >
-              ← All flyers
-            </Link>
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:inline text-xs uppercase tracking-widest text-[#f9e04c]/50">
+          <div className="flyer-no-print mx-auto mb-6 w-full max-w-[8.5in] space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <Link
+                href={backHref}
+                className="text-sm font-light text-[#f9e04c]/90 hover:text-[#f9e04c] transition-colors"
+              >
+                ← All flyers
+              </Link>
+              <span className="text-xs uppercase tracking-widest text-[#f9e04c]/50">
                 Letter · 8.5″×11″
               </span>
-              <button
-                type="button"
-                onClick={handlePrint}
-                className="rounded-lg bg-[#f9e04c] px-6 py-3 text-base font-bold text-[#1a1a1a] shadow-md hover:bg-[#f5d84a] transition-colors"
-              >
-                Print / Save as PDF
-              </button>
             </div>
+            <FlyerShareActions slug={flyer.slug} />
           </div>
         )}
 
@@ -66,76 +61,7 @@ export default function FlyerPrintView({
           style={{ background: theme.bodyBackground }}
           aria-label={`Protect Ontario printable flyer: ${flyer.title} ${flyer.subtitle}`}
         >
-          {/* Header — poster scale */}
-          <header
-            className="flyer-sheet-header px-8 pt-8 pb-7 sm:px-10 sm:pt-10 sm:pb-8"
-            style={{ background: headerGradient(theme) }}
-          >
-            <div className="flex items-center gap-3" aria-label="ProtectOnt.ca">
-                {/* Shield is pure SVG — logo-icon-text.svg embeds a PNG that inverts to a white block */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/favicon.svg" alt="" className="h-11 w-11 shrink-0 sm:h-12 sm:w-12" />
-                <span className="text-xl font-bold tracking-tight sm:text-2xl">
-                  <span className="text-[#f9e04c]">Protect</span>
-                  <span className="text-[#86efac]">Ont</span>
-                  <span className="text-white">.ca</span>
-                </span>
-              </div>
-
-            <div className={flyer.heroImageUrl ? 'mt-6 flex flex-col gap-6 lg:flex-row lg:items-start' : 'mt-6'}>
-              <div className="min-w-0 flex-1">
-                <h1
-                  className="flyer-headline text-[2rem] sm:text-[2.75rem] font-black leading-[1.05] tracking-tight uppercase"
-                  style={{ color: theme.headlineColor }}
-                >
-                  {flyer.title}
-                </h1>
-                {flyer.subtitle && (
-                  <p
-                    className="flyer-subhead mt-2 text-[1.5rem] sm:text-[2rem] font-bold leading-tight uppercase tracking-tight"
-                    style={{ color: theme.subtitleColor }}
-                  >
-                    {flyer.subtitle}
-                  </p>
-                )}
-                {flyer.intro && (
-                  <p
-                    className="flyer-body-text mt-5 text-base sm:text-lg leading-relaxed font-medium"
-                    style={{ color: theme.introColor }}
-                  >
-                    {flyer.intro}
-                  </p>
-                )}
-              </div>
-              {flyer.heroImageUrl && (
-                <div className="shrink-0 lg:max-w-[42%]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={flyer.heroImageUrl}
-                    alt=""
-                    className="w-full rounded-lg border-2 object-contain bg-black/20"
-                    style={{ borderColor: `${theme.highlightColor}66` }}
-                  />
-                </div>
-              )}
-            </div>
-
-            {flyer.highlights.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-2 sm:gap-3">
-                {flyer.highlights.map((h) => (
-                  <span
-                    key={h}
-                    className="rounded-md px-3 py-2 text-xs sm:text-sm font-bold uppercase tracking-wide"
-                    style={{ background: theme.highlightColor, color: theme.highlightTagTextColor }}
-                  >
-                    {h}
-                  </span>
-                ))}
-              </div>
-            )}
-          </header>
-
-          <div className="h-2" style={{ background: theme.accentColor }} aria-hidden />
+          <FlyerSheetHeader flyer={flyer} theme={theme} />
 
           {/* Body sections */}
           {flyer.sections.length > 0 && (
@@ -331,9 +257,9 @@ export default function FlyerPrintView({
 
         {showToolbar && (
           <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light leading-relaxed">
-            In the print dialog: set <strong className="font-normal">Margins to None</strong>, turn{' '}
-            <strong className="font-normal">off</strong> &quot;Headers and footers&quot;, turn{' '}
-            <strong className="font-normal">on</strong> background graphics, then print or save as PDF.
+            <strong className="font-normal">PDF</strong> downloads a ready-made file. For{' '}
+            <strong className="font-normal">Print</strong>, set margins to None, turn off headers and footers, and turn
+            on background graphics.
           </p>
         )}
       </div>
