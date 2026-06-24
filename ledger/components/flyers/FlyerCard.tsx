@@ -37,9 +37,6 @@ export default function FlyerCard({ flyer, index = 0, featured = false }: Props)
         <article className={`flex flex-col h-full ${featured ? 'p-6 sm:p-8' : 'p-5 sm:p-6'}`}>
           <div className="flex items-start justify-between gap-4 mb-3">
             <div className="min-w-0 flex-1">
-              {featured && (
-                <p className="text-xs font-medium text-[#9f1239] mb-2">Start here — overview flyer</p>
-              )}
               <h3
                 className={`font-light text-slate-900 group-hover:text-[#2E4A6B] transition-colors leading-snug ${
                   featured ? 'text-2xl sm:text-3xl' : 'text-xl sm:text-2xl'

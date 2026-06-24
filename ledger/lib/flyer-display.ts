@@ -3,8 +3,14 @@ export function toFlyerDisplayCase(value: string): string {
   const trimmed = value.trim()
   if (!trimmed) return trimmed
   const letters = trimmed.replace(/[^a-zA-Z]/g, '')
-  if (letters && letters === letters.toUpperCase()) {
-    return trimmed.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase())
-  }
+  if (!letters || letters !== letters.toUpperCase()) return trimmed
+
   return trimmed
+    .toLowerCase()
+    .split(/(\s+|·)/)
+    .map((part) => {
+      if (/^\s+$/.test(part) || part === '·') return part
+      return part.charAt(0).toUpperCase() + part.slice(1)
+    })
+    .join('')
 }

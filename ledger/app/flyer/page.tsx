@@ -15,24 +15,6 @@ const fade = {
   transition: { duration: 0.5 },
 }
 
-const printSteps = [
-  {
-    step: '1',
-    title: 'Pick a topic',
-    body: 'Start with the overview flyer or choose an issue you care about.',
-  },
-  {
-    step: '2',
-    title: 'Print or save PDF',
-    body: 'Open the flyer and use Print / Save as PDF. Enable background graphics.',
-  },
-  {
-    step: '3',
-    title: 'Share locally',
-    body: 'Post on community boards, share at events, or talk with neighbours.',
-  },
-]
-
 function partitionFlyers(flyers: Flyer[]) {
   const overview = flyers.find((f) => f.slug === 'overview')
   const rest = flyers.filter((f) => f.slug !== 'overview')
@@ -93,21 +75,6 @@ export default function FlyerIndexPage() {
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-14 space-y-12">
-        <motion.section {...fade} aria-label="How to use these flyers">
-          <div className="grid gap-4 sm:grid-cols-3">
-            {printSteps.map((item) => (
-              <div
-                key={item.step}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-              >
-                <p className="text-xs font-medium text-[#9f1239] mb-2">Step {item.step}</p>
-                <h2 className="text-base font-medium text-slate-900 mb-1">{item.title}</h2>
-                <p className="text-sm text-slate-600 font-light leading-relaxed">{item.body}</p>
-              </div>
-            ))}
-          </div>
-        </motion.section>
-
         {loading ? (
           <section className="space-y-8" aria-busy="true" aria-label="Loading flyers">
             <FlyerCardSkeleton featured />
