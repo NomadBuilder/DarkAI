@@ -57,6 +57,7 @@ const issuesDropdownItems: NavItem[] = [
 
 const aboutDropdownItems: NavItem[] = [
   { id: 'about', label: 'About', href: '/about' },
+  { id: 'media', label: 'Press room', href: '/media' },
   { id: 'receipts', label: 'The Receipts', href: '/receipts' },
   { id: 'dataSources', label: 'Data Sources', action: 'dataSources' },
   { id: 'methodology', label: 'Methodology', href: '/methodology' },

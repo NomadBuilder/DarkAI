@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420">
+  <rect width="100%" height="100%" fill="#f8fafc"/>
+  <text x="40" y="48" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="600" fill="#0f172a">Public dollars — delivery model</text>
+  <text x="40" y="76" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">ProtectOnt.ca — sourced from Ontario Public Accounts &amp; documented reporting</text>
+  <line x1="60" y1="340" x2="760" y2="340" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="80" y="120" width="120" height="220" fill="#2563eb" rx="4"/>
+      <text x="140" y="112" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="#334155">Public</text>
+      <text x="140" y="364" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">Hospitals & boards</text>
+<rect x="240" y="197.6470588235294" width="120" height="142.3529411764706" fill="#dc2626" rx="4"/>
+      <text x="300" y="189.6470588235294" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="#334155">Agencies</text>
+      <text x="300" y="364" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">Staffing firms</text>
+<rect x="400" y="236.47058823529412" width="120" height="103.52941176470588" fill="#b45309" rx="4"/>
+      <text x="460" y="228.47058823529412" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="#334155">For-profit</text>
+      <text x="460" y="364" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">Clinics (Bill 60)</text>
+</svg>

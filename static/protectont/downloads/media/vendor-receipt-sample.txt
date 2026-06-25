@@ -1,0 +1,15 @@
+ONTARIO PUBLIC ACCOUNTS — SAMPLE RECEIPT LINE
+============================================
+
+VENDOR:     [Private staffing agency — illustrative]
+MINISTRY:   Health
+FISCAL YR:  2023–24
+AMOUNT:     Documented in Public Accounts Detailed Schedule of Payments
+
+CONTEXT:    Hospital spending on private staffing agencies has surged year over year
+            while full-time public staffing struggles to keep pace. Agency workers
+            often cost far more per hour than equivalent public employees.
+
+SOURCE:     Ontario Public Accounts / Open Data Schedule of Payments
+VERIFY:     https://protectont.ca/receipts
+METHODOLOGY: https://protectont.ca/methodology

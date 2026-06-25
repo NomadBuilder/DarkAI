@@ -36,6 +36,9 @@ register_sign_delivery_routes(app)
 from stories_routes import register_stories_routes  # noqa: E402
 register_stories_routes(app)
 
+from sign_spotting_routes import register_sign_spotting_routes  # noqa: E402
+register_sign_spotting_routes(app)
+
 # Make GTM_ID available to all templates
 @app.context_processor
 def inject_gtm_id():

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="420" viewBox="0 0 800 420">
+  <rect width="100%" height="100%" fill="#f8fafc"/>
+  <text x="40" y="48" font-family="Inter,Arial,sans-serif" font-size="22" font-weight="600" fill="#0f172a">Acute care beds — Ontario vs peers (indexed)</text>
+  <text x="40" y="76" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">ProtectOnt.ca — sourced from Ontario Public Accounts &amp; documented reporting</text>
+  <line x1="60" y1="340" x2="760" y2="340" stroke="#cbd5e1" stroke-width="1"/>
+  <rect x="80" y="173.26315789473682" width="120" height="166.73684210526318" fill="#dc2626" rx="4"/>
+      <text x="140" y="165.26315789473682" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="#334155">ON</text>
+      <text x="140" y="364" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">Ontario</text>
+<rect x="240" y="120" width="120" height="220" fill="#64748b" rx="4"/>
+      <text x="300" y="112" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="#334155">QC</text>
+      <text x="300" y="364" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">Quebec</text>
+<rect x="400" y="136.21052631578948" width="120" height="203.78947368421052" fill="#2563eb" rx="4"/>
+      <text x="460" y="128.21052631578948" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="14" fill="#334155">Avg</text>
+      <text x="460" y="364" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="13" fill="#64748b">Provincial avg</text>
+</svg>

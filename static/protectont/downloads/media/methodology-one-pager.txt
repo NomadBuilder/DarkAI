@@ -1,0 +1,27 @@
+PROTECTONT — METHODOLOGY ONE-PAGER
+==================================
+
+WHAT WE ARE
+ProtectOnt (ProtectOnt.ca) is a public-accountability project tracking provincial spending,
+legislation, and documented policy impacts in Ontario.
+
+DATA SOURCES
+• Ontario Public Accounts & Detailed Schedule of Payments
+• Legislative Assembly of Ontario (bills, Hansard)
+• Auditor General of Ontario reports
+• CIHI, Statistics Canada, and peer-reviewed/public-interest research
+• Documented journalism (CBC, Globe, etc.) — cited per claim
+
+HOW WE WORK
+1. Source — primary public records first.
+2. Verify — cross-check amounts and dates against official datasets.
+3. Context — separate raw numbers from interpretation.
+4. Update — pages note print/API dates where relevant.
+
+WHAT WE DO NOT CLAIM
+• We do not allege criminal conduct without citing official investigations.
+• We do not publish private personal data.
+• Vendor classifications in The Receipts indicate service type estimates — see methodology drawer on site.
+
+MEDIA & CORRECTIONS
+Contact via https://protectont.ca/about — select "Media Inquiry."
