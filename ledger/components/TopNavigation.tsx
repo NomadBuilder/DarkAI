@@ -230,9 +230,15 @@ export default function TopNavigation({
                     aria-label="Protect Ontario – Home"
                   >
                     <img
-                      src={basePath ? `${basePath}/logo-icon-text.svg` : '/logo-icon-text.svg'}
+                      src={
+                        basePath
+                          ? `${basePath}/${navOnDark ? 'logo-icon-text-dark.svg' : 'logo-icon-text.svg'}`
+                          : navOnDark
+                            ? '/logo-icon-text-dark.svg'
+                            : '/logo-icon-text.svg'
+                      }
                       alt=""
-                      className={`h-9 sm:h-10 w-auto ${navOnDark ? 'brightness-0 invert' : ''}`}
+                      className="h-9 sm:h-10 w-auto"
                     />
                   </Link>
                 </div>

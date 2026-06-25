@@ -100,6 +100,7 @@ export default function ScrollyContainer() {
   return (
     <div ref={containerRef} className="relative w-full overflow-x-hidden">
       <TopNavigation
+        navOnDark
         onDataSourcesClick={handleDataSourcesToggle}
         onMethodologyClick={handleMethodologyToggle}
       />
