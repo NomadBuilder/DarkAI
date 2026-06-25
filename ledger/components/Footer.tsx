@@ -16,8 +16,9 @@ function needsWayfindingBar(pathname: string): boolean {
 const FOOTER_LINKS = [
   { href: '/protests', label: 'Protests' },
   { href: '/join', label: 'Join' },
-  { href: '/flyers', label: 'Flyers' },
   { href: '/materials', label: 'Materials' },
+  { href: '/flyers', label: 'Flyers' },
+  { href: '/products', label: 'Products' },
   { href: '/take-action', label: 'Take action' },
   { href: '/about', label: 'About' },
   { href: '/methodology', label: 'Methodology' },

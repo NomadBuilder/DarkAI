@@ -60,29 +60,22 @@ const aboutDropdownItems: NavItem[] = [
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
-const takeActionDropdownGroups: { label?: string; items: NavItem[] }[] = [
-  {
-    label: 'Take action',
-    items: [{ id: 'join', label: 'Join — get a sign', href: '/join' }],
-  },
-  {
-    label: 'Get ready',
-    items: [
-      { id: 'materials', label: 'Materials', href: '/materials' },
-      { id: 'products', label: 'Products', href: '/products' },
-    ],
-  },
-  {
-    label: 'Make noise',
-    items: [{ id: 'contact-mpp', label: 'Contact your MPP', href: '/take-action' }],
-  },
+const takeActionDropdownItems: NavItem[] = [
+  { id: 'join', label: 'Join — get a sign', href: '/join' },
+  { id: 'contact-mpp', label: 'Contact your MPP', href: '/take-action' },
+]
+
+const materialsDropdownItems: NavItem[] = [
+  { id: 'materials-hub', label: 'All materials', href: '/materials' },
+  { id: 'flyers', label: 'Printable flyers', href: '/flyers' },
+  { id: 'products', label: 'Products', href: '/products' },
 ]
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'The Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
-  { id: 'take-action', label: 'Take action', isDropdown: true, dropdownGroups: takeActionDropdownGroups },
+  { id: 'take-action', label: 'Take action', isDropdown: true, dropdownItems: takeActionDropdownItems },
   { id: 'protests', label: 'Protests', href: '/protests' },
-  { id: 'flyers', label: 'Flyers', href: '/flyers' },
+  { id: 'materials', label: 'Materials', isDropdown: true, dropdownItems: materialsDropdownItems },
   { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]
 
