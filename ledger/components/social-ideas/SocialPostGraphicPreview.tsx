@@ -2,7 +2,7 @@
 
 import { getSocialGraphicContent } from '@/lib/social-graphic-content'
 import { hasCustomSocialBackground } from '@/lib/social-post-images'
-import { LOGO_MARK_URL, resolveGraphicStyle } from '@/lib/social-graphic-style'
+import { resolveGraphicLogoUrl, resolveGraphicStyle } from '@/lib/social-graphic-style'
 import type { SocialPostIdea } from '@/lib/social-post-ideas'
 
 type Props = {
@@ -15,6 +15,7 @@ export default function SocialPostGraphicPreview({ idea, className = '' }: Props
   const hasImage = hasCustomSocialBackground(idea)
   const content = getSocialGraphicContent(idea, { compact: hasImage })
   const style = resolveGraphicStyle(idea)
+  const logoUrl = resolveGraphicLogoUrl(idea)
   const bgUrl = hasImage ? idea.imageUrl!.trim() : null
 
   const textScale = hasImage ? '' : 'scale-[1.08] origin-center'
@@ -41,7 +42,7 @@ export default function SocialPostGraphicPreview({ idea, className = '' }: Props
       <div className="relative z-10 flex flex-col items-center px-4 pt-3 pb-2">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={LOGO_MARK_URL}
+          src={logoUrl}
           alt=""
           className="h-5 sm:h-6 w-auto object-contain drop-shadow-sm"
         />

@@ -3,7 +3,7 @@ import {
   SOCIAL_GRAPHIC_EXPORT_SIZE,
   type SocialGraphicContent,
 } from './social-graphic-content'
-import { LOGO_MARK_URL, resolveGraphicStyle, type ResolvedGraphicStyle } from './social-graphic-style'
+import { LOGO_MARK_URL, resolveGraphicLogoUrl, resolveGraphicStyle, type ResolvedGraphicStyle } from './social-graphic-style'
 import type { SocialPostIdea } from './social-post-ideas'
 
 const COLORS = {
@@ -283,15 +283,17 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
   })
 }
 
-let logoPromise: Promise<HTMLImageElement | null> | null = null
+const logoCache = new Map<string, Promise<HTMLImageElement | null>>()
 
-function loadLogo(): Promise<HTMLImageElement | null> {
-  if (!logoPromise) {
-    logoPromise = loadImage(LOGO_MARK_URL).then((img) =>
-      img ? img : loadImage('/shield-icon.png')
-    )
-  }
-  return logoPromise
+function loadLogo(src: string): Promise<HTMLImageElement | null> {
+  const cached = logoCache.get(src)
+  if (cached) return cached
+
+  const promise = loadImage(src).then((img) =>
+    img ? img : src === LOGO_MARK_URL ? loadImage('/shield-icon.png') : null
+  )
+  logoCache.set(src, promise)
+  return promise
 }
 
 export async function renderSocialGraphicDataUrl(idea: SocialPostIdea): Promise<string> {
@@ -301,7 +303,7 @@ export async function renderSocialGraphicDataUrl(idea: SocialPostIdea): Promise<
   if (url && (url.startsWith('data:') || url.startsWith('http'))) {
     bg = await loadImage(url)
   }
-  const logo = await loadLogo()
+  const logo = await loadLogo(resolveGraphicLogoUrl(idea))
   paintSocialGraphic(canvas, idea, bg, logo)
   return canvas.toDataURL('image/png')
 }

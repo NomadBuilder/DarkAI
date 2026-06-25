@@ -1,6 +1,6 @@
 'use client'
 
-import { BACKGROUND_PRESETS } from '@/lib/social-graphic-style'
+import { BACKGROUND_PRESETS, DEFAULT_GRAPHIC_LOGO_URL } from '@/lib/social-graphic-style'
 import type { SocialPostIdea } from '@/lib/social-post-ideas'
 
 const fieldClass =
@@ -65,6 +65,34 @@ export default function SocialGraphicStyleFields({
             className="mt-2 text-xs text-red-600 hover:text-red-700"
           >
             Remove uploaded image
+          </button>
+        ) : null}
+      </div>
+
+      <div>
+        <span className={labelClass}>Logo (optional)</span>
+        <input
+          className={fieldClass}
+          value={idea.graphicLogoUrl ?? DEFAULT_GRAPHIC_LOGO_URL}
+          onChange={(e) => {
+            const next = e.target.value.trim()
+            onChange({
+              ...idea,
+              graphicLogoUrl: next === DEFAULT_GRAPHIC_LOGO_URL ? undefined : next || undefined,
+            })
+          }}
+          placeholder={DEFAULT_GRAPHIC_LOGO_URL}
+        />
+        <p className="mt-1 text-xs text-slate-500 font-light">
+          Default wordmark for dark backgrounds (white Protect/.ca). Paste a URL or path to override.
+        </p>
+        {idea.graphicLogoUrl && idea.graphicLogoUrl !== DEFAULT_GRAPHIC_LOGO_URL ? (
+          <button
+            type="button"
+            onClick={() => onChange({ ...idea, graphicLogoUrl: undefined })}
+            className="mt-2 text-xs text-red-600 hover:text-red-700"
+          >
+            Reset to default logo
           </button>
         ) : null}
       </div>

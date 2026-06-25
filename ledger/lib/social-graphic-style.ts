@@ -1,6 +1,10 @@
 import { FIGHT_FORD_HASHTAG, type SocialPostIdea } from './social-post-ideas'
 
-export const LOGO_MARK_URL = '/logo-icon-text.svg'
+/** Dark-background wordmark — white Protect/.ca, green Ont */
+export const DEFAULT_GRAPHIC_LOGO_URL = '/logo-icon-text-dark.svg'
+
+/** @deprecated use DEFAULT_GRAPHIC_LOGO_URL */
+export const LOGO_MARK_URL = DEFAULT_GRAPHIC_LOGO_URL
 
 export const DEFAULT_GRAPHIC_STYLE = {
   backgroundColor: '#152a45',
@@ -26,6 +30,11 @@ export function resolveGraphicStyle(idea: SocialPostIdea): ResolvedGraphicStyle 
     ctaPrimary: idea.ctaPrimary?.trim() || DEFAULT_GRAPHIC_STYLE.ctaPrimary,
     ctaSecondary: idea.ctaSecondary?.trim() || DEFAULT_GRAPHIC_STYLE.ctaSecondary,
   }
+}
+
+export function resolveGraphicLogoUrl(idea: SocialPostIdea): string {
+  const custom = idea.graphicLogoUrl?.trim()
+  return custom || DEFAULT_GRAPHIC_LOGO_URL
 }
 
 export const BACKGROUND_PRESETS = [

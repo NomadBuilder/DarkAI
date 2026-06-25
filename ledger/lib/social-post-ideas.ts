@@ -24,6 +24,8 @@ export type SocialPostIdea = {
   caption: string
   /** Body copy rendered on the graphic (not the post caption) */
   graphicText?: string
+  /** Logo mark on exported graphics (defaults to dark wordmark) */
+  graphicLogoUrl?: string
   /** Optional short line on a graphic (preview only) */
   headline?: string
   imageUrl?: string
