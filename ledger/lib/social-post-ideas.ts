@@ -45,7 +45,7 @@ export type SocialPostIdea = {
 }
 
 export const FIGHT_FORD_HASHTAG = '#FightFord'
-export const SOCIAL_IDEAS_VERSION = 4
+export const SOCIAL_IDEAS_VERSION = 5
 
 export const ISSUE_LABELS: Record<FordIssue, string> = {
   healthcare: 'Healthcare',
@@ -413,6 +413,84 @@ export const SOCIAL_POST_IDEAS: SocialPostIdea[] = [
       'Bill 124 capped their wages while hospitals sent billions to private staffing agencies. That is not austerity — it is shifting cost onto feminized care work.',
     caption: cap(
       'Sources and context: protectont.ca/healthcare · Printable flyer: protectont.ca/flyers/public-care'
+    ),
+  },
+  {
+    id: 'edu-care-ea-graphic',
+    title: 'Education support staff',
+    issue: 'education',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'FUND THE SUPPORT STAFF',
+    graphicText:
+      'Early childhood educators, EAs, and school support workers — mostly women — hold classrooms together while funding is cut. Public care includes public schools.',
+    caption: cap(
+      'Smaller classes and school supports are public care. Tell your MPP to fund classrooms, not excuses. protectont.ca/message-guide'
+    ),
+  },
+  {
+    id: 'protests-show-up',
+    title: 'Protests',
+    issue: 'accountability',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook'],
+    headline: 'SHOW UP — IT WORKS',
+    graphicText:
+      'The Greenbelt reversal happened because people showed up, wrote, and refused to accept that protected land was for sale. Public pressure still works.',
+    caption: cap(
+      'Find a rally near you or bring a sign: protectont.ca/protests · Free downloads: protectont.ca/join'
+    ),
+  },
+  {
+    id: 'receipts-billions',
+    title: 'The Receipts',
+    issue: 'transparency',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'FOLLOW THE MONEY',
+    graphicText:
+      'Ontario Public Accounts document who got paid — vendor by vendor, year by year. Billions to private staffing agencies while public hospitals report deficits.',
+    caption: cap(
+      'Search the receipts yourself: protectont.ca/receipts · Share one fact with a neighbour.'
+    ),
+  },
+  {
+    id: 'greenbelt-not-done',
+    title: 'Greenbelt',
+    issue: 'greenbelt',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'GREENBELT IS NOT SAFE',
+    graphicText:
+      'The carve-out was reversed — but the RCMP probe continues and the fight over farmland and watersheds is not over. Protected land should stay protected.',
+    caption: cap(
+      'Public land is a public trust: protectont.ca/public-land · Printable flyer: protectont.ca/flyers/public-land'
+    ),
+  },
+  {
+    id: 'water-public-tap',
+    title: 'Water',
+    issue: 'water',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook'],
+    headline: 'WHO CONTROLS THE TAP?',
+    graphicText:
+      'Bill 60 opens pathways for corporate control of water and wastewater. Once systems move behind corporate walls, communities lose leverage and transparency.',
+    caption: cap(
+      'Water is a public responsibility — not a shareholder bonus. protectont.ca/water · Flyer: protectont.ca/flyers/water'
+    ),
+  },
+  {
+    id: 'join-yard-sign',
+    title: 'Join',
+    issue: 'accountability',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook'],
+    headline: 'GET A YARD SIGN',
+    graphicText:
+      'Visibility matters — one sign on your lawn tells neighbours the fight is here. Download free art or order a printed sign from local volunteers.',
+    caption: cap(
+      'Join the network or grab a sign: protectont.ca/join · Spot yours: protectont.ca/signs-in-the-wild'
     ),
   },
 ]
