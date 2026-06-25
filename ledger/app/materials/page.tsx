@@ -77,12 +77,6 @@ const protestPrep = [
 
 const organizerTools = [
   {
-    title: 'Social post ideas',
-    description: 'Copy-ready captions with #FightFord — pair with a flyer when you share online.',
-    href: '/social-ideas',
-    cta: 'Get post ideas',
-  },
-  {
     title: 'Message guide',
     description: 'Talking points by issue — what to say and what to avoid at the door or on camera.',
     href: '/message-guide',
@@ -183,7 +177,7 @@ export default function MaterialsPage() {
           <p className="text-sm text-slate-600 font-light mb-5 max-w-2xl">
             Optional extras for tabling, social media, and on-the-ground events.
           </p>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {organizerTools.map((item) => (
               <Link
                 key={item.href}

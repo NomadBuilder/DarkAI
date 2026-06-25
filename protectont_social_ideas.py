@@ -1,4 +1,4 @@
-"""Read/write social-post-ideas.json for ProtectOnt /social-ideas."""
+"""Read/write social-post-ideas.json for ProtectOnt admin."""
 
 from __future__ import annotations
 
@@ -22,10 +22,11 @@ def social_ideas_save_enabled() -> bool:
     return flag not in ("1", "true", "yes")
 
 
-def save_from_social_ideas_page(origin: str, referer: str) -> bool:
+def save_social_post_ideas_allowed(origin: str, referer: str) -> bool:
     if not save_request_allowed(origin, referer):
         return False
-    return "social-ideas" in (referer or "")
+    ref = referer or ""
+    return "/admin" in ref or "section=social-posts" in ref
 
 
 def read_social_post_ideas_json() -> Tuple[Optional[dict], Optional[str]]:

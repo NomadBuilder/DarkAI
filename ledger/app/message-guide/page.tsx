@@ -37,7 +37,7 @@ const ISSUE_PAGES: Record<
     flyerHref: '/flyers/indigenous-rights',
   },
   transparency: { label: 'The Receipts', href: '/receipts', flyerHref: '/flyers/freedom-of-information' },
-  education: { label: 'Social post ideas', href: '/social-ideas' },
+  education: { label: 'Message guide', href: '/message-guide' },
 }
 
 const ISSUE_LABELS: Record<IssueKey, string> = {

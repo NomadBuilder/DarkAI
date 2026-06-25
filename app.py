@@ -406,10 +406,10 @@ def api_protectont_flyers():
 
 @app.route('/api/protectont/social-post-ideas', methods=['GET', 'POST', 'OPTIONS'])
 def api_protectont_social_post_ideas():
-    """GET/POST social post idea library for /social-ideas."""
+    """GET/POST social post library for admin."""
     from protectont_social_ideas import (
         read_social_post_ideas_json,
-        save_from_social_ideas_page,
+        save_social_post_ideas_allowed,
         social_ideas_save_enabled,
         write_social_post_ideas_json,
     )
@@ -426,15 +426,15 @@ def api_protectont_social_post_ideas():
     if not social_ideas_save_enabled():
         return jsonify({
             "error": "Server save disabled",
-            "message": "Unset PROTECTONT_SOCIAL_IDEAS_DISABLE_SAVE to allow saves from /social-ideas",
+            "message": "Unset PROTECTONT_SOCIAL_IDEAS_DISABLE_SAVE to allow saves from admin",
         }), 503
 
     origin = request.headers.get("Origin", "")
     referer = request.headers.get("Referer", "")
-    if not save_from_social_ideas_page(origin, referer):
+    if not save_social_post_ideas_allowed(origin, referer):
         return jsonify({
             "error": "Forbidden",
-            "message": "Saves are only accepted from protectont.ca/social-ideas",
+            "message": "Saves are only accepted from protectont.ca/admin",
         }), 403
 
     raw = request.get_data(as_text=True)

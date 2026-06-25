@@ -8,6 +8,7 @@ import FlyerAdminPage from '@/components/admin/FlyerAdminSection'
 import FormAdminPage from '@/components/admin/FormAdminSection'
 import SubmissionsAdminPage from '@/components/admin/SubmissionsAdminSection'
 import SignDeliveriesAdminPage from '@/components/admin/SignDeliveriesAdminSection'
+import SocialAdminSection from '@/components/admin/SocialAdminSection'
 
 export const ADMIN_SECTIONS = [
   {
@@ -23,6 +24,11 @@ export const ADMIN_SECTIONS = [
     blurb: 'Create and edit letter-size issue flyers.',
     viewHref: '/flyers',
     viewLabel: 'View /flyers',
+  },
+  {
+    id: 'social-posts',
+    label: 'Social posts',
+    blurb: 'Build Instagram & Facebook graphics, copy captions, and manage the post library.',
   },
   {
     id: 'join-form',
@@ -115,7 +121,9 @@ function AdminHubInner() {
 
       <div
         className={`mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8 ${
-          section === 'submissions' || section === 'sign-deliveries' ? 'max-w-6xl' : 'max-w-3xl'
+          section === 'submissions' || section === 'sign-deliveries' || section === 'social-posts'
+            ? 'max-w-6xl'
+            : 'max-w-3xl'
         }`}
       >
         {section !== 'submissions' && section !== 'sign-deliveries' && (
@@ -124,19 +132,22 @@ function AdminHubInner() {
               <h2 className="text-lg font-medium text-slate-900">{active.label}</h2>
               <p className="text-sm text-slate-600 font-light mt-1">{active.blurb}</p>
             </div>
-            <Link
-              href={active.viewHref}
-              target={active.id === 'flyers' ? '_blank' : undefined}
-              rel={active.id === 'flyers' ? 'noopener noreferrer' : undefined}
-              className="inline-flex items-center gap-1.5 text-sm text-[#3d2b7a] hover:text-[#2a1f58] bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-full px-4 py-2 transition-colors shrink-0"
-            >
-              {active.viewLabel} →
-            </Link>
+            {'viewHref' in active && active.viewHref ? (
+              <Link
+                href={active.viewHref}
+                target={active.id === 'flyers' ? '_blank' : undefined}
+                rel={active.id === 'flyers' ? 'noopener noreferrer' : undefined}
+                className="inline-flex items-center gap-1.5 text-sm text-[#3d2b7a] hover:text-[#2a1f58] bg-violet-50 hover:bg-violet-100 border border-violet-200 rounded-full px-4 py-2 transition-colors shrink-0"
+              >
+                {active.viewLabel} →
+              </Link>
+            ) : null}
           </div>
         )}
 
         {section === 'events' && <EventsAdminPage embedded />}
         {section === 'flyers' && <FlyerAdminPage embedded />}
+        {section === 'social-posts' && <SocialAdminSection embedded />}
         {section === 'join-form' && <FormAdminPage embedded />}
         {section === 'submissions' && <SubmissionsAdminPage embedded />}
         {section === 'sign-deliveries' && <SignDeliveriesAdminPage embedded />}

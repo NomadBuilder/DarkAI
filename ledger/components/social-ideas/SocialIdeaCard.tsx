@@ -54,13 +54,22 @@ function CollapsibleDetails({
 type Props = {
   idea: SocialPostIdea
   editing: boolean
+  adminMode?: boolean
   onChange: (next: SocialPostIdea) => void
   onRemove: () => void
   copiedId: string | null
   onCopy: (id: string, text: string) => void
 }
 
-export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copiedId, onCopy }: Props) {
+export default function SocialIdeaCard({
+  idea,
+  editing,
+  adminMode = false,
+  onChange,
+  onRemove,
+  copiedId,
+  onCopy,
+}: Props) {
   const post = buildShareableCaption(idea)
   const resource = ISSUE_RESOURCE_LINKS[idea.issue]
   const flyer = ISSUE_FLYER_LINKS[idea.issue]
@@ -97,7 +106,29 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
           <p className="text-sm text-slate-800 font-light leading-relaxed whitespace-pre-wrap">{post}</p>
         </div>
 
-        {editing && (
+        {editing && adminMode && (
+          <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+            <div>
+              <span className={labelClass}>Caption</span>
+              <textarea
+                rows={4}
+                className={`${fieldClass} resize-y`}
+                value={idea.caption}
+                onChange={(e) => onChange({ ...idea, caption: e.target.value })}
+              />
+            </div>
+            <div>
+              <span className={labelClass}>Graphic headline</span>
+              <input
+                className={fieldClass}
+                value={idea.headline ?? ''}
+                onChange={(e) => onChange({ ...idea, headline: e.target.value || undefined })}
+              />
+            </div>
+          </div>
+        )}
+
+        {editing && !adminMode && (
           <CollapsibleDetails title="Edit post">
             <div>
               <span className={labelClass}>Caption</span>
@@ -162,13 +193,15 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
                 }
               />
             </div>
-            <button
-              type="button"
-              onClick={onRemove}
-              className="text-sm text-red-600 hover:text-red-700"
-            >
-              Remove post
-            </button>
+            {!adminMode && (
+              <button
+                type="button"
+                onClick={onRemove}
+                className="text-sm text-red-600 hover:text-red-700"
+              >
+                Remove post
+              </button>
+            )}
           </CollapsibleDetails>
         )}
       </div>
@@ -190,20 +223,33 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
           {downloading ? 'Generating…' : 'Download graphic (1080×1080)'}
         </button>
         <div className="flex flex-wrap gap-2">
-          <Link
-            href={resource.href}
-            className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/25 text-[#2E4A6B] hover:bg-[#2E4A6B]/5"
-          >
-            {resource.label} →
-          </Link>
-          {flyer ? (
-            <Link
-              href={flyer.href}
-              className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/25 text-[#2E4A6B] hover:bg-[#2E4A6B]/5"
+          {!adminMode && (
+            <>
+              <Link
+                href={resource.href}
+                className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/25 text-[#2E4A6B] hover:bg-[#2E4A6B]/5"
+              >
+                {resource.label} →
+              </Link>
+              {flyer ? (
+                <Link
+                  href={flyer.href}
+                  className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/25 text-[#2E4A6B] hover:bg-[#2E4A6B]/5"
+                >
+                  {flyer.label} →
+                </Link>
+              ) : null}
+            </>
+          )}
+          {adminMode && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-red-200 text-red-700 hover:bg-red-50"
             >
-              {flyer.label} →
-            </Link>
-          ) : null}
+              Remove
+            </button>
+          )}
         </div>
       </div>
     </article>
