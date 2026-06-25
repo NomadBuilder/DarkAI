@@ -11,6 +11,6 @@
     <path d="M10 22h12M8 25h16M10 28h12" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity=".95"/>
   </g>
   <text x="50" y="26" font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="20" font-weight="700" dominant-baseline="middle" letter-spacing="0">
-    <tspan fill="#f9e04c">Protect</tspan><tspan fill="#86efac">Ont</tspan><tspan fill="#ffffff">.ca</tspan>
+    <tspan fill="#ffffff">Protect</tspan><tspan fill="#86efac">Ont</tspan><tspan fill="#ffffff">.ca</tspan>
   </text>
 </svg>
