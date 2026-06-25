@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "ideas": [
     {
       "id": "hc-wait-graphic",
@@ -202,6 +202,107 @@
       ],
       "caption": "This week: healthcare waits are a policy choice—not bad luck. Share one fact with someone who votes in Ontario.\n\n#FightFord",
       "headline": "ISSUE OF THE WEEK"
+    },
+    {
+      "id": "op-waterfront-graphic",
+      "title": "Ontario Place",
+      "issue": "ontario-place",
+      "format": "graphic",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "threads"
+      ],
+      "caption": "Ontario Place belongs to all of us—not a closed-door lease to a private operator. Share if you want the waterfront kept public.\n\n#FightFord",
+      "headline": "PUBLIC WATERFRONT ≠ PRIVATE SPA"
+    },
+    {
+      "id": "op-story-poll",
+      "title": "Ontario Place",
+      "issue": "ontario-place",
+      "format": "story",
+      "platforms": [
+        "instagram",
+        "facebook"
+      ],
+      "caption": "Would you trade public waterfront for a private spa? Most Ontarians say no. Print the flyer and talk to a neighbour.\n\n#FightFord"
+    },
+    {
+      "id": "rof-carousel",
+      "title": "Ring of Fire",
+      "issue": "ring-of-fire",
+      "format": "carousel",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "threads"
+      ],
+      "caption": "Major mining roads through the Ring of Fire need free, prior, and informed consent—not a rush past community objections. Swipe for the facts.\n\n#FightFord",
+      "headline": "CONSENT COMES FIRST"
+    },
+    {
+      "id": "rof-meme-map",
+      "title": "Ring of Fire",
+      "issue": "ring-of-fire",
+      "format": "meme",
+      "platforms": [
+        "facebook",
+        "instagram",
+        "x"
+      ],
+      "caption": "Billions in public infrastructure for northern mining—while communities ask who decided and who pays. Hold the process accountable.\n\n#FightFord",
+      "headline": "WHO BENEFITS?"
+    },
+    {
+      "id": "foi-receipt-graphic",
+      "title": "FOI",
+      "issue": "foi",
+      "format": "graphic",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "bluesky"
+      ],
+      "caption": "Rolling back freedom-of-information access makes closed-door deals easier. Ontarians deserve public records—not spin. Share the FOI flyer.\n\n#FightFord",
+      "headline": "SHOW THE RECORDS"
+    },
+    {
+      "id": "foi-text-ask",
+      "title": "FOI",
+      "issue": "foi",
+      "format": "text",
+      "platforms": [
+        "threads",
+        "x",
+        "bluesky"
+      ],
+      "caption": "When FOI fees go up and deadlines slip, accountability disappears. Ask your MPP: who decided to weaken public records?\n\n#FightFord"
+    },
+    {
+      "id": "bike-lanes-graphic",
+      "title": "Bike lanes",
+      "issue": "bike-lanes",
+      "format": "graphic",
+      "platforms": [
+        "instagram",
+        "facebook",
+        "threads"
+      ],
+      "caption": "Street safety policy should follow evidence—not get overridden for politics. Bike lanes save lives. Share if your city deserves safer streets.\n\n#FightFord",
+      "headline": "EVIDENCE OVER OVERRIDES"
+    },
+    {
+      "id": "bike-lanes-reel",
+      "title": "Bike lanes",
+      "issue": "bike-lanes",
+      "format": "reel",
+      "platforms": [
+        "instagram",
+        "tiktok",
+        "facebook"
+      ],
+      "caption": "One fact: protected bike lanes reduce serious injuries. One ask: tell your councillor and MPP to stop overriding safety policy.\n\n#FightFord",
+      "headline": "SAFER STREETS NOW"
     }
   ]
 }
