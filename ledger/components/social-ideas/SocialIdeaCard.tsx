@@ -2,16 +2,16 @@
 
 import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
+import SocialPostGraphicPreview from '@/components/social-ideas/SocialPostGraphicPreview'
 import {
-  FIGHT_FORD_HASHTAG,
   ISSUE_LABELS,
   PLATFORM_LABELS,
   buildShareableCaption,
-  postTextWithoutHashtag,
   type SocialPlatform,
   type SocialPostIdea,
 } from '@/lib/social-post-ideas'
-import { ISSUE_FLYER_LINKS, ISSUE_RESOURCE_LINKS, resolveSocialPostImage } from '@/lib/social-post-images'
+import { downloadSocialGraphic, renderSocialGraphicDataUrl } from '@/lib/render-social-graphic'
+import { ISSUE_FLYER_LINKS, ISSUE_RESOURCE_LINKS } from '@/lib/social-post-images'
 
 const fieldClass =
   'w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#2E4A6B]/30'
@@ -22,51 +22,6 @@ function PlatformBadge({ platform }: { platform: SocialPlatform }) {
     <span className="inline-flex items-center rounded-md bg-slate-100 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-slate-600">
       {PLATFORM_LABELS[platform]}
     </span>
-  )
-}
-
-function IdeaGraphic({ idea }: { idea: SocialPostIdea }) {
-  const image = resolveSocialPostImage(idea)
-  const body = postTextWithoutHashtag(idea.caption)
-  const headline = idea.headline?.trim()
-
-  if (image && !image.startsWith('data:')) {
-    return (
-      <div className="relative aspect-[4/5] max-h-[320px] w-full overflow-hidden rounded-xl border border-slate-200 bg-slate-100">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={image} alt="" className="h-full w-full object-contain p-2" />
-        <div className="absolute bottom-0 inset-x-0 bg-[#f9e04c] py-1.5 text-center text-[10px] font-bold text-[#1a1a1a]">
-          {FIGHT_FORD_HASHTAG}
-        </div>
-      </div>
-    )
-  }
-
-  return (
-    <div
-      className="relative aspect-[4/5] max-h-[320px] w-full overflow-hidden rounded-xl border border-[#2E4A6B]/20 flex flex-col"
-      style={{ background: 'linear-gradient(160deg, #152a45 0%, #2E4A6B 55%, #1e3a5f 100%)' }}
-    >
-      {image?.startsWith('data:') ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-35" />
-      ) : null}
-      <div className="relative z-10 flex flex-1 flex-col justify-center p-5 text-center">
-        {headline ? (
-          <p className="text-sm sm:text-base font-bold uppercase tracking-wide leading-tight text-[#f9e04c]">
-            {headline}
-          </p>
-        ) : null}
-        <p
-          className={`${headline ? 'mt-3 text-xs' : 'text-sm font-medium'} text-white/90 font-light leading-snug line-clamp-6`}
-        >
-          {body}
-        </p>
-      </div>
-      <div className="relative z-10 bg-[#f9e04c] py-1.5 text-center text-[10px] font-bold text-[#1a1a1a]">
-        {FIGHT_FORD_HASHTAG}
-      </div>
-    </div>
   )
 }
 
@@ -107,15 +62,27 @@ type Props = {
 
 export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copiedId, onCopy }: Props) {
   const post = buildShareableCaption(idea)
-  const image = resolveSocialPostImage(idea)
   const resource = ISSUE_RESOURCE_LINKS[idea.issue]
   const flyer = ISSUE_FLYER_LINKS[idea.issue]
   const platformStr = idea.platforms.join(', ')
+  const [downloading, setDownloading] = useState(false)
+
+  const handleDownloadGraphic = async () => {
+    setDownloading(true)
+    try {
+      const dataUrl = await renderSocialGraphicDataUrl(idea)
+      downloadSocialGraphic(idea, dataUrl)
+    } catch {
+      window.alert('Could not generate graphic. Try again.')
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-shadow">
       <div className="p-4 sm:p-5">
-        <IdeaGraphic idea={idea} />
+        <SocialPostGraphicPreview idea={idea} />
 
         <div className="mt-4 flex flex-wrap gap-1.5">
           <span className="inline-flex items-center rounded-md bg-[#2E4A6B]/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[#2E4A6B]">
@@ -142,15 +109,16 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
               />
             </div>
             <div>
-              <span className={labelClass}>Graphic headline (optional)</span>
+              <span className={labelClass}>Graphic headline (shown on image)</span>
               <input
                 className={fieldClass}
                 value={idea.headline ?? ''}
                 onChange={(e) => onChange({ ...idea, headline: e.target.value || undefined })}
+                placeholder="Short punchy line — e.g. PUBLIC CARE NOW"
               />
             </div>
             <div>
-              <span className={labelClass}>Image URL (optional)</span>
+              <span className={labelClass}>Background photo (optional)</span>
               <input
                 className={fieldClass}
                 value={idea.imageUrl?.startsWith('data:') ? '' : idea.imageUrl ?? ''}
@@ -213,16 +181,15 @@ export default function SocialIdeaCard({ idea, editing, onChange, onRemove, copi
         >
           {copiedId === idea.id ? 'Copied to clipboard!' : 'Copy post'}
         </button>
+        <button
+          type="button"
+          onClick={handleDownloadGraphic}
+          disabled={downloading}
+          className="w-full py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/30 text-[#2E4A6B] hover:bg-[#2E4A6B]/5 transition-colors disabled:opacity-60"
+        >
+          {downloading ? 'Generating…' : 'Download graphic (1080×1080)'}
+        </button>
         <div className="flex flex-wrap gap-2">
-          {image && !image.startsWith('data:') && (
-            <a
-              href={image}
-              download
-              className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-slate-200 text-slate-700 hover:bg-slate-50"
-            >
-              Save image
-            </a>
-          )}
           <Link
             href={resource.href}
             className="flex-1 min-w-[7rem] text-center py-2.5 rounded-xl text-sm font-medium border border-[#2E4A6B]/25 text-[#2E4A6B] hover:bg-[#2E4A6B]/5"

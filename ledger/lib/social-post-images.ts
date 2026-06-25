@@ -1,37 +1,21 @@
 import type { FordIssue, SocialPostIdea } from './social-post-ideas'
 
-/** Default share graphics when a post has no custom imageUrl */
-export const ISSUE_DEFAULT_IMAGE: Record<FordIssue, string> = {
-  healthcare: '/products/yard-signs/ford-failed-you.png',
-  education: '/products/yard-signs/ford-design-2.png',
-  greenbelt: '/products/yard-signs/ford-design-1.png',
-  'public-land': '/products/yard-signs/ford-design-1.png',
-  water: '/products/yard-signs/ford-design-2.png',
-  transparency: '/products/t-shirts/ford-sucks.png',
-  accountability: '/products/yard-signs/ford-failed-you.png',
-  'ontario-place': '/products/yard-signs/ford-design-1.png',
-  'ring-of-fire': '/products/yard-signs/ford-design-2.png',
-  foi: '/products/t-shirts/ford-sucks.png',
-  'bike-lanes': '/products/yard-signs/ford-design-2.png',
+/** True only when the editor explicitly set a background (upload or URL). */
+export function hasCustomSocialBackground(idea: SocialPostIdea): boolean {
+  const url = idea.imageUrl?.trim()
+  return Boolean(url && (url.startsWith('data:') || url.startsWith('http')))
 }
 
-/** Per-post overrides (yard signs, tees) */
-const POST_IMAGE_OVERRIDES: Record<string, string> = {
-  'acct-yard-sign-photo': '/products/yard-signs/ford-failed-you.png',
-  'acct-reel-15s': '/products/t-shirts/ford-sucks-group.png',
-  'trans-receipt-carousel': '/products/yard-signs/ford-design-1.png',
-}
-
-export function resolveSocialPostImage(idea: SocialPostIdea): string | undefined {
-  if (idea.imageUrl?.trim()) return idea.imageUrl.trim()
-  return POST_IMAGE_OVERRIDES[idea.id] ?? ISSUE_DEFAULT_IMAGE[idea.issue]
+/** @deprecated Yard-sign defaults removed — graphics are text-generated. */
+export function resolveSocialPostImage(_idea: SocialPostIdea): string | undefined {
+  return undefined
 }
 
 export const ISSUE_RESOURCE_LINKS: Record<FordIssue, { href: string; label: string }> = {
   healthcare: { href: '/healthcare', label: 'Healthcare page' },
   education: { href: '/message-guide', label: 'Message guide' },
-  greenbelt: { href: '/public-land#greenbelt', label: 'Greenbelt facts' },
   'public-land': { href: '/public-land', label: 'Public land page' },
+  greenbelt: { href: '/public-land#greenbelt', label: 'Greenbelt facts' },
   water: { href: '/water', label: 'Water page' },
   transparency: { href: '/receipts', label: 'The Receipts' },
   accountability: { href: '/take-action', label: 'Take action' },

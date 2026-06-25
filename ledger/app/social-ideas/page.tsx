@@ -33,8 +33,8 @@ const fade = {
 }
 
 const HOW_TO_STEPS = [
-  { step: '1', title: 'Pick a post', body: 'Filter by topic or platform, or browse all 16 ready-made captions.' },
-  { step: '2', title: 'Copy & paste', body: 'Tap Copy post — every caption includes #FightFord. Attach a Save image if you like.' },
+  { step: '1', title: 'Pick a post', body: 'Filter by topic or platform — each card shows a branded graphic built from the post text.' },
+  { step: '2', title: 'Download & copy', body: 'Download graphic (1080×1080) for Instagram or Facebook, then Copy post for the caption with #FightFord.' },
   { step: '3', title: 'Link to facts', body: 'Each card links to issue pages, flyers, or The Receipts for backup.' },
 ]
 
@@ -144,8 +144,8 @@ export default function SocialIdeasPage() {
             Social post ideas
           </h1>
           <p className="text-lg text-slate-200/95 font-light max-w-2xl leading-relaxed">
-            Ready-made captions and graphics for Facebook, Instagram, Threads, and more — each tied to a Ford
-            government issue. Copy, paste, and share with{' '}
+            Branded 1080×1080 graphics and copy-ready captions for Instagram and Facebook — each tied to a Ford
+            government issue. Download the image, copy the post, and share with{' '}
             <span className="font-medium text-[#f9e04c]">{FIGHT_FORD_HASHTAG}</span>.
           </p>
         </div>
