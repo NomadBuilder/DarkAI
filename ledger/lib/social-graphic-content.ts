@@ -39,7 +39,7 @@ function templateForFormat(format: PostFormat): SocialGraphicContent['template']
 }
 
 /** Text fields used for preview + PNG export (separate from full paste caption). */
-export function getSocialGraphicContent(idea: SocialPostIdea): SocialGraphicContent {
+export function getSocialGraphicContent(idea: SocialPostIdea, opts?: { compact?: boolean }): SocialGraphicContent {
   const bodySource = postTextWithoutHashtag(idea.caption)
   const issueLabel = ISSUE_LABELS[idea.issue]
   const template = templateForFormat(idea.format)
@@ -53,20 +53,21 @@ export function getSocialGraphicContent(idea: SocialPostIdea): SocialGraphicCont
   }
 
   let body = ''
+  const compact = opts?.compact ?? false
   if (template === 'quote') {
-    body = truncateAtWord(bodySource, 200)
+    body = truncateAtWord(bodySource, compact ? 200 : 320)
   } else if (template === 'meme') {
-    body = truncateAtWord(bodySource, 120)
+    body = truncateAtWord(bodySource, compact ? 120 : 200)
   } else {
-    body = truncateAtWord(bodySource, 160)
+    body = truncateAtWord(bodySource, compact ? 160 : 280)
   }
 
   return {
     issueLabel,
     headline,
     body,
-    hashtag: FIGHT_FORD_HASHTAG,
-    site: 'protectont.ca',
+    hashtag: idea.ctaPrimary?.trim() || FIGHT_FORD_HASHTAG,
+    site: idea.ctaSecondary?.trim() || 'protectont.ca',
     template,
   }
 }

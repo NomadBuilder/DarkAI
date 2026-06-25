@@ -1,6 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
+import SocialGraphicStyleFields from '@/components/admin/SocialGraphicStyleFields'
 import SocialPostGraphicPreview from '@/components/social-ideas/SocialPostGraphicPreview'
 import { downloadSocialGraphic, renderSocialGraphicDataUrl } from '@/lib/render-social-graphic'
 import {
@@ -175,6 +176,8 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
               ))}
             </div>
           </div>
+
+          <SocialGraphicStyleFields idea={draft} onChange={setDraft} />
         </div>
 
         <div className="space-y-4 lg:sticky lg:top-6">

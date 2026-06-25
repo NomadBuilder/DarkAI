@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState, type ReactNode } from 'react'
 import SocialPostGraphicPreview from '@/components/social-ideas/SocialPostGraphicPreview'
+import SocialGraphicStyleFields from '@/components/admin/SocialGraphicStyleFields'
 import {
   ISSUE_LABELS,
   PLATFORM_LABELS,
@@ -125,6 +126,7 @@ export default function SocialIdeaCard({
                 onChange={(e) => onChange({ ...idea, headline: e.target.value || undefined })}
               />
             </div>
+            <SocialGraphicStyleFields idea={idea} onChange={onChange} compact />
           </div>
         )}
 

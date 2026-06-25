@@ -25,6 +25,16 @@ export type SocialPostIdea = {
   /** Optional short line on a graphic (preview only) */
   headline?: string
   imageUrl?: string
+  /** Graphic background (top/left of gradient) */
+  graphicBgColor?: string
+  /** Graphic background gradient end */
+  graphicBgColorEnd?: string
+  /** Bottom CTA bar background */
+  ctaBackground?: string
+  /** Bottom CTA primary line (e.g. hashtag) */
+  ctaPrimary?: string
+  /** Bottom CTA secondary line (e.g. site URL) */
+  ctaSecondary?: string
   /** @deprecated Not shown; kept for older saved JSON */
   visualBrief?: string
   designTips?: string

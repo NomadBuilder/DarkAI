@@ -94,6 +94,11 @@ function normalizeIdea(raw: unknown, index: number): SocialPostIdea | null {
     caption: typeof o.caption === 'string' ? o.caption : '',
     headline: typeof o.headline === 'string' ? o.headline : undefined,
     imageUrl: typeof o.imageUrl === 'string' ? o.imageUrl : undefined,
+    graphicBgColor: typeof o.graphicBgColor === 'string' ? o.graphicBgColor : undefined,
+    graphicBgColorEnd: typeof o.graphicBgColorEnd === 'string' ? o.graphicBgColorEnd : undefined,
+    ctaBackground: typeof o.ctaBackground === 'string' ? o.ctaBackground : undefined,
+    ctaPrimary: typeof o.ctaPrimary === 'string' ? o.ctaPrimary : undefined,
+    ctaSecondary: typeof o.ctaSecondary === 'string' ? o.ctaSecondary : undefined,
     visualBrief: typeof o.visualBrief === 'string' ? o.visualBrief : undefined,
     designTips: typeof o.designTips === 'string' ? o.designTips : undefined,
   }
@@ -138,6 +143,11 @@ export function serializeSocialPostIdeasFile(file: SocialPostIdeasFile): string 
       caption: i.caption,
       headline: i.headline,
       imageUrl: i.imageUrl,
+      graphicBgColor: i.graphicBgColor,
+      graphicBgColorEnd: i.graphicBgColorEnd,
+      ctaBackground: i.ctaBackground,
+      ctaPrimary: i.ctaPrimary,
+      ctaSecondary: i.ctaSecondary,
     })),
   }
   return JSON.stringify(clean, null, 2) + '\n'

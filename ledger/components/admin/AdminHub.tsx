@@ -61,10 +61,37 @@ function isAdminSectionId(value: string | null): value is AdminSectionId {
   return ADMIN_SECTIONS.some((s) => s.id === value)
 }
 
+function SocialPostsOnlyInner() {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-white">
+      <header className="bg-gradient-to-br from-violet-950 via-[#3d2b7a] to-slate-900 text-white px-4 sm:px-6 md:px-8 py-8 sm:py-10 border-b border-white/10">
+        <div className="max-w-6xl mx-auto">
+          <p className="text-xs uppercase tracking-[0.35em] text-violet-200/90 mb-2 font-medium">
+            ProtectOnt
+          </p>
+          <h1 className="text-2xl sm:text-3xl font-light tracking-tight">Social posts</h1>
+          <p className="text-slate-300/95 font-light mt-2 max-w-xl text-sm sm:text-base">
+            Build Instagram and Facebook graphics, copy captions, and browse the post library. No other
+            admin sections on this page.
+          </p>
+        </div>
+      </header>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8">
+        <SocialAdminSection embedded />
+      </div>
+    </div>
+  )
+}
+
 function AdminHubInner() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const raw = searchParams.get('section')
+
+  if (raw === 'social-posts-only') {
+    return <SocialPostsOnlyInner />
+  }
+
   const section: AdminSectionId = isAdminSectionId(raw) ? raw : DEFAULT_SECTION
   const active = ADMIN_SECTIONS.find((s) => s.id === section) ?? ADMIN_SECTIONS[0]
 
@@ -147,7 +174,20 @@ function AdminHubInner() {
 
         {section === 'events' && <EventsAdminPage embedded />}
         {section === 'flyers' && <FlyerAdminPage embedded />}
-        {section === 'social-posts' && <SocialAdminSection embedded />}
+        {section === 'social-posts' && (
+          <>
+            <p className="text-sm text-violet-900/90 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3 mb-6 font-light">
+              Share this link with volunteers (builder + library only, no other admin):{' '}
+              <a
+                href="/admin?section=social-posts-only"
+                className="font-medium text-[#3d2b7a] underline underline-offset-2 break-all"
+              >
+                protectont.ca/admin?section=social-posts-only
+              </a>
+            </p>
+            <SocialAdminSection embedded />
+          </>
+        )}
         {section === 'join-form' && <FormAdminPage embedded />}
         {section === 'submissions' && <SubmissionsAdminPage embedded />}
         {section === 'sign-deliveries' && <SignDeliveriesAdminPage embedded />}
