@@ -3,11 +3,10 @@
 import Link from 'next/link'
 
 const LINKS = [
-  { href: '/flyers', label: 'Flyers' },
-  { href: '/materials', label: 'Materials' },
-  { href: '/social-ideas', label: 'Social posts' },
   { href: '/protests', label: 'Protests' },
   { href: '/join', label: 'Join' },
+  { href: '/flyers', label: 'Flyers' },
+  { href: '/materials', label: 'Materials' },
 ] as const
 
 /** Slim sticky links for pages that hide the full footer (join, flyer detail). */

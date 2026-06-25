@@ -60,19 +60,29 @@ const aboutDropdownItems: NavItem[] = [
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
-const resourcesDropdownItems: NavItem[] = [
-  { id: 'flyers', label: 'Printable flyers', href: '/flyers' },
-  { id: 'materials', label: 'Materials', href: '/materials' },
-  { id: 'social-ideas', label: 'Social post ideas', href: '/social-ideas' },
-  { id: 'message-guide', label: 'Message Guide', href: '/message-guide' },
-  { id: 'chants', label: 'Chant Bank', href: '/chants' },
+const takeActionDropdownGroups: { label?: string; items: NavItem[] }[] = [
+  {
+    label: 'Take action',
+    items: [{ id: 'join', label: 'Join — get a sign', href: '/join' }],
+  },
+  {
+    label: 'Get ready',
+    items: [
+      { id: 'materials', label: 'Materials', href: '/materials' },
+      { id: 'products', label: 'Products', href: '/products' },
+    ],
+  },
+  {
+    label: 'Make noise',
+    items: [{ id: 'contact-mpp', label: 'Contact your MPP', href: '/take-action' }],
+  },
 ]
 
 const navItems: NavItem[] = [
   { id: 'issues', label: 'The Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
+  { id: 'take-action', label: 'Take action', isDropdown: true, dropdownGroups: takeActionDropdownGroups },
   { id: 'protests', label: 'Protests', href: '/protests' },
-  { id: 'products', label: 'Products', href: '/products' },
-  { id: 'resources', label: 'Resources', isDropdown: true, dropdownItems: resourcesDropdownItems },
+  { id: 'flyers', label: 'Flyers', href: '/flyers' },
   { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]
 

@@ -2,6 +2,16 @@ import Link from 'next/link'
 
 const STEPS = [
   {
+    href: '/protests',
+    title: 'Find a protest',
+    blurb: 'Events and campaigns across Ontario',
+  },
+  {
+    href: '/join',
+    title: 'Join us',
+    blurb: 'Signs, volunteering, and local pickup',
+  },
+  {
     href: '/flyers',
     title: 'Printable flyers',
     blurb: 'Letter-size PDFs for doors, boards, and tabling',
@@ -12,19 +22,9 @@ const STEPS = [
     blurb: 'Signs, shirts, stickers, and protest prep',
   },
   {
-    href: '/social-ideas',
-    title: 'Social post ideas',
-    blurb: 'Copy-ready captions with #FightFord',
-  },
-  {
-    href: '/protests',
-    title: 'Find a protest',
-    blurb: 'Events and campaigns across Ontario',
-  },
-  {
-    href: '/join',
-    title: 'Join us',
-    blurb: 'Signs, volunteering, and local pickup',
+    href: '/take-action',
+    title: 'Contact your MPP',
+    blurb: 'Petitions, templates, and civic action',
   },
 ] as const
 

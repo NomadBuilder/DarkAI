@@ -62,18 +62,38 @@ const tablingAndDoors = [
     cta: 'Browse flyers',
   },
   {
-    title: 'Social post ideas',
-    description: 'Copy-ready captions with #FightFord — pair with a flyer when you share online.',
-    href: '/social-ideas',
-    cta: 'Get post ideas',
+    title: 'Order printed signs & tees',
+    description: 'Yard signs, posters, and shirts — optional paid orders fund local delivery.',
+    href: '/products',
+    cta: 'View products',
   },
 ]
 
 const protestPrep = [
   { title: 'Free sign downloads', href: '/join#download-a-sign', cta: 'Download on Join' },
-  { title: 'Message guide', href: '/message-guide', cta: 'Read guide' },
-  { title: 'Chant bank', href: '/chants', cta: 'Browse chants' },
   { title: 'Find a protest', href: '/protests#event-list', cta: 'See events' },
+  { title: 'Contact your MPP', href: '/take-action', cta: 'Take action' },
+]
+
+const organizerTools = [
+  {
+    title: 'Social post ideas',
+    description: 'Copy-ready captions with #FightFord — pair with a flyer when you share online.',
+    href: '/social-ideas',
+    cta: 'Get post ideas',
+  },
+  {
+    title: 'Message guide',
+    description: 'Talking points by issue — what to say and what to avoid at the door or on camera.',
+    href: '/message-guide',
+    cta: 'Read guide',
+  },
+  {
+    title: 'Chant bank',
+    description: 'Call-and-response chants by tone — print quick cards for rallies.',
+    href: '/chants',
+    cta: 'Browse chants',
+  },
 ]
 
 export default function MaterialsPage() {
@@ -153,6 +173,26 @@ export default function MaterialsPage() {
                 <h3 className="text-lg font-light text-slate-900">{item.title}</h3>
                 <p className="mt-2 flex-1 text-sm text-slate-600 font-light leading-relaxed">{item.description}</p>
                 <span className="mt-4 text-sm text-[#2E4A6B] font-medium group-hover:underline">{item.cta} →</span>
+              </Link>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section {...fade}>
+          <h2 className="text-2xl font-light text-slate-900 mb-2">Organizer tools</h2>
+          <p className="text-sm text-slate-600 font-light mb-5 max-w-2xl">
+            Optional extras for tabling, social media, and on-the-ground events.
+          </p>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {organizerTools.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex flex-col rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:border-[#2E4A6B]/30 hover:shadow-md transition-all"
+              >
+                <h3 className="text-lg font-light text-slate-900 group-hover:text-[#2E4A6B]">{item.title}</h3>
+                <p className="mt-2 flex-1 text-sm text-slate-600 font-light leading-relaxed">{item.description}</p>
+                <span className="mt-4 text-sm text-[#2E4A6B] font-medium">{item.cta} →</span>
               </Link>
             ))}
           </div>
