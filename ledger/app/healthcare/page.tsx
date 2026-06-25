@@ -1,6 +1,7 @@
 'use client'
 
 import SectionStaffingCrisis from '../../components/sections/SectionStaffingCrisis'
+import SectionSharedCare from '../../components/sections/SectionSharedCare'
 import SectionHospitalCrisis from '../../components/sections/SectionHospitalCrisis'
 import SectionLongTermCare from '../../components/sections/SectionLongTermCare'
 import SectionRegionalImpact from '../../components/sections/SectionRegionalImpact'
@@ -47,6 +48,9 @@ export default function HealthcarePage() {
               <section id="staffing" className="pt-20 sm:pt-24">
                 <SectionStaffingCrisis />
               </section>
+              <section id="shared-care" className="pt-16 md:pt-24">
+                <SectionSharedCare />
+              </section>
         <section id="hospitals" className="pt-16 md:pt-24">
           <SectionHospitalCrisis />
         </section>
@@ -84,6 +88,18 @@ export default function HealthcarePage() {
                 <span className="mr-2 text-slate-500">4.</span>
                 <a href="https://www.cihi.ca/en/indicators/number-of-acute-care-beds" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
                   CIHI: Number of acute care beds (per capita, by province)
+                </a>
+              </li>
+              <li id="source-5">
+                <span className="mr-2 text-slate-500">5.</span>
+                <a href="https://www150.statcan.gc.ca/n1/pub/75-006-x/2021001/article/00002-eng.htm" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Statistics Canada: Gender and health care occupations (2021)
+                </a>
+              </li>
+              <li id="source-6">
+                <span className="mr-2 text-slate-500">6.</span>
+                <a href="https://www.policyalternatives.ca/offices/ontario" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Canadian Centre for Policy Alternatives — Ontario (care economy &amp; public services)
                 </a>
               </li>
             </ul>

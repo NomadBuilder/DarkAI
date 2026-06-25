@@ -45,7 +45,7 @@ export type SocialPostIdea = {
 }
 
 export const FIGHT_FORD_HASHTAG = '#FightFord'
-export const SOCIAL_IDEAS_VERSION = 3
+export const SOCIAL_IDEAS_VERSION = 4
 
 export const ISSUE_LABELS: Record<FordIssue, string> = {
   healthcare: 'Healthcare',
@@ -348,6 +348,71 @@ export const SOCIAL_POST_IDEAS: SocialPostIdea[] = [
     headline: 'SAFER STREETS NOW',
     caption: cap(
       'One fact: protected bike lanes reduce serious injuries. One ask: tell your councillor and MPP to stop overriding safety policy.'
+    ),
+  },
+  {
+    id: 'care-shared-graphic',
+    title: 'Public care',
+    issue: 'healthcare',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'PUBLIC CARE IS SHARED CARE',
+    graphicText:
+      'When hospitals and schools are underfunded, families absorb the cost — and that load lands unevenly. Public services are how we share care.',
+    caption: cap(
+      'Read the full picture on protectont.ca/healthcare#shared-care — and print the flyer at protectont.ca/flyers/public-care.'
+    ),
+  },
+  {
+    id: 'care-women-twice',
+    title: 'Public care',
+    issue: 'healthcare',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook'],
+    headline: 'WOMEN PAY TWICE',
+    graphicText:
+      'Bill 124 capped wages in a workforce that is mostly women — while Ontario spent billions on private staffing agencies. Cuts at work. Unpaid care at home.',
+    caption: cap(
+      'At work and at home — when public care is cut, the bill does not disappear. Share the flyer: protectont.ca/flyers/public-care'
+    ),
+  },
+  {
+    id: 'care-bill-goes-home',
+    title: 'Public care',
+    issue: 'healthcare',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'THE BILL GOES HOME',
+    graphicText:
+      'Longer ER waits. Home-care waitlists. School supports stretched thin. The gap shifts onto family caregivers — disproportionately women.',
+    caption: cap(
+      'Public capacity is how we share care instead of privatizing it onto households. protectont.ca/healthcare#shared-care'
+    ),
+  },
+  {
+    id: 'care-organizers',
+    title: 'Organizing',
+    issue: 'accountability',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'threads'],
+    headline: 'WHO HOLDS ONTARIO TOGETHER?',
+    graphicText:
+      'Signs, protests, mutual aid, school-council pressure — much of this province’s opposition runs on volunteer labour. Often women doing the invisible coordinating.',
+    caption: cap(
+      'Join the network or find a local event: protectont.ca/join · protectont.ca/protests'
+    ),
+  },
+  {
+    id: 'care-nurses-stat',
+    title: 'Healthcare workforce',
+    issue: 'healthcare',
+    format: 'graphic',
+    platforms: ['instagram', 'facebook', 'x'],
+    headline: '9 IN 10 NURSES ARE WOMEN',
+    graphicText:
+      'Bill 124 capped their wages while hospitals sent billions to private staffing agencies. That is not austerity — it is shifting cost onto feminized care work.',
+    caption: cap(
+      'Sources and context: protectont.ca/healthcare · Printable flyer: protectont.ca/flyers/public-care'
     ),
   },
 ]

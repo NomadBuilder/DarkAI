@@ -53,6 +53,9 @@ export default function PartnerOrganizationsSection() {
           <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-relaxed text-slate-600 sm:max-w-3xl sm:text-base lg:max-w-none">
             Explore organizations working to protect public services, strengthen democracy, and build a better Ontario.
           </p>
+          <p className="mx-auto mt-2 max-w-2xl text-sm font-light leading-relaxed text-slate-500 sm:max-w-3xl sm:text-base lg:max-w-none">
+            Much of Ontario&apos;s opposition is volunteer-led — often women coordinating signs, events, and mutual aid.
+          </p>
         </motion.div>
 
         <div className="relative px-11 sm:px-12">

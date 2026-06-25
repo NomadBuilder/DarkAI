@@ -26,7 +26,7 @@ export const ISSUE_RESOURCE_LINKS: Record<FordIssue, { href: string; label: stri
 }
 
 export const ISSUE_FLYER_LINKS: Record<FordIssue, { href: string; label: string } | undefined> = {
-  healthcare: { href: '/flyers/healthcare', label: 'Healthcare flyer' },
+  healthcare: { href: '/flyers/public-care', label: 'Public care flyer' },
   education: undefined,
   greenbelt: { href: '/flyers/public-land', label: 'Public land flyer' },
   'public-land': { href: '/flyers/public-land', label: 'Public land flyer' },

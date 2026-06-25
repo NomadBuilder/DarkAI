@@ -13,7 +13,7 @@ const FORMATS: PostFormat[] = ['graphic', 'meme', 'gif', 'carousel', 'story', 'r
 const ALL_PLATFORMS: SocialPlatform[] = ['instagram', 'facebook', 'threads', 'x', 'tiktok', 'bluesky']
 
 const HEADLINES: Record<FordIssue, string[]> = {
-  healthcare: ['PUBLIC CARE NOW', 'WAIT TIMES ARE POLICY', 'STOP THE TWO-TIER SHIFT'],
+  healthcare: ['PUBLIC CARE NOW', 'WOMEN PAY TWICE', 'PUBLIC CARE IS SHARED CARE', 'THE BILL GOES HOME'],
   education: ['FUND OUR SCHOOLS', 'CLASSROOMS NOT CUTS', 'SUPPORT TEACHERS'],
   greenbelt: ['PROTECT THE GREENBELT', 'FARMLAND NOT SPRAWL', 'NATURE IS NOT FOR SALE'],
   'public-land': ['PUBLIC LAND STAYS PUBLIC', 'OUR PARKS OUR RULES', 'STOP THE GIVEAWAY'],
@@ -29,8 +29,8 @@ const HEADLINES: Record<FordIssue, string[]> = {
 const POSTS: Record<FordIssue, string[]> = {
   healthcare: [
     'Longer waits. Higher private bills. Ontario needs public capacity in public hospitals—not another shift to for-profit care.',
-    'If your ER wait got worse, you are not imagining it. Tag your MPP and share what you are seeing locally.',
-    'Public care. Public dollars. No more two-tier surprises.',
+    'When public care is cut, the load lands unevenly — at work (mostly women in feminized jobs) and at home (unpaid caregiving). Share the flyer.',
+    'Bill 124 capped wages while agencies captured billions. Public care is shared care — not a private bill sent home.',
   ],
   education: [
     'Kids need support before crisis—not after. Fund public classrooms, not excuses.',
