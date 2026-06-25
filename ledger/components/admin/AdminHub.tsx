@@ -65,15 +65,12 @@ function SocialPostsOnlyInner() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-100 via-slate-50 to-white">
       <header className="bg-gradient-to-br from-violet-950 via-[#3d2b7a] to-slate-900 text-white px-4 sm:px-6 md:px-8 py-8 sm:py-10 border-b border-white/10">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-xs uppercase tracking-[0.35em] text-violet-200/90 mb-2 font-medium">
-            ProtectOnt
-          </p>
+        <div className="max-w-6xl mx-auto flex items-start justify-between gap-4">
           <h1 className="text-2xl sm:text-3xl font-light tracking-tight">Social posts</h1>
-          <p className="text-slate-300/95 font-light mt-2 max-w-xl text-sm sm:text-base">
-            Build Instagram and Facebook graphics, copy captions, and browse the post library. No other
-            admin sections on this page.
-          </p>
+          <Link href="/" className="shrink-0" aria-label="Protect Ontario – Home">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo-icon-text-dark.svg" alt="" className="h-9 sm:h-10 w-auto" />
+          </Link>
         </div>
       </header>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-8">
