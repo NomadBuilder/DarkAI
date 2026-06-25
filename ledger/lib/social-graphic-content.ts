@@ -40,7 +40,7 @@ function templateForFormat(format: PostFormat): SocialGraphicContent['template']
 
 /** Text fields used for preview + PNG export (separate from full paste caption). */
 export function getSocialGraphicContent(idea: SocialPostIdea, opts?: { compact?: boolean }): SocialGraphicContent {
-  const bodySource = postTextWithoutHashtag(idea.caption)
+  const bodySource = postTextWithoutHashtag(idea.graphicText ?? idea.caption)
   const issueLabel = ISSUE_LABELS[idea.issue]
   const template = templateForFormat(idea.format)
 

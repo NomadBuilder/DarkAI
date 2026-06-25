@@ -21,6 +21,7 @@ function newDraft(issue: FordIssue = 'healthcare'): SocialPostIdea {
     format: 'graphic',
     platforms: ['instagram', 'facebook'],
     headline: '',
+    graphicText: '',
     caption: '',
   }
 }
@@ -31,6 +32,7 @@ type Props = {
 
 export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
   const [draft, setDraft] = useState<SocialPostIdea>(() => newDraft())
+  const [styleOpen, setStyleOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [downloading, setDownloading] = useState(false)
   const [savedFlash, setSavedFlash] = useState(false)
@@ -56,8 +58,8 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
   }
 
   const handleDownload = async () => {
-    if (!draft.caption.trim() && !draft.headline?.trim()) {
-      window.alert('Add a headline or caption so the graphic has something to show.')
+    if (!draft.graphicText?.trim() && !draft.headline?.trim()) {
+      window.alert('Add a headline or graphic text so the image has something to show.')
       return
     }
     setDownloading(true)
@@ -81,6 +83,7 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
       id: `idea-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
       title: ISSUE_LABELS[draft.issue],
       caption: cap(draft.caption.trim()),
+      graphicText: draft.graphicText?.trim() || undefined,
     }
     onSaveToLibrary(idea)
     setSavedFlash(true)
@@ -91,8 +94,9 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-violet-200 bg-violet-50/60 px-4 py-3 text-sm text-violet-950 font-light">
-        <strong className="font-medium">How it works:</strong> pick a topic, write a short headline and caption, preview
-        the branded square graphic, then copy the caption and download the image for Instagram or Facebook.
+        <strong className="font-medium">How it works:</strong> pick a topic, write headline and graphic text for the
+        image, then write a separate caption to paste with your post. Preview the graphic, copy the caption, and
+        download the image.
       </div>
 
       <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
@@ -131,22 +135,53 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
           </div>
 
           <div>
+            <button
+              type="button"
+              onClick={() => setStyleOpen((open) => !open)}
+              className="flex w-full items-center justify-between gap-3 text-left"
+              aria-expanded={styleOpen}
+            >
+              <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">3. Graphic style</span>
+              <span className="text-slate-400 text-sm" aria-hidden>
+                {styleOpen ? '−' : '+'}
+              </span>
+            </button>
+            {styleOpen ? (
+              <div className="mt-3">
+                <SocialGraphicStyleFields idea={draft} onChange={setDraft} showTitle={false} />
+              </div>
+            ) : null}
+          </div>
+
+          <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-              3. Caption (paste into the post)
+              4. Graphic text
+            </label>
+            <textarea
+              rows={4}
+              value={draft.graphicText ?? ''}
+              onChange={(e) => setDraft((d) => ({ ...d, graphicText: e.target.value }))}
+              placeholder="Supporting copy that appears on the image…"
+              className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-violet-300"
+            />
+            <p className="mt-1 text-xs text-slate-500 font-light">Rendered on the graphic only — not your post caption.</p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
+              5. Caption
             </label>
             <textarea
               rows={5}
               value={draft.caption.replace(new RegExp(`\\s*${FIGHT_FORD_HASHTAG}\\s*`, 'gi'), '').trim()}
               onChange={(e) => setDraft((d) => ({ ...d, caption: e.target.value }))}
-              placeholder="What you want people to read on Instagram or Facebook…"
+              placeholder="What you paste into Instagram or Facebook with the image…"
               className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-violet-300"
             />
             <p className="mt-1 text-xs text-slate-500 font-light">
               {FIGHT_FORD_HASHTAG} is added automatically when you copy.
             </p>
           </div>
-
-          <SocialGraphicStyleFields idea={draft} onChange={setDraft} />
         </div>
 
         <div className="space-y-4 lg:sticky lg:top-6">

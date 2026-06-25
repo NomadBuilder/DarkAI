@@ -22,6 +22,8 @@ export type SocialPostIdea = {
   platforms: SocialPlatform[]
   /** What you paste into Facebook / Instagram — the actual post */
   caption: string
+  /** Body copy rendered on the graphic (not the post caption) */
+  graphicText?: string
   /** Optional short line on a graphic (preview only) */
   headline?: string
   imageUrl?: string

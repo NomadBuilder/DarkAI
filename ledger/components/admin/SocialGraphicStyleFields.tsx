@@ -11,16 +11,22 @@ type Props = {
   idea: SocialPostIdea
   onChange: (next: SocialPostIdea) => void
   compact?: boolean
+  showTitle?: boolean
 }
 
-export default function SocialGraphicStyleFields({ idea, onChange, compact = false }: Props) {
+export default function SocialGraphicStyleFields({
+  idea,
+  onChange,
+  compact = false,
+  showTitle = true,
+}: Props) {
   const applyPreset = (bg: string, end: string) => {
     onChange({ ...idea, graphicBgColor: bg, graphicBgColorEnd: end })
   }
 
   return (
     <div className={compact ? 'space-y-3' : 'space-y-4 rounded-xl border border-slate-100 bg-slate-50/80 p-4'}>
-      {!compact && (
+      {!compact && showTitle && (
         <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Graphic style</p>
       )}
 
