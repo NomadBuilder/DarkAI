@@ -21,6 +21,8 @@ interface NavItem {
   label: string
   section?: string
   href?: string
+  /** Opens href in a new tab (e.g. Stripe donate) */
+  external?: boolean
   action?: 'dataSources' | 'methodology'
   isDropdown?: boolean
   dropdownItems?: NavItem[]
@@ -60,9 +62,12 @@ const aboutDropdownItems: NavItem[] = [
   { id: 'methodology', label: 'Methodology', href: '/methodology' },
 ]
 
+const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
+
 const takeActionDropdownItems: NavItem[] = [
   { id: 'join', label: 'Join — get a sign', href: '/join' },
   { id: 'contact-mpp', label: 'Contact your MPP', href: '/take-action' },
+  { id: 'donate', label: 'Donate', href: DONATE_STRIPE_URL, external: true },
 ]
 
 const materialsDropdownItems: NavItem[] = [
@@ -78,8 +83,6 @@ const navItems: NavItem[] = [
   { id: 'materials', label: 'Materials', isDropdown: true, dropdownItems: materialsDropdownItems },
   { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]
-
-const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
 
 const DROPDOWN_LEAVE_DELAY_MS = 200
 
@@ -157,7 +160,11 @@ export default function TopNavigation({
     } else if (item.action === 'methodology' && onMethodologyClick) {
       onMethodologyClick()
     } else if (item.href) {
-      window.location.href = getNavHref(item.href, basePath)
+      if (item.external || /^https?:\/\//i.test(item.href)) {
+        window.open(item.href, '_blank', 'noopener,noreferrer')
+      } else {
+        window.location.href = getNavHref(item.href, basePath)
+      }
     } else if (item.section) {
       scrollToSection(item.section)
     }
@@ -291,16 +298,6 @@ export default function TopNavigation({
                     </button>
                     )
                   })}
-                  <a
-                    href={DONATE_STRIPE_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`ml-2 lg:ml-3 px-2 py-2 text-sm lg:text-base font-light underline-offset-4 hover:underline transition-colors whitespace-nowrap ${
-                      navOnDark ? 'text-[#f9e04c]/80 hover:text-[#f9e04c]' : 'text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    Donate
-                  </a>
                   <Link
                     href={getNavHref(primaryCta?.href ?? DEFAULT_PRIMARY_CTA.href, basePath)}
                     className={`ml-2 lg:ml-2 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap ${
@@ -496,15 +493,6 @@ function MobileMenu({
                           }`}
                         >
                           {primaryCta?.label ?? DEFAULT_PRIMARY_CTA.label}
-                        </a>
-                        <a
-                          href={DONATE_STRIPE_URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          onClick={() => setIsOpen(false)}
-                          className="block w-full text-center px-4 py-3 text-base font-light text-gray-600 hover:text-gray-900 transition-colors"
-                        >
-                          Donate
                         </a>
                       </div>
                     </div>
