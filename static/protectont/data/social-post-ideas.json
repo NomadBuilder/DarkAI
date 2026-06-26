@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "ideas": [
     {
       "id": "hc-wait-graphic",
@@ -11,7 +11,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Ontarians are waiting longer while more care shifts private. Public hospitals need public funding—not another handout to for-profit clinics. Share if your ER wait got worse.\n\n#FightFord",
+      "caption": "Ontarians are waiting longer while more care shifts private. Public hospitals need public funding—not another handout to for-profit clinics. Share if your ER wait got worse.\n\n#ProtectOnt #FightFord",
       "headline": "PUBLIC CARE. PUBLIC DOLLARS."
     },
     {
@@ -24,7 +24,7 @@
         "instagram",
         "x"
       ],
-      "caption": "Still in the waiting room… while Ontario keeps expanding private billing. Punch up at policy, not patients.\n\n#FightFord",
+      "caption": "Still in the waiting room… while Ontario keeps expanding private billing. Punch up at policy, not patients.\n\n#ProtectOnt #FightFord",
       "headline": "STILL IN THE WAITING ROOM"
     },
     {
@@ -36,7 +36,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Students need support before crisis—not after. Public dollars should stay in public schools. Swipe if you agree.\n\n#FightFord",
+      "caption": "Students need support before crisis—not after. Public dollars should stay in public schools. Swipe if you agree.\n\n#ProtectOnt #FightFord",
       "headline": "FUND CLASSROOMS"
     },
     {
@@ -49,7 +49,7 @@
         "facebook",
         "tiktok"
       ],
-      "caption": "Smaller classes → erased. More EAs → erased. Libraries → cut. Public money belongs in public schools—not excuses.\n\n#FightFord",
+      "caption": "Smaller classes → erased. More EAs → erased. Libraries → cut. Public money belongs in public schools—not excuses.\n\n#ProtectOnt #FightFord",
       "headline": "CLASSROOMS NOT CUTS"
     },
     {
@@ -63,7 +63,7 @@
         "threads",
         "bluesky"
       ],
-      "caption": "They promised to protect the Greenbelt. Then they opened it up. Farmland and watersheds are not a developer bonus—once it is paved, we do not get it back.\n\n#FightFord",
+      "caption": "They promised to protect the Greenbelt. Then they opened it up. Farmland and watersheds are not a developer bonus—once it is paved, we do not get it back.\n\n#ProtectOnt #FightFord",
       "headline": "PROTECTED LAND ≠ FOR SALE"
     },
     {
@@ -75,7 +75,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Should Ontario pave more farmland? Most of us say no. Hold leaders accountable—and protect what is left.\n\n#FightFord"
+      "caption": "Should Ontario pave more farmland? Most of us say no. Hold leaders accountable—and protect what is left.\n\n#ProtectOnt #FightFord"
     },
     {
       "id": "land-quote-card",
@@ -87,7 +87,7 @@
         "facebook",
         "x"
       ],
-      "caption": "Parks, wetlands, and trails belong to all of us—not behind closed doors. Public land should stay public.\n\n#FightFord",
+      "caption": "Parks, wetlands, and trails belong to all of us—not behind closed doors. Public land should stay public.\n\n#ProtectOnt #FightFord",
       "headline": "PUBLIC LAND IS NOT A GIVEAWAY"
     },
     {
@@ -100,7 +100,7 @@
         "instagram",
         "tiktok"
       ],
-      "caption": "When the water bill lands and you wonder who is actually protecting your community. Rising costs. Weak safeguards. We deserve better.\n\n#FightFord",
+      "caption": "When the water bill lands and you wonder who is actually protecting your community. Rising costs. Weak safeguards. We deserve better.\n\n#ProtectOnt #FightFord",
       "headline": "CLEAN WATER NOW"
     },
     {
@@ -113,7 +113,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Who decided? Who benefited? What did it cost us? Ontarians deserve public records—not spin. Share if you want the receipts.\n\n#FightFord",
+      "caption": "Who decided? Who benefited? What did it cost us? Ontarians deserve public records—not spin. Share if you want the receipts.\n\n#ProtectOnt #FightFord",
       "headline": "SHOW THE RECEIPTS"
     },
     {
@@ -126,7 +126,7 @@
         "facebook",
         "x"
       ],
-      "caption": "Who signed? Who paid? Who was in the room? Closed-door deals cost the public every time.\n\n#FightFord",
+      "caption": "Who signed? Who paid? Who was in the room? Closed-door deals cost the public every time.\n\n#ProtectOnt #FightFord",
       "headline": "WHO WAS IN THE ROOM?"
     },
     {
@@ -138,7 +138,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Ford Failed You — on healthcare, schools, and public land. Want a yard sign in your neighbourhood? Comment or DM and we will connect you locally.\n\n#FightFord",
+      "caption": "Ford Failed You — on healthcare, schools, and public land. Want a yard sign in your neighbourhood? Comment or DM and we will connect you locally.\n\n#ProtectOnt #FightFord",
       "headline": "FORD FAILED YOU"
     },
     {
@@ -151,7 +151,7 @@
         "tiktok",
         "facebook"
       ],
-      "caption": "One issue. One fact. One ask: tell a friend, tag your MPP, share this. Grassroots pressure still works when we show up.\n\n#FightFord",
+      "caption": "One issue. One fact. One ask: tell a friend, tag your MPP, share this. Grassroots pressure still works when we show up.\n\n#ProtectOnt #FightFord",
       "headline": "HOLD THEM ACCOUNTABLE"
     },
     {
@@ -162,7 +162,7 @@
       "platforms": [
         "facebook"
       ],
-      "caption": "Longer waits. Higher private bills. If you have a recent ER or specialist story, share it below—keep it local. Public care needs public capacity.\n\n#FightFord"
+      "caption": "Longer waits. Higher private bills. If you have a recent ER or specialist story, share it below—keep it local. Public care needs public capacity.\n\n#ProtectOnt #FightFord"
     },
     {
       "id": "edu-threads-hot-take",
@@ -174,7 +174,7 @@
         "bluesky",
         "x"
       ],
-      "caption": "Public education is not failing—underfunding is the policy choice.\n\n#FightFord"
+      "caption": "Public education is not failing—underfunding is the policy choice.\n\n#ProtectOnt #FightFord"
     },
     {
       "id": "gb-meme-drake",
@@ -186,7 +186,7 @@
         "facebook",
         "x"
       ],
-      "caption": "Protect farmland and watersheds — yes. Pave the Greenbelt for sprawl — hard no.\n\n#FightFord",
+      "caption": "Protect farmland and watersheds — yes. Pave the Greenbelt for sprawl — hard no.\n\n#ProtectOnt #FightFord",
       "headline": "PROTECT / PAVE"
     },
     {
@@ -200,7 +200,7 @@
         "threads",
         "bluesky"
       ],
-      "caption": "This week: healthcare waits are a policy choice—not bad luck. Share one fact with someone who votes in Ontario.\n\n#FightFord",
+      "caption": "This week: healthcare waits are a policy choice—not bad luck. Share one fact with someone who votes in Ontario.\n\n#ProtectOnt #FightFord",
       "headline": "ISSUE OF THE WEEK"
     },
     {
@@ -213,7 +213,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Ontario Place belongs to all of us—not a closed-door lease to a private operator. Share if you want the waterfront kept public.\n\n#FightFord",
+      "caption": "Ontario Place belongs to all of us—not a closed-door lease to a private operator. Share if you want the waterfront kept public.\n\n#ProtectOnt #FightFord",
       "headline": "PUBLIC WATERFRONT ≠ PRIVATE SPA"
     },
     {
@@ -225,7 +225,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Would you trade public waterfront for a private spa? Most Ontarians say no. Print the flyer and talk to a neighbour.\n\n#FightFord"
+      "caption": "Would you trade public waterfront for a private spa? Most Ontarians say no. Print the flyer and talk to a neighbour.\n\n#ProtectOnt #FightFord"
     },
     {
       "id": "rof-carousel",
@@ -237,7 +237,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Major mining roads through the Ring of Fire need free, prior, and informed consent—not a rush past community objections. Swipe for the facts.\n\n#FightFord",
+      "caption": "Major mining roads through the Ring of Fire need free, prior, and informed consent—not a rush past community objections. Swipe for the facts.\n\n#ProtectOnt #FightFord",
       "headline": "CONSENT COMES FIRST"
     },
     {
@@ -250,7 +250,7 @@
         "instagram",
         "x"
       ],
-      "caption": "Billions in public infrastructure for northern mining—while communities ask who decided and who pays. Hold the process accountable.\n\n#FightFord",
+      "caption": "Billions in public infrastructure for northern mining—while communities ask who decided and who pays. Hold the process accountable.\n\n#ProtectOnt #FightFord",
       "headline": "WHO BENEFITS?"
     },
     {
@@ -263,7 +263,7 @@
         "facebook",
         "bluesky"
       ],
-      "caption": "Rolling back freedom-of-information access makes closed-door deals easier. Ontarians deserve public records—not spin. Share the FOI flyer.\n\n#FightFord",
+      "caption": "Rolling back freedom-of-information access makes closed-door deals easier. Ontarians deserve public records—not spin. Share the FOI flyer.\n\n#ProtectOnt #FightFord",
       "headline": "SHOW THE RECORDS"
     },
     {
@@ -276,7 +276,7 @@
         "x",
         "bluesky"
       ],
-      "caption": "When FOI fees go up and deadlines slip, accountability disappears. Ask your MPP: who decided to weaken public records?\n\n#FightFord"
+      "caption": "When FOI fees go up and deadlines slip, accountability disappears. Ask your MPP: who decided to weaken public records?\n\n#ProtectOnt #FightFord"
     },
     {
       "id": "bike-lanes-graphic",
@@ -288,7 +288,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Street safety policy should follow evidence—not get overridden for politics. Bike lanes save lives. Share if your city deserves safer streets.\n\n#FightFord",
+      "caption": "Street safety policy should follow evidence—not get overridden for politics. Bike lanes save lives. Share if your city deserves safer streets.\n\n#ProtectOnt #FightFord",
       "headline": "EVIDENCE OVER OVERRIDES"
     },
     {
@@ -301,7 +301,7 @@
         "tiktok",
         "facebook"
       ],
-      "caption": "One fact: protected bike lanes reduce serious injuries. One ask: tell your councillor and MPP to stop overriding safety policy.\n\n#FightFord",
+      "caption": "One fact: protected bike lanes reduce serious injuries. One ask: tell your councillor and MPP to stop overriding safety policy.\n\n#ProtectOnt #FightFord",
       "headline": "SAFER STREETS NOW"
     },
     {
@@ -314,7 +314,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Read the full picture on protectont.ca/healthcare#shared-care — and print the flyer at protectont.ca/flyers/public-care.\n\n#FightFord",
+      "caption": "Read the full picture on/healthcare#shared-care — and print the flyer at/flyers/public-care.\n\n#ProtectOnt #FightFord",
       "graphicText": "When hospitals and schools are underfunded, families absorb the cost — and that load lands unevenly. Public services are how we share care.",
       "headline": "PUBLIC CARE IS SHARED CARE"
     },
@@ -327,7 +327,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "At work and at home — when public care is cut, the bill does not disappear. Share the flyer: protectont.ca/flyers/public-care\n\n#FightFord",
+      "caption": "At work and at home — when public care is cut, the bill does not disappear. Share the flyer:/flyers/public-care\n\n#ProtectOnt #FightFord",
       "graphicText": "Bill 124 capped wages in a workforce that is mostly women — while Ontario spent billions on private staffing agencies. Cuts at work. Unpaid care at home.",
       "headline": "WOMEN PAY TWICE"
     },
@@ -341,7 +341,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Public capacity is how we share care instead of privatizing it onto households. protectont.ca/healthcare#shared-care\n\n#FightFord",
+      "caption": "Public capacity is how we share care instead of privatizing it onto households./healthcare#shared-care\n\n#ProtectOnt #FightFord",
       "graphicText": "Longer ER waits. Home-care waitlists. School supports stretched thin. The gap shifts onto family caregivers — disproportionately women.",
       "headline": "THE BILL GOES HOME"
     },
@@ -355,7 +355,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Join the network or find a local event: protectont.ca/join · protectont.ca/protests\n\n#FightFord",
+      "caption": "Join the network or find a local event:/join ·/protests\n\n#ProtectOnt #FightFord",
       "graphicText": "Signs, protests, mutual aid, school-council pressure — much of this province’s opposition runs on volunteer labour. Often women doing the invisible coordinating.",
       "headline": "WHO HOLDS ONTARIO TOGETHER?"
     },
@@ -369,7 +369,7 @@
         "facebook",
         "x"
       ],
-      "caption": "Sources and context: protectont.ca/healthcare · Printable flyer: protectont.ca/flyers/public-care\n\n#FightFord",
+      "caption": "Sources and context:/healthcare · Printable flyer:/flyers/public-care\n\n#ProtectOnt #FightFord",
       "graphicText": "Bill 124 capped their wages while hospitals sent billions to private staffing agencies. That is not austerity — it is shifting cost onto feminized care work.",
       "headline": "9 IN 10 NURSES ARE WOMEN"
     },
@@ -383,7 +383,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Smaller classes and school supports are public care. Tell your MPP to fund classrooms, not excuses. protectont.ca/message-guide\n\n#FightFord",
+      "caption": "Smaller classes and school supports are public care. Tell your MPP to fund classrooms, not excuses./message-guide\n\n#ProtectOnt #FightFord",
       "graphicText": "Early childhood educators, EAs, and school support workers — mostly women — hold classrooms together while funding is cut. Public care includes public schools.",
       "headline": "FUND THE SUPPORT STAFF"
     },
@@ -396,7 +396,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Find a rally near you or bring a sign: protectont.ca/protests · Free downloads: protectont.ca/join\n\n#FightFord",
+      "caption": "Find a rally near you or bring a sign:/protests · Free downloads:/join\n\n#ProtectOnt #FightFord",
       "graphicText": "The Greenbelt reversal happened because people showed up, wrote, and refused to accept that protected land was for sale. Public pressure still works.",
       "headline": "SHOW UP — IT WORKS"
     },
@@ -410,7 +410,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Search the receipts yourself: protectont.ca/receipts · Share one fact with a neighbour.\n\n#FightFord",
+      "caption": "Search the receipts yourself:/receipts · Share one fact with a neighbour.\n\n#ProtectOnt #FightFord",
       "graphicText": "Ontario Public Accounts document who got paid — vendor by vendor, year by year. Billions to private staffing agencies while public hospitals report deficits.",
       "headline": "FOLLOW THE MONEY"
     },
@@ -424,7 +424,7 @@
         "facebook",
         "threads"
       ],
-      "caption": "Public land is a public trust: protectont.ca/public-land · Printable flyer: protectont.ca/flyers/public-land\n\n#FightFord",
+      "caption": "Public land is a public trust:/public-land · Printable flyer:/flyers/public-land\n\n#ProtectOnt #FightFord",
       "graphicText": "The carve-out was reversed — but the RCMP probe continues and the fight over farmland and watersheds is not over. Protected land should stay protected.",
       "headline": "GREENBELT IS NOT SAFE"
     },
@@ -437,7 +437,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Water is a public responsibility — not a shareholder bonus. protectont.ca/water · Flyer: protectont.ca/flyers/water\n\n#FightFord",
+      "caption": "Water is a public responsibility — not a shareholder bonus./water · Flyer:/flyers/water\n\n#ProtectOnt #FightFord",
       "graphicText": "Bill 60 opens pathways for corporate control of water and wastewater. Once systems move behind corporate walls, communities lose leverage and transparency.",
       "headline": "WHO CONTROLS THE TAP?"
     },
@@ -450,7 +450,7 @@
         "instagram",
         "facebook"
       ],
-      "caption": "Join the network or grab a sign: protectont.ca/join · Spot yours: protectont.ca/signs-in-the-wild\n\n#FightFord",
+      "caption": "Join the network or grab a sign:/join · Spot yours:/signs-in-the-wild\n\n#ProtectOnt #FightFord",
       "graphicText": "Visibility matters — one sign on your lawn tells neighbours the fight is here. Download free art or order a printed sign from local volunteers.",
       "headline": "GET A YARD SIGN"
     }

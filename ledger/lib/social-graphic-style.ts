@@ -1,4 +1,4 @@
-import { FIGHT_FORD_HASHTAG, type SocialPostIdea } from './social-post-ideas'
+import { SOCIAL_POST_HASHTAGS, type SocialPostIdea } from './social-post-ideas'
 
 /** Dark-background wordmark — white Protect/.ca, green Ont */
 export const DEFAULT_GRAPHIC_LOGO_URL = '/logo-icon-text-dark.svg'
@@ -10,7 +10,7 @@ export const DEFAULT_GRAPHIC_STYLE = {
   backgroundColor: '#152a45',
   backgroundColorEnd: '#2E4A6B',
   ctaBackground: '#f9e04c',
-  ctaPrimary: FIGHT_FORD_HASHTAG,
+  ctaPrimary: SOCIAL_POST_HASHTAGS,
   ctaSecondary: 'protectont.ca',
 } as const
 

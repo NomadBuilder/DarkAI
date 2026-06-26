@@ -317,12 +317,17 @@ function paintSocialGraphicContent(
   ctx.fillStyle = 'rgba(255, 255, 255, 0.92)'
   drawWrappedText(ctx, bodyText, size / 2, blockY, innerW, bodyLineH)
 
-  const tagSize = Math.round(size * 0.038)
+  const tagLine = style.ctaPrimary
+  let tagSize = Math.round(size * 0.034)
   ctx.font = `800 ${tagSize}px "Arial Black", Inter, system-ui, sans-serif`
+  while (ctx.measureText(tagLine).width > innerW * 0.94 && tagSize > Math.round(size * 0.026)) {
+    tagSize -= 1
+    ctx.font = `800 ${tagSize}px "Arial Black", Inter, system-ui, sans-serif`
+  }
   ctx.fillStyle = COLORS.ink
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText(style.ctaPrimary, size / 2, size - footerH / 2 - Math.round(tagSize * 0.35))
+  ctx.fillText(tagLine, size / 2, size - footerH / 2 - Math.round(tagSize * 0.35))
 
   const siteSize = Math.round(size * 0.024)
   ctx.font = `500 ${siteSize}px Inter, system-ui, sans-serif`

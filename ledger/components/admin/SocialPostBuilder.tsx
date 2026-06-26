@@ -5,10 +5,11 @@ import SocialGraphicStyleFields from '@/components/admin/SocialGraphicStyleField
 import SocialPostGraphicPreview from '@/components/social-ideas/SocialPostGraphicPreview'
 import { downloadSocialGraphic, renderSocialGraphicDataUrl } from '@/lib/render-social-graphic'
 import {
-  FIGHT_FORD_HASHTAG,
+  SOCIAL_POST_HASHTAGS,
   ISSUE_LABELS,
   buildShareableCaption,
   cap,
+  stripSocialHashtags,
   type FordIssue,
   type SocialPostIdea,
 } from '@/lib/social-post-ideas'
@@ -39,7 +40,7 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
 
   const shareCaption = useMemo(() => {
     const text = draft.caption.trim()
-    if (!text) return FIGHT_FORD_HASHTAG
+    if (!text) return SOCIAL_POST_HASHTAGS
     return buildShareableCaption({ ...draft, caption: cap(text) })
   }, [draft])
 
@@ -173,13 +174,13 @@ export default function SocialPostBuilder({ onSaveToLibrary }: Props) {
             </label>
             <textarea
               rows={5}
-              value={draft.caption.replace(new RegExp(`\\s*${FIGHT_FORD_HASHTAG}\\s*`, 'gi'), '').trim()}
+              value={stripSocialHashtags(draft.caption)}
               onChange={(e) => setDraft((d) => ({ ...d, caption: e.target.value }))}
               placeholder="What you paste into Instagram or Facebook with the image…"
               className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm resize-y focus:outline-none focus:ring-2 focus:ring-violet-300"
             />
             <p className="mt-1 text-xs text-slate-500 font-light">
-              {FIGHT_FORD_HASHTAG} is added automatically when you copy.
+              {SOCIAL_POST_HASHTAGS} is added automatically when you copy.
             </p>
           </div>
         </div>

@@ -143,7 +143,7 @@ export default function SocialGraphicStyleFields({
             className={fieldClass}
             value={idea.ctaPrimary ?? ''}
             onChange={(e) => onChange({ ...idea, ctaPrimary: e.target.value || undefined })}
-            placeholder="#FightFord"
+            placeholder="#ProtectOnt #FightFord"
           />
           <input
             className={fieldClass}

@@ -1,5 +1,5 @@
 import {
-  FIGHT_FORD_HASHTAG,
+  SOCIAL_POST_HASHTAGS,
   ISSUE_LABELS,
   postTextWithoutHashtag,
   type PostFormat,
@@ -58,7 +58,7 @@ export function getSocialGraphicContent(idea: SocialPostIdea): SocialGraphicCont
     issueLabel,
     headline,
     body,
-    hashtag: idea.ctaPrimary?.trim() || FIGHT_FORD_HASHTAG,
+    hashtag: idea.ctaPrimary?.trim() || SOCIAL_POST_HASHTAGS,
     site: idea.ctaSecondary?.trim() || 'protectont.ca',
     template,
   }

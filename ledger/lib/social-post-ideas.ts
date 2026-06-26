@@ -44,8 +44,10 @@ export type SocialPostIdea = {
   designTips?: string
 }
 
+export const PROTECTONT_HASHTAG = '#ProtectOnt'
 export const FIGHT_FORD_HASHTAG = '#FightFord'
-export const SOCIAL_IDEAS_VERSION = 5
+export const SOCIAL_POST_HASHTAGS = `${PROTECTONT_HASHTAG} ${FIGHT_FORD_HASHTAG}`
+export const SOCIAL_IDEAS_VERSION = 6
 
 export const ISSUE_LABELS: Record<FordIssue, string> = {
   healthcare: 'Healthcare',
@@ -80,18 +82,24 @@ export const FORMAT_LABELS: Record<PostFormat, string> = {
   text: 'Text-only',
 }
 
+export function stripSocialHashtags(text: string): string {
+  return text
+    .replace(new RegExp(`\\s*${PROTECTONT_HASHTAG}\\s*`, 'gi'), '')
+    .replace(new RegExp(`\\s*${FIGHT_FORD_HASHTAG}\\s*`, 'gi'), '')
+    .replace(/\s*protectont\.ca\s*/gi, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 export function cap(text: string): string {
-  const base = text.trim()
-  if (base.includes(FIGHT_FORD_HASHTAG)) return base
-  return `${base}\n\n${FIGHT_FORD_HASHTAG}`
+  const base = stripSocialHashtags(text)
+  if (!base) return SOCIAL_POST_HASHTAGS
+  return `${base}\n\n${SOCIAL_POST_HASHTAGS}`
 }
 
 /** Caption without hashtag block — for preview body */
 export function postTextWithoutHashtag(caption: string): string {
-  return caption
-    .replace(new RegExp(`\\s*${FIGHT_FORD_HASHTAG}\\s*`, 'gi'), '')
-    .replace(/\s*protectont\.ca\s*/gi, '')
-    .trim()
+  return stripSocialHashtags(caption)
 }
 
 export const SOCIAL_POST_IDEAS: SocialPostIdea[] = [
