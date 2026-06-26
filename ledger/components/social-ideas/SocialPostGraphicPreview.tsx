@@ -39,12 +39,12 @@ export default function SocialPostGraphicPreview({ idea, className = '' }: Props
         />
       ) : null}
 
-      <div className="relative z-10 flex flex-col items-center px-4 pt-3 pb-2">
+      <div className="relative z-10 flex flex-col items-center px-4 pt-2 pb-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={logoUrl}
           alt=""
-          className="h-5 sm:h-6 w-auto object-contain drop-shadow-sm"
+          className="h-9 sm:h-11 w-auto max-w-[88%] object-contain drop-shadow-sm"
         />
       </div>
 
@@ -83,7 +83,7 @@ export default function SocialPostGraphicPreview({ idea, className = '' }: Props
                 : 'text-[11px] sm:text-xs'
               : content.template === 'quote'
                 ? 'text-sm sm:text-base italic font-normal'
-                : 'text-xs sm:text-sm'
+                : 'text-sm sm:text-base leading-snug'
           }`}
         >
           {content.template === 'quote' ? `"${content.body}"` : content.body}
