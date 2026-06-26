@@ -388,7 +388,7 @@ function loadLogo(src: string): Promise<HTMLImageElement | null> {
   if (cached) return cached
 
   const promise = loadImage(src).then((img) =>
-    img ? img : src === LOGO_MARK_URL ? loadImage('/shield-icon.png') : null
+    img ? img : src === LOGO_MARK_URL ? loadImage('/logo-shield.svg') : null
   )
   logoCache.set(src, promise)
   return promise

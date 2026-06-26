@@ -20,7 +20,7 @@ export default function FlyerSheetHeader({ flyer, theme: themeProp }: FlyerSheet
       >
         <div className="flex items-center gap-3" aria-hidden>
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/favicon.svg" alt="" className="h-11 w-11 shrink-0 sm:h-12 sm:w-12" />
+          <img src="/logo-shield.svg" alt="" className="h-11 w-11 shrink-0 sm:h-12 sm:w-12" />
           <span className="text-xl font-bold tracking-tight sm:text-2xl">
             <span className="text-[#f9e04c]">Protect</span>
             <span className="text-[#86efac]">Ont</span>

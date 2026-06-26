@@ -14,7 +14,8 @@
     "start": "next start",
     "lint": "next lint",
     "test:flyer-print": "node scripts/test-flyer-print-fit.mjs",
-    "process-data": "python scripts/process_data.py"
+    "process-data": "python scripts/process_data.py",
+    "generate:shield-pngs": "node scripts/generate-shield-pngs.mjs"
   },
   "dependencies": {
     "@react-spring/web": "^10.0.3",

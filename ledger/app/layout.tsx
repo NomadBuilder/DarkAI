@@ -28,8 +28,11 @@ export const metadata: Metadata = {
   applicationName: 'Protect Ontario',
   keywords: ['Ontario', 'provincial government', 'public spending', 'accountability', 'ProtectOnt.ca'],
   icons: {
-    icon: [{ url: `${basePath}/favicon.png`, type: 'image/png' }],
-    apple: `${basePath}/favicon.png`,
+    icon: [
+      { url: `${basePath}/favicon.svg`, type: 'image/svg+xml' },
+      { url: `${basePath}/favicon.png`, type: 'image/png', sizes: '32x32' },
+    ],
+    apple: `${basePath}/favicon-192.png`,
   },
   openGraph: {
     title: 'Protect Ontario — Public accountability in Ontario',
