@@ -39,7 +39,7 @@ function templateForFormat(format: PostFormat): SocialGraphicContent['template']
 }
 
 /** Text fields used for preview + PNG export (separate from full paste caption). */
-export function getSocialGraphicContent(idea: SocialPostIdea, opts?: { compact?: boolean }): SocialGraphicContent {
+export function getSocialGraphicContent(idea: SocialPostIdea): SocialGraphicContent {
   const bodySource = postTextWithoutHashtag(idea.graphicText ?? idea.caption)
   const issueLabel = ISSUE_LABELS[idea.issue]
   const template = templateForFormat(idea.format)
@@ -52,15 +52,7 @@ export function getSocialGraphicContent(idea: SocialPostIdea, opts?: { compact?:
         : firstSentence(bodySource, 64).toUpperCase()
   }
 
-  let body = ''
-  const compact = opts?.compact ?? false
-  if (template === 'quote') {
-    body = truncateAtWord(bodySource, compact ? 200 : 320)
-  } else if (template === 'meme') {
-    body = truncateAtWord(bodySource, compact ? 120 : 200)
-  } else {
-    body = truncateAtWord(bodySource, compact ? 160 : 280)
-  }
+  let body = bodySource
 
   return {
     issueLabel,

@@ -13,7 +13,7 @@ type Props = {
 /** On-card preview — mirrors canvas export styling at smaller scale. */
 export default function SocialPostGraphicPreview({ idea, className = '' }: Props) {
   const hasImage = hasCustomSocialBackground(idea)
-  const content = getSocialGraphicContent(idea, { compact: hasImage })
+  const content = getSocialGraphicContent(idea)
   const style = resolveGraphicStyle(idea)
   const logoUrl = resolveGraphicLogoUrl(idea)
   const bgUrl = hasImage ? idea.imageUrl!.trim() : null

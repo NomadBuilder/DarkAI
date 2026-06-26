@@ -122,6 +122,124 @@ function paintLogo(
   return y + logoH
 }
 
+type TextLayout = {
+  issueSize: number
+  headlineSize: number
+  bodySize: number
+  headlineLineH: number
+  bodyLineH: number
+  issueLineH: number
+  gapAfterIssue: number
+  gapAfterHeadline: number
+  issueLines: number
+  headlineLines: number
+  bodyLines: number
+  blockHeight: number
+}
+
+function lineHeightForFont(ctx: CanvasRenderingContext2D, fontSize: number, multiplier: number): number {
+  const metrics = ctx.measureText('Mgypq')
+  const ascent = metrics.actualBoundingBoxAscent || fontSize * 0.78
+  const descent = metrics.actualBoundingBoxDescent || fontSize * 0.22
+  return Math.ceil((ascent + descent) * multiplier)
+}
+
+function findFitScale(
+  ctx: CanvasRenderingContext2D,
+  content: SocialGraphicContent,
+  bodyText: string,
+  size: number,
+  innerW: number,
+  hasImage: boolean,
+  availableH: number
+): number {
+  let lo = 0.5
+  let hi = hasImage ? 1 : 0.92
+  let best = lo
+
+  for (let i = 0; i < 14; i++) {
+    const mid = (lo + hi) / 2
+    const layout = measureTextLayout(ctx, content, bodyText, size, innerW, hasImage, mid)
+    if (layout.blockHeight <= availableH) {
+      best = mid
+      lo = mid
+    } else {
+      hi = mid
+    }
+  }
+
+  return best
+}
+
+function measureTextLayout(
+  ctx: CanvasRenderingContext2D,
+  content: SocialGraphicContent,
+  bodyText: string,
+  size: number,
+  innerW: number,
+  hasImage: boolean,
+  fitScale: number
+): TextLayout {
+  const issueSize = Math.round(size * 0.028 * (hasImage ? 1 : 1.1) * fitScale)
+  const headlineSize = Math.round(
+    (content.template === 'meme'
+      ? size * 0.078
+      : content.template === 'quote'
+        ? size * 0.04
+        : size * 0.062) * fitScale
+  )
+  const bodySize = Math.round(
+    (content.template === 'quote'
+      ? size * 0.042
+      : content.template === 'meme'
+        ? size * 0.034
+        : size * 0.036) * fitScale
+  )
+
+  const gapAfterIssue = Math.round(size * (hasImage ? 0.02 : 0.028) * fitScale)
+  const gapAfterHeadline = Math.round(
+    (content.template === 'quote' ? size * 0.04 : size * 0.032) * fitScale
+  )
+
+  ctx.font = `600 ${issueSize}px Inter, system-ui, sans-serif`
+  const issueLineH = lineHeightForFont(ctx, issueSize, 1.2)
+  const issueLines = countWrappedLines(ctx, content.issueLabel.toUpperCase(), innerW)
+
+  ctx.font = `800 ${headlineSize}px "Arial Black", Inter, system-ui, sans-serif`
+  const headlineLineH = lineHeightForFont(ctx, headlineSize, 1.1)
+  const headlineLines = countWrappedLines(ctx, content.headline, innerW)
+
+  ctx.font =
+    content.template === 'quote'
+      ? `500 ${bodySize}px Georgia, "Times New Roman", serif`
+      : `400 ${bodySize}px Inter, system-ui, sans-serif`
+  const bodyLineH = lineHeightForFont(ctx, bodySize, 1.22)
+  const bodyLines = countWrappedLines(ctx, bodyText, innerW)
+
+  const blockHeight =
+    issueLines * issueLineH +
+    gapAfterIssue +
+    headlineLines * headlineLineH +
+    gapAfterHeadline +
+    bodyLines * bodyLineH +
+    Math.round(size * 0.02)
+
+  return {
+    issueSize,
+    headlineSize,
+    bodySize,
+    headlineLineH,
+    bodyLineH,
+    issueLineH,
+    gapAfterIssue,
+    gapAfterHeadline,
+    issueLines,
+    headlineLines,
+    bodyLines,
+    blockHeight,
+  }
+}
+
 function paintSocialGraphicContent(
   ctx: CanvasRenderingContext2D,
   content: SocialGraphicContent,
@@ -133,62 +251,40 @@ function paintSocialGraphicContent(
   const pad = Math.round(size * 0.1)
   const innerW = size - pad * 2
   const footerH = Math.round(size * 0.11)
+  const footerTop = size - footerH
   const contentTop = logoBottom + Math.round(size * 0.025)
-  const contentBottom = size - footerH - Math.round(size * 0.04)
-
-  const textScale = hasImage ? 1 : 1.55
-
-  const issueSize = Math.round(size * 0.028 * (hasImage ? 1 : 1.15))
-  const headlineSize =
-    (content.template === 'meme'
-      ? Math.round(size * 0.078)
-      : content.template === 'quote'
-        ? Math.round(size * 0.04)
-        : Math.round(size * 0.062)) * textScale
-
-  const bodySize =
-    (content.template === 'quote'
-      ? Math.round(size * 0.042)
-      : content.template === 'meme'
-        ? Math.round(size * 0.034)
-        : Math.round(size * 0.036)) * textScale
-
-  const headlineLineH = Math.round(headlineSize * 1.08)
-  const bodyLineH = Math.round(bodySize * 1.35)
-  const issueLineH = Math.round(issueSize * 1.4)
-  const gapAfterIssue = Math.round(size * (hasImage ? 0.02 : 0.03))
-  const gapAfterHeadline =
-    content.template === 'quote' ? Math.round(size * 0.04) : Math.round(size * 0.035)
+  const contentBottom = footerTop - Math.round(size * 0.08)
 
   let bodyText = content.body
   if (content.template === 'quote' && bodyText.length > 0) {
     bodyText = `"${bodyText}"`
   }
 
-  ctx.font = `600 ${issueSize}px Inter, system-ui, sans-serif`
-  const issueLines = countWrappedLines(ctx, content.issueLabel.toUpperCase(), innerW)
-
-  ctx.font = `800 ${headlineSize}px "Arial Black", Inter, system-ui, sans-serif`
-  const headlineLines = countWrappedLines(ctx, content.headline, innerW)
-
-  ctx.font =
-    content.template === 'quote'
-      ? `500 ${bodySize}px Georgia, "Times New Roman", serif`
-      : `400 ${bodySize}px Inter, system-ui, sans-serif`
-  const bodyLines = countWrappedLines(ctx, bodyText, innerW)
-
-  const blockHeight =
-    issueLines * issueLineH +
-    gapAfterIssue +
-    headlineLines * headlineLineH +
-    gapAfterHeadline +
-    bodyLines * bodyLineH
-
   const availableH = contentBottom - contentTop
-  let blockY =
-    hasImage
-      ? contentTop
-      : contentTop + Math.max(0, Math.round((availableH - blockHeight) / 2))
+  const fitScale = findFitScale(ctx, content, bodyText, size, innerW, hasImage, availableH)
+  const layout = measureTextLayout(ctx, content, bodyText, size, innerW, hasImage, fitScale)
+
+  ctx.fillStyle = style.ctaBackground
+  ctx.fillRect(0, footerTop, size, footerH)
+
+  const {
+    issueSize,
+    headlineSize,
+    bodySize,
+    headlineLineH,
+    bodyLineH,
+    issueLineH,
+    gapAfterIssue,
+    gapAfterHeadline,
+    issueLines,
+    blockHeight,
+  } = layout
+
+  let blockY = contentTop
+  if (!hasImage && blockHeight < availableH * 0.72) {
+    blockY = contentTop + Math.round((availableH - blockHeight) / 2)
+  }
+  blockY = Math.max(contentTop, Math.min(blockY, contentBottom - blockHeight))
 
   ctx.font = `600 ${issueSize}px Inter, system-ui, sans-serif`
   ctx.fillStyle = 'rgba(255, 255, 255, 0.55)'
@@ -221,9 +317,6 @@ function paintSocialGraphicContent(
   ctx.fillStyle = 'rgba(255, 255, 255, 0.92)'
   drawWrappedText(ctx, bodyText, size / 2, blockY, innerW, bodyLineH)
 
-  ctx.fillStyle = style.ctaBackground
-  ctx.fillRect(0, size - footerH, size, footerH)
-
   const tagSize = Math.round(size * 0.038)
   ctx.font = `800 ${tagSize}px "Arial Black", Inter, system-ui, sans-serif`
   ctx.fillStyle = COLORS.ink
@@ -251,7 +344,7 @@ export function paintSocialGraphic(
 
   const style = resolveGraphicStyle(idea)
   const hasImage = Boolean(backgroundImage?.naturalWidth)
-  const content = getSocialGraphicContent(idea, { compact: hasImage })
+  const content = getSocialGraphicContent(idea)
 
   if (hasImage && backgroundImage) {
     paintBackgroundImage(
