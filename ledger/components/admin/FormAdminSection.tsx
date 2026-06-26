@@ -267,7 +267,7 @@ export default function FormAdminPage({ embedded = false }: { embedded?: boolean
           />
           <SelectOptionsEditor
             label="Size options"
-            hint="Values 24x18, 18x12, and any match the order system."
+            hint="Values 24x18, 12x16, and any match the order system."
             options={ys.sizeOptions}
             onChange={(sizeOptions) => patchNested(setCopy, 'yardSign', { sizeOptions })}
           />

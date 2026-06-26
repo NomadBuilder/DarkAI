@@ -216,7 +216,7 @@ export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
     sizePlaceholder: 'Select a size',
     sizeOptions: [
       { value: '24x18', label: '24" × 18"' },
-      { value: '18x12', label: '18" × 12"' },
+      { value: '12x16', label: '12" × 16"' },
       { value: 'any', label: 'Any size' },
     ],
     paymentLabel: 'Payment *',

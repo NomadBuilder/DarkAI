@@ -34,7 +34,7 @@ export type CatalogProduct = {
 export const YARD_SIGN_STRIPE_CHECKOUT_URL =
   'https://buy.stripe.com/dRm3cvdHKeh76Nsfdm4gg01'
 
-export const YARD_SIGN_SIZES = ['24" × 18"', '18" × 12"'] as const
+export const YARD_SIGN_SIZES = ['24" × 18"', '12" × 16"'] as const
 
 export const productCategories: ProductCategory[] = [
   {
@@ -80,17 +80,17 @@ export const catalogProducts: CatalogProduct[] = [
     categoryLabel: 'Yard sign',
     image: '/products/yard-signs/ford-failed-you.png',
     summary:
-      'Healthcare · Education · Transparency. $10 per sign with stand—choose 24″ × 18″ or 18″ × 12″ when you order or sign up.',
+      'Healthcare · Education · Transparency. $10 per sign with stand—choose 24″ × 18″ or 12″ × 16″ when you order or sign up.',
     specs: [
       'One design: Healthcare · Education · Transparency — Ford Failed You!',
-      'Sizes: 24″ × 18″ or 18″ × 12″ (select on the sign-up form or note at checkout)',
+      'Sizes: 24″ × 18″ or 12″ × 16″ (select on the sign-up form or note at checkout)',
       'Stand included',
       'Delivered by a local organizer—not shipped by mail',
     ],
     themes: ['Healthcare', 'Education', 'Transparency'],
     minPriceCad: 10,
     stripeCheckoutUrl: YARD_SIGN_STRIPE_CHECKOUT_URL,
-    checkoutHint: 'Mention your preferred size (24″ × 18″ or 18″ × 12″) in the order notes if prompted.',
+    checkoutHint: 'Mention your preferred size (24″ × 18″ or 12″ × 16″) in the order notes if prompted.',
     sortOrder: 1,
   },
 ]
