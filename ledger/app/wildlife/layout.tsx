@@ -3,7 +3,7 @@ import { buildPageMetadata } from '@/lib/page-metadata'
 
 export const metadata: Metadata = buildPageMetadata(
   'Wildlife & Animal Protection — Protect Ontario',
-  'Bill 5 species rollbacks and Bill 75 research-animal regulations in Ontario — what changed, what loopholes remain, and primary sources.'
+  'Endangered species rollbacks under Bill 5, research-animal rules under Bill 75, and what Ontarians stand to lose — with primary sources.'
 )
 
 export default function WildlifeLayout({ children }: { children: React.ReactNode }) {
