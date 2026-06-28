@@ -43,7 +43,7 @@ export const PROTEST_TOPICS: { id: ProtestTopicId; label: string }[] = [
   { id: 'healthcare', label: 'Healthcare' },
   { id: 'water', label: 'Water' },
   { id: 'land', label: 'Public land' },
-  { id: 'wildlife', label: 'Wildlife & Bill 5' },
+  { id: 'wildlife', label: 'Wildlife & animal protection' },
   { id: 'indigenous', label: 'Indigenous rights' },
   { id: 'accountability', label: 'Accountability' },
 ]

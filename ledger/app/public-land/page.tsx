@@ -341,7 +341,7 @@ export default function PublicLandPage() {
                 <InlineCitation href="#source-op-4" label="9" />
                 {' '}For species protection, special economic zones, and Ring of Fire impacts, see{' '}
                 <Link href="/wildlife" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
-                  wildlife &amp; Bill 5
+                  wildlife &amp; species
                 </Link>
                 ; for treaty rights and consent on northern development, see{' '}
                 <Link href="/indigenous-rights" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">

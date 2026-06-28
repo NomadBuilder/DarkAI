@@ -207,7 +207,7 @@ export default function IndigenousRightsPage() {
                   <p>
                     For more on species law and environmental rollbacks, see our{' '}
                     <Link href="/wildlife" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
-                      wildlife &amp; Bill 5 page
+                      wildlife &amp; species page
                     </Link>
                     .
                   </p>

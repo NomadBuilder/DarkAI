@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { buildPageMetadata } from '@/lib/page-metadata'
 
 export const metadata: Metadata = buildPageMetadata(
-  'Wildlife — Protect Ontario',
-  'Species protections and environmental safeguards weakened in Ontario — documented policy rollbacks and community impact.'
+  'Wildlife & Animal Protection — Protect Ontario',
+  'Bill 5 species rollbacks and Bill 75 research-animal regulations in Ontario — what changed, what loopholes remain, and primary sources.'
 )
 
 export default function WildlifeLayout({ children }: { children: React.ReactNode }) {

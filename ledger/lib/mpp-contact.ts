@@ -238,4 +238,8 @@ export const ENVIRONMENT_PETITIONS: ExternalPetition[] = [
     label: 'David Suzuki Foundation: Repeal Bill 5',
     href: 'https://davidsuzuki.org/action/repealbill5/',
   },
+  {
+    label: 'Animal Alliance of Canada: Bill 75 & dogs and cats in research',
+    href: 'https://www.animalalliance.ca/ontarios-bill-75-passed-without-amendments-what-happens-next-for-dogs-and-cats-in-research/',
+  },
 ]

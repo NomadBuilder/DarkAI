@@ -56,15 +56,28 @@ export default function WildlifePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-light text-gray-900 mb-6 md:mb-8 leading-tight"
             >
-              Species, Rights & What We Stand to Lose
+              Species, Rights &amp; What We Stand to Lose
             </motion.h1>
             <motion.p
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-8"
+              className="text-xl sm:text-2xl md:text-3xl text-gray-600 font-light max-w-3xl mx-auto mb-6"
             >
-              The government sold it as economic reform. In reality, it&apos;s an attack on endangered species, Indigenous rights, and the land and water we all depend on.
+              This page covers two distinct policy fights in Ontario:{' '}
+              <strong className="font-normal text-gray-800">Bill 5</strong> — sweeping rollbacks to species protection
+              and environmental accountability — and{' '}
+              <strong className="font-normal text-gray-800">Bill 75</strong> — new rules for dogs and cats used in
+              research, taking effect January 1, 2027, with major loopholes still open.
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.25 }}
+              className="text-base sm:text-lg text-gray-500 font-light max-w-2xl mx-auto mb-8"
+            >
+              Both are documented below with primary sources — legislation, regulations, and independent advocacy
+              analysis.
             </motion.p>
             <motion.blockquote
               initial={{ opacity: 0 }}
@@ -88,17 +101,25 @@ export default function WildlifePage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.55 }}
-              className="flex flex-wrap justify-center gap-6 sm:gap-10 md:gap-14 mt-10"
+              className="flex flex-wrap justify-center gap-6 sm:gap-8 md:gap-10 mt-10"
             >
-              <div className="text-center">
+              <div className="text-center min-w-[7rem]">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-700 tabular-nums">Bill 5</span>
                 <span className="block text-sm sm:text-base text-gray-500 mt-1">
-                  now law
+                  species &amp; SEZs
                   <InlineCitation href="#source-1" label="1" />
                 </span>
               </div>
               <div className="w-px h-12 bg-amber-200/80 hidden sm:block self-center" />
-              <div className="text-center">
+              <div className="text-center min-w-[7rem]">
+                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-800 tabular-nums">Bill 75</span>
+                <span className="block text-sm sm:text-base text-gray-500 mt-1">
+                  research animals · Jan 2027
+                  <InlineCitation href="#source-5" label="5" />
+                </span>
+              </div>
+              <div className="w-px h-12 bg-amber-200/80 hidden sm:block self-center" />
+              <div className="text-center min-w-[7rem]">
                 <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-800 tabular-nums">Ring of Fire</span>
                 <span className="block text-sm sm:text-base text-gray-500 mt-1">
                   first special economic zone
@@ -106,24 +127,66 @@ export default function WildlifePage() {
                 </span>
               </div>
               <div className="w-px h-12 bg-amber-200/80 hidden sm:block self-center" />
-              <div className="text-center">
-                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-700 tabular-nums">Species at risk</span>
+              <div className="text-center min-w-[7rem]">
+                <span className="block text-2xl sm:text-3xl md:text-4xl font-light text-amber-700 tabular-nums">Pound to lab</span>
                 <span className="block text-sm sm:text-base text-gray-500 mt-1">
-                  weaker protection
-                  <InlineCitation href="#source-1" label="1" />
+                  pipeline not closed
+                  <InlineCitation href="#source-6" label="6" />
                 </span>
               </div>
             </motion.div>
           </div>
         </section>
 
-        {/* Section 1: The moment we're in */}
-        <section className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden">
+        {/* On this page */}
+        <section className="relative px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-b border-slate-100">
+          <div className="max-w-4xl mx-auto">
+            <motion.h2 {...fadeIn} className="text-xl sm:text-2xl font-light text-gray-900 mb-6">
+              On this page
+            </motion.h2>
+            <motion.div {...fadeIn} className="grid gap-4 sm:grid-cols-2">
+              <a
+                href="#bill-5"
+                className="rounded-xl border border-amber-100 bg-amber-50/40 p-5 sm:p-6 hover:border-amber-200 transition-colors group"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-amber-800 mb-2">Topic 1</p>
+                <h3 className="text-lg sm:text-xl font-light text-gray-900 group-hover:text-amber-900">
+                  Bill 5 — species, zones &amp; accountability
+                </h3>
+                <p className="mt-2 text-sm sm:text-base text-gray-600 font-light leading-relaxed">
+                  Endangered species law replaced, special economic zones, Ring of Fire, Indigenous rights, Ontario Place
+                  carve-outs.
+                </p>
+              </a>
+              <a
+                href="#bill-75"
+                className="rounded-xl border border-amber-100 bg-amber-50/40 p-5 sm:p-6 hover:border-amber-200 transition-colors group"
+              >
+                <p className="text-xs uppercase tracking-[0.2em] text-amber-800 mb-2">Topic 2</p>
+                <h3 className="text-lg sm:text-xl font-light text-gray-900 group-hover:text-amber-900">
+                  Bill 75 — dogs, cats &amp; research
+                </h3>
+                <p className="mt-2 text-sm sm:text-base text-gray-600 font-light leading-relaxed">
+                  Final regulations under the Animals for Research Act — what they achieve, where loopholes remain, and
+                  the pound-to-research pipeline.
+                </p>
+              </a>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* Section 1: Bill 5 — The moment we're in */}
+        <section id="bill-5" className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden scroll-mt-20">
           <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-amber-400 to-amber-600 opacity-90" />
           <div className="max-w-4xl mx-auto pl-4 sm:pl-6">
-            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12">
-              The moment we&apos;re in
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-3 md:mb-4">
+              Bill 5: the moment we&apos;re in
             </motion.h2>
+            <motion.p {...fadeIn} className="text-base sm:text-lg text-gray-500 font-light mb-8 md:mb-12 max-w-3xl">
+              The government sold Bill 5 as economic reform. In reality, it weakens endangered species protection,
+              creates special economic zones, and rolls back accountability — with direct consequences for Indigenous
+              rights and the land and water we all depend on.
+            </motion.p>
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
                 Bill 5 — officially the <em>Protect Ontario by Unleashing our Economy Act, 2025</em> — has received Royal Assent. It is now law. What that means: the Endangered Species Act has been replaced with a weaker regime, &quot;special economic zones&quot; can exempt developers from the rules that protect our environment, and the first of those zones has already been declared in the Ring of Fire — on the doorstep of Indigenous nations who have not given free, prior and informed consent.
@@ -137,7 +200,7 @@ export default function WildlifePage() {
           </div>
         </section>
 
-        {/* Section 2: What Bill 5 actually does — intro + dark card */}
+        {/* Section 2: What Bill 5 actually does */}
         <section className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-white overflow-hidden">
           <div className="absolute right-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-amber-400 to-amber-600 opacity-70 z-10" />
           <div className="max-w-4xl mx-auto pr-4 sm:pr-6">
@@ -210,19 +273,118 @@ export default function WildlifePage() {
           </div>
         </section>
 
-        {/* Section 3: What we're losing */}
+        {/* Section 3: Bill 75 — Animals for Research Act */}
+        <section id="bill-75" className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden scroll-mt-20">
+          <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-amber-400 to-amber-600 opacity-90" />
+          <div className="max-w-4xl mx-auto pl-4 sm:pl-6">
+            <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-3 md:mb-4">
+              Bill 75: dogs, cats &amp; animals used in research
+            </motion.h2>
+            <motion.p {...fadeIn} className="text-base sm:text-lg text-gray-500 font-light mb-8 md:mb-12 max-w-3xl">
+              Bill 75 (Schedule 1 of the <em>Keeping Criminals Behind Bars Act, 2026</em>) amends Ontario&apos;s{' '}
+              <em>Animals for Research Act</em>. Final regulations were published in 2026 and come into force on{' '}
+              <strong className="font-normal text-gray-700">January 1, 2027</strong>.
+              <InlineCitation href="#source-5" label="5" />
+              {' '}After years of advocacy — including from Animal Alliance of Canada
+              <InlineCitation href="#source-6" label="6" />
+              {' '}— the framework adds some safeguards for dogs and cats used in research. Important gaps remain.
+            </motion.p>
+
+            <div className="space-y-14 md:space-y-16">
+              <motion.div {...fadeIn}>
+                <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4 pb-2 border-b border-amber-200">
+                  What the regulations achieve
+                </h3>
+                <div className="space-y-4 text-gray-700 font-light leading-relaxed text-lg">
+                  <p>
+                    The regulations implement Bill 75&apos;s amendments to the <em>Animals for Research Act</em>. Among
+                    other changes, they:
+                  </p>
+                  <ul className="space-y-3 list-none pl-0">
+                    {[
+                      'Require research proposals involving dogs and cats to be reviewed by institutional Animal Care Committees (ACCs).',
+                      'Require researchers to consider alternatives to animal use before proceeding.',
+                      'Introduce planning for the potential rehoming of dogs and cats following research, where appropriate.',
+                      'Build on Bill 75 restrictions on invasive medical research on dogs and cats and on breeding cats and dogs for research in Ontario supply facilities.',
+                    ].map((item) => (
+                      <li key={item} className="flex gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" aria-hidden />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p>
+                    Animal Alliance of Canada welcomed these steps as progress reflecting growing public concern about
+                    animals used in research.
+                    <InlineCitation href="#source-6" label="6" />
+                  </p>
+                </div>
+              </motion.div>
+
+              <motion.div {...fadeIn}>
+                <h3 className="text-xl sm:text-2xl font-light text-gray-900 mb-4 pb-2 border-b border-amber-200">
+                  Where the regulations fall short
+                </h3>
+                <div className="space-y-4 text-gray-700 font-light leading-relaxed text-lg">
+                  <p>
+                    Throughout the public consultation process, advocates urged the Ontario government to strengthen the
+                    proposed rules. While some improvements were made, several issues remain unresolved:
+                    <InlineCitation href="#source-6" label="6" />
+                  </p>
+                  <ul className="space-y-3 list-none pl-0">
+                    {[
+                      'They do not require dogs and cats to be rehomed after research when it is safe and appropriate — rehoming is planned for only where “appropriate,” not mandated.',
+                      'They do not close Ontario’s long-standing pound-to-research pipeline, under which unclaimed dogs and cats can be transferred from municipal pounds to research facilities.',
+                      'They continue to rely on institutional Animal Care Committees rather than independent oversight.',
+                      'They permit the use of “animals of a lower order” as a substitute rather than prioritizing modern, non-animal alternatives.',
+                    ].map((item) => (
+                      <li key={item} className="flex gap-3">
+                        <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-amber-700" aria-hidden />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="rounded-xl bg-white/80 border border-amber-100 p-6 sm:p-8 shadow-sm">
+                    <p className="text-amber-800 font-medium text-lg mb-1">Partial reform is not the same as protection.</p>
+                    <p className="text-gray-700 text-base">
+                      Bill 75 and its regulations mark a shift for dogs and cats in Ontario labs — but leaving the
+                      pound-to-research pipeline open and rehoming optional means the system still treats living animals
+                      as resources to be used, not beings owed a real exit when research ends.
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* Section 4: What we're losing */}
         <section className="relative px-4 sm:px-6 md:px-8 py-16 md:py-24 bg-slate-50 overflow-hidden">
           <div className="absolute left-0 top-0 bottom-0 w-1 sm:w-1.5 bg-gradient-to-b from-amber-400 to-amber-600 opacity-90" />
           <div className="max-w-4xl mx-auto pl-4 sm:pl-6">
             <motion.h2 {...fadeIn} className="text-2xl sm:text-3xl md:text-4xl font-light text-gray-900 mb-8 md:mb-12">
-              What we&apos;re losing
+              What we&apos;re losing — on both fronts
             </motion.h2>
             <motion.div {...fadeIn} className="space-y-6 text-lg sm:text-xl text-gray-700 font-light leading-relaxed">
               <p>
-                We&apos;re losing the legal backbone that made Ontario list species at risk, plan for their recovery, and protect their habitat. We&apos;re losing the expectation that major projects face environmental and democratic scrutiny. We&apos;re losing the promise that Indigenous Peoples will be full partners in decisions that affect their territories and rights.
+                Under <strong className="font-normal text-gray-900">Bill 5</strong>, we&apos;re losing the legal backbone
+                that made Ontario list species at risk, plan for their recovery, and protect their habitat. We&apos;re
+                losing the expectation that major projects face environmental and democratic scrutiny. We&apos;re losing
+                the promise that Indigenous Peoples will be full partners in decisions that affect their territories and
+                rights.
               </p>
               <p>
-                We&apos;re not just losing paperwork. We&apos;re losing the chance for caribou, polar bears, and countless other species to recover. We&apos;re losing wetlands that filter water and store carbon. We&apos;re losing the idea that the economy should work within the limits of the land — not the other way around. And we&apos;re passing that loss to the next generation, who will inherit a province that chose short-term deals over long-term care.
+                Under <strong className="font-normal text-gray-900">Bill 75</strong>, Ontario is moving toward stronger
+                rules for dogs and cats in research — but without closing the pound-to-research pipeline, mandating
+                rehoming when safe, or establishing independent oversight, the province still normalizes using shelter
+                animals and institutional self-regulation as good enough.
+              </p>
+              <p>
+                We&apos;re not just losing paperwork. We&apos;re losing the chance for caribou, polar bears, and
+                countless other species to recover. We&apos;re losing wetlands that filter water and store carbon. We&apos;re
+                losing the idea that the economy should work within the limits of the land — not the other way around.
+                And we&apos;re passing that loss to the next generation, who will inherit a province that chose
+                short-term deals over long-term care.
               </p>
               <motion.div {...fadeIn} className="rounded-xl bg-white/80 border border-amber-100 p-6 sm:p-8 shadow-sm">
                 <p className="text-amber-800 font-medium text-lg sm:text-xl mb-1">No matter how it&apos;s spun, bulldozing species protection doesn&apos;t unleash opportunity.</p>
@@ -248,7 +410,7 @@ export default function WildlifePage() {
                 and hand it to connected developers, public pressure forced a reversal. People showed up. They wrote. They refused to accept that protected land was for sale. That reversal proved that bad policy can be pushed back — but only if we make it politically impossible to ignore.
               </p>
               <p>
-                Bill 5 is already law. Reversing it will take the same kind of sustained, loud, and clear demand: from scientists, from First Nations, from municipalities, from ordinary people who believe that endangered species and Indigenous rights are not negotiable. Ontario Nature
+                Bill 5 is already law. Reversing it will take the same kind of sustained, loud, and clear demand: from scientists, from First Nations, from municipalities, from ordinary people who believe that endangered species and Indigenous rights are not negotiable. On Bill 75, advocates have until the January 2027 implementation date to push for stronger regulations and to close loopholes before they become normalized. Ontario Nature
                 <InlineCitation href="#source-2" label="2" />
                 , the David Suzuki Foundation
                 <InlineCitation href="#source-3" label="3" />
@@ -291,6 +453,24 @@ export default function WildlifePage() {
                   CBC: Ontario to make Ring of Fire a special economic zone
                 </a>
               </li>
+              <li id="source-5">
+                <span className="mr-2 text-slate-500">5.</span>
+                <a href="https://www.ontario.ca/laws/regulation/900022" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Ontario.ca: O. Reg. 900022 — regulations under the Animals for Research Act (Bill 75 implementation; in force January 1, 2027)
+                </a>
+              </li>
+              <li id="source-6">
+                <span className="mr-2 text-slate-500">6.</span>
+                <a href="https://www.globenewswire.com/news-release/2026/06/26/3318289/0/en/ontario-finalizes-animal-research-regulations-leaving-critical-loopholes-unaddressed.html" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Animal Alliance of Canada (via GlobeNewswire): Ontario finalizes animal research regulations — critical loopholes unaddressed
+                </a>
+              </li>
+              <li id="source-7">
+                <span className="mr-2 text-slate-500">7.</span>
+                <a href="https://www.ola.org/en/legislative-business/bills/parliament-44/session-1/bill-75" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Legislative Assembly of Ontario: Bill 75 — Keeping Criminals Behind Bars Act, 2026 (Schedule 1: Animals for Research Act)
+                </a>
+              </li>
             </ul>
           </div>
         </section>
@@ -310,7 +490,8 @@ export default function WildlifePage() {
                     Contact your provincial representative
                   </h3>
                   <p className="text-base sm:text-lg md:text-xl text-gray-400 font-light max-w-2xl mx-auto">
-                    Tell your MPP you want Bill 5 repealed and species protection and Indigenous rights restored
+                    Tell your MPP you want Bill 5 repealed, species protection restored, and stronger Bill 75 rules —
+                    including closing the pound-to-research pipeline and mandating rehoming where safe
                   </p>
                   <button
                     onClick={() => setIsModalOpen(true)}

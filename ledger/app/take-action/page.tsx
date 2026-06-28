@@ -143,10 +143,18 @@ export default function TakeActionPage() {
               <span className="absolute left-0 top-0 -translate-x-1/2 w-6 h-6 rounded-full bg-slate-300 text-white text-xs font-medium flex items-center justify-center">
                 2
               </span>
-              <h2 className="text-xl sm:text-2xl font-light text-gray-900 mb-3">Sign petitions — environment &amp; Bill 5</h2>
-              <p className="text-gray-600 font-light leading-relaxed mb-6">
+              <h2 className="text-xl sm:text-2xl font-light text-gray-900 mb-3">
+                Sign petitions — environment, species &amp; research animals
+              </h2>
+              <p className="text-gray-600 font-light leading-relaxed mb-4">
                 Ontario Nature and the David Suzuki Foundation are calling for Bill 5 to be cancelled and for species
-                and Indigenous rights to be protected.
+                and Indigenous rights to be protected. Animal Alliance of Canada and others are pushing for stronger
+                Bill 75 rules before they take effect in 2027.
+              </p>
+              <p className="text-gray-600 font-light leading-relaxed mb-6">
+                <Link href="/wildlife" className="text-blue-600 hover:text-blue-700 underline underline-offset-2">
+                  Read the full wildlife &amp; animal protection breakdown →
+                </Link>
               </p>
               <ul className="space-y-2">
                 {ENVIRONMENT_PETITIONS.map((link) => (
