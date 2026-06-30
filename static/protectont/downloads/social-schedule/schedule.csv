@@ -1,0 +1,31 @@
+index,scheduled_date,scheduled_time,timezone,idea_id,issue,headline,platforms,image_file,caption_file
+1,2026-06-30,10:00,America/Toronto,hc-wait-graphic,healthcare,"PUBLIC CARE. PUBLIC DOLLARS.","instagram; facebook; threads",01-hc-wait-graphic.png,01-hc-wait-graphic.txt
+2,2026-07-02,10:00,America/Toronto,edu-carousel,education,"FUND CLASSROOMS","instagram; facebook",02-edu-carousel.png,02-edu-carousel.txt
+3,2026-07-07,10:00,America/Toronto,water-stat-meme,water,"CLEAN WATER NOW","facebook; instagram; tiktok",03-water-stat-meme.png,03-water-stat-meme.txt
+4,2026-07-09,10:00,America/Toronto,land-quote-card,public-land,"PUBLIC LAND IS NOT A GIVEAWAY","instagram; facebook; x",04-land-quote-card.png,04-land-quote-card.txt
+5,2026-07-14,10:00,America/Toronto,gb-before-after,greenbelt,"PROTECTED LAND ≠ FOR SALE","instagram; facebook; threads; bluesky",05-gb-before-after.png,05-gb-before-after.txt
+6,2026-07-16,10:00,America/Toronto,acct-yard-sign-photo,accountability,"FORD FAILED YOU","instagram; facebook",06-acct-yard-sign-photo.png,06-acct-yard-sign-photo.txt
+7,2026-07-21,10:00,America/Toronto,trans-receipt-carousel,transparency,"SHOW THE RECEIPTS","instagram; facebook; threads",07-trans-receipt-carousel.png,07-trans-receipt-carousel.txt
+8,2026-07-23,10:00,America/Toronto,foi-receipt-graphic,foi,"SHOW THE RECORDS","instagram; facebook; bluesky",08-foi-receipt-graphic.png,08-foi-receipt-graphic.txt
+9,2026-07-28,10:00,America/Toronto,op-waterfront-graphic,ontario-place,"PUBLIC WATERFRONT ≠ PRIVATE SPA","instagram; facebook; threads",09-op-waterfront-graphic.png,09-op-waterfront-graphic.txt
+10,2026-07-30,10:00,America/Toronto,rof-carousel,ring-of-fire,"CONSENT COMES FIRST","instagram; facebook; threads",10-rof-carousel.png,10-rof-carousel.txt
+11,2026-08-04,10:00,America/Toronto,bike-lanes-graphic,bike-lanes,"EVIDENCE OVER OVERRIDES","instagram; facebook; threads",11-bike-lanes-graphic.png,11-bike-lanes-graphic.txt
+12,2026-08-06,10:00,America/Toronto,hc-meme-ER,healthcare,"STILL IN THE WAITING ROOM","facebook; instagram; x",12-hc-meme-ER.png,12-hc-meme-ER.txt
+13,2026-08-11,10:00,America/Toronto,edu-gif-chalk,education,"CLASSROOMS NOT CUTS","instagram; facebook; tiktok",13-edu-gif-chalk.png,13-edu-gif-chalk.txt
+14,2026-08-13,10:00,America/Toronto,water-public-tap,water,"WHO CONTROLS THE TAP?","instagram; facebook",14-water-public-tap.png,14-water-public-tap.txt
+15,2026-08-18,10:00,America/Toronto,gb-meme-drake,greenbelt,"PROTECT / PAVE","instagram; facebook; x",15-gb-meme-drake.png,15-gb-meme-drake.txt
+16,2026-08-20,10:00,America/Toronto,acct-reel-15s,accountability,"HOLD THEM ACCOUNTABLE","instagram; tiktok; facebook",16-acct-reel-15s.png,16-acct-reel-15s.txt
+17,2026-08-25,10:00,America/Toronto,trans-gif-news,transparency,"WHO WAS IN THE ROOM?","instagram; facebook; x",17-trans-gif-news.png,17-trans-gif-news.txt
+18,2026-08-27,10:00,America/Toronto,rof-meme-map,ring-of-fire,"WHO BENEFITS?","facebook; instagram; x",18-rof-meme-map.png,18-rof-meme-map.txt
+19,2026-09-01,10:00,America/Toronto,bike-lanes-reel,bike-lanes,"SAFER STREETS NOW","instagram; tiktok; facebook",19-bike-lanes-reel.png,19-bike-lanes-reel.txt
+20,2026-09-03,10:00,America/Toronto,care-shared-graphic,healthcare,"PUBLIC CARE IS SHARED CARE","instagram; facebook; threads",20-care-shared-graphic.png,20-care-shared-graphic.txt
+21,2026-09-08,10:00,America/Toronto,edu-care-ea-graphic,education,"FUND THE SUPPORT STAFF","instagram; facebook; threads",21-edu-care-ea-graphic.png,21-edu-care-ea-graphic.txt
+22,2026-09-10,10:00,America/Toronto,greenbelt-not-done,greenbelt,"GREENBELT IS NOT SAFE","instagram; facebook; threads",22-greenbelt-not-done.png,22-greenbelt-not-done.txt
+23,2026-09-15,10:00,America/Toronto,multi-issue-weekly,accountability,"ISSUE OF THE WEEK","instagram; facebook; threads; bluesky",23-multi-issue-weekly.png,23-multi-issue-weekly.txt
+24,2026-09-17,10:00,America/Toronto,receipts-billions,transparency,"FOLLOW THE MONEY","instagram; facebook; threads",24-receipts-billions.png,24-receipts-billions.txt
+25,2026-09-22,10:00,America/Toronto,care-women-twice,healthcare,"WOMEN PAY TWICE","instagram; facebook",25-care-women-twice.png,25-care-women-twice.txt
+26,2026-09-24,10:00,America/Toronto,care-organizers,accountability,"WHO HOLDS ONTARIO TOGETHER?","instagram; facebook; threads",26-care-organizers.png,26-care-organizers.txt
+27,2026-09-29,10:00,America/Toronto,care-bill-goes-home,healthcare,"THE BILL GOES HOME","instagram; facebook; threads",27-care-bill-goes-home.png,27-care-bill-goes-home.txt
+28,2026-10-01,10:00,America/Toronto,protests-show-up,accountability,"SHOW UP — IT WORKS","instagram; facebook",28-protests-show-up.png,28-protests-show-up.txt
+29,2026-10-06,10:00,America/Toronto,care-nurses-stat,healthcare,"9 IN 10 NURSES ARE WOMEN","instagram; facebook; x",29-care-nurses-stat.png,29-care-nurses-stat.txt
+30,2026-10-08,10:00,America/Toronto,join-yard-sign,accountability,"GET A YARD SIGN","instagram; facebook",30-join-yard-sign.png,30-join-yard-sign.txt

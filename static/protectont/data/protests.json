@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-06-21",
+  "lastUpdated": "2026-06-25",
   "featuredCampaign": {
-    "enabled": true,
+    "enabled": false,
     "label": "Province-wide protest Saturday June 27, 2026 — find your city and join in",
     "href": "#event-list",
     "campaignId": "june-27-2026"
