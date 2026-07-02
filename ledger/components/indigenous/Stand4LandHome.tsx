@@ -22,7 +22,7 @@ export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomePr
         {!heroFailed ? (
           <img
             src={HUB_LAND_HERO.url}
-            alt=""
+            alt={HUB_LAND_HERO.alt ?? ''}
             className="absolute inset-0 h-full w-full object-cover"
             loading="eager"
             onError={() => setHeroFailed(true)}
@@ -101,9 +101,9 @@ export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomePr
       <section className="px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { href: indigenousHubPath('organizations'), title: 'Organizations', desc: 'Indigenous-led groups & legal advocates' },
+            { href: indigenousHubPath('organizations'), title: 'Organizations', desc: 'Nation-led groups & legal advocates' },
             { href: indigenousHubPath('learn'), title: 'Learn', desc: 'Land Back, IPCAs, treaties & FPIC' },
-            { href: indigenousHubPath('news'), title: 'News', desc: 'Trusted Indigenous & independent sources' },
+            { href: indigenousHubPath('news'), title: 'News', desc: 'Trusted Nation-led & independent sources' },
             { href: indigenousHubPath('support'), title: 'Support', desc: 'Donate, volunteer & take action — officially' },
           ].map((item) => (
             <Link
@@ -117,6 +117,19 @@ export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomePr
               <p className="mt-2 text-sm text-[var(--hub-land-muted)]">{item.desc}</p>
             </Link>
           ))}
+        </div>
+      </section>
+
+      <section className="px-4 sm:px-6 lg:px-8 pb-16 md:pb-20">
+        <div className="max-w-6xl mx-auto rounded-2xl bg-[var(--hub-land-forest)] text-[#e8f0e4] p-6 sm:p-8">
+          <h2 className="hub-display text-xl sm:text-2xl font-semibold mb-3">Ontario-specific action</h2>
+          <p className="text-sm sm:text-base leading-relaxed opacity-90">
+            Protect Ontario covers Ford government policy affecting Indigenous rights in Ontario — Bill 5, Ring of Fire,
+            and free, prior and informed consent.{' '}
+            <Link href="/indigenous-rights/" className="underline underline-offset-2 hover:opacity-100">
+              Read our Indigenous rights page →
+            </Link>
+          </p>
         </div>
       </section>
     </>

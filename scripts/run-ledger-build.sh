@@ -27,6 +27,19 @@ echo "📦 npm install..."
 npm install --include=dev
 
 echo ""
+echo "🖼️  Generating Standing for the Land OG + campaign assets..."
+if node scripts/generate-indigenous-og.mjs 2>/dev/null; then
+  echo "✅ indigenous-og-image.png"
+else
+  echo "⚠️  Hub OG skipped (npx playwright install chromium in ledger/)"
+fi
+if node scripts/generate-hub-campaign-assets.mjs 2>/dev/null; then
+  echo "✅ Campaign OG images + PDF flyers"
+else
+  echo "⚠️  Campaign assets skipped (playwright/chromium)"
+fi
+
+echo ""
 echo "🖼️  Generating og-image.png for social previews..."
 if command -v python3 >/dev/null 2>&1; then
   python3 scripts/generate-og-image.py || echo "⚠️  og-image generation skipped (install Pillow: pip install Pillow)"

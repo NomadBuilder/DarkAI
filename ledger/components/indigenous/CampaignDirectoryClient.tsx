@@ -1,12 +1,14 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { CampaignIssue, CampaignStatus, IndigenousCampaign, IndigenousProvince } from '@/lib/indigenous-hub'
 import {
   CAMPAIGN_ISSUE_LABELS,
   CAMPAIGN_STATUS_LABELS,
   PROVINCE_LABELS,
   filterCampaigns,
+  indigenousHubPath,
 } from '@/lib/indigenous-hub'
 import CampaignCard from './CampaignCard'
 
@@ -14,11 +16,50 @@ const ALL_PROVINCES: IndigenousProvince[] = [
   'BC', 'AB', 'SK', 'MB', 'ON', 'QC', 'NB', 'NS', 'PE', 'NL', 'YT', 'NT', 'NU', 'National',
 ]
 
+function parseProvince(value: string | null): IndigenousProvince | 'all' {
+  if (!value) return 'all'
+  return ALL_PROVINCES.includes(value as IndigenousProvince) ? (value as IndigenousProvince) : 'all'
+}
+
+function parseIssue(value: string | null): CampaignIssue | 'all' {
+  if (!value) return 'all'
+  return value in CAMPAIGN_ISSUE_LABELS ? (value as CampaignIssue) : 'all'
+}
+
+function parseStatus(value: string | null): CampaignStatus | 'all' {
+  if (!value) return 'all'
+  return value in CAMPAIGN_STATUS_LABELS ? (value as CampaignStatus) : 'all'
+}
+
 export default function CampaignDirectoryClient({ campaigns }: { campaigns: IndigenousCampaign[] }) {
-  const [q, setQ] = useState('')
-  const [province, setProvince] = useState<IndigenousProvince | 'all'>('all')
-  const [issue, setIssue] = useState<CampaignIssue | 'all'>('all')
-  const [status, setStatus] = useState<CampaignStatus | 'all'>('all')
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
+  const [q, setQ] = useState(() => searchParams.get('q') ?? '')
+  const [province, setProvince] = useState<IndigenousProvince | 'all'>(() => parseProvince(searchParams.get('province')))
+  const [issue, setIssue] = useState<CampaignIssue | 'all'>(() => parseIssue(searchParams.get('issue')))
+  const [status, setStatus] = useState<CampaignStatus | 'all'>(() => parseStatus(searchParams.get('status')))
+
+  useEffect(() => {
+    setQ(searchParams.get('q') ?? '')
+    setProvince(parseProvince(searchParams.get('province')))
+    setIssue(parseIssue(searchParams.get('issue')))
+    setStatus(parseStatus(searchParams.get('status')))
+  }, [searchParams])
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (q.trim()) params.set('q', q.trim())
+    if (province !== 'all') params.set('province', province)
+    if (issue !== 'all') params.set('issue', issue)
+    if (status !== 'all') params.set('status', status)
+    const qs = params.toString()
+    const next = qs ? `${indigenousHubPath('campaigns')}?${qs}` : indigenousHubPath('campaigns')
+    const current = `${indigenousHubPath('campaigns')}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`
+    if (next !== current) {
+      router.replace(next, { scroll: false })
+    }
+  }, [q, province, issue, status, router, searchParams])
 
   const filtered = useMemo(
     () => filterCampaigns(campaigns, { q, province, issue, status }),

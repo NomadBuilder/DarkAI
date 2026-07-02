@@ -2,9 +2,10 @@ import Link from 'next/link'
 import hubData from '../../../../public/data/indigenous-hub.json'
 import CampaignDetailView from '@/components/indigenous/CampaignDetailView'
 import HubBreadcrumbs from '@/components/indigenous/HubBreadcrumbs'
+import HubCampaignJsonLd from '@/components/indigenous/HubCampaignJsonLd'
 import { HubPage } from '@/components/indigenous/HubPage'
 import { getCampaignBySlug, indigenousHubPath, parseIndigenousHubFile, hubPageTitle } from '@/lib/indigenous-hub'
-import { buildHubPageMetadata } from '@/lib/page-metadata'
+import { buildCampaignPageMetadata, buildHubPageMetadata } from '@/lib/page-metadata'
 import type { Metadata } from 'next'
 
 export function generateStaticParams() {
@@ -18,9 +19,10 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   if (!campaign) {
     return buildHubPageMetadata('Campaign not found', 'This campaign could not be found.')
   }
-  return buildHubPageMetadata(
+  return buildCampaignPageMetadata(
     hubPageTitle(campaign.title),
-    campaign.summary.slice(0, 155)
+    campaign.summary.slice(0, 155),
+    campaign.slug
   )
 }
 
@@ -41,6 +43,7 @@ export default function IndigenousCampaignPage({ params }: { params: { slug: str
 
   return (
     <HubPage>
+      <HubCampaignJsonLd campaign={campaign} />
       <HubBreadcrumbs
         items={[
           { label: 'Campaigns', href: indigenousHubPath('campaigns') },

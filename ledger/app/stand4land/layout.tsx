@@ -21,7 +21,7 @@ const hubBody = Lora({
 
 export const metadata = buildHubPageMetadata(
   `${HUB_SITE_NAME} — Protect Ontario`,
-  'Discover and support Indigenous-led land defence, Land Back, treaty rights, and environmental protection campaigns across Canada — official links only.'
+  'Discover Nation-led land defence campaigns — Land Back, treaty rights, and environmental protection across Canada. Official links only.'
 )
 
 export default function IndigenousHubLayout({ children }: { children: React.ReactNode }) {

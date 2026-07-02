@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import dynamic from 'next/dynamic'
 import hubData from '../../../public/data/indigenous-hub.json'
 import { HubPage, HubPageIntro } from '@/components/indigenous/HubPage'
@@ -15,7 +16,7 @@ const MapPageClient = dynamic(() => import('@/components/indigenous/MapPageClien
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('Campaign map'),
-  'Interactive map of Indigenous-led land defence and environmental protection campaigns across Canada.'
+  'Interactive map of Nation-led land defence and environmental protection campaigns across Canada.'
 )
 
 export default function IndigenousMapPage() {
@@ -23,10 +24,12 @@ export default function IndigenousMapPage() {
   return (
     <HubPage wide>
       <HubPageIntro title="Campaign map">
-        Every marker is an Indigenous-led campaign with official support links. Click to explore, then visit the
+        Every marker is a Nation-led campaign with official support links. Click to explore, then visit the
         campaign&apos;s own site to donate or volunteer.
       </HubPageIntro>
-      <MapPageClient campaigns={hub.campaigns} />
+      <Suspense fallback={<p className="text-[var(--hub-land-muted)]">Loading map…</p>}>
+        <MapPageClient campaigns={hub.campaigns} />
+      </Suspense>
     </HubPage>
   )
 }

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
+import { useRouter, useSearchParams } from 'next/navigation'
 import type { IndigenousCampaign } from '@/lib/indigenous-hub'
 import { CAMPAIGN_STATUS_LABELS, indigenousHubPath } from '@/lib/indigenous-hub'
 import CanadaCampaignMap from './CanadaCampaignMap'
@@ -11,13 +12,46 @@ export default function MapPageClient({
 }: {
   campaigns: IndigenousCampaign[]
 }) {
-  const [selectedSlug, setSelectedSlug] = useState<string | null>(null)
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const campaignFromUrl = searchParams.get('campaign')
+  const validSlug = useMemo(
+    () => (campaignFromUrl && campaigns.some((c) => c.slug === campaignFromUrl) ? campaignFromUrl : null),
+    [campaignFromUrl, campaigns]
+  )
+
+  const [selectedSlug, setSelectedSlug] = useState<string | null>(validSlug)
   const selected = selectedSlug ? campaigns.find((c) => c.slug === selectedSlug) : null
+
+  useEffect(() => {
+    setSelectedSlug(validSlug)
+  }, [validSlug])
+
+  const updateUrl = useCallback(
+    (slug: string | null) => {
+      const params = new URLSearchParams(searchParams.toString())
+      if (slug) params.set('campaign', slug)
+      else params.delete('campaign')
+      const qs = params.toString()
+      router.replace(qs ? `${indigenousHubPath('map')}?${qs}` : indigenousHubPath('map'), { scroll: false })
+    },
+    [router, searchParams]
+  )
+
+  const handleSelect = (slug: string | null) => {
+    setSelectedSlug(slug)
+    updateUrl(slug)
+  }
 
   return (
     <div className="grid gap-6 lg:gap-8 lg:grid-cols-5">
       <div className="lg:col-span-3 min-w-0">
-        <CanadaCampaignMap campaigns={campaigns} selectedSlug={selectedSlug} onSelect={setSelectedSlug} />
+        <CanadaCampaignMap
+          campaigns={campaigns}
+          selectedSlug={selectedSlug}
+          flyToSlug={selectedSlug}
+          onSelect={handleSelect}
+        />
       </div>
       <div className="lg:col-span-2 min-w-0">
         {selected ? (
@@ -57,7 +91,7 @@ export default function MapPageClient({
             <li key={c.slug}>
               <button
                 type="button"
-                onClick={() => setSelectedSlug(c.slug)}
+                onClick={() => handleSelect(c.slug)}
                 className={`w-full text-left rounded-lg px-3 py-2 text-sm transition-colors ${
                   selectedSlug === c.slug ? 'bg-[#1a4d3a] text-white' : 'hover:bg-[#1a4d3a]/8 text-[#3d5c48]'
                 }`}

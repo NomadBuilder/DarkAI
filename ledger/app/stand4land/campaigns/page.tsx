@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import hubData from '../../../public/data/indigenous-hub.json'
 import CampaignDirectoryClient from '@/components/indigenous/CampaignDirectoryClient'
 import { HubPage, HubPageIntro } from '@/components/indigenous/HubPage'
@@ -6,7 +7,7 @@ import { buildHubPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('Campaign directory'),
-  'Search Indigenous-led land defence campaigns across Canada by province, issue, and status. Official links only.'
+  'Search Nation-led land defence campaigns across Canada by province, issue, and status. Official campaign channels only.'
 )
 
 export default function IndigenousCampaignsPage() {
@@ -14,10 +15,12 @@ export default function IndigenousCampaignsPage() {
   return (
     <HubPage wide>
       <HubPageIntro title="Campaign directory">
-        Active Indigenous-led campaigns for land, water, treaty rights, and environmental protection. Every listing
+        Active Nation-led campaigns for land, water, treaty rights, and environmental protection. Every listing
         links to official Nation or campaign channels.
       </HubPageIntro>
-      <CampaignDirectoryClient campaigns={hub.campaigns} />
+      <Suspense fallback={<p className="text-[var(--hub-land-muted)]">Loading campaigns…</p>}>
+        <CampaignDirectoryClient campaigns={hub.campaigns} />
+      </Suspense>
     </HubPage>
   )
 }

@@ -164,7 +164,7 @@ export default function IndigenousHubShell({
       <footer className="hub-shell-footer border-t border-[var(--hub-land-forest)]/20 text-[#e8f0e4] px-4 sm:px-6 py-6 sm:py-8 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="max-w-lg mx-auto text-center space-y-3">
           <p className="text-sm font-light leading-relaxed opacity-90">
-            This site links to official Indigenous-led campaigns. We do not speak for Nations or collect donations on
+            This directory links to official Nation-led campaigns. Protect Ontario does not speak for Nations or collect donations on
             their behalf.
           </p>
           {lastUpdated && (

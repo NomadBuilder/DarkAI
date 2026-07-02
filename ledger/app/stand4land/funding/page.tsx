@@ -5,7 +5,7 @@ import { hubPageTitle } from '@/lib/indigenous-hub'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('Apply for funding'),
-  'Protect Ontario has very limited funds for Indigenous-led land and water defence. Tell us about your campaign if you are seeking support.'
+  'Protect Ontario has very limited funds for Nation-led land and water defence campaigns. Tell us about your campaign if you are seeking support.'
 )
 
 export default function IndigenousFundingPage() {
@@ -20,11 +20,11 @@ export default function IndigenousFundingPage() {
         <div className="space-y-4 text-base sm:text-lg">
           <p>
             Protect Ontario has <strong className="font-normal text-[#142818]">very limited funding</strong> for
-            Indigenous-led land and water defence. We cannot support every campaign — but for the right cause, at the
+            Nation-led land and water defence campaigns. We cannot support every campaign — but for the right cause, at the
             right moment, we may be able to help.
           </p>
           <p>
-            We prioritize requests that are clearly Indigenous-led, tied to land or water protection, and verifiable
+            We prioritize requests that are clearly Nation-led, tied to land or water protection, and verifiable
             through official Nation or campaign channels. We do not collect donations on behalf of movements listed in
             this hub.
           </p>

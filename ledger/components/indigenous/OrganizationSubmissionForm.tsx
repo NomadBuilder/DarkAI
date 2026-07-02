@@ -11,7 +11,7 @@ import { HUB_SITE_NAME, PROVINCE_LABELS, type IndigenousProvince } from '@/lib/i
 const HUB_EMAIL = 'protectont@gmail.com'
 
 const ORG_TYPES = [
-  'Indigenous-led organization',
+  'Nation-led organization',
   'Legal advocacy',
   'Conservation & IPCAs',
   'Research & education',
@@ -194,7 +194,7 @@ export default function OrganizationSubmissionForm() {
         <h2 className="hub-display text-xl font-semibold text-[var(--hub-land-ink)]">Submission received</h2>
         <p className="mt-3 text-[var(--hub-land-muted)] leading-relaxed">
           Thank you. We review every organization suggestion before adding it to the directory. Listings must be
-          Indigenous-led or clearly support Indigenous land and water defence through official, verifiable channels.
+          Nation-led or clearly supporting Indigenous land and water defence through official, verifiable channels.
         </p>
         <button
           type="button"
@@ -361,7 +361,7 @@ export default function OrganizationSubmissionForm() {
           value={form.whyList}
           onChange={(e) => setField('whyList', e.target.value)}
           className={`${inputClass} resize-y min-h-[6rem]`}
-          placeholder="How is it Indigenous-led or Indigenous-supporting? What official channels can we verify?"
+          placeholder="How is it Nation-led or Nation-supporting? What official channels can we verify?"
         />
       </label>
 

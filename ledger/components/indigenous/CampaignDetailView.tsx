@@ -10,7 +10,9 @@ import {
   indigenousHubPath,
 } from '@/lib/indigenous-hub'
 import HubCampaignMedia from '@/components/indigenous/HubCampaignMedia'
+import HubCampaignShare from '@/components/indigenous/HubCampaignShare'
 import { getCampaignLandImage } from '@/lib/hub-land-images'
+import { hubCampaignFlyerPath, hubCampaignPageUrl } from '@/lib/hub-campaign-utils'
 
 function LinkSection({ title, links }: { title: string; links?: HubLinkType[] }) {
   if (!links?.length) return null
@@ -44,6 +46,8 @@ export default function CampaignDetailView({
   hub: IndigenousHubFile
 }) {
   const image = getCampaignLandImage(campaign.slug)
+  const pageUrl = hubCampaignPageUrl(campaign.slug)
+  const flyerPath = hubCampaignFlyerPath(campaign.slug)
   const related = (campaign.relatedSlugs ?? [])
     .map((slug) => getCampaignBySlug(hub, slug))
     .filter(Boolean) as IndigenousCampaign[]
@@ -92,6 +96,23 @@ export default function CampaignDetailView({
               Official campaign site ↗
             </a>
           )}
+          <div className="mt-4 flex flex-wrap gap-3">
+            <HubCampaignShare campaign={campaign} pageUrl={pageUrl} />
+            <Link
+              href={`${indigenousHubPath('map')}?campaign=${encodeURIComponent(campaign.slug)}`}
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--hub-land-forest)]/25 px-4 py-2.5 text-sm text-[var(--hub-land-forest)] hover:bg-[var(--hub-land-forest)]/5 transition-colors"
+            >
+              View on map
+            </Link>
+            <a
+              href={flyerPath}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-[var(--hub-land-forest)]/25 px-4 py-2.5 text-sm text-[var(--hub-land-forest)] hover:bg-[var(--hub-land-forest)]/5 transition-colors"
+            >
+              Printable flyer (PDF) ↗
+            </a>
+          </div>
         </div>
       </header>
 

@@ -6,7 +6,7 @@ import { buildHubPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('How to support'),
-  'Donate, volunteer, and share resources — always through official Indigenous-led campaign channels.'
+  'Donate, volunteer, and share resources — always through official Nation-led campaign channels.'
 )
 
 export default function IndigenousSupportPage() {

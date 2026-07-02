@@ -73,7 +73,7 @@ const HTML = `<!DOCTYPE html>
 <body>
   <div class="bar" aria-hidden="true"></div>
   <h1><span>Standing </span>for the Land</h1>
-  <p>Indigenous-led land &amp; water defence across Canada — official campaign links.</p>
+  <p>Nation-led land &amp; water defence across Canada — official campaign links.</p>
   <div class="url">protectont.ca/stand4land</div>
 </body>
 </html>`

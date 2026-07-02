@@ -5,11 +5,13 @@ import { PROVINCE_LABELS } from '@/lib/indigenous-hub'
 export type HubLandImage = {
   url: string
   credit: string
+  alt?: string
 }
 
 export const HUB_LAND_HERO: HubLandImage = {
   url: '/hub/hero-morice-canyon.jpg',
   credit: 'Morice Canyon, Bulkley River — Wikimedia Commons / CC BY 3.0',
+  alt: 'Morice Canyon on the Bulkley River in British Columbia',
 }
 
 function hubImagePath(slug: string): string {

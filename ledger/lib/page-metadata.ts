@@ -28,6 +28,11 @@ export function buildPageMetadata(title: string, description: string, ogImage?: 
 }
 
 /** Metadata for Standing for the Land (/stand4land) pages with dedicated social image. */
-export function buildHubPageMetadata(title: string, description: string): Metadata {
-  return buildPageMetadata(title, description, HUB_OG_IMAGE)
+export function buildHubPageMetadata(title: string, description: string, ogImage?: string): Metadata {
+  return buildPageMetadata(title, description, ogImage ?? HUB_OG_IMAGE)
+}
+
+/** Per-campaign metadata with generated OG card. */
+export function buildCampaignPageMetadata(title: string, description: string, slug: string): Metadata {
+  return buildPageMetadata(title, description, `/hub/og/${slug}.png`)
 }
