@@ -1,6 +1,6 @@
 import { Fraunces, Lora } from 'next/font/google'
 import hubData from '../../public/data/indigenous-hub.json'
-import IndigenousHubShell from '@/components/indigenous/IndigenousHubShell'
+import HubLayoutSwitch from '@/components/indigenous/HubLayoutSwitch'
 import { HUB_SITE_NAME, parseIndigenousHubFile } from '@/lib/indigenous-hub'
 import { buildHubPageMetadata } from '@/lib/page-metadata'
 import '@/components/indigenous/hub-land.css'
@@ -28,7 +28,7 @@ export default function IndigenousHubLayout({ children }: { children: React.Reac
   const hub = parseIndigenousHubFile(hubData)
   return (
     <div className={`hub-theme-land min-h-full ${hubDisplay.variable} ${hubBody.variable}`}>
-      <IndigenousHubShell lastUpdated={hub.lastUpdated || undefined}>{children}</IndigenousHubShell>
+      <HubLayoutSwitch lastUpdated={hub.lastUpdated || undefined}>{children}</HubLayoutSwitch>
     </div>
   )
 }

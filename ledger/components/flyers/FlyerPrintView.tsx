@@ -9,14 +9,38 @@ import { footerGradient, resolveFlyerTheme } from '@/lib/flyer-theme'
 import { FLYERS_INDEX_PATH } from '@/lib/flyer-routes'
 import { bindFlyerPrintTitleCleanup } from '@/lib/print-flyer'
 
-const FLYER_QR_IMAGE = '/flyers/protectont-qr.png'
-const FLYER_QR_URL = 'https://protectont.ca/'
+export type FlyerPrintBrand = {
+  chromeFrom: string
+  chromeTo: string
+  chromeAccent: string
+  chromeMuted: string
+  siteUrl: string
+  siteLabel: string
+  qrImageUrl: string
+  ariaPrefix: string
+  backLabel: string
+}
+
+const DEFAULT_FLYER_BRAND: FlyerPrintBrand = {
+  chromeFrom: '#3d2b7a',
+  chromeTo: '#2a1f58',
+  chromeAccent: '#f9e04c',
+  chromeMuted: '#f9e04c',
+  siteUrl: 'https://protectont.ca/',
+  siteLabel: 'protectont.ca',
+  qrImageUrl: '/flyers/protectont-qr.png',
+  ariaPrefix: 'Protect Ontario printable flyer',
+  backLabel: '← All flyers',
+}
 
 type FlyerPrintViewProps = {
   flyer: Flyer
   shared: FlyerShared
   backHref?: string
   showToolbar?: boolean
+  showShareActions?: boolean
+  brand?: Partial<FlyerPrintBrand>
+  useOverviewGrid?: boolean
 }
 
 export default function FlyerPrintView({
@@ -24,11 +48,15 @@ export default function FlyerPrintView({
   shared,
   backHref = FLYERS_INDEX_PATH,
   showToolbar = true,
+  showShareActions = true,
+  brand: brandProp,
+  useOverviewGrid,
 }: FlyerPrintViewProps) {
   useEffect(() => bindFlyerPrintTitleCleanup(), [])
 
+  const brand = { ...DEFAULT_FLYER_BRAND, ...brandProp }
   const theme = resolveFlyerTheme(flyer.theme)
-  const useGridLayout = flyer.slug === 'overview'
+  const gridLayout = useOverviewGrid ?? flyer.slug === 'overview'
   const calloutActions = flyer.calloutActions?.filter((a) => a.label || a.text) ?? []
   const printDensityClass =
     flyer.sections.length >= 4
@@ -38,21 +66,28 @@ export default function FlyerPrintView({
         : ''
 
   return (
-      <div className="flyer-print-chrome min-h-screen bg-gradient-to-b from-[#3d2b7a] to-[#2a1f58] py-6 px-3 sm:py-10 sm:px-6">
+      <div
+        className="flyer-print-chrome min-h-screen py-6 px-3 sm:py-10 sm:px-6"
+        style={{ background: `linear-gradient(to bottom, ${brand.chromeFrom}, ${brand.chromeTo})` }}
+      >
         {showToolbar && (
           <div className="flyer-no-print mx-auto mb-6 w-full max-w-[8.5in] space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Link
                 href={backHref}
-                className="text-sm font-light text-[#f9e04c]/90 hover:text-[#f9e04c] transition-colors"
+                className="text-sm font-light transition-colors"
+                style={{ color: `${brand.chromeAccent}e6` }}
               >
-                ← All flyers
+                {brand.backLabel}
               </Link>
-              <span className="text-xs uppercase tracking-widest text-[#f9e04c]/50">
+              <span
+                className="text-xs uppercase tracking-widest"
+                style={{ color: `${brand.chromeMuted}80` }}
+              >
                 Letter · 8.5″×11″
               </span>
             </div>
-            <FlyerShareActions slug={flyer.slug} />
+            {showShareActions && <FlyerShareActions slug={flyer.slug} />}
           </div>
         )}
 
@@ -60,7 +95,7 @@ export default function FlyerPrintView({
         <article
           className={`flyer-sheet mx-auto w-full max-w-[8.5in] overflow-hidden rounded-md border-2 border-transparent shadow-2xl print:flex print:flex-col print:h-[11in] print:max-h-[11in] print:min-h-0 print:border-[#1a1a1a] print:shadow-none ${printDensityClass}`}
           style={{ background: theme.bodyBackground }}
-          aria-label={`Protect Ontario printable flyer: ${flyer.title} ${flyer.subtitle}`}
+          aria-label={`${brand.ariaPrefix}: ${flyer.title} ${flyer.subtitle}`}
         >
           <FlyerSheetHeader flyer={flyer} theme={theme} />
 
@@ -68,15 +103,15 @@ export default function FlyerPrintView({
           {flyer.sections.length > 0 && (
             <div
               className={`flyer-sheet-body ${
-                useGridLayout ? 'flyer-sheet-body--grid grid gap-0 sm:grid-cols-2' : 'flex flex-col divide-y divide-slate-200'
+                gridLayout ? 'flyer-sheet-body--grid grid gap-0 sm:grid-cols-2' : 'flex flex-col divide-y divide-slate-200'
               }`}
             >
               {flyer.sections.map((block, i) => (
                 <section
                   key={`${block.title}-${i}`}
                   className={`px-8 py-6 sm:px-10 sm:py-7 ${
-                    useGridLayout && i % 2 === 0 ? 'sm:border-r border-slate-200' : ''
-                  } ${useGridLayout && i < 2 ? 'border-b border-slate-200' : ''}`}
+                    gridLayout && i % 2 === 0 ? 'sm:border-r border-slate-200' : ''
+                  } ${gridLayout && i < 2 ? 'border-b border-slate-200' : ''}`}
                 >
                   {block.title && (
                     <h2
@@ -223,41 +258,58 @@ export default function FlyerPrintView({
                 )}
               </div>
 
-              <a
-                href={FLYER_QR_URL}
-                className="flyer-qr-block mx-auto shrink-0 flex flex-col items-center text-center sm:mx-0 sm:pt-1"
-                aria-label="Visit protectont.ca — scan QR code or open link"
-              >
-                <div
-                  className="rounded-xl border-2 bg-white p-2 shadow-md"
-                  style={{ borderColor: `${theme.footerHeadingColor}88` }}
+              {brand.qrImageUrl ? (
+                <a
+                  href={brand.siteUrl}
+                  className="flyer-qr-block mx-auto shrink-0 flex flex-col items-center text-center sm:mx-0 sm:pt-1"
+                  aria-label={`Visit ${brand.siteLabel} — scan QR code or open link`}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={FLYER_QR_IMAGE}
-                    alt=""
-                    width={96}
-                    height={96}
-                    className="h-[4.5rem] w-[4.5rem] sm:h-24 sm:w-24 object-contain"
-                  />
+                  <div
+                    className="rounded-xl border-2 bg-white p-2 shadow-md"
+                    style={{ borderColor: `${theme.footerHeadingColor}88` }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={brand.qrImageUrl}
+                      alt=""
+                      width={96}
+                      height={96}
+                      className="h-[4.5rem] w-[4.5rem] sm:h-24 sm:w-24 object-contain"
+                    />
+                  </div>
+                  <p
+                    className="mt-2 text-[10px] font-bold uppercase tracking-[0.15em]"
+                    style={{ color: theme.footerHeadingColor }}
+                  >
+                    Scan for more
+                  </p>
+                  <p className="mt-0.5 text-sm sm:text-base font-black" style={{ color: theme.footerCtaTextColor }}>
+                    {brand.siteLabel}
+                  </p>
+                </a>
+              ) : (
+                <div className="mx-auto shrink-0 text-center sm:mx-0 sm:pt-1 sm:max-w-[8rem]">
+                  <p
+                    className="text-[10px] font-bold uppercase tracking-[0.15em]"
+                    style={{ color: theme.footerHeadingColor }}
+                  >
+                    Visit
+                  </p>
+                  <p className="mt-1 text-sm sm:text-base font-black leading-snug" style={{ color: theme.footerCtaTextColor }}>
+                    {brand.siteLabel}
+                  </p>
                 </div>
-                <p
-                  className="mt-2 text-[10px] font-bold uppercase tracking-[0.15em]"
-                  style={{ color: theme.footerHeadingColor }}
-                >
-                  Scan for more
-                </p>
-                <p className="mt-0.5 text-sm sm:text-base font-black" style={{ color: theme.footerCtaTextColor }}>
-                  protectont.ca
-                </p>
-              </a>
+              )}
             </div>
           </footer>
         </article>
         </div>
 
         {showToolbar && (
-          <p className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm text-[#f9e04c]/70 font-light leading-relaxed">
+          <p
+            className="flyer-no-print mx-auto mt-6 w-full max-w-[8.5in] text-center text-sm font-light leading-relaxed"
+            style={{ color: `${brand.chromeAccent}b3` }}
+          >
             <strong className="font-normal">PDF</strong> downloads a ready-made file. For{' '}
             <strong className="font-normal">Print</strong>, set margins to None, turn off headers and footers, and turn
             on background graphics.

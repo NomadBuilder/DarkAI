@@ -101,6 +101,9 @@ personaforge/static/data/*
 shadowstack/static/data/*
 !shadowstack/static/data/analysis.html
 
+# Standing for the Land printable PDFs (local build output)
+ledger/output/
+
 # Temporary files
 tmp/
 temp/
