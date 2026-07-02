@@ -1,7 +1,7 @@
 import type { IndigenousCampaign, IndigenousProvince } from '@/lib/indigenous-hub'
 import { PROVINCE_LABELS } from '@/lib/indigenous-hub'
 
-/** Region-appropriate landscape photos (Wikimedia Commons) for land-theme preview. */
+/** Region-appropriate landscape photos (Wikimedia Commons, bundled locally) for the land theme. */
 export type HubLandImage = {
   url: string
   credit: string
@@ -12,50 +12,54 @@ export const HUB_LAND_HERO: HubLandImage = {
   credit: 'Morice Canyon, Bulkley River — Wikimedia Commons / CC BY 3.0',
 }
 
-/** One verified photo per campaign — no duplicates. Omit slug to use the gradient fallback. */
+function hubImagePath(slug: string): string {
+  return `/hub/${slug}.jpg`
+}
+
+/** One verified photo per campaign — bundled under public/hub/ (no hotlinked Wikimedia thumbs). */
 export const HUB_CAMPAIGN_IMAGES: Partial<Record<string, HubLandImage>> = {
   'gidimten-yintah': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Morice_Canyon_-_Bulkley_River_-_panoramio.jpg/1280px-Morice_Canyon_-_Bulkley_River_-_panoramio.jpg',
+    url: hubImagePath('gidimten-yintah'),
     credit: 'Bulkley River region, BC — Wikimedia Commons',
   },
   'unistoten-camp': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/94/UnistotenCamp.jpg/1280px-UnistotenCamp.jpg',
+    url: hubImagePath('unistoten-camp'),
     credit: 'Unist\'ot\'en Camp — Wikimedia Commons / CC BY-SA 4.0',
   },
   'likhtsamisyu-climate': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Bulkley_River_flowing_into_Skeena_River_near_Hazelton%2C_British_Columbia.jpg/1280px-Bulkley_River_flowing_into_Skeena_River_near_Hazelton%2C_British_Columbia.jpg',
+    url: hubImagePath('likhtsamisyu-climate'),
     credit: 'Skeena River region, BC — Wikimedia Commons',
   },
   'tiny-house-warriors': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Railway_bridge_over_the_North_Thompson_River_-_Thompson-Nicola_Regional_District%2C_British_Columbia%2C_Canada_-_July_1990_01.jpg/1280px-Railway_bridge_over_the_North_Thompson_River_-_Thompson-Nicola_Regional_District%2C_British_Columbia%2C_Canada_-_July_1990_01.jpg',
+    url: hubImagePath('tiny-house-warriors'),
     credit: 'North Thompson River, Secwepemc territory — Wikimedia Commons',
   },
   'grassy-narrows': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/English_River_ON.JPG/1280px-English_River_ON.JPG',
+    url: hubImagePath('grassy-narrows'),
     credit: 'English River, Ontario — Wikimedia Commons',
   },
   'mushkegowuk-ring-of-fire': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/73/Springtime_in_James_Bay_%28MODIS_2022-06-22%29.jpg/1280px-Springtime_in_James_Bay_%28MODIS_2022-06-22%29.jpg',
+    url: hubImagePath('mushkegowuk-ring-of-fire'),
     credit: 'James Bay lowlands — Wikimedia Commons / NASA',
   },
   'wsanec-land-trust': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Lighthouse_Marine_Park_Lookout%2C_Point_Roberts%2C_looking_toward_the_Salish_Sea.jpg/1280px-Lighthouse_Marine_Park_Lookout%2C_Point_Roberts%2C_looking_toward_the_Salish_Sea.jpg',
+    url: hubImagePath('wsanec-land-trust'),
     credit: 'Salish Sea — Wikimedia Commons',
   },
   'sipeknekatik-fishery': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b2/File_Nova_Scotia_-_Sober_Island_-_fishing_boat_%E2%80%98Terry_and_Margaret%E2%80%99_and_lobster_traps.jpg/1280px-File_Nova_Scotia_-_Sober_Island_-_fishing_boat_%E2%80%98Terry_and_Margaret%E2%80%99_and_lobster_traps.jpg',
+    url: hubImagePath('sipeknekatik-fishery'),
     credit: 'Nova Scotia fishery — Wikimedia Commons',
   },
   'acfn-tar-sands': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Athabasca_River_at_Sunrise.jpg/1280px-Athabasca_River_at_Sunrise.jpg',
+    url: hubImagePath('acfn-tar-sands'),
     credit: 'Athabasca River, Alberta — Wikimedia Commons',
   },
   'land-needs-guardians': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Cedar_cabin_in_the_Great_Bear_Rainforest.jpg/1280px-Cedar_cabin_in_the_Great_Bear_Rainforest.jpg',
+    url: hubImagePath('land-needs-guardians'),
     credit: 'Great Bear Rainforest, BC — Wikimedia Commons',
   },
   'indigenous-climate-action': {
-    url: 'https://upload.wikimedia.org/wikipedia/commons/f/ff/2018-05-20_Salish_Sea_Sunset_%2841543181514%29.jpg',
+    url: hubImagePath('indigenous-climate-action'),
     credit: 'Pacific Northwest — Wikimedia Commons / CC BY 2.0',
   },
 }
