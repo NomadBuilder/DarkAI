@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import CampaignCard from '@/components/indigenous/CampaignCard'
 import MapPreview from '@/components/indigenous/MapPreview'
@@ -13,15 +14,25 @@ type Stand4LandHomeProps = {
 }
 
 export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomeProps) {
+  const [heroFailed, setHeroFailed] = useState(false)
+
   return (
     <>
       <section className="hub-land-hero relative overflow-hidden">
-        <img
-          src={HUB_LAND_HERO.url}
-          alt=""
-          className="absolute inset-0 h-full w-full object-cover"
-          loading="eager"
-        />
+        {!heroFailed ? (
+          <img
+            src={HUB_LAND_HERO.url}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+            loading="eager"
+            onError={() => setHeroFailed(true)}
+          />
+        ) : (
+          <div
+            className="absolute inset-0 hub-land-media-fallback bg-gradient-to-br from-[#1a3d2e] via-[#2d4a36] to-[#3d5c5a]"
+            aria-hidden
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-[#1c2419]/75 via-[#1c2419]/55 to-[#1c2419]/85" />
         <div className="relative px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 md:pt-24 pb-20 md:pb-28">
           <div className="max-w-4xl mx-auto text-center">
@@ -54,7 +65,9 @@ export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomePr
                 Learning centre
               </Link>
             </div>
-            <p className="mt-8 text-xs text-white/50">{HUB_LAND_HERO.credit}</p>
+            {!heroFailed && (
+              <p className="mt-8 text-xs text-white/50">{HUB_LAND_HERO.credit}</p>
+            )}
           </div>
         </div>
       </section>

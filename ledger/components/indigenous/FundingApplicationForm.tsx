@@ -248,7 +248,7 @@ export default function FundingApplicationForm() {
           value={form.amountRequested}
           onChange={(e) => setField('amountRequested', e.target.value)}
           className={inputClass}
-          placeholder="e.g. $500 for travel, $2,000 for legal fees"
+          placeholder="e.g. $50 for travel, $100 for legal fees"
         />
       </label>
 

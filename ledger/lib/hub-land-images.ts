@@ -8,7 +8,7 @@ export type HubLandImage = {
 }
 
 export const HUB_LAND_HERO: HubLandImage = {
-  url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/58/Morice_Canyon_-_Bulkley_River_-_panoramio.jpg/1600px-Morice_Canyon_-_Bulkley_River_-_panoramio.jpg',
+  url: '/hub/hero-morice-canyon.jpg',
   credit: 'Morice Canyon, Bulkley River — Wikimedia Commons / CC BY 3.0',
 }
 

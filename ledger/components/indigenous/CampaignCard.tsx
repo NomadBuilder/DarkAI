@@ -17,22 +17,28 @@ export default function CampaignCard({ campaign }: { campaign: IndigenousCampaig
 
   return (
     <article className="group relative flex flex-col hub-land-card rounded-xl border overflow-hidden hover:shadow-lg transition-all">
-      <HubCampaignMedia
-        campaign={campaign}
-        variant="card"
-        overlay={
-          <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 z-10">
-            <span className="text-xs uppercase tracking-wider text-white bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded">
-              {CAMPAIGN_STATUS_LABELS[campaign.status]}
-            </span>
-            {campaign.provinces.slice(0, 1).map((p) => (
-              <span key={p} className="text-xs text-white/90 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded">
-                {PROVINCE_LABELS[p]}
+      <Link
+        href={detailHref}
+        className="block relative focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--hub-land-forest)] focus-visible:ring-inset"
+        aria-label={`View campaign: ${campaign.title}`}
+      >
+        <HubCampaignMedia
+          campaign={campaign}
+          variant="card"
+          overlay={
+            <div className="absolute bottom-3 left-3 right-3 flex flex-wrap gap-2 z-10 pointer-events-none">
+              <span className="text-xs uppercase tracking-wider text-white bg-black/40 backdrop-blur-sm px-2 py-0.5 rounded">
+                {CAMPAIGN_STATUS_LABELS[campaign.status]}
               </span>
-            ))}
-          </div>
-        }
-      />
+              {campaign.provinces.slice(0, 1).map((p) => (
+                <span key={p} className="text-xs text-white/90 bg-black/30 backdrop-blur-sm px-2 py-0.5 rounded">
+                  {PROVINCE_LABELS[p]}
+                </span>
+              ))}
+            </div>
+          }
+        />
+      </Link>
       <div className="flex flex-col flex-1 p-5 sm:p-6">
         <h3 className="hub-display text-lg sm:text-xl font-semibold text-[var(--hub-land-ink)] group-hover:text-[var(--hub-land-forest)] transition-colors">
           <Link href={detailHref} className="after:absolute relative">

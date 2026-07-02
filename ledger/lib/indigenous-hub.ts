@@ -182,6 +182,7 @@ export const HUB_NAV: { href: string; label: string; exact?: boolean; shortLabel
 ]
 
 export const HUB_FUNDING_PATH = `${HUB_BASE_PATH}/funding`
+export const HUB_ORG_SUBMIT_PATH = `${HUB_BASE_PATH}/organizations/submit`
 
 /** Public name for the Standing for the Land microsite (nav, titles, emails). */
 export const HUB_SITE_NAME = 'Standing for the Land'
