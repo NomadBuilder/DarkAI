@@ -195,7 +195,7 @@ export default function CanadaCampaignMap({
           zoom={mapZoom}
           scrollWheelZoom={scrollWheelZoom}
           className={`${mapHeight} w-full z-0`}
-          aria-label="Map of Nation-led campaigns across Canada"
+          aria-label="Map of Indigenous-led campaigns across Canada"
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

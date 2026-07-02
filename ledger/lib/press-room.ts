@@ -39,7 +39,7 @@ export const PRESS_EXPERT_ROUTING: ExpertContact[] = [
   },
   {
     topic: 'Indigenous rights & Ring of Fire',
-    organization: 'Contact nation-led campaigns directly',
+    organization: 'Contact indigenous-led campaigns directly',
     href: '/indigenous-rights',
     note: 'Follow and amplify statements from affected First Nations — see our Indigenous rights page for context.',
   },

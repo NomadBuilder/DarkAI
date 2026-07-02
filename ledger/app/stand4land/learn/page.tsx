@@ -15,7 +15,7 @@ export default function IndigenousLearnPage() {
   return (
     <HubPage>
       <HubPageIntro title="Learning centre">
-        Plain-language guides to concepts behind land defence movements — with links to Nation-led and official
+        Plain-language guides to concepts behind land defence movements — with links to Indigenous-led and official
         resources. We cite sources; we do not speak for Nations.
       </HubPageIntro>
 

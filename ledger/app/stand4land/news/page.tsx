@@ -5,11 +5,11 @@ import { buildHubPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('News sources'),
-  'Trusted Nation-led and independent news sources for land defence, treaty rights, and environmental justice.'
+  'Trusted Indigenous-led and independent news sources for land defence, treaty rights, and environmental justice.'
 )
 
 const TYPE_LABELS = {
-  'indigenous-led': 'Nation-led media',
+  'indigenous-led': 'Indigenous-led media',
   journalism: 'Independent journalism',
   research: 'Research & policy',
 } as const
@@ -21,7 +21,7 @@ export default function IndigenousNewsPage() {
     <HubPage>
       <HubPageIntro title="News & updates">
         We do not republish news stories here — that would strip context and attribution. Instead, follow these
-        Nation-led and trusted independent sources directly. Always check the original publisher.
+        Indigenous-led and trusted independent sources directly. Always check the original publisher.
       </HubPageIntro>
 
       <div className="space-y-4">

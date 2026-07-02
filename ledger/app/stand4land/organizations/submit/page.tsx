@@ -7,7 +7,7 @@ import { buildHubPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('Suggest an organization'),
-  'Nominate a Nation-led or Nation-supporting organization for review before it is added to the Standing for the Land directory.'
+  'Nominate a Indigenous-led or Indigenous-supporting organization for review before it is added to the Standing for the Land directory.'
 )
 
 export default function OrganizationSubmitPage() {
@@ -23,7 +23,7 @@ export default function OrganizationSubmitPage() {
       <HubPageIntro title="Suggest an organization">
         <div className="space-y-4">
           <p>
-            Know a Nation-led group or trusted advocate that should be in this directory? Submit it here. We
+            Know a Indigenous-led group or trusted advocate that should be in this directory? Submit it here. We
             review every suggestion before publishing — listings must link to official channels only.
           </p>
           <p className="text-base">

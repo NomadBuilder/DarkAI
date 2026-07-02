@@ -182,7 +182,7 @@ function flyerHtml(campaign) {
 </head>
 <body>
   <div class="bar"></div>
-  <p class="eyebrow">${escapeHtml(region)} · Nation-led campaign</p>
+  <p class="eyebrow">${escapeHtml(region)} · Indigenous-led campaign</p>
   <h1>${title}</h1>
   <p class="nations">${nations}</p>
   <p class="summary">${summary}</p>
@@ -197,7 +197,7 @@ function flyerHtml(campaign) {
     <div class="link-box"><strong>Verified links directory</strong>${escapeHtml(directory)}</div>
   </div>
   <div class="footer">
-    <strong>Standing for the Land</strong> — Protect Ontario curates links to official Nation-led campaigns.
+    <strong>Standing for the Land</strong> — Protect Ontario curates links to official Indigenous-led campaigns.
     We do not speak for Nations or collect donations. Always verify links on the official campaign website.
     <br />protectont.ca/stand4land · Data verified ${escapeHtml(campaign.lastVerified ?? '')}
   </div>

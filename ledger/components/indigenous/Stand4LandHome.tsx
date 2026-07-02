@@ -101,9 +101,9 @@ export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomePr
       <section className="px-4 sm:px-6 lg:px-8 py-16 md:py-20">
         <div className="max-w-6xl mx-auto grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { href: indigenousHubPath('organizations'), title: 'Organizations', desc: 'Nation-led groups & legal advocates' },
+            { href: indigenousHubPath('organizations'), title: 'Organizations', desc: 'Indigenous-led groups & legal advocates' },
             { href: indigenousHubPath('learn'), title: 'Learn', desc: 'Land Back, IPCAs, treaties & FPIC' },
-            { href: indigenousHubPath('news'), title: 'News', desc: 'Trusted Nation-led & independent sources' },
+            { href: indigenousHubPath('news'), title: 'News', desc: 'Trusted Indigenous-led & independent sources' },
             { href: indigenousHubPath('support'), title: 'Support', desc: 'Donate, volunteer & take action — officially' },
           ].map((item) => (
             <Link

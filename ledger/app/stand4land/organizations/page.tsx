@@ -12,7 +12,7 @@ import { buildHubPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('Organizations'),
-  'Nation-led organizations working on land stewardship, treaty rights, legal advocacy, and environmental protection.'
+  'Indigenous-led organizations working on land stewardship, treaty rights, legal advocacy, and environmental protection.'
 )
 
 export default function IndigenousOrganizationsPage() {
@@ -21,7 +21,7 @@ export default function IndigenousOrganizationsPage() {
   return (
     <HubPage>
       <HubPageIntro title="Organizations">
-        Nation-led and Indigenous-focused organizations supporting land defence, IPCAs, legal advocacy, and
+        Indigenous-led and Indigenous-focused organizations supporting land defence, IPCAs, legal advocacy, and
         climate justice. Donations go directly to each organization.
       </HubPageIntro>
 

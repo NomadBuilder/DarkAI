@@ -274,7 +274,7 @@ export default function FundingApplicationForm() {
           value={form.message}
           onChange={(e) => setField('message', e.target.value)}
           className={`${inputClass} resize-y min-h-[7rem]`}
-          placeholder="What is at stake? Why is this Nation-led? What would support make possible?"
+          placeholder="What is at stake? Why is this Indigenous-led? What would support make possible?"
         />
       </label>
 

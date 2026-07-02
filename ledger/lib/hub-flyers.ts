@@ -28,7 +28,7 @@ export const HUB_FLYER_SITE_URL = 'https://protectont.ca/stand4land/'
 export const HUB_FLYER_SHARED: FlyerShared = {
   footerHeading: 'Standing for the Land',
   footerFinePrint:
-    'This directory links to official Nation-led campaigns. We do not speak for Nations or collect donations. Always verify links on each campaign’s official website.',
+    'This directory links to official Indigenous-led campaigns. We do not speak for Nations or collect donations. Always verify links on each campaign’s official website.',
   ctas: [
     { label: 'Website', text: 'protectont.ca/stand4land' },
     { label: 'Map', text: 'protectont.ca/stand4land/map' },
@@ -41,7 +41,7 @@ const hubFlyerEntries: Flyer[] = [
     id: 'hub-overview',
     slug: 'overview',
     title: 'Standing for the Land',
-    subtitle: 'Nation-led land & water defence',
+    subtitle: 'Indigenous-led land & water defence',
     intro:
       'Active land and water defence campaigns are underway across Canada — pipelines, mining, treaty rights, fisheries, and Land Back. This map and directory links only to official Nation and campaign channels.',
     heroImageUrl: '/hub/hero-morice-canyon.jpg',
@@ -122,7 +122,7 @@ const hubFlyerEntries: Flyer[] = [
       },
     ],
     calloutTitle: 'Find campaigns near you',
-    calloutBody: 'Standing for the Land maps Nation-led campaigns across Canada with official support links for each one.',
+    calloutBody: 'Standing for the Land maps Indigenous-led campaigns across Canada with official support links for each one.',
     calloutActions: [{ label: 'Open map', text: 'protectont.ca/stand4land/map' }],
     published: true,
     theme: HUB_LAND_FLYER_THEME,

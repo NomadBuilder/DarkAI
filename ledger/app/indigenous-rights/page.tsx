@@ -233,7 +233,7 @@ export default function IndigenousRightsPage() {
               <motion.div {...fadeIn} className="rounded-xl bg-white/80 border border-teal-100 p-6 sm:p-8 shadow-sm">
                 <p className="text-teal-900 font-medium text-lg sm:text-xl mb-1">Solidarity is not a slogan.</p>
                 <p className="text-gray-700 text-base sm:text-lg">
-                  It means showing up for nation-led campaigns, amplifying their demands in your riding, and refusing to treat
+                  It means showing up for indigenous-led campaigns, amplifying their demands in your riding, and refusing to treat
                   reconciliation as a press release while the bulldozers are already scheduled.
                 </p>
               </motion.div>

@@ -7,7 +7,7 @@ import { buildHubPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildHubPageMetadata(
   hubPageTitle('Campaign directory'),
-  'Search Nation-led land defence campaigns across Canada by province, issue, and status. Official campaign channels only.'
+  'Search Indigenous-led land defence campaigns across Canada by province, issue, and status. Official campaign channels only.'
 )
 
 export default function IndigenousCampaignsPage() {
@@ -15,7 +15,7 @@ export default function IndigenousCampaignsPage() {
   return (
     <HubPage wide>
       <HubPageIntro title="Campaign directory">
-        Active Nation-led campaigns for land, water, treaty rights, and environmental protection. Every listing
+        Active Indigenous-led campaigns for land, water, treaty rights, and environmental protection. Every listing
         links to official Nation or campaign channels.
       </HubPageIntro>
       <Suspense fallback={<p className="text-[var(--hub-land-muted)]">Loading campaigns…</p>}>
