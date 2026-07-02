@@ -53,6 +53,7 @@ const issuesDropdownItems: NavItem[] = [
   { id: 'public-land', label: 'Public land', href: '/public-land' },
   { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
   { id: 'indigenous-rights', label: 'Indigenous rights', href: '/indigenous-rights' },
+  { id: 'indigenous-hub', label: 'Land & Water Hub (Canada)', href: '/indigenous' },
 ]
 
 const aboutDropdownItems: NavItem[] = [

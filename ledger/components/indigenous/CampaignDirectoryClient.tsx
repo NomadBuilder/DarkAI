@@ -1,0 +1,110 @@
+'use client'
+
+import { useMemo, useState } from 'react'
+import type { CampaignIssue, CampaignStatus, IndigenousCampaign, IndigenousProvince } from '@/lib/indigenous-hub'
+import {
+  CAMPAIGN_ISSUE_LABELS,
+  CAMPAIGN_STATUS_LABELS,
+  PROVINCE_LABELS,
+  filterCampaigns,
+} from '@/lib/indigenous-hub'
+import CampaignCard from './CampaignCard'
+
+const ALL_PROVINCES: IndigenousProvince[] = [
+  'BC', 'AB', 'SK', 'MB', 'ON', 'QC', 'NB', 'NS', 'PE', 'NL', 'YT', 'NT', 'NU', 'National',
+]
+
+export default function CampaignDirectoryClient({ campaigns }: { campaigns: IndigenousCampaign[] }) {
+  const [q, setQ] = useState('')
+  const [province, setProvince] = useState<IndigenousProvince | 'all'>('all')
+  const [issue, setIssue] = useState<CampaignIssue | 'all'>('all')
+  const [status, setStatus] = useState<CampaignStatus | 'all'>('all')
+
+  const filtered = useMemo(
+    () => filterCampaigns(campaigns, { q, province, issue, status }),
+    [campaigns, q, province, issue, status]
+  )
+
+  const issueOptions = useMemo(() => {
+    const set = new Set<CampaignIssue>()
+    campaigns.forEach((c) => c.issues.forEach((i) => set.add(i)))
+    return Array.from(set).sort()
+  }, [campaigns])
+
+  return (
+    <div>
+      <div className="rounded-2xl border border-[#1a4d3a]/12 bg-white p-4 sm:p-6 shadow-sm mb-8 space-y-4">
+        <label className="block">
+          <span className="text-xs uppercase tracking-wider text-[#5a7a66] mb-1.5 block">Search</span>
+          <input
+            type="search"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="Nation, issue, campaign name…"
+            className="w-full rounded-xl border border-[#1a4d3a]/15 px-4 py-2.5 text-sm bg-[#f4f7f2]/50 focus:outline-none focus:ring-2 focus:ring-[#1a4d3a]/25"
+          />
+        </label>
+        <div className="grid gap-4 sm:grid-cols-3">
+          <label className="block">
+            <span className="text-xs uppercase tracking-wider text-[#5a7a66] mb-1.5 block">Province / territory</span>
+            <select
+              value={province}
+              onChange={(e) => setProvince(e.target.value as IndigenousProvince | 'all')}
+              className="w-full rounded-xl border border-[#1a4d3a]/15 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a4d3a]/25"
+            >
+              <option value="all">All regions</option>
+              {ALL_PROVINCES.map((p) => (
+                <option key={p} value={p}>
+                  {PROVINCE_LABELS[p]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs uppercase tracking-wider text-[#5a7a66] mb-1.5 block">Issue</span>
+            <select
+              value={issue}
+              onChange={(e) => setIssue(e.target.value as CampaignIssue | 'all')}
+              className="w-full rounded-xl border border-[#1a4d3a]/15 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a4d3a]/25"
+            >
+              <option value="all">All issues</option>
+              {issueOptions.map((i) => (
+                <option key={i} value={i}>
+                  {CAMPAIGN_ISSUE_LABELS[i]}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="text-xs uppercase tracking-wider text-[#5a7a66] mb-1.5 block">Status</span>
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value as CampaignStatus | 'all')}
+              className="w-full rounded-xl border border-[#1a4d3a]/15 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#1a4d3a]/25"
+            >
+              <option value="all">All statuses</option>
+              {(Object.keys(CAMPAIGN_STATUS_LABELS) as CampaignStatus[]).map((s) => (
+                <option key={s} value={s}>
+                  {CAMPAIGN_STATUS_LABELS[s]}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+        <p className="text-sm text-[#5a7a66] font-light">
+          {filtered.length} campaign{filtered.length !== 1 ? 's' : ''}
+        </p>
+      </div>
+
+      {filtered.length === 0 ? (
+        <p className="text-center text-[#5a7a66] py-16 font-light">No campaigns match your filters.</p>
+      ) : (
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {filtered.map((c) => (
+            <CampaignCard key={c.slug} campaign={c} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}

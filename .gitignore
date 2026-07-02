@@ -76,6 +76,7 @@ htmlcov/
 !ledger/public/data/protests.json
 !ledger/public/data/get-involved-form.json
 !ledger/public/data/social-post-ideas.json
+!ledger/public/data/indigenous-hub.json
 data/
 # Allow Ledger data used by admin/protests pages
 ledger/data/*
