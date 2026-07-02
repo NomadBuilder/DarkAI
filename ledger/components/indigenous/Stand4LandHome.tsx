@@ -37,7 +37,7 @@ export default function Stand4LandHome({ campaigns, featured }: Stand4LandHomePr
         <div className="relative px-4 sm:px-6 lg:px-8 pt-16 sm:pt-20 md:pt-24 pb-20 md:pb-28">
           <div className="max-w-4xl mx-auto text-center">
             <p className="hub-display text-sm sm:text-base tracking-[0.2em] uppercase text-[#e8dfd0]/90 mb-4">
-              Indigenous-led land &amp; water defence
+              Land &amp; water defence
             </p>
             <h1 className="hub-display text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-white leading-[1.06]">
               Standing for the Land
