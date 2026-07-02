@@ -169,15 +169,17 @@ export const PROVINCE_LABELS: Record<IndigenousProvince, string> = {
   National: 'National',
 }
 
-export const HUB_NAV: { href: string; label: string; exact?: boolean }[] = [
+export const HUB_NAV: { href: string; label: string; exact?: boolean; shortLabel?: string }[] = [
   { href: '/indigenous', label: 'Home', exact: true },
   { href: '/indigenous/campaigns', label: 'Campaigns' },
   { href: '/indigenous/map', label: 'Map' },
-  { href: '/indigenous/organizations', label: 'Organizations' },
+  { href: '/indigenous/organizations', label: 'Organizations', shortLabel: 'Orgs' },
   { href: '/indigenous/learn', label: 'Learn' },
   { href: '/indigenous/news', label: 'News' },
   { href: '/indigenous/support', label: 'Support' },
 ]
+
+export const HUB_FUNDING_PATH = '/indigenous/funding'
 
 export function parseIndigenousHubFile(data: unknown): IndigenousHubFile {
   const file = data as IndigenousHubFile
