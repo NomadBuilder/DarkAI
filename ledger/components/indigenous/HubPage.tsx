@@ -2,7 +2,6 @@ import type { ReactNode } from 'react'
 
 type HubPageProps = {
   children: ReactNode
-  /** Use max-w-7xl for map and campaign directory grids */
   wide?: boolean
   className?: string
 }
@@ -26,9 +25,11 @@ export function HubPageIntro({ title, children, className = '', eyebrow }: HubPa
   return (
     <header className={`mb-10 md:mb-14 max-w-3xl ${className}`}>
       {eyebrow}
-      <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-[#142818] leading-tight">{title}</h1>
+      <h1 className="hub-display text-3xl sm:text-4xl md:text-5xl font-semibold text-[var(--hub-land-ink)] leading-tight">
+        {title}
+      </h1>
       {children && (
-        <div className="mt-4 text-lg text-[#3d5c48] font-light leading-relaxed">{children}</div>
+        <div className="mt-4 text-lg text-[var(--hub-land-muted)] leading-relaxed">{children}</div>
       )}
     </header>
   )

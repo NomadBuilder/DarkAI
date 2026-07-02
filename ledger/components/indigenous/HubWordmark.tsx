@@ -14,10 +14,10 @@ export default function HubWordmark({ href, className = '' }: HubWordmarkProps) 
       aria-label={HUB_SITE_NAME}
     >
       <span
-        className="h-7 sm:h-8 w-0.5 rounded-full bg-[#1a4d3a]/70 group-hover:bg-[#1a4d3a] transition-colors"
+        className="h-7 sm:h-8 w-0.5 rounded-full bg-[var(--hub-land-forest)]/70 group-hover:bg-[var(--hub-land-forest)] transition-colors"
         aria-hidden
       />
-      <span className="font-hub-display text-[1.05rem] sm:text-[1.2rem] leading-tight tracking-[-0.02em] text-[#142818] group-hover:text-[#1a4d3a] transition-colors">
+      <span className="font-hub-display text-[1.05rem] sm:text-[1.2rem] leading-tight tracking-[-0.02em] text-[var(--hub-land-ink)] group-hover:text-[var(--hub-land-forest)] transition-colors">
         <span className="font-normal">Standing </span>
         <span className="font-semibold">for the Land</span>
       </span>

@@ -21,17 +21,18 @@ function isActive(pathname: string | null, href: string, basePath: string, exact
 }
 
 function hubNavClass(active: boolean, variant: 'pill' | 'funding' = 'pill'): string {
-  const base =
-    'inline-flex items-center justify-center h-8 px-3.5 text-sm leading-none rounded-full transition-colors'
+  const base = 'inline-flex items-center justify-center h-8 px-3.5 text-sm leading-none rounded-md transition-colors'
   if (variant === 'funding') {
     return `${base} font-medium border ${
       active
-        ? 'bg-[#1a4d3a] text-white border-[#1a4d3a]'
-        : 'bg-white text-[#1a4d3a] border-[#1a4d3a]/20 hover:border-[#1a4d3a]/35 hover:bg-[#1a4d3a]/5'
+        ? 'bg-[var(--hub-land-forest)] text-white border-[var(--hub-land-forest)]'
+        : 'bg-transparent text-[var(--hub-land-forest)] border-[var(--hub-land-forest)]/25 hover:border-[var(--hub-land-forest)]/45'
     }`
   }
-  return `${base} font-light ${
-    active ? 'bg-[#1a4d3a] text-white' : 'text-[#3d5c48] hover:bg-[#1a4d3a]/8'
+  return `${base} font-normal ${
+    active
+      ? 'bg-[var(--hub-land-forest)] text-white'
+      : 'text-[var(--hub-land-muted)] hover:bg-[var(--hub-land-forest)]/8'
   }`
 }
 
@@ -105,17 +106,16 @@ export default function IndigenousHubShell({
   )
 
   return (
-    <div className="relative min-h-screen bg-[#f4f7f2] flex flex-col">
-      <header className="sticky top-0 z-40 border-b border-[#1a4d3a]/10 bg-[#f4f7f2]/95 backdrop-blur-md">
+    <div className="relative min-h-screen flex flex-col">
+      <header className="hub-shell-header sticky top-0 z-40 border-b border-[var(--hub-land-forest)]/12 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
-          {/* Mobile */}
           <div className="sm:hidden">
             <div className="flex items-center justify-between gap-3">
               <HubWordmark href={homeHref} />
               <button
                 type="button"
                 onClick={() => setMobileNavOpen((open) => !open)}
-                className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-[#1a4d3a]/15 bg-white text-[#1a4d3a] hover:bg-[#1a4d3a]/5 transition-colors"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-[var(--hub-land-forest)]/15 bg-white text-[var(--hub-land-forest)] hover:bg-[var(--hub-land-forest)]/5 transition-colors"
                 aria-expanded={mobileNavOpen}
                 aria-controls="hub-mobile-nav"
               >
@@ -137,7 +137,7 @@ export default function IndigenousHubShell({
               aria-hidden={!mobileNavOpen}
             >
               <nav
-                className="flex flex-wrap gap-2 rounded-2xl border border-[#1a4d3a]/10 bg-white/80 p-3"
+                className="flex flex-wrap gap-2 rounded-2xl border border-[var(--hub-land-forest)]/10 bg-white/80 p-3"
                 aria-label={HUB_SITE_NAME}
               >
                 {HUB_NAV.map((item) => renderNavLink(item))}
@@ -146,7 +146,6 @@ export default function IndigenousHubShell({
             </div>
           </div>
 
-          {/* Desktop */}
           <div className="hidden sm:flex items-center gap-4 lg:gap-8">
             <HubWordmark href={homeHref} />
             <nav
@@ -162,7 +161,7 @@ export default function IndigenousHubShell({
 
       <main className="flex-1">{children}</main>
 
-      <footer className="border-t border-[#1a4d3a]/10 bg-[#1a4d3a] text-[#e8f0e4] px-4 sm:px-6 py-6 sm:py-8 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
+      <footer className="hub-shell-footer border-t border-[var(--hub-land-forest)]/20 text-[#e8f0e4] px-4 sm:px-6 py-6 sm:py-8 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <div className="max-w-lg mx-auto text-center space-y-3">
           <p className="text-sm font-light leading-relaxed opacity-90">
             This site links to official Indigenous-led campaigns. We do not speak for Nations or collect donations on
