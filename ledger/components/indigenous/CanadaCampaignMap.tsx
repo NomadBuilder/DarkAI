@@ -23,7 +23,8 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
   const [L, setL] = useState<typeof import('leaflet') | null>(null)
 
   useEffect(() => {
-    void Promise.all([import('react-leaflet'), import('leaflet')]).then(([rl, leaflet]) => {
+    void Promise.all([import('react-leaflet'), import('leaflet')]).then(([rl, leafletMod]) => {
+      const leaflet = ('default' in leafletMod ? leafletMod.default : leafletMod) as typeof import('leaflet')
       setMapComponents({
         MapContainer: rl.MapContainer,
         TileLayer: rl.TileLayer,
@@ -31,7 +32,7 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
         Popup: rl.Popup,
         useMap: rl.useMap,
       })
-      setL(leaflet.default)
+      setL(leaflet)
     })
   }, [])
 

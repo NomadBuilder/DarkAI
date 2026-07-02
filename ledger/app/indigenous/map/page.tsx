@@ -1,7 +1,16 @@
+import dynamic from 'next/dynamic'
 import hubData from '../../../public/data/indigenous-hub.json'
-import MapPageClient from '@/components/indigenous/MapPageClient'
 import { parseIndigenousHubFile } from '@/lib/indigenous-hub'
 import { buildPageMetadata } from '@/lib/page-metadata'
+
+const MapPageClient = dynamic(() => import('@/components/indigenous/MapPageClient'), {
+  ssr: false,
+  loading: () => (
+    <div className="rounded-2xl border border-[#1a4d3a]/12 bg-[#e8f0e4] flex items-center justify-center min-h-[420px]">
+      <p className="text-sm text-[#5a7a66] font-light">Loading map…</p>
+    </div>
+  ),
+})
 
 export const metadata = buildPageMetadata(
   'Campaign map — Indigenous Land & Water Hub',
