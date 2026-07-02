@@ -164,7 +164,7 @@ export default function CampaignDetailView({
         </div>
 
         <aside className="space-y-6">
-          <div className="rounded-2xl border border-[#1a4d3a]/10 bg-white p-5 sm:p-6 sticky top-36">
+          <div className="rounded-2xl border border-[#1a4d3a]/10 bg-white p-5 sm:p-6 sticky top-24">
             <h2 className="text-sm uppercase tracking-wider text-[#5a7a66] mb-3">Issues</h2>
             <div className="flex flex-wrap gap-2">
               {campaign.issues.map((issue) => (

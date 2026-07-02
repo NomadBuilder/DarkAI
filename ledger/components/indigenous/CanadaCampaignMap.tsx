@@ -10,9 +10,18 @@ type Props = {
   selectedSlug?: string | null
   onSelect?: (slug: string | null) => void
   className?: string
+  compact?: boolean
+  scrollWheelZoom?: boolean
 }
 
-export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, className = '' }: Props) {
+export default function CanadaCampaignMap({
+  campaigns,
+  selectedSlug,
+  onSelect,
+  className = '',
+  compact = false,
+  scrollWheelZoom = true,
+}: Props) {
   const [MapComponents, setMapComponents] = useState<{
     MapContainer: typeof import('react-leaflet').MapContainer
     TileLayer: typeof import('react-leaflet').TileLayer
@@ -47,9 +56,10 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
   }, [L])
 
   if (!MapComponents || !L || !icon) {
+    const minH = compact ? 'h-[240px] sm:h-[280px]' : 'min-h-[min(420px,55vh)] sm:min-h-[420px]'
     return (
       <div
-        className={`rounded-2xl border border-[#1a4d3a]/12 bg-[#e8f0e4] flex items-center justify-center min-h-[min(420px,55vh)] sm:min-h-[420px] ${className}`}
+        className={`rounded-2xl border border-[#1a4d3a]/12 bg-[#e8f0e4] flex items-center justify-center ${minH} ${className}`}
       >
         <p className="text-sm text-[#5a7a66] font-light">Loading map…</p>
       </div>
@@ -57,6 +67,8 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
   }
 
   const { MapContainer, TileLayer, Marker, Popup } = MapComponents
+  const mapHeight = compact ? 'h-[240px] sm:h-[280px]' : 'h-[min(420px,55vh)] sm:h-[520px]'
+  const mapZoom = compact ? 3 : 4
 
   return (
     <>
@@ -78,9 +90,9 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
       <div className={`rounded-2xl overflow-hidden border border-[#1a4d3a]/12 shadow-lg ${className}`}>
         <MapContainer
           center={[56, -96]}
-          zoom={4}
-          scrollWheelZoom
-          className="h-[min(420px,55vh)] sm:h-[520px] w-full z-0"
+          zoom={mapZoom}
+          scrollWheelZoom={scrollWheelZoom}
+          className={`${mapHeight} w-full z-0`}
           aria-label="Map of Indigenous-led campaigns across Canada"
         >
           <TileLayer

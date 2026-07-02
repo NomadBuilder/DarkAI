@@ -169,17 +169,26 @@ export const PROVINCE_LABELS: Record<IndigenousProvince, string> = {
   National: 'National',
 }
 
+export const HUB_BASE_PATH = '/stand4land'
+
 export const HUB_NAV: { href: string; label: string; exact?: boolean; shortLabel?: string }[] = [
-  { href: '/indigenous', label: 'Home', exact: true },
-  { href: '/indigenous/campaigns', label: 'Campaigns' },
-  { href: '/indigenous/map', label: 'Map' },
-  { href: '/indigenous/organizations', label: 'Organizations', shortLabel: 'Orgs' },
-  { href: '/indigenous/learn', label: 'Learn' },
-  { href: '/indigenous/news', label: 'News' },
-  { href: '/indigenous/support', label: 'Support' },
+  { href: HUB_BASE_PATH, label: 'Home', exact: true },
+  { href: `${HUB_BASE_PATH}/campaigns`, label: 'Campaigns', shortLabel: 'Campaigns' },
+  { href: `${HUB_BASE_PATH}/map`, label: 'Map', shortLabel: 'Map' },
+  { href: `${HUB_BASE_PATH}/organizations`, label: 'Organizations', shortLabel: 'Orgs' },
+  { href: `${HUB_BASE_PATH}/learn`, label: 'Learn', shortLabel: 'Learn' },
+  { href: `${HUB_BASE_PATH}/news`, label: 'News', shortLabel: 'News' },
+  { href: `${HUB_BASE_PATH}/support`, label: 'Support', shortLabel: 'Support' },
 ]
 
-export const HUB_FUNDING_PATH = '/indigenous/funding'
+export const HUB_FUNDING_PATH = `${HUB_BASE_PATH}/funding`
+
+/** Public name for the Standing for the Land microsite (nav, titles, emails). */
+export const HUB_SITE_NAME = 'Standing for the Land'
+
+export function hubPageTitle(pageTitle: string): string {
+  return `${pageTitle} — ${HUB_SITE_NAME}`
+}
 
 export function parseIndigenousHubFile(data: unknown): IndigenousHubFile {
   const file = data as IndigenousHubFile
@@ -235,5 +244,5 @@ export function filterCampaigns(
 
 export function indigenousHubPath(...segments: string[]): string {
   const parts = segments.filter(Boolean).map((s) => s.replace(/^\/+|\/+$/g, ''))
-  return `/indigenous${parts.length ? `/${parts.join('/')}` : ''}/`
+  return `${HUB_BASE_PATH}${parts.length ? `/${parts.join('/')}` : ''}/`
 }

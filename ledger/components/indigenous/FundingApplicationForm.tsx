@@ -6,6 +6,7 @@ import {
   emptyGetInvolvedFormState,
   loadGetInvolvedClientConfig,
 } from '@/lib/get-involved'
+import { HUB_SITE_NAME } from '@/lib/indigenous-hub'
 
 const FUNDING_EMAIL = 'protectont@gmail.com'
 
@@ -39,7 +40,7 @@ const labelClass = 'block text-sm font-light text-[#3d5c48] mb-1.5'
 
 function buildFundingNotes(form: FundingFormState): string {
   return [
-    '=== Land & Water Hub — funding application ===',
+    `=== ${HUB_SITE_NAME} — funding application ===`,
     form.organization.trim() && `Organization / campaign: ${form.organization.trim()}`,
     form.location.trim() && `Location: ${form.location.trim()}`,
     form.campaignUrl.trim() && `Official link: ${form.campaignUrl.trim()}`,
@@ -79,7 +80,7 @@ export default function FundingApplicationForm() {
   }
 
   const openMailtoFallback = () => {
-    const subject = `Land & Water Hub funding request — ${form.organization.trim() || form.name.trim()}`
+    const subject = `${HUB_SITE_NAME} funding request — ${form.organization.trim() || form.name.trim()}`
     const body = buildFundingNotes(form) + `\n\nContact: ${form.name.trim()} <${form.email.trim()}>`
     window.location.href = `mailto:${FUNDING_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
   }
@@ -114,8 +115,8 @@ export default function FundingApplicationForm() {
         consent: true,
       }
       const body = new URLSearchParams(
-        buildGetInvolvedSubmitPayload(giState, { sourcePage: 'indigenous/funding' }, [
-          { id: 'other', label: 'Land & Water Hub — funding application' },
+        buildGetInvolvedSubmitPayload(giState, { sourcePage: 'stand4land/funding' }, [
+          { id: 'other', label: `${HUB_SITE_NAME} — funding application` },
         ])
       )
       const submitEndpoint = submitViaApi ? '/api/get-involved-submit' : sheetSubmitUrl

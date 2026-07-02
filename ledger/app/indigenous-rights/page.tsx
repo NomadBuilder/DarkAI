@@ -285,8 +285,8 @@ export default function IndigenousRightsPage() {
               <li className="flex gap-3">
                 <span className="text-teal-700 font-medium shrink-0">→</span>
                 <span>
-                  <Link href="/indigenous/" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
-                    Indigenous Land &amp; Water Hub
+                  <Link href="/stand4land/" className="text-teal-800 underline underline-offset-2 hover:text-teal-900">
+                    Standing for the Land
                   </Link>{' '}
                   — discover and support Indigenous-led campaigns across Canada through official channels.
                 </span>

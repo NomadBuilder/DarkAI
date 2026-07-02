@@ -21,7 +21,7 @@ export default function MapPageClient({
       </div>
       <div className="lg:col-span-2 min-w-0">
         {selected ? (
-          <div className="rounded-2xl border border-[#1a4d3a]/12 bg-white p-4 sm:p-6 shadow-sm lg:sticky lg:top-28">
+          <div className="rounded-2xl border border-[#1a4d3a]/12 bg-white p-4 sm:p-6 shadow-sm lg:sticky lg:top-24">
             <p className="text-xs uppercase tracking-wider text-[#1a4d3a]">{CAMPAIGN_STATUS_LABELS[selected.status]}</p>
             <h2 className="text-xl font-light text-[#142818] mt-1">{selected.title}</h2>
             <p className="text-sm text-[#3d7a57] mt-1">{selected.nations.join(' · ')}</p>
@@ -46,7 +46,7 @@ export default function MapPageClient({
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-[#1a4d3a]/20 bg-[#e8f0e4]/50 p-4 sm:p-6 text-center lg:sticky lg:top-28">
+          <div className="rounded-2xl border border-dashed border-[#1a4d3a]/20 bg-[#e8f0e4]/50 p-4 sm:p-6 text-center lg:sticky lg:top-24">
             <p className="text-sm text-[#5a7a66] font-light">
               Click a marker on the map to see campaign details and support links.
             </p>

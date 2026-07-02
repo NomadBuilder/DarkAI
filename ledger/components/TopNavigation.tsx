@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import ProtestsSiteBanner from './ProtestsSiteBanner'
+import { HUB_SITE_NAME } from '@/lib/indigenous-hub'
 
 // Start with empty basePath so server and client first render match (avoids hydration error).
 // NEXT_PUBLIC_* is inlined at build time; BASE_PATH is server-only, so they can differ.
@@ -55,7 +56,7 @@ const issuesDropdownItems: NavItem[] = [
   { id: 'public-land', label: 'Public land', href: '/public-land' },
   { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
   { id: 'indigenous-rights', label: 'Indigenous rights', href: '/indigenous-rights' },
-  { id: 'indigenous-hub', label: 'Land & Water Hub (Canada)', href: '/indigenous' },
+  { id: 'indigenous-hub', label: HUB_SITE_NAME, href: '/stand4land' },
 ]
 
 const aboutDropdownItems: NavItem[] = [

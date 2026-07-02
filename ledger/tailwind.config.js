@@ -25,6 +25,7 @@ module.exports = {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Inter', 'system-ui', 'sans-serif'],
+        'hub-display': ['var(--font-hub-display)', 'Fraunces', 'Georgia', 'serif'],
       },
     },
   },

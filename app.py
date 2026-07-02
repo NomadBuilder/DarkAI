@@ -505,6 +505,14 @@ def protect_ontario_and_ledger_redirect():
             tuple(f"{p}/" for p in legacy_join_paths)
         ):
             return redirect("https://protectont.ca/join/", code=301)
+        if path == "indigenous" or path.startswith("indigenous/"):
+            suffix = path[len("indigenous") :].lstrip("/")
+            target = (
+                f"https://protectont.ca/stand4land/{suffix}/"
+                if suffix
+                else "https://protectont.ca/stand4land/"
+            )
+            return redirect(target, code=301)
         if path == "flyer" or path == "flyer/":
             return redirect("https://protectont.ca/flyers/", code=301)
         if path.startswith("flyer/"):
