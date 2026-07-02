@@ -49,7 +49,7 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
   if (!MapComponents || !L || !icon) {
     return (
       <div
-        className={`rounded-2xl border border-[#1a4d3a]/12 bg-[#e8f0e4] flex items-center justify-center min-h-[420px] ${className}`}
+        className={`rounded-2xl border border-[#1a4d3a]/12 bg-[#e8f0e4] flex items-center justify-center min-h-[min(420px,55vh)] sm:min-h-[420px] ${className}`}
       >
         <p className="text-sm text-[#5a7a66] font-light">Loading map…</p>
       </div>
@@ -80,7 +80,7 @@ export default function CanadaCampaignMap({ campaigns, selectedSlug, onSelect, c
           center={[56, -96]}
           zoom={4}
           scrollWheelZoom
-          className="h-[420px] sm:h-[520px] w-full z-0"
+          className="h-[min(420px,55vh)] sm:h-[520px] w-full z-0"
           aria-label="Map of Indigenous-led campaigns across Canada"
         >
           <TileLayer

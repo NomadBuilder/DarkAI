@@ -9,7 +9,7 @@ export default function IndigenousHubHomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 sm:pt-16 pb-20 md:pb-28">
+      <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 md:pt-16 pb-16 md:pb-24">
         <div className="absolute inset-0 bg-gradient-to-br from-[#1a4d3a]/12 via-[#f4f7f2] to-[#c4a574]/15" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_-10%,rgba(26,77,58,0.12),transparent)]" />
         <div className="relative max-w-5xl mx-auto text-center">

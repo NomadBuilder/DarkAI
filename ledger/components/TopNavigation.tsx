@@ -41,6 +41,8 @@ interface TopNavigationProps {
   onMethodologyClick?: () => void
   /** Purple/yellow nav bar while over the join-styled hero (home preview) */
   navOnDark?: boolean
+  /** Slightly shorter bar — used on Indigenous hub pages */
+  compact?: boolean
   /** Override the primary CTA (defaults to Join us → /join) */
   primaryCta?: { label: string; href: string }
 }
@@ -92,6 +94,7 @@ export default function TopNavigation({
   onDataSourcesClick,
   onMethodologyClick,
   navOnDark = false,
+  compact = false,
   primaryCta,
 }: TopNavigationProps = {}) {
   const [isScrolling, setIsScrolling] = useState(false)
@@ -221,12 +224,14 @@ export default function TopNavigation({
               }`}
             >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-              <div className="flex items-center justify-between h-14 sm:h-16">
+              <div
+                className={`flex items-center justify-between ${compact ? 'h-12 sm:h-14' : 'h-14 sm:h-16'}`}
+              >
                 {/* Logo/Title */}
-                <div className="flex-shrink-0">
+                <div className="flex-shrink-0 min-w-0">
                   <Link
                     href={basePath || '/'}
-                    className={`flex items-center gap-2 text-sm sm:text-base font-light transition-colors ${
+                    className={`flex items-center gap-2 leading-none text-sm sm:text-base font-light transition-colors ${
                       navOnDark ? 'text-[#f9e04c] hover:text-[#f9e04c]/85' : 'text-gray-900 hover:text-gray-700'
                     }`}
                     aria-label="Protect Ontario – Home"
@@ -240,7 +245,7 @@ export default function TopNavigation({
                             : '/logo-icon-text.svg'
                       }
                       alt=""
-                      className="h-9 sm:h-10 w-auto"
+                      className={`block w-auto ${compact ? 'h-8 sm:h-9' : 'h-9 sm:h-10'}`}
                     />
                   </Link>
                 </div>

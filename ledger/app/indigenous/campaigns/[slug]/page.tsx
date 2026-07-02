@@ -38,7 +38,7 @@ export default function IndigenousCampaignPage({ params }: { params: { slug: str
   }
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-12 md:py-16 max-w-6xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 max-w-6xl mx-auto">
       <Link
         href={indigenousHubPath('campaigns')}
         className="inline-block text-sm text-[#5a7a66] hover:text-[#1a4d3a] mb-8"

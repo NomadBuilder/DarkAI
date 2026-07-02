@@ -22,7 +22,7 @@ export default function IndigenousEventsPage() {
   const sorted = [...hub.events].sort((a, b) => a.date.localeCompare(b.date))
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-12 md:py-16 max-w-4xl mx-auto">
+    <div className="px-4 sm:px-6 lg:px-8 py-8 sm:py-12 md:py-16 max-w-4xl mx-auto">
       <header className="mb-10 md:mb-14">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-light text-[#142818]">Events</h1>
         <p className="mt-4 text-lg text-[#3d5c48] font-light leading-relaxed">

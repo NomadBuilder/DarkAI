@@ -15,13 +15,13 @@ export default function MapPageClient({
   const selected = selectedSlug ? campaigns.find((c) => c.slug === selectedSlug) : null
 
   return (
-    <div className="grid gap-8 lg:grid-cols-5">
-      <div className="lg:col-span-3">
+    <div className="grid gap-6 lg:gap-8 lg:grid-cols-5">
+      <div className="lg:col-span-3 min-w-0">
         <CanadaCampaignMap campaigns={campaigns} selectedSlug={selectedSlug} onSelect={setSelectedSlug} />
       </div>
-      <div className="lg:col-span-2">
+      <div className="lg:col-span-2 min-w-0">
         {selected ? (
-          <div className="rounded-2xl border border-[#1a4d3a]/12 bg-white p-6 shadow-sm sticky top-36">
+          <div className="rounded-2xl border border-[#1a4d3a]/12 bg-white p-4 sm:p-6 shadow-sm lg:sticky lg:top-36">
             <p className="text-xs uppercase tracking-wider text-[#1a4d3a]">{CAMPAIGN_STATUS_LABELS[selected.status]}</p>
             <h2 className="text-xl font-light text-[#142818] mt-1">{selected.title}</h2>
             <p className="text-sm text-[#3d7a57] mt-1">{selected.nations.join(' · ')}</p>
@@ -46,13 +46,13 @@ export default function MapPageClient({
             </div>
           </div>
         ) : (
-          <div className="rounded-2xl border border-dashed border-[#1a4d3a]/20 bg-[#e8f0e4]/50 p-6 text-center sticky top-36">
+          <div className="rounded-2xl border border-dashed border-[#1a4d3a]/20 bg-[#e8f0e4]/50 p-4 sm:p-6 text-center lg:sticky lg:top-36">
             <p className="text-sm text-[#5a7a66] font-light">
               Click a marker on the map to see campaign details and support links.
             </p>
           </div>
         )}
-        <ul className="mt-6 space-y-2 max-h-[280px] overflow-y-auto">
+        <ul className="mt-4 sm:mt-6 space-y-2 max-h-none lg:max-h-[280px] lg:overflow-y-auto">
           {campaigns.map((c) => (
             <li key={c.slug}>
               <button
