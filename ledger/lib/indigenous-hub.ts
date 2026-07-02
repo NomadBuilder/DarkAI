@@ -176,7 +176,6 @@ export const HUB_NAV: { href: string; label: string; exact?: boolean }[] = [
   { href: '/indigenous/organizations', label: 'Organizations' },
   { href: '/indigenous/learn', label: 'Learn' },
   { href: '/indigenous/news', label: 'News' },
-  { href: '/indigenous/events', label: 'Events' },
   { href: '/indigenous/support', label: 'Support' },
 ]
 

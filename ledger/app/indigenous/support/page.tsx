@@ -5,7 +5,7 @@ import { buildPageMetadata } from '@/lib/page-metadata'
 
 export const metadata = buildPageMetadata(
   'How to support — Indigenous Land & Water Hub',
-  'Donate, volunteer, attend events, and share resources — always through official Indigenous-led campaign channels.'
+  'Donate, volunteer, and share resources — always through official Indigenous-led campaign channels.'
 )
 
 export default function IndigenousSupportPage() {
@@ -35,7 +35,7 @@ export default function IndigenousSupportPage() {
           },
           {
             title: 'Volunteer & show up',
-            body: 'Rallies, blockades, and community events are listed on campaign sites and our events page. Follow Nation-led safety guidance and respect protocols on the land.',
+            body: 'Rallies, blockades, and community gatherings are announced on official campaign sites and Nation channels. Follow Nation-led safety guidance and respect protocols on the land.',
           },
           {
             title: 'Contact elected representatives',
