@@ -91,16 +91,13 @@ export default function IndigenousHubShell({
           </button>
 
           <Link href={homeHref} className="inline-block group max-w-full" onClick={closeMobile}>
-            <p className="text-[10px] sm:text-[11px] uppercase tracking-[0.34em] text-[#5a7a66] font-medium">
-              Indigenous-led · Official sources
-            </p>
-            <p className="mt-3 sm:mt-4 text-2xl sm:text-[2rem] font-light text-[#142818] tracking-tight leading-none group-hover:text-[#1a4d3a] transition-colors">
+            <p className="text-[1.8rem] sm:text-[2.2rem] font-light text-[#142818] tracking-tight leading-none group-hover:text-[#1a4d3a] transition-colors">
               Land &amp; Water Hub
             </p>
           </Link>
 
           {/* Desktop navigation */}
-          <nav className="hidden sm:block mt-9 sm:mt-10" aria-label="Land & Water Hub">
+          <nav className="hidden sm:block mt-10 sm:mt-11" aria-label="Land & Water Hub">
             <ul className="flex flex-wrap items-center justify-center gap-x-7 lg:gap-x-9 gap-y-3">
               {HUB_NAV.map((item) => {
                 const href = hubHref(item.href, basePath)
@@ -121,7 +118,7 @@ export default function IndigenousHubShell({
             </ul>
           </nav>
 
-          <p className="hidden sm:block mt-8 text-xs text-[#5a7a66]/90 font-light">
+          <p className="hidden sm:block mt-10 text-xs text-[#5a7a66]/90 font-light">
             <Link href={siteHref(basePath)} className="hover:text-[#1a4d3a] transition-colors">
               Protect Ontario
             </Link>
