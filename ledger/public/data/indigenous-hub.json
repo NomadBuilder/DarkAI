@@ -13,7 +13,7 @@
       "lat": 54.85,
       "lng": -127.32,
       "mapLabel": "Wet'suwet'en territory",
-      "whyItMatters": "Coastal GasLink would cross more than 600 km of unceded Wet'suwet'en territory. Hereditary chiefs have not consented. The conflict has become a national test of Indigenous jurisdiction, climate policy, and police enforcement on land defence.",
+      "whyItMatters": "Coastal GasLink's 670 km route crosses roughly 190 km of Wet'suwet'en territory. Hereditary chiefs have not consented. The conflict has become a national test of Indigenous jurisdiction, climate policy, and police enforcement on land defence.",
       "background": "For years, Wet'suwet'en hereditary leaders have upheld Wet'suwet'en law on their yintah while opposing fossil fuel infrastructure. Gidimt'en Access supports reoccupation, legal defence, and frontline costs for land defenders.",
       "perspectives": "Wet'suwet'en hereditary chiefs maintain authority over traditional territories under Wet'suwet'en law. The Supreme Court of Canada recognized Aboriginal title in Delgamuukw (1997). Defenders describe pipeline approval as violation of free, prior and informed consent.",
       "statusDetail": "Pipeline construction continues in disputed areas. Legal challenges and frontline presence remain active as of 2026.",
@@ -52,7 +52,7 @@
       "background": "Since 2010, Unist'ot'en have reoccupied traditional territory and hosted a healing centre. The camp monitors access to territory under Wet'suwet'en law and has become a symbol of Indigenous land defence across Turtle Island.",
       "statusDetail": "Camp hosts maintain year-round presence. Legal defence remains a priority funding need.",
       "timeline": [
-        { "date": "2010", "title": "Unist'ot'en reoccupation begins", "sourceUrl": "https://unistoten.camp/the-camp/history/", "sourceLabel": "Unist'ot'en Camp" },
+        { "date": "2010", "title": "Unist'ot'en reoccupation begins", "sourceUrl": "https://unistoten.camp/about/", "sourceLabel": "Unist'ot'en Camp" },
         { "date": "2019–2020", "title": "Enforcement and solidarity", "summary": "RCMP actions and nationwide support actions.", "sourceLabel": "Reporting" },
         { "date": "2026", "title": "Ongoing camp and legal fund", "sourceUrl": "https://unistoten.camp/support-us/donate/", "sourceLabel": "Unist'ot'en Camp" }
       ],
@@ -87,7 +87,7 @@
       "timeline": [
         { "date": "2020", "title": "Statement of claim filed", "sourceUrl": "https://raventrust.com/campaigns/wetsuweten/", "sourceLabel": "RAVEN Trust" },
         { "date": "2025", "title": "Canada files motion to strike", "sourceUrl": "https://raventrust.com/campaigns/wetsuweten/", "sourceLabel": "RAVEN Trust" },
-        { "date": "2026", "title": "Amended statement of claim", "summary": "Case proceeds with updated filings.", "sourceUrl": "https://raventrust.com/campaigns/wetsuweten/", "sourceLabel": "RAVEN Trust" }
+        { "date": "Dec 2025", "title": "Amended statement of claim", "summary": "House groups filed an amended claim after the September 2025 motion-to-strike decision.", "sourceUrl": "https://raventrust.com/campaigns/wetsuweten/", "sourceLabel": "RAVEN Trust" }
       ],
       "officialSite": { "label": "RAVEN — Wet'suwet'en campaign", "href": "https://raventrust.com/campaigns/wetsuweten/" },
       "donate": [
@@ -324,7 +324,7 @@
       "background": "Indigenous Climate Action supports Indigenous-led climate justice through education, organizing, and amplifying frontline voices.",
       "officialSite": { "label": "Indigenous Climate Action", "href": "https://www.indigenousclimateaction.com/" },
       "donate": [
-        { "label": "Support ICA", "href": "https://www.indigenousclimateaction.com/support" }
+        { "label": "Support ICA", "href": "https://www.indigenousclimateaction.com/donate" }
       ],
       "social": [
         { "label": "Instagram", "href": "https://www.instagram.com/indigenousclimateaction/" },
@@ -411,7 +411,7 @@
       "regions": ["National"],
       "type": "Climate justice",
       "website": { "label": "indigenousclimateaction.com", "href": "https://www.indigenousclimateaction.com/" },
-      "donate": [{ "label": "Support", "href": "https://www.indigenousclimateaction.com/support" }],
+      "donate": [{ "label": "Support", "href": "https://www.indigenousclimateaction.com/donate" }],
       "relatedCampaignSlugs": ["indigenous-climate-action"],
       "lastVerified": "2026-07-01"
     },
@@ -474,7 +474,7 @@
       ],
       "resources": [
         { "label": "Indigenous Foundations — Treaties (UBC)", "href": "https://indigenousfoundations.arts.ubc.ca/treaties/" },
-        { "label": "Government of Canada — Treaties", "href": "https://www.rcaanc-cirnac.gc.ca/eng/1100100032293/1581290819858" }
+        { "label": "Government of Canada — Treaties", "href": "https://www.canada.ca/en/library-archives/collection/research-help/indigenous-history/treaties-surrenders-agreements.html" }
       ],
       "relatedSlugs": ["sipeknekatik-fishery", "grassy-narrows"]
     },
@@ -499,7 +499,7 @@
       "summary": "Environmental racism describes how pollution, industrial projects, and climate harm disproportionately affect Indigenous and racialized communities.",
       "body": [
         "Grassy Narrows mercury poisoning, tar sands downstream impacts on ACFN, and pipeline routes through unceded territory are frequently cited examples in Canada.",
-        "Bill C-226 (National Strategy to Redress Environmental Racism Act) passed the House but faced delays in the Senate. Community organizers continue to push for accountability.",
+        "Bill C-226 became law in June 2024. Environment and Climate Change Canada is developing the required national strategy, with engagement continuing through 2026.",
         "Environmental justice movements connect land defence with health, housing, and treaty rights — not treating pollution as isolated from colonial history."
       ],
       "resources": [
@@ -555,7 +555,7 @@
     {
       "name": "Windspeaker",
       "description": "Canada's national Indigenous news source (AMMSA).",
-      "href": "https://www.ammsa.com/publications/windspeaker",
+      "href": "https://windspeaker.com/",
       "type": "indigenous-led"
     },
     {
