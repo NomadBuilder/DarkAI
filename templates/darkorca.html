@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','{{ GTM_ID }}');</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>DarkOrca — Managed Security Audits | Dark AI</title>
+  <meta name="description" content="DarkOrca by Dark AI delivers managed cybersecurity audits for websites and web apps. Prioritized findings, remediation guidance, and professional reports." />
+  <link rel="icon" type="image/png" href="/static/darkorca/DarkOrca.png" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Inter", sans-serif;
+      background: #05060b;
+      color: #f2f3f5;
+      line-height: 1.6;
+    }
+    nav {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.2rem 2rem; background: rgba(0,0,0,0.4); backdrop-filter: blur(16px);
+      position: sticky; top: 0; z-index: 1000;
+    }
+    nav a { color: #f2f3f5; text-decoration: none; margin-left: 1.2rem; }
+    nav a:hover { color: #ff6b6b; }
+    .hero {
+      max-width: 1100px; margin: 0 auto; padding: 5rem 2rem 3rem;
+      display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; align-items: center;
+    }
+    .hero img { width: 120px; height: 120px; border-radius: 24px; }
+    h1 { font-size: 2.8rem; line-height: 1.1; margin: 0 0 1rem; }
+    .sub { color: #9aa0a6; font-size: 1.15rem; max-width: 640px; }
+    .btn {
+      display: inline-block; background: #ff6b6b; color: #05060b; font-weight: 700;
+      padding: 0.9rem 1.4rem; border-radius: 10px; text-decoration: none; border: none; cursor: pointer;
+    }
+    .btn:hover { background: #ff8e8e; }
+    .btn-secondary {
+      background: transparent; color: #f2f3f5; border: 1px solid rgba(255,255,255,0.15);
+    }
+    section { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
+    .card {
+      background: #0b0d16; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.8rem;
+    }
+    .card h3 { margin-top: 0; }
+    .muted { color: #9aa0a6; }
+    .form-card { background: #0b0d16; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 1.5rem; }
+    label { display: block; font-size: 0.9rem; color: #9aa0a6; margin: 0.8rem 0 0.35rem; }
+    input, select, textarea {
+      width: 100%; padding: 0.85rem 1rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(0,0,0,0.35); color: #f2f3f5; font: inherit;
+    }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .step-num { color: #ff6b6b; font-weight: 700; font-size: 1.4rem; }
+    .status { margin-top: 0.75rem; font-size: 0.9rem; }
+    .status.ok { color: #86efac; }
+    .status.err { color: #fca5a5; }
+    footer { text-align: center; padding: 2rem; color: #6b7280; font-size: 0.9rem; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/" style="margin-left:0; font-weight:700;">Dark AI</a>
+    <div>
+      <a href="/">Home</a>
+      <a href="#pricing">Audits</a>
+      <a href="#request">Request Audit</a>
+      <a href="{{ darkorca_app_url }}" target="_blank" rel="noopener">Open Platform</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <img src="/static/darkorca/DarkOrca.png" alt="DarkOrca" />
+      <h1>Managed security audits for websites &amp; web apps</h1>
+      <p class="sub">DarkOrca by Dark AI scans your site, prioritizes what matters, and delivers a clear remediation plan — without needing an in-house security team.</p>
+      <div style="margin-top: 1.5rem; display:flex; gap:0.75rem; flex-wrap:wrap;">
+        <a class="btn" href="#request">Request an audit</a>
+        <a class="btn btn-secondary" href="{{ darkorca_app_url }}" target="_blank" rel="noopener">Run a self-serve scan</a>
+      </div>
+    </div>
+    <div class="form-card" id="request">
+      <h2 style="margin-top:0;">Request a managed audit</h2>
+      <p class="muted" style="margin-top:-0.5rem;">We’ll confirm scope, run the assessment, and deliver a branded report.</p>
+      <form id="auditForm">
+        <label for="name">Name</label>
+        <input id="name" name="name" required />
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required />
+        <label for="company">Company (optional)</label>
+        <input id="company" name="company" />
+        <label for="website_url">Website URL</label>
+        <input id="website_url" name="website_url" placeholder="https://example.com" required />
+        <label for="audit_type">Audit type</label>
+        <select id="audit_type" name="audit_type">
+          <option value="quick">Quick Audit (~15 min)</option>
+          <option value="standard" selected>Standard Audit (~45 min)</option>
+          <option value="deep">Deep Audit (~2 hr, authorized testing)</option>
+        </select>
+        <label for="message">Notes (optional)</label>
+        <textarea id="message" name="message" rows="3" placeholder="WordPress site, staging environment, compliance deadline, etc."></textarea>
+        <label style="display:flex; align-items:flex-start; gap:0.5rem; margin-top:1rem; color:#f2f3f5;">
+          <input type="checkbox" id="authorized" style="width:auto; margin-top:0.25rem;" />
+          <span>I confirm I own this site or have written authorization for security testing.</span>
+        </label>
+        <button class="btn" type="submit" style="width:100%; margin-top:1rem;">Submit audit request</button>
+        <div id="formStatus" class="status"></div>
+      </form>
+    </div>
+  </div>
+
+  <section>
+    <h2>Who it’s for</h2>
+    <div class="grid">
+      <div class="card"><h3>WordPress &amp; SMB sites</h3><p class="muted">Plugin risk, exposed files, SSL/headers, and version vulnerabilities.</p></div>
+      <div class="card"><h3>Agencies &amp; studios</h3><p class="muted">Pre-launch audits and client deliverables with executive summaries.</p></div>
+      <div class="card"><h3>Startups &amp; product teams</h3><p class="muted">Baseline security posture before fundraising, launches, or compliance reviews.</p></div>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <h2>Audit tiers</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Quick Audit</h3>
+        <p class="muted">SSL/TLS, security headers, WordPress fingerprint, exposed sensitive files.</p>
+        <p><strong>~15 minutes</strong> · Defensive only</p>
+      </div>
+      <div class="card" style="border-color: rgba(255,107,107,0.35);">
+        <h3>Standard Audit</h3>
+        <p class="muted">Full defensive assessment including Nuclei and Nmap integration.</p>
+        <p><strong>~45 minutes</strong> · Recommended for most sites</p>
+      </div>
+      <div class="card">
+        <h3>Deep Audit</h3>
+        <p class="muted">Comprehensive authorized testing — defensive recon plus offensive checks.</p>
+        <p><strong>~2 hours</strong> · Written authorization required</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="steps">
+      <div class="card"><div class="step-num">1</div><strong>Request</strong><p class="muted">Tell us your URL and audit tier.</p></div>
+      <div class="card"><div class="step-num">2</div><strong>Scope</strong><p class="muted">We confirm authorization and testing boundaries.</p></div>
+      <div class="card"><div class="step-num">3</div><strong>Assess</strong><p class="muted">DarkOrca runs the scan; we triage false positives.</p></div>
+      <div class="card"><div class="step-num">4</div><strong>Deliver</strong><p class="muted">Branded PDF report with prioritized remediation.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>What you get</h2>
+    <div class="grid">
+      <div class="card"><h3>Executive summary</h3><p class="muted">Risk score, top priorities, and plain-language recommendations.</p></div>
+      <div class="card"><h3>Confidence-rated findings</h3><p class="muted">Confirmed vs likely vs informational — not raw scanner dumps.</p></div>
+      <div class="card"><h3>Vulnerability references</h3><p class="muted">WPScan and NVD links when WordPress versions or plugins are detected.</p></div>
+      <div class="card"><h3>Branded PDF report</h3><p class="muted">Client-ready deliverable from Dark AI · DarkOrca.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    DarkOrca is part of the <a href="/" style="color:#ff6b6b;">Dark AI</a> platform · Managed security audits &amp; self-serve scanning
+  </footer>
+
+  <script>
+    document.getElementById('auditForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const status = document.getElementById('formStatus');
+      const authorized = document.getElementById('authorized').checked;
+      const auditType = document.getElementById('audit_type').value;
+      if ((auditType === 'deep') && !authorized) {
+        status.className = 'status err';
+        status.textContent = 'Deep Audit requires authorization confirmation.';
+        return;
+      }
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        company: document.getElementById('company').value.trim(),
+        website_url: document.getElementById('website_url').value.trim(),
+        audit_type: auditType,
+        message: document.getElementById('message').value.trim(),
+        authorized: authorized,
+      };
+      status.className = 'status';
+      status.textContent = 'Sending...';
+      try {
+        const res = await fetch('/api/darkorca/audit-request', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          status.className = 'status ok';
+          status.textContent = data.message || 'Request received. We will contact you shortly.';
+          e.target.reset();
+        } else {
+          status.className = 'status err';
+          status.textContent = data.error || 'Could not submit request.';
+        }
+      } catch (err) {
+        status.className = 'status err';
+        status.textContent = 'Network error. Please try again.';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -42,7 +42,10 @@ register_sign_spotting_routes(app)
 # Make GTM_ID available to all templates
 @app.context_processor
 def inject_gtm_id():
-    return {'GTM_ID': os.getenv('NEXT_PUBLIC_GTM_ID', 'GTM-MZ69VXXL')}
+    return {
+        'GTM_ID': os.getenv('NEXT_PUBLIC_GTM_ID', 'GTM-MZ69VXXL'),
+        'darkorca_app_url': os.getenv('DARKORCA_APP_URL', 'http://localhost:8080'),
+    }
 
 # Register blueprints
 import sys
@@ -608,6 +611,99 @@ def humangate():
     except:
         # Fallback to send_from_directory if template not found
         return send_from_directory('templates', 'humangate.html')
+
+
+@app.route('/darkorca')
+def darkorca_landing():
+    """DarkOrca managed security audit landing page."""
+    from flask import render_template
+    darkorca_app_url = os.getenv('DARKORCA_APP_URL', 'http://localhost:8080')
+    try:
+        return render_template('darkorca.html', darkorca_app_url=darkorca_app_url)
+    except Exception:
+        return send_from_directory('templates', 'darkorca.html')
+
+
+@app.route('/api/darkorca/audit-request', methods=['POST', 'OPTIONS'])
+def darkorca_audit_request():
+    """Handle managed audit request submissions via Resend."""
+    if request.method == 'OPTIONS':
+        return '', 204
+    try:
+        data = request.get_json() or {}
+        name = (data.get('name') or '').strip()
+        email = (data.get('email') or '').strip()
+        website_url = (data.get('website_url') or '').strip()
+        audit_type = (data.get('audit_type') or 'standard').strip()
+        company = (data.get('company') or '').strip()
+        message = (data.get('message') or '').strip()
+        authorized = bool(data.get('authorized'))
+
+        if not name or not email or not website_url:
+            return jsonify({'success': False, 'error': 'Name, email, and website URL are required.'}), 400
+
+        if audit_type == 'deep' and not authorized:
+            return jsonify({'success': False, 'error': 'Deep Audit requires authorization confirmation.'}), 400
+
+        resend_api_key = os.getenv('RESEND_API_KEY', '')
+        recipient_email = os.getenv('CONTACT_EMAIL', 'aazirmun@gmail.com')
+        from_email = os.getenv('FROM_EMAIL', 'onboarding@resend.dev')
+
+        audit_labels = {'quick': 'Quick Audit', 'standard': 'Standard Audit', 'deep': 'Deep Audit'}
+        audit_label = audit_labels.get(audit_type, audit_type)
+
+        subject = f"DarkOrca Audit Request: {website_url} ({audit_label})"
+        html_body = f"""
+        <h2>New DarkOrca managed audit request</h2>
+        <p><strong>Name:</strong> {name}</p>
+        <p><strong>Email:</strong> {email}</p>
+        <p><strong>Company:</strong> {company or '—'}</p>
+        <p><strong>Website:</strong> {website_url}</p>
+        <p><strong>Audit type:</strong> {audit_label}</p>
+        <p><strong>Authorized:</strong> {'Yes' if authorized else 'No'}</p>
+        <p><strong>Notes:</strong><br>{message.replace(chr(10), '<br>') if message else '—'}</p>
+        <hr><p><em>Submitted from darkai.ca/darkorca</em></p>
+        """
+        text_body = f"""New DarkOrca managed audit request
+
+Name: {name}
+Email: {email}
+Company: {company or '—'}
+Website: {website_url}
+Audit type: {audit_label}
+Authorized: {'Yes' if authorized else 'No'}
+
+Notes:
+{message or '—'}
+"""
+
+        if resend_api_key:
+            response = requests.post(
+                'https://api.resend.com/emails',
+                headers={
+                    'Authorization': f'Bearer {resend_api_key}',
+                    'Content-Type': 'application/json',
+                },
+                json={
+                    'from': from_email,
+                    'to': [recipient_email],
+                    'reply_to': email,
+                    'subject': subject,
+                    'html': html_body,
+                    'text': text_body,
+                },
+                timeout=15,
+            )
+            if response.status_code == 200:
+                return jsonify({'success': True, 'message': 'Thank you — your audit request was received. We will contact you within 1–2 business days.'})
+            error_data = response.json() if response.content else {}
+            return jsonify({'success': False, 'error': error_data.get('message', 'Failed to send email.')}), 500
+
+        return jsonify({'success': False, 'error': 'Email service not configured.'}), 500
+    except Exception as e:
+        print(f"DarkOrca audit request error: {e}")
+        return jsonify({'success': False, 'error': 'An error occurred. Please try again later.'}), 500
+
 
 @app.route('/flyt')
 def flyt():
