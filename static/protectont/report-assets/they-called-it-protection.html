@@ -395,14 +395,47 @@
     .mpp-actions a.primary:hover, .mpp-actions button.primary:hover { background: var(--yellow-hover); }
     .mpp-actions a:hover, .mpp-actions button:hover { border-color: var(--purple-mid); }
     .mpp-lookup-foot { margin-top: 0.85rem; font-size: 0.75rem; color: var(--dim); }
-    @media print { .mpp-lookup-form, .mpp-actions { display: none !important; } }
+    @media print { .mpp-lookup-form, .mpp-actions, .mpp-lookup { display: none !important; } }
 
     @media print {
       .band::before, .hero::before { display: none !important; }
-      .hero, .band { background: #fff !important; color: #111 !important; }
-      h1, .lead, .meta, .pill { color: #111 !important; text-shadow: none !important; }
+      .hero, .band {
+        background: #3d2b7a !important;
+        color: #fff !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .hero h1, .hero .lead, .band h3, .band p, .band .cite { color: #fff !important; text-shadow: none !important; }
+      .hero h1 em { color: #f9e04c !important; }
       .wrap { max-width: none; }
-      .stat, .card, .callout, .bill { break-inside: avoid; }
+      /* Single column so grid cells don't slice across pages */
+      .explore {
+        display: block !important;
+        grid-template-columns: none !important;
+      }
+      .explore a,
+      .stat,
+      .bill,
+      .callout,
+      .timeline .item,
+      .data-credit {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      section, article.wrap {
+        break-inside: auto;
+        page-break-inside: auto;
+      }
+      h2, h3 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+      .data-credit img {
+        height: 16px !important;
+        max-width: 52px !important;
+      }
     }
 
 
