@@ -218,6 +218,12 @@ services:
         rm -rf static/protectont
         mkdir -p static/protectont
         cp -r ledger/out/* static/protectont/
+        # Keep accountability brief available even if Next export omitted public/reports
+        if [ -f "ledger/public/reports/they-called-it-protection.html" ]; then
+          mkdir -p static/protectont/reports
+          cp -f ledger/public/reports/they-called-it-protection.html static/protectont/reports/
+          echo "✅ Copied they-called-it-protection.html into static/protectont/reports/"
+        fi
         echo "✅ static/protectont populated (app.py will serve from here if present)"
         ls -la static/protectont/ | head -5
         echo ""
