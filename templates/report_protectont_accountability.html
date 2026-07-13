@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>They Called It Protection — ProtectOnt.ca</title>
+  <meta name="description" content="Government bills branded “Protect Ontario” rewrote species law, water rules, and budget vehicles — with 100% PC Yes/No lockstep, weeks-to-law timelines, and watchdog precedent.">
+  <meta name="theme-color" content="#2a1f58">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --yellow: #f9e04c;
+      --yellow-hover: #f5d84a;
+      --orange: #ff9a3c;
+      --purple-deep: #2a1f58;
+      --purple: #35266d;
+      --purple-mid: #3d2b7a;
+      --navy: #2E4A6B;
+      --green: #66A33F;
+      --ink: #1a1a1a;
+      --text: #111827;
+      --muted: #4b5563;
+      --dim: #6b7280;
+      --border: #e8e4f0;
+      --bg: #faf9fc;
+      --bg-card: #ffffff;
+      --danger: #b91c1c;
+      --font: Inter, system-ui, -apple-system, sans-serif;
+      --display: Fraunces, Georgia, serif;
+      --max: 880px;
+      --hero-grad: linear-gradient(168deg, #5c4899 0%, #4a3888 18%, #3d2b7a 42%, #35266d 68%, #2a1f58 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--navy); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+    a:hover { color: var(--purple-mid); }
+    .site-bar {
+      position: sticky; top: 0; z-index: 20;
+      background: rgba(255,255,255,0.82); backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(249,224,76,0.28);
+      padding: 0.65rem 1.25rem;
+      display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+    }
+    .site-bar img { height: 36px; width: auto; display: block; }
+    .site-bar button {
+      font-family: var(--font); font-weight: 600; font-size: 0.88rem;
+      background: var(--yellow); color: var(--ink); border: 0; border-radius: 0.5rem;
+      padding: 0.55rem 1rem; cursor: pointer;
+    }
+    .site-bar button:hover { background: var(--yellow-hover); }
+    .hero {
+      position: relative; overflow: hidden;
+      background: var(--hero-grad);
+      padding: 3rem 1.25rem 2.5rem;
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(245,184,122,0.4) 0%, transparent 42%),
+        radial-gradient(circle at 88% 78%, rgba(224,120,48,0.32) 0%, transparent 46%),
+        radial-gradient(ellipse at 50% 110%, rgba(249,224,76,0.2) 0%, transparent 52%),
+        linear-gradient(to bottom, rgba(255,255,255,0.08) 0%, transparent 30%, rgba(0,0,0,0.14) 100%);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; }
+    .eyebrow {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem;
+    }
+    .pill {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; padding: 0.35rem 0.7rem;
+      border: 1px solid rgba(249,224,76,0.4); border-radius: 999px; color: rgba(249,224,76,0.95);
+    }
+    .pill.solid { color: var(--ink); background: var(--yellow); border-color: var(--yellow); }
+    h1 {
+      font-family: var(--display);
+      font-size: clamp(2.35rem, 6vw, 3.6rem);
+      font-weight: 600; letter-spacing: -0.03em; line-height: 1.05;
+      margin-bottom: 0.85rem; color: #fff;
+      text-shadow: 0 4px 32px rgba(0,0,0,0.35);
+    }
+    h1 em {
+      font-style: normal; color: var(--yellow);
+    }
+    .lead {
+      color: rgba(249,224,76,0.92); font-size: 1.12rem; font-weight: 400;
+      max-width: 34rem; margin-bottom: 0; line-height: 1.45;
+    }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .band {
+      width: 100%;
+      background: var(--hero-grad);
+      color: #fff;
+      padding: 2.5rem 1.25rem;
+      margin: 2.5rem 0;
+      position: relative; overflow: hidden;
+    }
+    .band::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(circle at 80% 20%, rgba(249,224,76,0.2) 0%, transparent 45%);
+    }
+    .band-inner { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; }
+    .band blockquote {
+      font-family: var(--display); font-size: clamp(1.45rem, 3.5vw, 2rem);
+      font-weight: 500; line-height: 1.25; letter-spacing: -0.02em;
+      color: var(--yellow); max-width: 38rem;
+    }
+    .band .cite { margin-top: 0.85rem; font-size: 0.85rem; color: rgba(255,255,255,0.6); }
+    .stats {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+    @media (min-width: 640px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+    .stat {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 0.9rem; padding: 1.05rem;
+      box-shadow: 0 8px 24px rgba(42,31,88,0.05);
+    }
+    .stat .n {
+      font-family: var(--display); font-size: 1.55rem; font-weight: 600;
+      color: var(--purple-mid); line-height: 1.15;
+    }
+    .stat .l {
+      font-size: 0.7rem; color: var(--dim); margin-top: 0.3rem;
+      text-transform: uppercase; letter-spacing: 0.045em; font-weight: 600;
+    }
+    .callout {
+      background: rgba(249,224,76,0.14); border: 1px solid rgba(249,224,76,0.45);
+      border-radius: 0.9rem; padding: 1.15rem 1.25rem; margin: 1.25rem 0;
+    }
+    .callout.danger {
+      background: rgba(185,28,28,0.06); border-color: rgba(185,28,28,0.28);
+    }
+    .callout.info {
+      background: rgba(46,74,107,0.06); border-color: rgba(46,74,107,0.22);
+    }
+    .callout h3 {
+      font-size: 0.78rem; color: var(--purple); text-transform: uppercase;
+      letter-spacing: 0.06em; margin-bottom: 0.4rem; font-weight: 700;
+    }
+    .callout.danger h3 { color: var(--danger); }
+    .callout.info h3 { color: var(--navy); }
+    .callout p { color: var(--muted); font-size: 0.95rem; margin: 0; }
+    hr { border: 0; border-top: 1px solid var(--border); margin: 2.4rem 0; }
+    h2 {
+      font-family: var(--display);
+      font-size: clamp(1.55rem, 3.2vw, 2.05rem); font-weight: 600;
+      margin-bottom: 0.75rem; letter-spacing: -0.025em; color: var(--ink); line-height: 1.15;
+    }
+    h2 .num { color: var(--orange); margin-right: 0.3rem; font-weight: 600; }
+    section p { color: var(--muted); margin-bottom: 0.85rem; }
+    section p strong { color: var(--text); font-weight: 600; }
+    ul, ol { margin: 0.5rem 0 1rem 1.1rem; color: var(--muted); }
+    li { margin-bottom: 0.4rem; }
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 0.95rem; padding: 1.2rem; margin: 1rem 0;
+      box-shadow: 0 8px 24px rgba(42,31,88,0.05);
+    }
+    .card h3 {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--dim); margin-bottom: 0.85rem; font-weight: 700;
+    }
+    .chart-box { position: relative; height: 260px; }
+    .chart-box.tall { height: 300px; }
+    .caption { font-size: 0.74rem; color: var(--dim); margin-top: 0.65rem; }
+    .grid-2 { display: grid; gap: 1rem; }
+    @media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
+    .compare {
+      display: grid; gap: 0.65rem; margin: 1.1rem 0 1.5rem;
+    }
+    .compare-row {
+      display: grid; gap: 0.5rem;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 0.85rem; padding: 0.95rem 1rem;
+      box-shadow: 0 6px 18px rgba(42,31,88,0.04);
+    }
+    @media (min-width: 700px) {
+      .compare-row { grid-template-columns: 1.1fr 1.4fr; align-items: start; }
+    }
+    .compare-row .says {
+      font-size: 0.82rem; font-weight: 700; color: var(--purple-mid);
+    }
+    .compare-row .says span {
+      display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 0.25rem;
+    }
+    .compare-row .does { font-size: 0.9rem; color: var(--muted); }
+    .compare-row .does strong { color: var(--ink); }
+    .timeline {
+      position: relative; margin: 1.25rem 0 1.5rem; padding-left: 1.15rem;
+      border-left: 2px solid rgba(249,224,76,0.7);
+    }
+    .timeline .item { position: relative; padding: 0 0 1.25rem 0.85rem; }
+    .timeline .item::before {
+      content: ""; position: absolute; left: -1.28rem; top: 0.35rem;
+      width: 0.65rem; height: 0.65rem; border-radius: 50%;
+      background: var(--orange); box-shadow: 0 0 0 3px rgba(255,154,60,0.25);
+    }
+    .timeline .when {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 0.2rem;
+    }
+    .timeline .what { font-weight: 600; color: var(--ink); margin-bottom: 0.25rem; }
+    .timeline .why { font-size: 0.9rem; color: var(--muted); }
+    .bill {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-left: 4px solid var(--yellow);
+      border-radius: 0.95rem; padding: 1.3rem 1.25rem; margin: 1.1rem 0;
+      box-shadow: 0 10px 28px rgba(42,31,88,0.06);
+    }
+    .bill header {
+      display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.45rem 0.75rem;
+      margin-bottom: 0.55rem;
+    }
+    .bill .tag {
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;
+      color: var(--ink); background: var(--yellow); padding: 0.28rem 0.55rem; border-radius: 0.35rem;
+    }
+    .bill .days { font-size: 0.78rem; font-weight: 700; color: var(--orange); }
+    .bill h3 {
+      flex: 1 1 100%;
+      font-family: var(--display); font-size: 1.2rem; font-weight: 600;
+      color: var(--ink); letter-spacing: -0.015em; margin: 0.15rem 0 0;
+    }
+    .bill .hook { color: var(--text); font-weight: 500; margin: 0.55rem 0 0.65rem; }
+    .bill ul { margin: 0.25rem 0 0.9rem 1.1rem; }
+    .bill .more { font-size: 0.88rem; font-weight: 600; }
+    .explore { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 0.25rem; }
+    .explore a {
+      font-size: 0.82rem; font-weight: 600; text-decoration: none;
+      padding: 0.42rem 0.78rem; border-radius: 0.5rem;
+      background: rgba(46,74,107,0.08); color: var(--navy);
+      border: 1px solid rgba(46,74,107,0.18);
+    }
+    .explore a:hover {
+      background: rgba(249,224,76,0.3); border-color: rgba(249,224,76,0.55); color: var(--ink);
+    }
+    .data-credit {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem 1.1rem;
+      margin: 1.35rem 0 0.25rem;
+      padding: 0.85rem 1rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      box-shadow: 0 6px 18px rgba(42,31,88,0.04);
+    }
+    .data-credit img {
+      height: 40px; width: auto; max-width: 160px; object-fit: contain; display: block;
+    }
+    .data-credit p {
+      flex: 1 1 220px; margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.45;
+    }
+    .data-credit p strong { color: var(--text); font-weight: 600; }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.35rem; }
+    .cta-row a {
+      display: inline-block; font-weight: 600; font-size: 0.95rem;
+      padding: 0.7rem 1.15rem; border-radius: 0.55rem; text-decoration: none;
+    }
+    .cta-row a.primary { background: var(--yellow); color: var(--ink); }
+    .cta-row a.primary:hover { background: var(--yellow-hover); color: var(--ink); }
+    .cta-row a.secondary {
+      background: transparent; color: var(--navy); border: 1px solid rgba(46,74,107,0.35);
+    }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 1rem 0;
+    }
+    th, td {
+      text-align: left; padding: 0.65rem 0.5rem; border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th { color: var(--dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    td { color: var(--muted); }
+    td:first-child { color: var(--text); font-weight: 600; white-space: nowrap; }
+    .sources { font-size: 0.82rem; color: var(--dim); }
+    .sources li { margin-bottom: 0.45rem; }
+    footer {
+      margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
+      font-size: 0.78rem; color: var(--dim);
+    }
+    @media print {
+      .site-bar, .band::before, .hero::before { display: none !important; }
+      .hero, .band { background: #fff !important; color: #111 !important; }
+      h1, .lead, .meta, .pill { color: #111 !important; text-shadow: none !important; }
+      .wrap { max-width: none; }
+      .stat, .card, .callout, .bill { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site-bar">
+    <a href="https://protectont.ca/" aria-label="Protect Ontario – Home">
+      <img src="https://protectont.ca/logo-icon-text.svg" alt="ProtectOnt.ca" width="180" height="40">
+    </a>
+    <button type="button" onclick="window.print()">Print / Save PDF</button>
+  </div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">
+        <span class="pill solid">ProtectOnt.ca</span>
+        <span class="pill">Accountability · July 2026</span>
+      </div>
+      <h1>They called it <em>protection</em></h1>
+      <p class="lead">
+        The government’s bills wear the word. The schedules exempt, replace, and defer — locked in with zero Progressive Conservative dissent on the votes below.
+      </p>
+    </div>
+  </header>
+
+  <article class="wrap">
+    <div class="explore">
+      <a href="https://protectont.ca/wildlife">Wildlife &amp; Bill 5</a>
+      <a href="https://protectont.ca/water">Water &amp; Bill 60</a>
+      <a href="https://protectont.ca/public-land">Public land</a>
+      <a href="https://protectont.ca/indigenous-rights">Indigenous rights</a>
+      <a href="https://protectont.ca/greenbelt">Greenbelt</a>
+      <a href="https://protectont.ca/healthcare">Healthcare</a>
+      <a href="https://protectont.ca/take-action">Take action</a>
+    </div>
+
+    <div class="data-credit">
+      <a href="https://www.onac.ca/" target="_blank" rel="noopener noreferrer" aria-label="Ontarians Against Corruption">
+        <img src="https://protectont.ca/partners/onac.png" alt="Ontarians Against Corruption" width="160" height="48">
+      </a>
+      <p>
+        <strong>Vote, salary, and alignment data</strong> from the MPP tracker built with
+        <a href="https://www.onac.ca/" target="_blank" rel="noopener noreferrer">Ontarians Against Corruption</a>
+        (ONAC) · External figures from OLA, Elections Ontario, FAO, Auditor General, and Integrity Commissioner
+      </p>
+    </div>
+
+    <div class="callout">
+      <h3>Which bills — and why these six</h3>
+      <p>
+        This brief follows the ONAC / ProtectOnt.ca tracker’s government bill stack for Parliament 44: the laws that most clearly trade public protections for speed and private leverage. Each one received Royal Assent. Together they cover species and land (Bill 5), municipal planning power (Bill 17), water governance (Bill 60), and three budget-measures omnibuses (Bills 24, 68, 97).
+      </p>
+      <ul style="margin:0.75rem 0 0 1.1rem;color:var(--muted)">
+        <li><strong>Bill 5</strong> — species law rewrite + special economic zones + Ontario Place EBR carve-out</li>
+        <li><strong>Bill 17</strong> — limits what studies municipalities can require</li>
+        <li><strong>Bill 60</strong> — water / wastewater “public corporations” framework</li>
+        <li><strong>Bills 24, 68, 97</strong> — Plan to Protect Ontario budget measures (cleared in as little as 19 days)</li>
+      </ul>
+    </div>
+
+    <hr>
+
+    <section>
+      <h2><span class="num">1.</span> The brand inversion</h2>
+      <p>
+        Almost every featured bill wears “Protect Ontario” in the short title. Read the schedules and the verb flips: protect becomes <strong>exempt, replace, designate, defer, extinguish</strong>. That mismatch is the first analytical finding — not that a majority can pass bills, but that the marketing name and the legal effect point opposite directions.
+      </p>
+      <div class="compare">
+        <div class="compare-row">
+          <div class="says"><span>Bill 5 says</span> Protect Ontario by Unleashing our Economy</div>
+          <div class="does"><strong>Does:</strong> Replace the Endangered Species Act; create special economic zones that can skip environmental and municipal rules; carve Ontario Place out of normal EBR scrutiny; limit causes of action.</div>
+        </div>
+        <div class="compare-row">
+          <div class="says"><span>Bill 60 says</span> Fighting Delays, Building Faster</div>
+          <div class="does"><strong>Does:</strong> Enact Water and Wastewater Public Corporations — Business Corporations Act entities that can take exclusive delivery of municipal water, are not Crown agents, and leave key safeguards to regulation.</div>
+        </div>
+        <div class="compare-row">
+          <div class="says"><span>Bill 17 says</span> Building Faster and Smarter</div>
+          <div class="does"><strong>Does:</strong> Constrain what studies municipalities can require; expand provincial levers over complete applications, setbacks, and MZOs.</div>
+        </div>
+        <div class="compare-row">
+          <div class="says"><span>Bills 24 / 68 / 97 say</span> Plan to Protect Ontario (Budget Measures)</div>
+          <div class="does"><strong>Sit beside:</strong> FAO’s $5B Protecting Ontario Account, $2B extra WSIB employer rebates, ~$9B business-tax deferral — large employer-facing vehicles the FAO says won’t materially shift the near-term balance.</div>
+        </div>
+      </div>
+      <p class="caption">Bill titles &amp; statuses: Legislative Assembly of Ontario · Bill 5 / 60 substance also summarized on ProtectOnt.ca issue pages · FAO: Commentary on the 2025 Ontario Budget</p>
+    </section>
+  </article>
+
+  <div class="band">
+    <div class="band-inner">
+      <blockquote>They didn’t just win seats. On the bills that strip protections, every Progressive Conservative who voted Yes or No voted the same way.</blockquote>
+      <p class="cite">ONAC / ProtectOnt.ca tracker · Bills 5, 17, 24, 60, 68, 97 · 100% PC Yes when they voted</p>
+    </div>
+  </div>
+
+  <article class="wrap">
+    <section>
+      <h2><span class="num">2.</span> Spring 2025: the blitz window</h2>
+      <p>
+        Speed is not random noise. Three major “Protect Ontario” bills overlapped in a tight first→third window. Budget measures later repeated the pattern at <strong>19 days</strong>. House status notes repeatedly order third reading “pursuant to the Order of the House.”
+      </p>
+      <div class="timeline">
+        <div class="item">
+          <div class="when">Apr 17 → Jun 4, 2025 · 48 days</div>
+          <div class="what">Bill 5 — species law rewrite + Special Economic Zones Act</div>
+          <div class="why">Slowest of the featured stack — still under seven weeks for the most consequential environmental rewrite in a generation.</div>
+        </div>
+        <div class="item">
+          <div class="when">May 12 → Jun 3, 2025 · 22 days</div>
+          <div class="what">Bill 17 — planning / municipal study limits</div>
+          <div class="why">Third reading one day before Bill 5’s — development streamlining and species rollback landing in the same week.</div>
+        </div>
+        <div class="item">
+          <div class="when">May 15 → Jun 3, 2025 · 19 days</div>
+          <div class="what">Bill 24 — budget measures</div>
+          <div class="why">Tied for fastest first→third. Same week as Bill 17 third reading.</div>
+        </div>
+        <div class="item">
+          <div class="when">Oct 23 → Nov 24 · Nov 6 → Nov 25, 2025</div>
+          <div class="what">Bill 60 (32 days) · Bill 68 (19 days)</div>
+          <div class="why">Fall sequel: water-corporation framework + another budget omnibus at 19 days.</div>
+        </div>
+        <div class="item">
+          <div class="when">Mar 26 → Apr 23, 2026 · 28 days</div>
+          <div class="what">Bill 97 — budget measures 2026</div>
+          <div class="why">Same branding, same whip pattern into the next fiscal cycle.</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Days first reading → third reading (OLA)</h3>
+        <div class="chart-box"><canvas id="chartDays"></canvas></div>
+        <p class="caption">Source: Legislative Assembly of Ontario status timelines</p>
+      </div>
+      <div class="callout">
+        <h3>Why the calendar matters</h3>
+        <p>
+          When Bill 5 (species + SEZs), Bill 17 (municipal friction), and Bill 24 (budget measures) clear within overlapping windows, the legislature is not debating three separate stories. It is running one play: accelerate development-facing law while the branding says protection.
+        </p>
+      </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2><span class="num">3.</span> What each Yes actually bought</h2>
+      <p>
+        Deep dives live on ProtectOnt.ca. This section is the legislature-facing digest — what changed, how fast, and where to read more.
+      </p>
+
+      <article class="bill">
+        <header>
+          <span class="tag">Bill 5</span>
+          <span class="days">48 days · RA · SO 2025 c.4</span>
+          <h3>Protect Ontario by Unleashing our Economy Act, 2025</h3>
+        </header>
+        <p class="hook">Endangered Species Act replaced. Special economic zones can skip the usual rules. First zone: Ring of Fire.</p>
+        <ul>
+          <li><strong>Species:</strong> ESA 2007 → Species Conservation Act, 2025. Listing at-risk species no longer mandatory; recovery tools and habitat definitions weakened; permits on a lower bar.</li>
+          <li><strong>SEZs:</strong> Special Economic Zones Act lets the province designate areas and “trusted proponents” / projects exempt from other Acts — including environmental rules and municipal by-laws.</li>
+          <li><strong>Ring of Fire:</strong> first zone declared on Treaty territory where free, prior and informed consent remains contested.</li>
+          <li><strong>Ontario Place:</strong> carved out of normal Environmental Bill of Rights participation.</li>
+          <li><strong>Redress:</strong> certain causes of action extinguished; Mining Act / procurement rewritten to prioritize “Ontario’s economy.”</li>
+        </ul>
+        <p class="more">
+          <a href="https://protectont.ca/wildlife">Wildlife</a> ·
+          <a href="https://protectont.ca/indigenous-rights">Indigenous rights</a> ·
+          <a href="https://protectont.ca/public-land">Ontario Place</a> ·
+          <a href="https://www.ola.org/en/legislative-business/bills/parliament-44/session-1/bill-5" target="_blank" rel="noopener">OLA Bill 5</a>
+        </p>
+      </article>
+
+      <article class="bill">
+        <header>
+          <span class="tag">Bill 60</span>
+          <span class="days">32 days · RA · SO 2025 c.14</span>
+          <h3>Fighting Delays, Building Faster Act, 2025</h3>
+        </header>
+        <p class="hook">Sold as cutting delays. Also builds the legal shell for corporate-style water utilities.</p>
+        <ul>
+          <li><strong>Water corporations:</strong> minister may designate a Business Corporations Act company to deliver water/sewage for prescribed municipalities — exclusively, once designated.</li>
+          <li><strong>Accountability gap:</strong> corporations are not agents of the Crown; rates/fees and governance details lean on regulation, not locked statute.</li>
+          <li><strong>Development track:</strong> more Planning Act / development-charge / transit fast-tracks that reduce local friction for proponents.</li>
+        </ul>
+        <p class="more">
+          <a href="https://protectont.ca/water">Water privatization pathway</a> ·
+          Same hollowing pattern: <a href="https://protectont.ca/healthcare">Healthcare</a>
+        </p>
+      </article>
+
+      <article class="bill">
+        <header>
+          <span class="tag">Bill 17</span>
+          <span class="days">22 days · RA · SO 2025 c.9</span>
+          <h3>Protect Ontario by Building Faster and Smarter Act, 2025</h3>
+        </header>
+        <p class="hook">Municipalities lose leverage over study requirements; Queen’s Park gains more planning levers.</p>
+        <ul>
+          <li>Minister approval required to change complete-application study rules in official plans.</li>
+          <li>Regulation power to limit required studies (province floated bans on sun/shadow, wind, urban design, lighting reports).</li>
+          <li>As-of-right setback variations; expanded MZO condition tools; DC / transit amendments.</li>
+        </ul>
+        <p class="more">
+          <a href="https://protectont.ca/public-land">Public land</a> · <a href="https://protectont.ca/greenbelt">Greenbelt</a>
+        </p>
+      </article>
+
+      <article class="bill">
+        <header>
+          <span class="tag">Bills 24 · 68 · 97</span>
+          <span class="days">19 / 19 / 28 days</span>
+          <h3>Plan to Protect Ontario Act (Budget Measures)</h3>
+        </header>
+        <p class="hook">Three omnibuses in weeks. FAO maps the fiscal machinery beside them:</p>
+        <div class="stats">
+          <div class="stat"><div class="n">$5B</div><div class="l">Protecting Ontario Account</div></div>
+          <div class="stat"><div class="n">$2B</div><div class="l">Extra WSIB employer rebates</div></div>
+          <div class="stat"><div class="n">~$9B</div><div class="l">Business-tax deferral (6 mo)</div></div>
+          <div class="stat"><div class="n">$14.6B</div><div class="l">Projected deficit 2025–26</div></div>
+        </div>
+        <p class="caption">FAO: measures above not expected to materially change the near-term budget balance — while still moving enormous sums into business-facing vehicles. Path: $0.6B deficit (2023–24) → $14.6B (2025–26) → balance targeted 2027–28.</p>
+      </article>
+    </section>
+  </article>
+
+  <div class="band">
+    <div class="band-inner">
+      <blockquote>Greenbelt showed preferential treatment was possible. Bill 5 builds the next version into statute — zones that skip rules, and fewer ways to sue when they do.</blockquote>
+      <p class="cite">Auditor General &amp; Integrity Commissioner (2023) · Bill 5 Special Economic Zones Act + extinguished causes of action (2025)</p>
+    </div>
+  </div>
+
+  <article class="wrap">
+    <section>
+      <h2><span class="num">4.</span> From scandal to structure</h2>
+      <p>
+        The Greenbelt episode is not a separate morality play. It is the precedent that makes Bill 5’s design intelligible. Watchdogs documented a biased land process that improperly furthered developer interests. Public pressure forced a reversal. Bill 5 answers a different question: how do you move faster next time with fewer procedural handholds?
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Then — Greenbelt (documented)</h3>
+          <ul>
+            <li>~<strong>7,400 acres</strong> removed across 15 sites (2022).</li>
+            <li>Process <strong>not transparent, fair, objective, or fully informed</strong> (AG).</li>
+            <li>~<strong>92%</strong> of acreage tied to preferential treatment for certain developers.</li>
+            <li>Lobbying for <strong>12 of 15</strong> sites before the change.</li>
+            <li>Minister Clark <strong>contravened</strong> the Members’ Integrity Act; staff furthered private interests improperly.</li>
+            <li>Reversed Sept 2023 after public pressure; RCMP probe continued.</li>
+          </ul>
+          <p class="caption"><a href="https://protectont.ca/greenbelt">Greenbelt brief</a> · AG special report · Integrity Commissioner report (30 Aug 2023)</p>
+        </div>
+        <div class="card">
+          <h3>Now — Bill 5 (structural)</h3>
+          <ul>
+            <li><strong>SEZs</strong> can exempt designated projects from environmental and municipal requirements.</li>
+            <li><strong>Species listing</strong> becomes discretionary — politics over science.</li>
+            <li><strong>Ontario Place</strong> EBR carve-out reduces public participation on a live waterfront deal.</li>
+            <li><strong>Causes of action extinguished</strong> — fewer court doors after the fact.</li>
+            <li>Ring of Fire declared first zone without settling FPIC contests.</li>
+            <li>PC caucus: <strong>Yes 70 / No 0</strong> on Bill 5 among those voting (tracker).</li>
+          </ul>
+          <p class="caption"><a href="https://protectont.ca/wildlife">Wildlife</a> · <a href="https://protectont.ca/public-land">Public land</a> · <a href="https://protectont.ca/indigenous-rights">Indigenous rights</a></p>
+        </div>
+      </div>
+      <div class="callout danger">
+        <h3>Analytical read</h3>
+        <p>
+          Greenbelt required an opaque, staff-driven selection process — and still blew up under AG / integrity scrutiny. Bill 5’s SEZ + liability limits are a cleaner machine: designate, exempt, proceed. The unbroken Yes on Bill 5 is the caucus signing that machine into law after the last one was exposed.
+        </p>
+      </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2><span class="num">5.</span> The unbroken Yes</h2>
+      <p>
+        Opposition Yes rates on this stack are near-zero on the hardest bills (Bill 5, 24, 60, 97). Progressive Conservatives sit at <strong>100%</strong> Yes among Yes/No votes every time. That is not “majorities pass government bills.” That is zero recorded PC dissent on these six.
+      </p>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Bill 5 overall (tracker)</h3>
+          <div class="chart-box"><canvas id="chartBill5"></canvas></div>
+          <p class="caption">PC Yes=70 No=0 · opposition No among those voting</p>
+        </div>
+        <div class="card">
+          <h3>Party alignment averages</h3>
+          <div class="chart-box"><canvas id="chartAlign"></canvas></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>PC vs opposition Yes rate (%)</h3>
+        <div class="chart-box tall"><canvas id="chartYesRates"></canvas></div>
+        <p class="caption">Yes / (Yes+No) within each group · ProtectOnt.ca tracker</p>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="n">70</div><div class="l">PC Yes on Bill 5</div></div>
+        <div class="stat"><div class="n">71</div><div class="l">PC Yes on Bill 60</div></div>
+        <div class="stat"><div class="n">0</div><div class="l">PC No on any of the six</div></div>
+        <div class="stat"><div class="n">100%</div><div class="l">PC Yes rate when they voted</div></div>
+      </div>
+      <p>
+        On every bill in this brief, Progressive Conservatives who cast Yes or No voted Yes. No recorded PC No. Absences (“No Show”) exist — they are not dissent.
+      </p>
+      <div class="cta-row">
+        <a class="primary" href="https://protectont.ca/take-action">Contact your MPP</a>
+        <a class="secondary" href="https://protectont.ca/join/">Join us</a>
+      </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2><span class="num">6.</span> The money behind the whip</h2>
+      <p>
+        Disclosable contributions (party + riding associations + candidates, 2022–2025) put Progressive Conservatives at <strong>$62.6M</strong> — about <strong>58%</strong> of the four-party total, and roughly <strong>$17M more</strong> than Liberals, NDP, and Greens combined ($45.6M).
+      </p>
+      <div class="stats">
+        <div class="stat"><div class="n">$62.6M</div><div class="l">PC network</div></div>
+        <div class="stat"><div class="n">$45.6M</div><div class="l">Lib + NDP + Green</div></div>
+        <div class="stat"><div class="n">1.37×</div><div class="l">PC vs those three combined</div></div>
+        <div class="stat"><div class="n">4/4</div><div class="l">Years PC led</div></div>
+      </div>
+      <div class="card">
+        <h3>Disclosable $ by year</h3>
+        <div class="chart-box tall"><canvas id="chartMoney"></canvas></div>
+        <p class="caption">Elections Ontario filed-statement CSVs · finances.elections.on.ca · downloaded 2026-07-12</p>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Cumulative network 2022–25</h3>
+          <div class="chart-box"><canvas id="chartMoneyCum"></canvas></div>
+        </div>
+        <div class="card">
+          <h3>Central party entity only</h3>
+          <div class="chart-box"><canvas id="chartMoneyParty"></canvas></div>
+          <p class="caption">PC ~$33.3M vs NDP ~$12.4M</p>
+        </div>
+      </div>
+      <div class="callout info">
+        <h3>How to read EO data</h3>
+        <p>
+          Corporate/union donations are banned. These are disclosed <strong>individual</strong> gifts above the public threshold. Sub-threshold and leadership-contestant totals are excluded here. Election years spike — and PCs still lead every year.
+        </p>
+      </div>
+      <div class="callout danger">
+        <h3>Pattern</h3>
+        <p>
+          Dominant disclosable fundraising · unbroken whip on “Protect Ontario” bills · weeks-to-law calendars · FAO business-facing budget vehicles. Seat count is known. This stack is the operating system.
+        </p>
+      </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2><span class="num">7.</span> Names worth knowing</h2>
+      <p>
+        Public salaries, public Yes votes. These Progressive Conservatives are among the highest-paid who voted <strong>Yes on Bill 5</strong> — the species rewrite and special economic zones law.
+      </p>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr><th>Name</th><th>Riding</th><th>Salary</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Raymond Sung Joon Cho</td><td>Scarborough North</td><td>$235,334</td></tr>
+            <tr><td>Peter Bethlenfalvy</td><td>Pickering—Uxbridge</td><td>$213,940</td></tr>
+            <tr><td>Paul Calandra</td><td>Markham—Stouffville</td><td>$213,940</td></tr>
+            <tr><td>Stan Cho</td><td>Willowdale</td><td>$213,940</td></tr>
+            <tr><td>Doug Downey</td><td>Barrie—Springwater—Oro-Medonte</td><td>$213,940</td></tr>
+            <tr><td>Jill Dunlop</td><td>Simcoe North</td><td>$213,940</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="caption">ONAC / ProtectOnt.ca tracker · Yes on Bill 5 · public salary on file</p>
+      <div class="cta-row">
+        <a class="primary" href="https://protectont.ca/take-action">Contact your MPP</a>
+        <a class="secondary" href="https://protectont.ca/join/">Join us</a>
+      </div>
+      <div class="card" style="margin-top:1.25rem">
+        <h3>Average salary by party (tracker)</h3>
+        <div class="chart-box"><canvas id="chartSalary"></canvas></div>
+        <p class="caption">PC average ~$189K · ~$21.7M in salaries on file across the legislature</p>
+      </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2>Findings</h2>
+      <ul>
+        <li><strong>Brand vs statute:</strong> “Protect Ontario” titles cover exemptions, replacements, designations, and deferrals.</li>
+        <li><strong>Blitz calendar:</strong> Bills 5, 17, and 24 overlapped in spring 2025; budget measures hit 19 days twice.</li>
+        <li><strong>Scandal → structure:</strong> Greenbelt preferential treatment (AG / Integrity Commissioner) precedes Bill 5’s SEZ + liability design.</li>
+        <li><strong>Whip:</strong> 100% PC Yes among Yes/No votes on all six bills; 70 PC Yes on Bill 5 alone.</li>
+        <li><strong>Money:</strong> $62.6M PC network vs $45.6M for the other three majors combined (2022–25 disclosable).</li>
+      </ul>
+      <div class="cta-row">
+        <a class="primary" href="https://protectont.ca/take-action">Take action</a>
+        <a class="secondary" href="https://protectont.ca/join/">Join us</a>
+      </div>
+      <div class="explore">
+        <a href="https://protectont.ca/wildlife">Wildlife</a>
+        <a href="https://protectont.ca/water">Water</a>
+        <a href="https://protectont.ca/public-land">Public land</a>
+        <a href="https://protectont.ca/greenbelt">Greenbelt</a>
+        <a href="https://protectont.ca/healthcare">Healthcare</a>
+      </div>
+    </section>
+
+    <hr>
+
+    <section>
+      <h2>Sources</h2>
+      <ul class="sources">
+        <li>Legislative Assembly of Ontario — Bills 5, 17, 24, 60, 68, 97 (Parliament 44)</li>
+        <li>Elections Ontario — Filed Statement Contributions bulk CSVs 2022–2025 (<a href="https://finances.elections.on.ca/" target="_blank" rel="noopener">finances.elections.on.ca</a>)</li>
+        <li>Financial Accountability Office of Ontario — Commentary on the 2025 Ontario Budget</li>
+        <li>Auditor General of Ontario — Special Report on Changes to the Greenbelt (2023)</li>
+        <li>Office of the Integrity Commissioner — Report re Minister Clark (30 Aug 2023)</li>
+        <li>ProtectOnt.ca — wildlife, water, public land, Indigenous rights, greenbelt, healthcare; MPP tracker (dataset with Ontarians Against Corruption / <a href="https://www.onac.ca/" target="_blank" rel="noopener">onac.ca</a>)</li>
+      </ul>
+    </section>
+
+    <footer>
+      Protect Ontario · protectont.ca · MPP tracker dataset with Ontarians Against Corruption · Advocacy / public education · Not affiliated with the Legislative Assembly · External figures from the primary sources listed above
+    </footer>
+  </article>
+
+  <script>
+    const yellow = '#f9e04c';
+    const purple = '#3d2b7a';
+    const navy = '#2E4A6B';
+    const orange = '#ff9a3c';
+    const green = '#66A33F';
+    const muted = '#6b7280';
+    const grid = '#e8e4f0';
+    Chart.defaults.color = muted;
+    Chart.defaults.borderColor = grid;
+    Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+
+    const money = (v) => '$' + Math.round(v / 1e6 * 10) / 10 + 'M';
+
+    new Chart(document.getElementById('chartDays'), {
+      type: 'bar',
+      data: {
+        labels: ['Bill 24', 'Bill 68', 'Bill 17', 'Bill 97', 'Bill 60', 'Bill 5'],
+        datasets: [{ label: 'Days', data: [19, 19, 22, 28, 32, 48], backgroundColor: orange }]
+      },
+      options: {
+        scales: { y: { beginAtZero: true, title: { display: true, text: 'Days' } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    new Chart(document.getElementById('chartAlign'), {
+      type: 'bar',
+      data: {
+        labels: ['PC', 'NDP', 'Green', 'Liberal', 'Independent'],
+        datasets: [{ label: 'Alignment %', data: [100, 100, 100, 98.1, 86.5], backgroundColor: purple }]
+      },
+      options: {
+        scales: { y: { min: 80, max: 100, title: { display: true, text: '%' } } },
+        plugins: { legend: { display: false } }
+      }
+    });
+
+    new Chart(document.getElementById('chartBill5'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Yes', 'No', 'No Show'],
+        datasets: [{ data: [71, 43, 9], backgroundColor: [yellow, '#b91c1c', '#9ca3af'] }]
+      },
+      options: { plugins: { legend: { position: 'bottom' } } }
+    });
+
+    new Chart(document.getElementById('chartYesRates'), {
+      type: 'bar',
+      data: {
+        labels: ['Bill 5', 'Bill 17', 'Bill 24', 'Bill 60', 'Bill 68', 'Bill 97'],
+        datasets: [
+          { label: 'PC Yes %', data: [100, 100, 100, 100, 100, 100], backgroundColor: purple },
+          { label: 'Opposition Yes %', data: [2, 29, 2, 0, 3, 0], backgroundColor: navy }
+        ]
+      },
+      options: {
+        scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: '%' } } }
+      }
+    });
+
+    new Chart(document.getElementById('chartMoney'), {
+      type: 'bar',
+      data: {
+        labels: ['2022', '2023', '2024', '2025'],
+        datasets: [
+          { label: 'PC', data: [19179390, 13539257, 13326998, 16549609], backgroundColor: purple },
+          { label: 'Liberal', data: [6872988, 2274273, 4403496, 5640893], backgroundColor: navy },
+          { label: 'NDP', data: [6578225, 2902314, 4072363, 5595740], backgroundColor: '#b91c1c' },
+          { label: 'Green', data: [1830856, 1497776, 2015396, 1908016], backgroundColor: green }
+        ]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: (v) => '$' + (v / 1e6).toFixed(0) + 'M' },
+            title: { display: true, text: 'Disclosable $' }
+          }
+        }
+      }
+    });
+
+    new Chart(document.getElementById('chartMoneyCum'), {
+      type: 'bar',
+      data: {
+        labels: ['PC', 'Liberal', 'NDP', 'Green'],
+        datasets: [{ label: 'Cumulative $', data: [62595254, 19191651, 19148642, 7252044], backgroundColor: purple }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { callback: (v) => money(v) } } }
+      }
+    });
+
+    new Chart(document.getElementById('chartMoneyParty'), {
+      type: 'bar',
+      data: {
+        labels: ['PC', 'NDP', 'Liberal', 'Green'],
+        datasets: [{ label: 'Party entity $', data: [33308498, 12386144, 8714245, 5753425], backgroundColor: navy }]
+      },
+      options: {
+        indexAxis: 'y',
+        plugins: { legend: { display: false } },
+        scales: { x: { ticks: { callback: (v) => money(v) } } }
+      }
+    });
+
+    new Chart(document.getElementById('chartSalary'), {
+      type: 'bar',
+      data: {
+        labels: ['PC', 'NDP', 'Liberal', 'Green', 'Independent'],
+        datasets: [{ label: 'Avg salary', data: [188978, 161265, 158589, 150344, 146166], backgroundColor: orange }]
+      },
+      options: {
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { callback: (v) => '$' + Math.round(v / 1000) + 'k' },
+            title: { display: true, text: 'Average salary' }
+          }
+        }
+      }
+    });
+  </script>
+</body>
+</html>

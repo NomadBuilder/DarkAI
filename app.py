@@ -1028,6 +1028,16 @@ def view_waitlist():
         return jsonify({'error': 'Failed to fetch waitlist'}), 500
 
 
+@app.route('/reports/they-called-it-protection')
+@app.route('/reports/protectont-accountability')
+def protectont_accountability_report():
+    """ProtectOnt accountability brief — also served on protectont.ca/reports/."""
+    try:
+        return render_template('report_protectont_accountability.html')
+    except Exception:
+        return send_from_directory('templates', 'report_protectont_accountability.html')
+
+
 @app.route('/reports/2025-deepfake-report')
 def deepfake_report_2025():
     """2025 Deepfake Report page."""
