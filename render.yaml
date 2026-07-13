@@ -121,6 +121,8 @@ services:
           python3 scripts/generate-og-image.py >> "$DIAG_LOG" 2>&1 || echo "  ⚠️  og-image.png generation skipped (commit ledger/public/og-image.png)" >> "$DIAG_LOG"
         fi
 
+        # Wipe prior export so stale force-added HTML cannot outlive matching _next hashes
+        rm -rf out
         # Run build with environment variables inline (more reliable) and capture all output
         if ! NODE_ENV=production NEXT_PUBLIC_SITE_URL="${NEXT_PUBLIC_SITE_URL:-https://protectont.ca}" npm run build:protectont >> "$DIAG_LOG" 2>&1; then
           echo ""
@@ -228,7 +230,12 @@ services:
           cp -f ledger/public/reports/they-called-it-protection.html static/protectont/reports/
           echo "✅ Copied they-called-it-protection.html into static/protectont/reports/"
         fi
-        if [ -f "ledger/out/reports/index.html" ]; then
+        # Prefer Flask-styled reports hub over Next export (avoids CSS hash mismatch)
+        if [ -f "templates/reports_hub.html" ]; then
+          mkdir -p static/protectont/reports
+          cp -f templates/reports_hub.html static/protectont/reports/index.html
+          echo "✅ Installed Flask reports hub as static/protectont/reports/index.html"
+        elif [ -f "ledger/out/reports/index.html" ]; then
           mkdir -p static/protectont/reports
           cp -f ledger/out/reports/index.html static/protectont/reports/
           echo "✅ Ensured /reports hub index.html is in static/protectont/reports/"

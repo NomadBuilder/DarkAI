@@ -1,16 +1,8 @@
 'use client'
 
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import TopNavigation from '../../components/TopNavigation'
 import { PROTECTONT_REPORTS } from '../../lib/reports'
-
-const fade = {
-  initial: { opacity: 0, y: 20 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: '-40px' },
-  transition: { duration: 0.5 },
-}
 
 export default function ReportsPage() {
   return (
@@ -33,7 +25,7 @@ export default function ReportsPage() {
       <section className="px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="max-w-5xl mx-auto space-y-6">
           {PROTECTONT_REPORTS.map((report) => (
-            <motion.article key={report.slug} {...fade}>
+            <article key={report.slug}>
               <a
                 href={report.href}
                 className="group block rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm hover:border-[#2E4A6B]/35 hover:shadow-md transition-all"
@@ -59,7 +51,7 @@ export default function ReportsPage() {
                   Read the report →
                 </span>
               </a>
-            </motion.article>
+            </article>
           ))}
         </div>
       </section>

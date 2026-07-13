@@ -535,13 +535,12 @@ def protect_ontario_and_ledger_redirect():
                 return send_from_directory(
                     "templates", "report_protectont_accountability.html"
                 )
-        # /reports hub: prefer exported Next page; never fall through to homepage
-        if path in ("reports", "reports/"):
-            ledger_dir = _ledger_dir()
-            hub = os.path.join(ledger_dir, "reports", "index.html")
-            if os.path.isfile(hub):
-                return send_from_directory(os.path.join(ledger_dir, "reports"), "index.html")
-            return redirect("https://protectont.ca/reports/they-called-it-protection", code=302)
+        # /reports hub — Flask template (avoids mismatched Next CSS hashes from partial out commits)
+        if path in ("reports", "reports/", "reports/index.html"):
+            try:
+                return render_template("reports_hub.html")
+            except Exception:
+                return send_from_directory("templates", "reports_hub.html")
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")
