@@ -22,6 +22,11 @@ const STEPS = [
     blurb: 'Signs, shirts, stickers, and protest prep',
   },
   {
+    href: '/reports',
+    title: 'Reports',
+    blurb: 'Accountability briefs — including how your MPP voted',
+  },
+  {
     href: '/take-action',
     title: 'Contact your MPP',
     blurb: 'Petitions, templates, and civic action',

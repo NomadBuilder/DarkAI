@@ -29,6 +29,7 @@ const FOOTER_LINKS = [
   { href: '/protests', label: 'Protests' },
   { href: '/join', label: 'Join' },
   { href: '/materials', label: 'Materials' },
+  { href: '/reports', label: 'Reports' },
   { href: '/flyers', label: 'Flyers' },
   { href: '/products', label: 'Products' },
   { href: '/take-action', label: 'Take action' },

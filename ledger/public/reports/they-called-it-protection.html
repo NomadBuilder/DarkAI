@@ -53,6 +53,13 @@
       padding: 0.65rem 1.25rem;
       display: flex; justify-content: space-between; align-items: center; gap: 1rem;
     }
+    .site-bar-left { display: flex; align-items: center; gap: 1rem; min-width: 0; flex-wrap: wrap; }
+    .site-bar-nav { display: flex; align-items: center; gap: 0.85rem; }
+    .site-bar-nav a {
+      font-size: 0.88rem; font-weight: 600; color: var(--purple-mid);
+      text-decoration: none;
+    }
+    .site-bar-nav a:hover { color: var(--ink); text-decoration: underline; }
     .site-bar img { height: 36px; width: auto; display: block; }
     .site-bar button {
       font-family: var(--font); font-weight: 600; font-size: 0.88rem;
@@ -407,9 +414,15 @@
 </head>
 <body>
   <div class="site-bar">
-    <a href="https://protectont.ca/" aria-label="Protect Ontario – Home">
-      <img src="https://protectont.ca/logo-icon-text.svg" alt="ProtectOnt.ca" width="180" height="40">
-    </a>
+    <div class="site-bar-left">
+      <a href="https://protectont.ca/" aria-label="Protect Ontario – Home">
+        <img src="https://protectont.ca/logo-icon-text.svg" alt="ProtectOnt.ca" width="180" height="40">
+      </a>
+      <nav class="site-bar-nav" aria-label="Report navigation">
+        <a href="https://protectont.ca/reports">Reports</a>
+        <a href="https://protectont.ca/take-action">Take action</a>
+      </nav>
+    </div>
     <button type="button" onclick="window.print()">Print / Save PDF</button>
   </div>
 
