@@ -518,7 +518,11 @@ def protect_ontario_and_ledger_redirect():
             return redirect(target, code=301)
         if path == "flyer" or path == "flyer/":
             return redirect("https://protectont.ca/flyers/", code=301)
-        # Accountability brief — served from Flask templates so it survives ledger/out → static/protectont rebuilds
+        if path.startswith("flyer/"):
+            slug = path[6:].strip("/").split("/")[0]
+            if slug and not slug.startswith("_"):
+                return redirect(f"https://protectont.ca/flyers/{slug}/", code=301)
+        # Accountability brief — from Flask templates so it survives ledger rebuild wipes
         if path in (
             "reports/they-called-it-protection",
             "reports/they-called-it-protection.html",
@@ -531,11 +535,6 @@ def protect_ontario_and_ledger_redirect():
                 return send_from_directory(
                     "templates", "report_protectont_accountability.html"
                 )
-        return serve_ledger_at_root(path)
-        if path.startswith("flyer/"):
-            slug = path[6:].strip("/").split("/")[0]
-            if slug and not slug.startswith("_"):
-                return redirect(f"https://protectont.ca/flyers/{slug}/", code=301)
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")
