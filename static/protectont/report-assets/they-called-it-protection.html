@@ -226,6 +226,14 @@
     .bill .hook { color: var(--text); font-weight: 500; margin: 0.55rem 0 0.65rem; }
     .bill ul { margin: 0.25rem 0 0.9rem 1.1rem; }
     .bill .more { font-size: 0.88rem; font-weight: 600; }
+    .explore-heading {
+      margin: 1rem 0 0.35rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--purple);
+    }
     .explore {
       display: grid; gap: 0.55rem; margin: 0.85rem 0 0;
     }
@@ -420,9 +428,10 @@
       }
       .lead { font-size: 0.95rem !important; }
       .wrap { max-width: none; padding-top: 0 !important; }
+      /* Web-only nav tiles — skip in print/PDF */
+      .explore-heading,
       .explore {
-        display: block !important;
-        grid-template-columns: none !important;
+        display: none !important;
       }
       .explore a,
       .stat,
@@ -502,7 +511,7 @@
         <li><strong>Bill 60</strong> — build the legal shell for corporate-style water utilities</li>
         <li><strong>Bills 24, 68, 97</strong> — budget omnibuses cleared in as little as <strong>19 days</strong>, beside FAO’s multi-billion “Protect Ontario” business vehicles</li>
       </ul>
-      <p style="margin:1rem 0 0.35rem;font-size:0.78rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--purple)">Where ProtectOnt documents the damage</p>
+      <p class="explore-heading">Where ProtectOnt documents the damage</p>
       <div class="explore">
         <a href="https://protectont.ca/wildlife"><span>Bill 5</span>Species law gutted · wildlife</a>
         <a href="https://protectont.ca/indigenous-rights"><span>Bill 5</span>Ring of Fire SEZ · Indigenous rights</a>
