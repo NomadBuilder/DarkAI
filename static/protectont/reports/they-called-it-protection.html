@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>They Called It Protection — ProtectOnt.ca</title>
-  <meta name="description" content="Government bills branded “Protect Ontario” rewrote species law, water rules, and budget vehicles — with 100% PC Yes/No lockstep, weeks-to-law timelines, and watchdog precedent.">
+  <title>They Sold It as Protection — ProtectOnt.ca</title>
+  <meta name="description" content="Gut species law. Open special economic zones. Push water into corporate shells. Zero PC dissent on the votes that locked it in.">
   <meta name="theme-color" content="#2a1f58">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -234,15 +234,25 @@
     .bill .hook { color: var(--text); font-weight: 500; margin: 0.55rem 0 0.65rem; }
     .bill ul { margin: 0.25rem 0 0.9rem 1.1rem; }
     .bill .more { font-size: 0.88rem; font-weight: 600; }
-    .explore { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 0.25rem; }
+    .explore {
+      display: grid; gap: 0.55rem; margin: 0.85rem 0 0;
+    }
+    @media (min-width: 640px) {
+      .explore { grid-template-columns: 1fr 1fr; }
+    }
     .explore a {
-      font-size: 0.82rem; font-weight: 600; text-decoration: none;
-      padding: 0.42rem 0.78rem; border-radius: 0.5rem;
-      background: rgba(46,74,107,0.08); color: var(--navy);
-      border: 1px solid rgba(46,74,107,0.18);
+      font-size: 0.88rem; font-weight: 600; text-decoration: none;
+      padding: 0.7rem 0.85rem; border-radius: 0.65rem;
+      background: rgba(46,74,107,0.06); color: var(--navy);
+      border: 1px solid rgba(46,74,107,0.16);
+      line-height: 1.35;
     }
     .explore a:hover {
-      background: rgba(249,224,76,0.3); border-color: rgba(249,224,76,0.55); color: var(--ink);
+      background: rgba(249,224,76,0.28); border-color: rgba(249,224,76,0.55); color: var(--ink);
+    }
+    .explore a span {
+      display: block; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.05em;
+      text-transform: uppercase; color: var(--orange); margin-bottom: 0.15rem;
     }
     .data-credit {
       display: flex; flex-wrap: wrap; align-items: center; gap: 0.85rem 1.1rem;
@@ -298,7 +308,7 @@
 <body>
   <div class="site-bar">
     <a href="https://protectont.ca/" aria-label="Protect Ontario – Home">
-      <img src="/logo-icon-text.svg" alt="ProtectOnt.ca" width="180" height="40">
+      <img src="https://protectont.ca/logo-icon-text.svg" alt="ProtectOnt.ca" width="180" height="40">
     </a>
     <button type="button" onclick="window.print()">Print / Save PDF</button>
   </div>
@@ -309,27 +319,17 @@
         <span class="pill solid">ProtectOnt.ca</span>
         <span class="pill">Accountability · July 2026</span>
       </div>
-      <h1>They called it <em>protection</em></h1>
+      <h1>They sold it as <em>protection</em></h1>
       <p class="lead">
-        The government’s bills wear the word. The schedules exempt, replace, and defer — locked in with zero Progressive Conservative dissent on the votes below.
+        Then they rewrote the rules: gut species law, open special economic zones, push water into corporate shells — and every Progressive Conservative who voted, voted Yes.
       </p>
     </div>
   </header>
 
   <article class="wrap">
-    <div class="explore">
-      <a href="https://protectont.ca/wildlife">Wildlife &amp; Bill 5</a>
-      <a href="https://protectont.ca/water">Water &amp; Bill 60</a>
-      <a href="https://protectont.ca/public-land">Public land</a>
-      <a href="https://protectont.ca/indigenous-rights">Indigenous rights</a>
-      <a href="https://protectont.ca/greenbelt">Greenbelt</a>
-      <a href="https://protectont.ca/healthcare">Healthcare</a>
-      <a href="https://protectont.ca/take-action">Take action</a>
-    </div>
-
     <div class="data-credit">
       <a href="https://www.onac.ca/" target="_blank" rel="noopener noreferrer" aria-label="Ontarians Against Corruption">
-        <img src="/partners/onac.png" alt="Ontarians Against Corruption" width="160" height="48">
+        <img src="https://protectont.ca/partners/onac.png" alt="Ontarians Against Corruption" width="160" height="48">
       </a>
       <p>
         <strong>Vote, salary, and alignment data</strong> from the MPP tracker built with
@@ -339,24 +339,33 @@
     </div>
 
     <div class="callout">
-      <h3>Which bills — and why these six</h3>
+      <h3>Six bills. One pattern.</h3>
       <p>
-        This brief follows the ONAC / ProtectOnt.ca tracker’s government bill stack for Parliament 44: the laws that most clearly trade public protections for speed and private leverage. Each one received Royal Assent. Together they cover species and land (Bill 5), municipal planning power (Bill 17), water governance (Bill 60), and three budget-measures omnibuses (Bills 24, 68, 97).
+        Not every law this session — the ones that most clearly trade public protections for speed and private leverage. All received Royal Assent. On every one, PC Yes/No votes were unanimous Yes.
       </p>
       <ul style="margin:0.75rem 0 0 1.1rem;color:var(--muted)">
-        <li><strong>Bill 5</strong> — species law rewrite + special economic zones + Ontario Place EBR carve-out</li>
-        <li><strong>Bill 17</strong> — limits what studies municipalities can require</li>
-        <li><strong>Bill 60</strong> — water / wastewater “public corporations” framework</li>
-        <li><strong>Bills 24, 68, 97</strong> — Plan to Protect Ontario budget measures (cleared in as little as 19 days)</li>
+        <li><strong>Bill 5</strong> — kill the Endangered Species Act framework; invent SEZs that can skip the rules; carve Ontario Place out of normal scrutiny</li>
+        <li><strong>Bill 17</strong> — strip municipal leverage over the studies developers must file</li>
+        <li><strong>Bill 60</strong> — build the legal shell for corporate-style water utilities</li>
+        <li><strong>Bills 24, 68, 97</strong> — budget omnibuses cleared in as little as <strong>19 days</strong>, beside FAO’s multi-billion “Protect Ontario” business vehicles</li>
       </ul>
+      <p style="margin:1rem 0 0.35rem;font-size:0.78rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--purple)">Where ProtectOnt documents the damage</p>
+      <div class="explore">
+        <a href="https://protectont.ca/wildlife"><span>Bill 5</span>Species law gutted · wildlife</a>
+        <a href="https://protectont.ca/indigenous-rights"><span>Bill 5</span>Ring of Fire SEZ · Indigenous rights</a>
+        <a href="https://protectont.ca/public-land"><span>Bill 5</span>Ontario Place carve-out · public land</a>
+        <a href="https://protectont.ca/water"><span>Bill 60</span>Water corporations · privatization pathway</a>
+        <a href="https://protectont.ca/greenbelt"><span>Precedent</span>Greenbelt preferential treatment</a>
+        <a href="https://protectont.ca/take-action"><span>Next</span>Contact your MPP · take action</a>
+      </div>
     </div>
 
     <hr>
 
     <section>
-      <h2><span class="num">1.</span> The brand inversion</h2>
+      <h2><span class="num">1.</span> The brand is the tell</h2>
       <p>
-        Almost every featured bill wears “Protect Ontario” in the short title. Read the schedules and the verb flips: protect becomes <strong>exempt, replace, designate, defer, extinguish</strong>. That mismatch is the first analytical finding — not that a majority can pass bills, but that the marketing name and the legal effect point opposite directions.
+        They stamped “Protect Ontario” on the short titles. Open the schedules and the verbs flip: <strong>exempt. replace. designate. defer. extinguish.</strong> That is not a branding quirk — it is the operating method.
       </p>
       <div class="compare">
         <div class="compare-row">
@@ -382,7 +391,7 @@
 
   <div class="band">
     <div class="band-inner">
-      <blockquote>They didn’t just win seats. On the bills that strip protections, every Progressive Conservative who voted Yes or No voted the same way.</blockquote>
+      <blockquote>Zero Progressive Conservative No votes on the bills that strip the protections. Not a debate. A machine.</blockquote>
       <p class="cite">ONAC / ProtectOnt.ca tracker · Bills 5, 17, 24, 60, 68, 97 · 100% PC Yes when they voted</p>
     </div>
   </div>
@@ -568,7 +577,7 @@
     <section>
       <h2><span class="num">5.</span> The unbroken Yes</h2>
       <p>
-        Opposition Yes rates on this stack are near-zero on the hardest bills (Bill 5, 24, 60, 97). Progressive Conservatives sit at <strong>100%</strong> Yes among Yes/No votes every time. That is not “majorities pass government bills.” That is zero recorded PC dissent on these six.
+        On the hardest votes in this stack, opposition Yes rates collapse toward zero. Progressive Conservatives who cast Yes or No sit at <strong>100% Yes — every time</strong>. Absences happen. Dissent does not.
       </p>
       <div class="grid-2">
         <div class="card">
@@ -694,11 +703,12 @@
         <a class="secondary" href="https://protectont.ca/join/">Join us</a>
       </div>
       <div class="explore">
-        <a href="https://protectont.ca/wildlife">Wildlife</a>
-        <a href="https://protectont.ca/water">Water</a>
-        <a href="https://protectont.ca/public-land">Public land</a>
-        <a href="https://protectont.ca/greenbelt">Greenbelt</a>
-        <a href="https://protectont.ca/healthcare">Healthcare</a>
+        <a href="https://protectont.ca/wildlife"><span>Bill 5</span>Wildlife</a>
+        <a href="https://protectont.ca/water"><span>Bill 60</span>Water</a>
+        <a href="https://protectont.ca/public-land"><span>Bill 5</span>Public land</a>
+        <a href="https://protectont.ca/greenbelt"><span>Precedent</span>Greenbelt</a>
+        <a href="https://protectont.ca/indigenous-rights"><span>Bill 5</span>Indigenous rights</a>
+        <a href="https://protectont.ca/take-action"><span>Act</span>Contact your MPP</a>
       </div>
     </section>
 
