@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import TopNavigation from '../../../components/TopNavigation'
 
 const REPORT_SRC = '/report-assets/they-called-it-protection.html'
+const HERO_TOP = '#5c4899'
 
 export default function TheyCalledItProtectionPage() {
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -18,7 +19,7 @@ export default function TheyCalledItProtectionPage() {
       const next = Math.max(doc.body.scrollHeight, doc.documentElement.scrollHeight, 1200)
       setHeight(next)
     } catch {
-      /* cross-origin should not happen for same-origin asset */
+      /* same-origin asset */
     }
   }, [])
 
@@ -28,13 +29,8 @@ export default function TheyCalledItProtectionPage() {
 
     const onLoad = () => {
       resize()
-      // Charts/fonts can change height after first paint
-      const t1 = window.setTimeout(resize, 400)
-      const t2 = window.setTimeout(resize, 1200)
-      return () => {
-        window.clearTimeout(t1)
-        window.clearTimeout(t2)
-      }
+      window.setTimeout(resize, 400)
+      window.setTimeout(resize, 1200)
     }
 
     iframe.addEventListener('load', onLoad)
@@ -47,9 +43,9 @@ export default function TheyCalledItProtectionPage() {
   }, [resize])
 
   return (
-    <div className="min-h-screen bg-white">
-      <TopNavigation />
-      <div className="flex justify-end max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+    <div className="min-h-screen" style={{ background: HERO_TOP }}>
+      <TopNavigation navOnDark />
+      <div className="relative">
         <button
           type="button"
           onClick={() => {
@@ -57,18 +53,18 @@ export default function TheyCalledItProtectionPage() {
             if (win) win.print()
             else window.print()
           }}
-          className="text-xs font-medium text-slate-500 underline underline-offset-2 hover:text-slate-800"
+          className="absolute top-3 right-4 z-10 text-xs font-medium text-white/70 underline underline-offset-2 hover:text-white"
         >
           Print / Save PDF
         </button>
+        <iframe
+          ref={iframeRef}
+          src={REPORT_SRC}
+          title="They sold it as protection"
+          className="block w-full border-0"
+          style={{ height, background: HERO_TOP }}
+        />
       </div>
-      <iframe
-        ref={iframeRef}
-        src={REPORT_SRC}
-        title="They sold it as protection"
-        className="block w-full border-0"
-        style={{ height }}
-      />
     </div>
   )
 }

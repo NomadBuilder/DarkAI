@@ -233,8 +233,9 @@ services:
         ls -la static/protectont/ | head -5
         ls -la static/protectont/reports/ 2>/dev/null | head -10 || true
         echo ""
-        if ! grep -q '>Reports<' out/index.html; then
-          echo "❌ out/index.html missing Reports nav item — TopNavigation not in build"
+        # We already cd'd to repo root — check ledger/out, not a non-existent ./out
+        if ! grep -q '>Reports' ledger/out/index.html; then
+          echo "❌ ledger/out/index.html missing Reports nav item — TopNavigation not in build"
           exit 1
         fi
         echo "✅ Homepage nav includes Reports"

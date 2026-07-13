@@ -152,7 +152,9 @@ dummy_data_thread.start()
 # then ledger/out (local or if copy step is skipped)
 def _ledger_dir():
     base = os.path.dirname(__file__)
-    for subpath in ("static", "protectont"), ("ledger", "out"):
+    # Prefer ledger/out (fresh Next export). static/protectont is a deploy copy and
+    # may lag or contain force-committed HTML that references deleted _next hashes.
+    for subpath in ("ledger", "out"), ("static", "protectont"):
         d = os.path.join(base, *subpath)
         if os.path.isdir(d) and os.path.isfile(os.path.join(d, "index.html")):
             return d
