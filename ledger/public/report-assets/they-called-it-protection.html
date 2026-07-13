@@ -258,20 +258,20 @@
       .hero-brand img { height: 2.75rem; }
     }
     .data-credit {
-      display: flex; flex-wrap: wrap; align-items: center; gap: 0.65rem 0.85rem;
-      margin: 1.35rem 0 0.25rem;
-      padding: 0.75rem 0.9rem;
+      display: flex; flex-wrap: nowrap; align-items: center; gap: 0.55rem 0.7rem;
+      margin: 1rem 0 0.25rem;
+      padding: 0.55rem 0.75rem;
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 0.85rem;
+      border-radius: 0.75rem;
       box-shadow: 0 6px 18px rgba(42,31,88,0.04);
     }
     .data-credit img {
       height: 16px; width: auto; max-width: 52px; object-fit: contain; display: block;
-      opacity: 0.9;
+      opacity: 0.9; flex: 0 0 auto;
     }
     .data-credit p {
-      flex: 1 1 220px; margin: 0; font-size: 0.88rem; color: var(--muted); line-height: 1.45;
+      flex: 1 1 auto; margin: 0; font-size: 0.8rem; color: var(--muted); line-height: 1.35;
     }
     .data-credit p strong { color: var(--text); font-weight: 600; }
     .cta-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.35rem; }
@@ -404,13 +404,22 @@
         color: #fff !important;
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
-        break-inside: avoid;
-        page-break-inside: avoid;
+        padding: 0.7rem 0.9rem !important;
+        margin: 0 0 0.4rem !important;
+        break-inside: auto;
+        page-break-inside: auto;
       }
       .hero h1, .hero .lead, .band h3, .band p, .band .cite { color: #fff !important; text-shadow: none !important; }
       .hero h1 em { color: #f9e04c !important; }
-      .wrap { max-width: none; }
-      /* Single column so grid cells don't slice across pages */
+      .hero-brand { margin-bottom: 0.45rem !important; }
+      .hero-brand img { height: 2rem !important; }
+      .eyebrow { margin-bottom: 0.45rem !important; }
+      h1 {
+        font-size: 1.85rem !important;
+        margin-bottom: 0.35rem !important;
+      }
+      .lead { font-size: 0.95rem !important; }
+      .wrap { max-width: none; padding-top: 0 !important; }
       .explore {
         display: block !important;
         grid-template-columns: none !important;
@@ -418,23 +427,34 @@
       .explore a,
       .stat,
       .bill,
-      .callout,
-      .timeline .item,
-      .data-credit {
+      .timeline .item {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
-      section, article.wrap {
-        break-inside: auto;
-        page-break-inside: auto;
+      .callout, .card, section, article.wrap, .data-credit {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+      .data-credit {
+        margin: 0.35rem 0 0.25rem !important;
+        padding: 0.35rem 0.55rem !important;
+        gap: 0.45rem !important;
+      }
+      .data-credit p {
+        font-size: 0.68rem !important;
+        line-height: 1.25 !important;
+      }
+      .data-credit img {
+        height: 12px !important;
+        max-width: 40px !important;
+      }
+      .callout {
+        margin: 0.35rem 0 !important;
+        padding: 0.75rem 0.85rem !important;
       }
       h2, h3 {
         break-after: avoid;
         page-break-after: avoid;
-      }
-      .data-credit img {
-        height: 16px !important;
-        max-width: 52px !important;
       }
     }
 
@@ -466,9 +486,8 @@
         <img src="https://protectont.ca/partners/onac.png" alt="Ontarians Against Corruption" width="52" height="16">
       </a>
       <p>
-        <strong>Vote, salary, and alignment data</strong> from the MPP tracker built with
-        <a href="https://www.onac.ca/" target="_blank" rel="noopener noreferrer">Ontarians Against Corruption</a>
-        (ONAC) · External figures from OLA, Elections Ontario, FAO, Auditor General, and Integrity Commissioner
+        <strong>Vote, salary &amp; alignment data</strong> from the ONAC MPP tracker
+        · Sources: OLA, Elections Ontario, FAO, Auditor General &amp; Integrity Commissioner
       </p>
     </div>
 
