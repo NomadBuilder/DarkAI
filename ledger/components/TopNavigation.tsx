@@ -85,7 +85,7 @@ const reportsDropdownItems: NavItem[] = [
   {
     id: 'report-protection',
     label: 'They sold it as protection',
-    href: '/reports/they-called-it-protection',
+    href: '/reports/they-called-it-protection/',
   },
 ]
 

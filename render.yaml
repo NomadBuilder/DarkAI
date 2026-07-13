@@ -221,17 +221,14 @@ services:
         mkdir -p static/protectont
         cp -r ledger/out/* static/protectont/
         # Keep accountability brief available even if Next export omitted public/reports
-        if [ -f "ledger/public/reports/they-called-it-protection/index.html" ]; then
-          mkdir -p static/protectont/reports/they-called-it-protection
-          cp -f ledger/public/reports/they-called-it-protection/index.html static/protectont/reports/they-called-it-protection/
-          echo "✅ Copied they-called-it-protection into static/protectont/reports/"
-        elif [ -f "ledger/public/reports/they-called-it-protection.html" ]; then
-          mkdir -p static/protectont/reports
-          cp -f ledger/public/reports/they-called-it-protection.html static/protectont/reports/
-          echo "✅ Copied they-called-it-protection.html into static/protectont/reports/"
+        # Report body asset (iframe) + ensure Next page owns /reports/they-called-it-protection
+        if [ -f "ledger/public/report-assets/they-called-it-protection.html" ]; then
+          mkdir -p static/protectont/report-assets
+          cp -f ledger/public/report-assets/they-called-it-protection.html static/protectont/report-assets/
+          echo "✅ Copied report-assets/they-called-it-protection.html"
         fi
-        # No reports hub for now — Flask redirects /reports → brief
-        rm -f static/protectont/reports/index.html static/protectont/reports/index.txt
+        # No stale flat report HTML under reports/ (App Router page must win)
+        rm -f static/protectont/reports/they-called-it-protection.html
         echo "✅ static/protectont populated (app.py will serve from here if present)"
         ls -la static/protectont/ | head -5
         ls -la static/protectont/reports/ 2>/dev/null | head -10 || true

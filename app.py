@@ -522,22 +522,11 @@ def protect_ontario_and_ledger_redirect():
             slug = path[6:].strip("/").split("/")[0]
             if slug and not slug.startswith("_"):
                 return redirect(f"https://protectont.ca/flyers/{slug}/", code=301)
-        # Accountability brief — from Flask templates so it survives ledger rebuild wipes
-        if path in (
-            "reports/they-called-it-protection",
-            "reports/they-called-it-protection.html",
-            "reports/protectont-accountability",
-            "reports/protectont-accountability.html",
-        ):
-            try:
-                return render_template("report_protectont_accountability.html")
-            except Exception:
-                return send_from_directory(
-                    "templates", "report_protectont_accountability.html"
-                )
-        # Single report for now — /reports goes straight to the brief
+        # Accountability brief is a normal ProtectOnt page (Next + TopNavigation).
+        # Do not serve the old Flask-only template — that duplicated/broke the global nav.
+        # /reports with no slug → the brief (single report for now)
         if path in ("reports", "reports/", "reports/index.html"):
-            return redirect("/reports/they-called-it-protection", code=302)
+            return redirect("/reports/they-called-it-protection/", code=302)
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")
@@ -1045,9 +1034,18 @@ def view_waitlist():
 
 
 @app.route('/reports/they-called-it-protection')
+@app.route('/reports/they-called-it-protection/')
 @app.route('/reports/protectont-accountability')
 def protectont_accountability_report():
-    """ProtectOnt accountability brief — also served on protectont.ca/reports/."""
+    """Serve the Next/ProtectOnt brief page (shared TopNavigation) from static export."""
+    ledger_dir = _ledger_dir()
+    for relative in (
+        os.path.join('reports', 'they-called-it-protection', 'index.html'),
+        os.path.join('reports', 'they-called-it-protection.html'),
+    ):
+        full = os.path.join(ledger_dir, relative)
+        if os.path.isfile(full):
+            return send_from_directory(os.path.dirname(full), os.path.basename(full))
     try:
         return render_template('report_protectont_accountability.html')
     except Exception:
