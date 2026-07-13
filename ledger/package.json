@@ -10,7 +10,7 @@
     "build": "next build",
     "build:validate": "next build && node scripts/validate-build.js",
     "build:static": "STATIC_EXPORT=true next build",
-    "build:protectont": "STATIC_EXPORT=true next build",
+    "build:protectont": "STATIC_EXPORT=true BASE_PATH= NEXT_PUBLIC_BASE_PATH= next build",
     "start": "next start",
     "lint": "next lint",
     "test:flyer-print": "node scripts/test-flyer-print-fit.mjs",

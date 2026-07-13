@@ -152,9 +152,9 @@ dummy_data_thread.start()
 # then ledger/out (local or if copy step is skipped)
 def _ledger_dir():
     base = os.path.dirname(__file__)
-    # Prefer ledger/out (fresh Next export). static/protectont is a deploy copy and
-    # may lag or contain force-committed HTML that references deleted _next hashes.
-    for subpath in ("ledger", "out"), ("static", "protectont"):
+    # Prefer static/protectont (Render build copies a complete root-relative export here).
+    # Fall back to ledger/out for local builds where the copy step was skipped.
+    for subpath in ("static", "protectont"), ("ledger", "out"):
         d = os.path.join(base, *subpath)
         if os.path.isdir(d) and os.path.isfile(os.path.join(d, "index.html")):
             return d
@@ -212,6 +212,12 @@ def serve_ledger_at_root(path):
             "x_forwarded_host": request.headers.get("X-Forwarded-Host"),
         }), 503
     path = (path or "").strip("/")
+    # Safety net: if a build accidentally baked BASE_PATH=/ledger, browser requests
+    # /ledger/_next/... — strip the prefix so root hosting still finds the files.
+    if path == "ledger":
+        path = ""
+    elif path.startswith("ledger/"):
+        path = path[len("ledger/") :]
     if not path or path == "index.html":
         return send_from_directory(LEDGER_DIR, "index.html")
 
