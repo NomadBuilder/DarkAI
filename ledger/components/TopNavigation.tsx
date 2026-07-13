@@ -81,21 +81,12 @@ const materialsDropdownItems: NavItem[] = [
   { id: 'products', label: 'Products', href: '/products' },
 ]
 
-const reportsDropdownItems: NavItem[] = [
-  { id: 'reports-all', label: 'All reports', href: '/reports' },
-  {
-    id: 'report-protection',
-    label: 'They sold it as protection',
-    href: '/reports/they-called-it-protection',
-  },
-]
-
 const navItems: NavItem[] = [
   { id: 'issues', label: 'The Issues', isDropdown: true, dropdownItems: issuesDropdownItems },
   { id: 'take-action', label: 'Take action', isDropdown: true, dropdownItems: takeActionDropdownItems },
   { id: 'protests', label: 'Protests', href: '/protests' },
   { id: 'materials', label: 'Materials', isDropdown: true, dropdownItems: materialsDropdownItems },
-  { id: 'reports', label: 'Reports', isDropdown: true, dropdownItems: reportsDropdownItems },
+  { id: 'reports', label: 'Reports', href: '/reports' },
   { id: 'about', label: 'About', isDropdown: true, dropdownItems: aboutDropdownItems },
 ]
 
