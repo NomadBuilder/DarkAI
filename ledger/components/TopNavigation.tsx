@@ -84,7 +84,7 @@ const materialsDropdownItems: NavItem[] = [
 const reportsDropdownItems: NavItem[] = [
   {
     id: 'report-protection',
-    label: 'They sold it as protection',
+    label: 'Protect Ontario accountability brief',
     href: '/reports/they-called-it-protection/',
   },
 ]

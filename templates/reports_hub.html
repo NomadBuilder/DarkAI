@@ -123,117 +123,23 @@
     .footer a { font-size: 0.88rem; color: var(--muted); text-decoration: none; }
     .footer a:hover { color: var(--ink); }
     .copy { font-size: 0.75rem; color: var(--dim); }
-
-
   </style>
 </head>
 <body>
-
-
-    <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={corePlugins:{preflight:false}}</script>
-  <nav class="po-main-nav sticky top-0 left-0 right-0 z-50 w-full" aria-label="Main">
-    <div class="backdrop-blur-md transition-all duration-300 w-full border-b border-[#f9e04c]/15 bg-[#3d2b7a]/90">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-        <div class="flex items-center justify-between h-14 sm:h-16">
-          <div class="flex-shrink-0 min-w-0">
-            <a class="flex items-center gap-2 leading-none text-sm sm:text-base font-light transition-colors text-[#f9e04c] hover:text-[#f9e04c]/85 no-underline" aria-label="Protect Ontario – Home" href="https://protectont.ca/">
-              <img src="https://protectont.ca/logo-icon-text-dark.svg" alt="" class="block w-auto h-9 sm:h-10" width="180" height="40"/>
-            </a>
-          </div>
-          <div class="hidden md:flex items-center flex-1 justify-end gap-1 lg:gap-2 xl:gap-3 max-w-6xl mx-4">
-        <div class="relative group">
-          <button type="button" class="px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10 flex items-center gap-1">The Issues<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-          <div class="hidden group-hover:block absolute top-full left-0 pt-1 z-50">
-            <div class="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/healthcare">Healthcare</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/water">Water</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/public-land">Public land</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/wildlife">Wildlife Impact</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/indigenous-rights">Indigenous rights</a>
-            </div>
-          </div>
-        </div>
-        <div class="relative group">
-          <button type="button" class="px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10 flex items-center gap-1">Take action<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-          <div class="hidden group-hover:block absolute top-full left-0 pt-1 z-50">
-            <div class="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/join/">Join — get a sign</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/take-action">Contact your MPP</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00">Donate</a>
-            </div>
-          </div>
-        </div>
-            <a class="px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10 no-underline" href="https://protectont.ca/protests">Protests</a>
-        <div class="relative group">
-          <button type="button" class="px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10 flex items-center gap-1">Materials<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-          <div class="hidden group-hover:block absolute top-full left-0 pt-1 z-50">
-            <div class="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/materials">All materials</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/flyers">Printable flyers</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/products">Products</a>
-            </div>
-          </div>
-        </div>
-            <a class="px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10 no-underline" href="https://protectont.ca/reports/">Reports</a>
-        <div class="relative group">
-          <button type="button" class="px-3 lg:px-4 py-2 text-sm lg:text-base font-light transition-colors rounded-md whitespace-nowrap text-[#f9e04c]/85 hover:text-[#f9e04c] hover:bg-white/10 flex items-center gap-1">About<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
-          <div class="hidden group-hover:block absolute top-full left-0 pt-1 z-50">
-            <div class="bg-white rounded-lg shadow-lg border border-gray-200 py-2 min-w-[200px]">
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/about">About</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/media">Press room</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/receipts">The Receipts</a>
-            <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/methodology">Methodology</a>
-            </div>
-          </div>
-        </div>
-            <a class="ml-2 lg:ml-2 px-4 lg:px-5 py-2.5 text-sm lg:text-base font-medium rounded-lg shadow-sm hover:shadow transition-colors whitespace-nowrap bg-[#f9e04c] text-[#1a1a1a] hover:bg-[#f5d84a] no-underline" href="https://protectont.ca/join/">Join us</a>
-          </div>
-          <div class="md:hidden relative z-[90]">
-            <details class="relative">
-              <summary class="p-2 text-[#f9e04c]/90 cursor-pointer list-none" aria-label="Menu">
-                <svg class="w-6 h-6" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
-              </summary>
-              <div class="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/healthcare">The Issues</a>
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/take-action">Take action</a>
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/protests">Protests</a>
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/materials">Materials</a>
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/reports/">Reports</a>
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/about">About</a>
-                <a class="block w-full text-left px-4 py-2 text-sm font-light text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors no-underline" href="https://protectont.ca/join/">Join us</a>
-              </div>
-            </details>
-          </div>
-        </div>
-      </div>
+  <div class="site-bar">
+    <div class="site-bar-left">
+      <a href="https://protectont.ca/" aria-label="Protect Ontario – Home">
+        <img src="https://protectont.ca/logo-icon-text.svg" alt="ProtectOnt.ca" width="180" height="40">
+      </a>
+      <nav class="site-bar-nav" aria-label="Site">
+        <a href="https://protectont.ca/reports/">Reports</a>
+        <a href="https://protectont.ca/take-action">Take action</a>
+        <a href="https://protectont.ca/protests">Protests</a>
+        <a href="https://protectont.ca/materials">Materials</a>
+      </nav>
     </div>
-  </nav>
-  <div class="hidden md:flex justify-end max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-0">
-    <button type="button" onclick="window.print()" class="sr-only">Print</button>
+    <a class="join" href="https://protectont.ca/join/">Join us</a>
   </div>
-  <style>
-    .po-main-nav summary::-webkit-details-marker { display: none; }
-    .po-main-nav a { text-decoration: none; }
-    @media print { .po-main-nav { display: none !important; } }
-    /* desktop print control under bar */
-    .po-print-row {
-      display: none;
-    }
-    @media (min-width: 768px) {
-      .po-print-row {
-        display: flex; justify-content: flex-end;
-        max-width: 80rem; margin: 0.35rem auto 0;
-        padding: 0 1rem;
-      }
-      .po-print-row button {
-        font-family: Inter, system-ui, sans-serif;
-        font-size: 0.75rem; font-weight: 500;
-        color: #6b7280; background: transparent; border: 0;
-        cursor: pointer; text-decoration: underline;
-      }
-    }
-  </style>
 
   <header class="hero">
     <div class="hero-inner">
@@ -251,7 +157,7 @@
         <span class="badge">Featured</span>
         <span class="date">July 2026</span>
       </div>
-      <h2>They sold it as protection</h2>
+      <h2>Protect Ontario accountability brief</h2>
       <p class="sub">Six bills. One pattern. Your MPP’s votes.</p>
       <p class="desc">
         How “Protect Ontario” branding covered species-law rollbacks, special economic zones, water corporations, and budget omnibuses — plus a postal lookup for your MPP’s Yes / No / No Show on Bills 5, 17, 24, 60, 68 &amp; 97.

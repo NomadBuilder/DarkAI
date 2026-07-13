@@ -13,7 +13,7 @@ export type ProtectOntReport = {
 export const PROTECTONT_REPORTS: ProtectOntReport[] = [
   {
     slug: 'they-called-it-protection',
-    title: 'They sold it as protection',
+    title: 'Protect Ontario accountability brief',
     subtitle: 'Six bills. One pattern. Your MPP’s votes.',
     description:
       'How “Protect Ontario” branding covered species-law rollbacks, special economic zones, water corporations, and budget omnibuses — plus a postal lookup for your MPP’s Yes / No / No Show on Bills 5, 17, 24, 60, 68 & 97.',

@@ -60,7 +60,7 @@ export default function TheyCalledItProtectionPage() {
         <iframe
           ref={iframeRef}
           src={REPORT_SRC}
-          title="They sold it as protection"
+          title="Protect Ontario accountability brief"
           className="block w-full border-0"
           style={{ height, background: HERO_TOP }}
         />
