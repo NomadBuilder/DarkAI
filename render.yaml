@@ -245,6 +245,12 @@ services:
         ls -la static/protectont/reports/ 2>/dev/null | head -10 || true
         echo ""
         echo "=========================================="
+        # Fail loudly if homepage nav is missing Reports (TopNavigation regression)
+        if ! grep -q '>Reports<' out/index.html; then
+          echo "❌ out/index.html missing Reports nav item — TopNavigation not in build"
+          exit 1
+        fi
+        echo "✅ Homepage nav includes Reports"
         echo "✅ Ledger build successful!"
         echo "=========================================="
       else
