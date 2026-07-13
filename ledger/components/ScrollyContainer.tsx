@@ -15,7 +15,6 @@ import TopNavigation from './TopNavigation'
 import SectionColdOpenJoinBridge from './home/SectionColdOpenJoinBridge'
 import SectionJoinCtaBridge from './home/SectionJoinCtaBridge'
 import PartnerOrganizationsSection from './home/PartnerOrganizationsCarousel'
-import MppVoteRecordLookup from './take-action/MppVoteRecordLookup'
 
 export default function ScrollyContainer() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -119,7 +118,6 @@ export default function ScrollyContainer() {
           <SectionKeyFindings />
         </section>
         <SectionLoss />
-        <MppVoteRecordLookup compact sharePath="/#your-mpp-record" />
         <PartnerOrganizationsSection />
         <SectionJoinCtaBridge />
         <section id="sources" className="border-t border-slate-100 bg-white px-4 py-12 sm:px-6 md:px-8 md:py-16">

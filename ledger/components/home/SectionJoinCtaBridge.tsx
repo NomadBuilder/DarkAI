@@ -36,7 +36,7 @@ export default function SectionJoinCtaBridge() {
           Find a protest
         </Link>
         <Link
-          href="/take-action#your-mpp-record"
+          href="/take-action"
           className="inline-flex min-h-[3rem] w-full items-center justify-center rounded-lg border-2 border-white/40 px-8 py-3.5 text-sm font-medium text-white transition-colors hover:border-white hover:bg-white/10 sm:w-auto"
         >
           Contact your MPP

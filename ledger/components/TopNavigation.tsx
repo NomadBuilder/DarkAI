@@ -71,7 +71,7 @@ const DONATE_STRIPE_URL = 'https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00'
 
 const takeActionDropdownItems: NavItem[] = [
   { id: 'join', label: 'Join — get a sign', href: '/join' },
-  { id: 'contact-mpp', label: 'Contact your MPP', href: '/take-action#your-mpp-record' },
+  { id: 'contact-mpp', label: 'Contact your MPP', href: '/take-action' },
   { id: 'donate', label: 'Donate', href: DONATE_STRIPE_URL, external: true },
 ]
 

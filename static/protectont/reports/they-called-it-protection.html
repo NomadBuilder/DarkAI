@@ -299,6 +299,103 @@
       margin-top: 2.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
       font-size: 0.78rem; color: var(--dim);
     }
+
+    /* Postal → MPP six-bill record */
+    .mpp-lookup {
+      scroll-margin-top: 4.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 1rem;
+      padding: 1.35rem 1.35rem 1.25rem;
+      margin: 1.5rem 0 0;
+      box-shadow: 0 10px 36px rgba(42,31,88,0.07);
+    }
+    .mpp-lookup .eyebrow-sm {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 0.4rem;
+    }
+    .mpp-lookup h3 {
+      font-family: var(--display); font-size: clamp(1.35rem, 3vw, 1.7rem);
+      font-weight: 600; letter-spacing: -0.02em; color: var(--ink);
+      margin: 0 0 0.45rem; text-transform: none;
+    }
+    .mpp-lookup > .blurb {
+      color: var(--muted); font-size: 0.95rem; margin: 0 0 1rem; max-width: 36rem;
+    }
+    .mpp-lookup-form {
+      display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: stretch;
+    }
+    .mpp-lookup-form label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .mpp-lookup-form input {
+      flex: 1 1 10rem; min-width: 0;
+      font-family: var(--font); font-size: 1rem;
+      border: 1px solid var(--border); border-radius: 0.55rem;
+      padding: 0.7rem 0.85rem; color: var(--text); background: #fff;
+    }
+    .mpp-lookup-form input:focus {
+      outline: 2px solid rgba(53,38,109,0.35); outline-offset: 1px;
+    }
+    .mpp-lookup-form button {
+      font-family: var(--font); font-weight: 600; font-size: 0.92rem;
+      background: var(--yellow); color: var(--ink); border: 0; border-radius: 0.55rem;
+      padding: 0.7rem 1.1rem; cursor: pointer; white-space: nowrap;
+    }
+    .mpp-lookup-form button:hover { background: var(--yellow-hover); }
+    .mpp-lookup-form button:disabled { opacity: 0.65; cursor: wait; }
+    .mpp-lookup-error {
+      margin-top: 0.75rem; color: var(--danger); font-size: 0.9rem; display: none;
+    }
+    .mpp-lookup-error.show { display: block; }
+    .mpp-lookup-result { display: none; margin-top: 1.15rem; }
+    .mpp-lookup-result.show { display: block; }
+    .mpp-lookup-meta { font-size: 0.9rem; color: var(--muted); margin: 0.2rem 0 0.85rem; }
+    .mpp-lookup-meta a { font-weight: 600; }
+    .mpp-lookup-warn {
+      font-size: 0.85rem; color: #92400e; background: #fffbeb;
+      border: 1px solid #fde68a; border-radius: 0.5rem; padding: 0.55rem 0.7rem; margin-bottom: 0.85rem;
+    }
+    .mpp-votes {
+      list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 0 0 1rem;
+    }
+    @media (max-width: 560px) { .mpp-votes { grid-template-columns: 1fr; } }
+    .mpp-votes li {
+      display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;
+      background: var(--bg); border: 1px solid var(--border); border-radius: 0.65rem;
+      padding: 0.65rem 0.75rem;
+    }
+    .mpp-votes .bill-id { font-weight: 700; font-size: 0.88rem; color: var(--ink); }
+    .mpp-votes .bill-short { display: block; font-size: 0.72rem; color: var(--dim); font-weight: 500; }
+    .vote-badge {
+      flex-shrink: 0; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.02em;
+      padding: 0.28rem 0.55rem; border-radius: 0.4rem; border: 1px solid transparent;
+    }
+    .vote-badge.yes { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+    .vote-badge.no { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+    .vote-badge.noshow { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+    .vote-badge.other { background: #f3f4f6; color: #374151; border-color: #e5e7eb; }
+    .mpp-ask {
+      background: rgba(53,38,109,0.06); border: 1px solid rgba(53,38,109,0.18);
+      border-radius: 0.75rem; padding: 0.85rem 1rem; margin-bottom: 1rem;
+    }
+    .mpp-ask .label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 0.3rem;
+    }
+    .mpp-ask p { margin: 0; color: var(--text); font-size: 0.95rem; }
+    .mpp-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+    .mpp-actions a, .mpp-actions button {
+      font-family: var(--font); font-weight: 600; font-size: 0.88rem;
+      border-radius: 0.5rem; padding: 0.55rem 0.9rem; cursor: pointer;
+      text-decoration: none; border: 1px solid var(--border); background: #fff; color: var(--ink);
+    }
+    .mpp-actions a.primary, .mpp-actions button.primary {
+      background: var(--yellow); border-color: var(--yellow); color: var(--ink);
+    }
+    .mpp-actions a.primary:hover, .mpp-actions button.primary:hover { background: var(--yellow-hover); }
+    .mpp-actions a:hover, .mpp-actions button:hover { border-color: var(--purple-mid); }
+    .mpp-lookup-foot { margin-top: 0.85rem; font-size: 0.75rem; color: var(--dim); }
+    @media print { .mpp-lookup-form, .mpp-actions { display: none !important; } }
+
     @media print {
       .site-bar, .band::before, .hero::before { display: none !important; }
       .hero, .band { background: #fff !important; color: #111 !important; }
@@ -359,8 +456,24 @@
         <a href="https://protectont.ca/public-land"><span>Bill 5</span>Ontario Place carve-out · public land</a>
         <a href="https://protectont.ca/water"><span>Bill 60</span>Water corporations · privatization pathway</a>
         <a href="https://protectont.ca/greenbelt"><span>Precedent</span>Greenbelt preferential treatment</a>
-        <a href="https://protectont.ca/take-action"><span>Next</span>Contact your MPP · take action</a>
+        <a href="#your-mpp-record"><span>Act</span>Your MPP’s record on these six</a>
       </div>
+    </div>
+
+    <div class="mpp-lookup" id="your-mpp-record">
+      <p class="eyebrow-sm">Six bills · one riding</p>
+      <h3>Your MPP’s record on these six</h3>
+      <p class="blurb">
+        Enter your postal code. See Yes / No / No Show on Bills 5, 17, 24, 60, 68 &amp; 97 — then a one-line ask you can send.
+      </p>
+      <form class="mpp-lookup-form" id="mpp-lookup-form">
+        <label for="mpp-postal">Ontario postal code</label>
+        <input id="mpp-postal" name="postal" type="text" inputmode="text" autocomplete="postal-code" placeholder="e.g. M5V 2T6" required>
+        <button type="submit" id="mpp-lookup-btn">See their record</button>
+      </form>
+      <p class="mpp-lookup-error" id="mpp-lookup-error" role="alert"></p>
+      <div class="mpp-lookup-result" id="mpp-lookup-result" role="status" aria-live="polite"></div>
+      <p class="mpp-lookup-foot">Riding match via OpenNorth Represent · vote data from the ProtectOnt / ONAC MPP tracker</p>
     </div>
 
     <hr>
@@ -608,7 +721,7 @@
         On every bill in this brief, Progressive Conservatives who cast Yes or No voted Yes. No recorded PC No. Absences (“No Show”) exist — they are not dissent.
       </p>
       <div class="cta-row">
-        <a class="primary" href="https://protectont.ca/take-action">Contact your MPP</a>
+        <a class="primary" href="#your-mpp-record">Your MPP’s record</a>
         <a class="secondary" href="https://protectont.ca/join/">Join us</a>
       </div>
     </section>
@@ -680,7 +793,7 @@
       </div>
       <p class="caption">ONAC / ProtectOnt.ca tracker · Yes on Bill 5 · public salary on file</p>
       <div class="cta-row">
-        <a class="primary" href="https://protectont.ca/take-action">Contact your MPP</a>
+        <a class="primary" href="#your-mpp-record">Your MPP’s record</a>
         <a class="secondary" href="https://protectont.ca/join/">Join us</a>
       </div>
       <div class="card" style="margin-top:1.25rem">
@@ -711,7 +824,7 @@
         <a href="https://protectont.ca/public-land"><span>Bill 5</span>Public land</a>
         <a href="https://protectont.ca/greenbelt"><span>Precedent</span>Greenbelt</a>
         <a href="https://protectont.ca/indigenous-rights"><span>Bill 5</span>Indigenous rights</a>
-        <a href="https://protectont.ca/take-action"><span>Act</span>Contact your MPP</a>
+        <a href="#your-mpp-record"><span>Act</span>Your MPP’s record</a>
       </div>
     </section>
 
@@ -861,5 +974,242 @@
       }
     });
   </script>
+
+  <script>
+  (function () {
+    const BILL_ORDER = ['Bill 5', 'Bill 17', 'Bill 24', 'Bill 60', 'Bill 68', 'Bill 97'];
+    const REPRESENT = 'https://represent.opennorth.ca';
+    const DATA_URLS = [
+      '/data/mpp-featured-votes.json',
+      'https://protectont.ca/data/mpp-featured-votes.json'
+    ];
+    const SHARE_URL = 'https://protectont.ca/reports/they-called-it-protection#your-mpp-record';
+
+    const form = document.getElementById('mpp-lookup-form');
+    const input = document.getElementById('mpp-postal');
+    const btn = document.getElementById('mpp-lookup-btn');
+    const errEl = document.getElementById('mpp-lookup-error');
+    const resultEl = document.getElementById('mpp-lookup-result');
+    if (!form) return;
+
+    let dataset = null;
+
+    function normalizePostal(raw) {
+      return String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    }
+    function formatPostal(raw) {
+      const n = normalizePostal(raw).slice(0, 6);
+      return n.length > 3 ? n.slice(0, 3) + ' ' + n.slice(3) : n;
+    }
+    function isValidPostal(raw) {
+      return /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(String(raw || '').trim().replace(/\s+/g, ''));
+    }
+    function normalizeRiding(name) {
+      return String(name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[—–−‑]/g, '-').replace(/[''`]/g, '').replace(/\s+/g, ' ').trim();
+    }
+    function normalizePersonName(name) {
+      return String(name || '').toLowerCase().replace(/^(hon\.|dr\.)\s*/i, '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z\s-]/g, '')
+        .replace(/\s+/g, ' ').trim();
+    }
+    function findMpp(mpps, districtName, apiName) {
+      const wantRiding = normalizeRiding(districtName);
+      if (wantRiding) {
+        const byRiding = mpps.find(m => normalizeRiding(m.riding) === wantRiding);
+        if (byRiding) return byRiding;
+      }
+      const wantName = normalizePersonName(apiName);
+      if (wantName) {
+        const byName = mpps.find(m => normalizePersonName(m.name) === wantName);
+        if (byName) return byName;
+      }
+      return null;
+    }
+    function voteTone(vote) {
+      const v = String(vote || '').trim().toLowerCase();
+      if (v === 'yes') return 'yes';
+      if (v === 'no') return 'no';
+      if (v === 'no show' || v === 'absent') return 'noshow';
+      return 'other';
+    }
+    function oneLineAsk(votes) {
+      const values = BILL_ORDER.map(id => votes[id] || '');
+      const yesCount = values.filter(v => voteTone(v) === 'yes').length;
+      const noCount = values.filter(v => voteTone(v) === 'no').length;
+      const noShowCount = values.filter(v => voteTone(v) === 'noshow').length;
+      if (yesCount >= 4) {
+        return 'Ask them why they voted Yes on bills sold as “protection” that strip species law, municipal power, and public water control.';
+      }
+      if (noCount >= 4) {
+        return 'Thank them for voting No — ask them to keep pressing for repeal of Bill 5 and to block the next “Protect Ontario” package.';
+      }
+      if (noShowCount >= 3) {
+        return 'Ask them why they skipped votes on bills that reshape public protections — and how they’ll show up next time.';
+      }
+      return 'Tell them you’ve seen their record on these six bills — and ask them to reverse course and protect public assets.';
+    }
+    function showError(msg) {
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+      resultEl.classList.remove('show');
+      resultEl.innerHTML = '';
+    }
+    function clearError() {
+      errEl.textContent = '';
+      errEl.classList.remove('show');
+    }
+    async function loadDataset() {
+      if (dataset) return dataset;
+      let lastErr = null;
+      for (const url of DATA_URLS) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) { lastErr = new Error('HTTP ' + res.status); continue; }
+          dataset = await res.json();
+          return dataset;
+        } catch (e) { lastErr = e; }
+      }
+      throw lastErr || new Error('Could not load vote data');
+    }
+    async function lookupByPostal(code, mpps) {
+      const res = await fetch(REPRESENT + '/postcodes/' + code + '/');
+      if (res.status === 404) return { ok: false, error: 'That postal code was not found. Double-check it and try again.' };
+      if (!res.ok) return { ok: false, error: 'Lookup service is unavailable right now. Try again in a moment.' };
+      const data = await res.json();
+      if (data.province && data.province !== 'ON') {
+        return { ok: false, error: 'That postal code is in ' + (data.province || 'another province') + ', not Ontario.' };
+      }
+      const ontarioMpps = (data.representatives_centroid || []).filter(r =>
+        r.elected_office === 'MPP' && (r.representative_set_name || '').includes('Ontario')
+      );
+      for (const rep of ontarioMpps) {
+        const mpp = findMpp(mpps, rep.district_name, rep.name);
+        if (mpp) {
+          return { ok: true, mpp, riding: mpp.riding || rep.district_name, city: data.city || null, warning: null };
+        }
+      }
+      const districts = [];
+      for (const b of data.boundaries_centroid || []) {
+        if ((b.boundary_set_name || '').includes('Ontario electoral') && b.name && !districts.includes(b.name)) {
+          districts.push(b.name);
+        }
+      }
+      for (const district of districts) {
+        const mpp = findMpp(mpps, district, null);
+        if (mpp) {
+          return {
+            ok: true, mpp, riding: mpp.riding || district, city: data.city || null,
+            warning: districts.length > 1
+              ? 'This postal code may touch more than one riding — we matched the best available result.'
+              : null
+          };
+        }
+      }
+      if (ontarioMpps.length || districts.length) {
+        const label = (ontarioMpps[0] && ontarioMpps[0].district_name) || districts[0];
+        return { ok: false, error: 'Found riding “' + label + '”, but it isn’t in our MPP list yet.' };
+      }
+      return { ok: false, error: 'No Ontario MPP found for that postal code.' };
+    }
+    function shareText(mpp, bills, postal, ask) {
+      const lines = bills.map(b => b.id + ' (' + b.short + '): ' + (mpp.votes[b.id] || '—'));
+      return [
+        mpp.name + ' (' + mpp.riding + ') — record on six “Protect Ontario” bills',
+        'Postal: ' + postal, '', ...lines, '', ask, '', 'Look up yours: ' + SHARE_URL
+      ].join('\n');
+    }
+    function mailto(mpp, bills, ask) {
+      const voteLines = bills.map(b => '• ' + b.id + ' (' + b.short + '): ' + (mpp.votes[b.id] || '—')).join('\n');
+      const body = 'Hello ' + mpp.name + ',\n\nI looked up your voting record on the six featured “Protect Ontario” bills:\n\n'
+        + voteLines + '\n\n' + ask
+        + '\n\nI am a constituent in ' + mpp.riding + ' and I expect you to protect public assets, species law, and municipal democracy.\n\nSincerely,\n[Your Name]';
+      const subject = 'Your record on Bills 5, 17, 24, 60, 68 & 97';
+      const href = (mpp.email ? 'mailto:' + encodeURIComponent(mpp.email) : 'mailto:')
+        + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+      return href;
+    }
+    function renderResult(lookup, bills, postal) {
+      const mpp = lookup.mpp;
+      const ask = oneLineAsk(mpp.votes);
+      const voteItems = bills.map(b => {
+        const vote = mpp.votes[b.id] || '—';
+        const tone = voteTone(vote);
+        return '<li><div><span class="bill-id">' + b.id + '</span><span class="bill-short">'
+          + (b.short || '') + '</span></div><span class="vote-badge ' + tone + '">' + vote + '</span></li>';
+      }).join('');
+      const profile = mpp.profileUrl
+        ? ' · <a href="' + mpp.profileUrl + '" target="_blank" rel="noopener noreferrer">OLA profile ↗</a>'
+        : '';
+      const warn = lookup.warning ? '<p class="mpp-lookup-warn">' + lookup.warning + '</p>' : '';
+      resultEl.innerHTML =
+        '<h4 style="font-family:var(--display);font-size:1.35rem;margin:0;color:var(--ink)">' + mpp.name + '</h4>'
+        + '<p class="mpp-lookup-meta">' + mpp.party + ' · ' + mpp.riding
+        + (lookup.city ? ' · ' + lookup.city : '') + ' · ' + postal + profile + '</p>'
+        + warn
+        + '<ul class="mpp-votes">' + voteItems + '</ul>'
+        + '<div class="mpp-ask"><div class="label">One-line ask</div><p>' + ask + '</p></div>'
+        + '<div class="mpp-actions">'
+        + '<a class="primary" id="mpp-email" href="' + mailto(mpp, bills, ask) + '">Email this MPP</a>'
+        + '<button type="button" id="mpp-copy">Copy share text</button>'
+        + (navigator.share ? '<button type="button" id="mpp-share">Share</button>' : '')
+        + '</div>';
+      resultEl.classList.add('show');
+      const text = shareText(mpp, bills, postal, ask);
+      const copyBtn = document.getElementById('mpp-copy');
+      if (copyBtn) {
+        copyBtn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(text);
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => { copyBtn.textContent = 'Copy share text'; }, 2000);
+          } catch (_) {
+            showError('Could not copy — select the text and copy manually.');
+          }
+        });
+      }
+      const shareBtn = document.getElementById('mpp-share');
+      if (shareBtn && navigator.share) {
+        shareBtn.addEventListener('click', async () => {
+          try { await navigator.share({ title: mpp.name + ' — six-bill record', text: text, url: SHARE_URL }); }
+          catch (_) {}
+        });
+      }
+    }
+
+    input.addEventListener('blur', () => {
+      const n = normalizePostal(input.value);
+      if (n.length === 6 && isValidPostal(n)) input.value = formatPostal(n);
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const code = normalizePostal(input.value);
+      if (code.length !== 6 || !isValidPostal(code)) {
+        showError('Enter a valid Ontario postal code (e.g. M5V 2T6).');
+        return;
+      }
+      input.value = formatPostal(code);
+      btn.disabled = true;
+      btn.textContent = 'Looking up…';
+      try {
+        const data = await loadDataset();
+        const lookup = await lookupByPostal(code, data.mpps || []);
+        if (!lookup.ok) { showError(lookup.error); return; }
+        const bills = (data.bills && data.bills.length)
+          ? data.bills
+          : BILL_ORDER.map(id => ({ id: id, short: id, title: id }));
+        renderResult(lookup, bills, formatPostal(code));
+      } catch (_) {
+        showError('Lookup failed. Check your connection and try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'See their record';
+      }
+    });
+  })();
+  </script>
+
 </body>
 </html>
