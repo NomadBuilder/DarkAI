@@ -121,8 +121,8 @@ services:
           python3 scripts/generate-og-image.py >> "$DIAG_LOG" 2>&1 || echo "  ⚠️  og-image.png generation skipped (commit ledger/public/og-image.png)" >> "$DIAG_LOG"
         fi
 
-        # Wipe prior export so stale force-added HTML cannot outlive matching _next hashes
-        rm -rf out
+        # Wipe prior export AND Next cache so label/source edits always recompile
+        rm -rf .next out
         # Run build with environment variables inline (more reliable) and capture all output
         # Explicitly clear BASE_PATH — Render service env may still set BASE_PATH=/ledger
         # for darkai.ca subpath hosting; ProtectOnt must be root-relative or CSS 404s.
