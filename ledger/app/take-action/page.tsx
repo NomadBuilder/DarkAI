@@ -5,6 +5,7 @@ import MethodologyDrawer from '../../components/MethodologyDrawer'
 import DataSourcesDrawer from '../../components/DataSourcesDrawer'
 import MPPContactModal, { type MppContactVariant } from '../../components/MPPContactModal'
 import MPPIssuePicker from '../../components/take-action/MPPIssuePicker'
+import MppVoteRecordLookup from '../../components/take-action/MppVoteRecordLookup'
 import Link from 'next/link'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
@@ -79,6 +80,8 @@ export default function TakeActionPage() {
             </motion.p>
           </div>
         </section>
+
+        <MppVoteRecordLookup />
 
         {/* Issue-picker MPP flow */}
         <section className="px-4 sm:px-6 md:px-8 py-12 md:py-16 bg-white border-y border-slate-100">

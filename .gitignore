@@ -77,7 +77,12 @@ htmlcov/
 !ledger/public/data/get-involved-form.json
 !ledger/public/data/social-post-ideas.json
 !ledger/public/data/indigenous-hub.json
+!ledger/public/data/flyers.json
 data/
+# Re-allow Ledger public data after blanket data/ ignore (parent dir must be un-ignored first)
+!ledger/public/data/
+!ledger/public/data/mpp-featured-votes.json
+!ledger/public/data/flyers.json
 # Allow Ledger data used by admin/protests pages
 ledger/data/*
 !ledger/data/

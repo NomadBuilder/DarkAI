@@ -1,0 +1,1883 @@
+{
+  "asOf": null,
+  "source": "Ontarians Against Corruption / ProtectOnt MPP tracker",
+  "bills": [
+    {
+      "id": "Bill 5",
+      "short": "Species law + SEZs",
+      "title": "Protect Ontario by Unleashing our Economy Act, 2025"
+    },
+    {
+      "id": "Bill 17",
+      "short": "Municipal study limits",
+      "title": "Protect Ontario by Building Faster and Smarter Act, 2025"
+    },
+    {
+      "id": "Bill 24",
+      "short": "Budget measures",
+      "title": "Plan to Protect Ontario Act (Budget Measures), 2025"
+    },
+    {
+      "id": "Bill 60",
+      "short": "Water corporations",
+      "title": "Fighting Delays, Building Faster Act, 2025"
+    },
+    {
+      "id": "Bill 68",
+      "short": "Budget measures No. 2",
+      "title": "Plan to Protect Ontario Act (Budget Measures), 2025 (No. 2)"
+    },
+    {
+      "id": "Bill 97",
+      "short": "Budget measures 2026",
+      "title": "Plan to Protect Ontario Act (Budget Measures), 2026"
+    }
+  ],
+  "mpps": [
+    {
+      "name": "Tyler Allsopp",
+      "party": "Progressive Conservative",
+      "riding": "Bay of Quinte",
+      "email": "tyler.allsopp@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/tyler-allsopp",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Deepak Anand",
+      "party": "Progressive Conservative",
+      "riding": "Mississauga—Malton",
+      "email": "deepak.anandco@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/deepak-anand",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Teresa J. Armstrong",
+      "party": "New Democratic",
+      "riding": "London—Fanshawe",
+      "email": "armstrong-co@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/teresa-j-armstrong",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Aris Babikian",
+      "party": "Progressive Conservative",
+      "riding": "Scarborough—Agincourt",
+      "email": "aris.babikian@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/aris-babikian",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Robert Bailey",
+      "party": "Progressive Conservative",
+      "riding": "Sarnia—Lambton",
+      "email": "bob.bailey@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/robert-bailey",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "No Show",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Jessica Bell",
+      "party": "New Democratic",
+      "riding": "University—Rosedale",
+      "email": "jbell-co@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/jessica-bell",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Peter Bethlenfalvy",
+      "party": "Progressive Conservative",
+      "riding": "Pickering—Uxbridge",
+      "email": "peter.bethlenfalvy@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/peter-bethlenfalvy",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "No Show",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Stephen Blais",
+      "party": "Liberal",
+      "riding": "Orléans",
+      "email": "sblais.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stephen-blais",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Will Bouma",
+      "party": "Progressive Conservative",
+      "riding": "Brantford—Brant",
+      "email": "will.bouma@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/will-bouma",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Guy Bourgouin",
+      "party": "New Democratic",
+      "riding": "Mushkegowuk—James Bay",
+      "email": "none provided",
+      "profileUrl": "https://www.ola.org/en/members/all/guy-bourgouin",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Stephanie Bowman",
+      "party": "Liberal",
+      "riding": "Don Valley West",
+      "email": "sbowman.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stephanie-bowman",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Bobbi Ann Brady",
+      "party": "Independent",
+      "riding": "Haldimand—Norfolk",
+      "email": "babrady-co@ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/bobbi-ann-brady",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "Yes",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Ric Bresee",
+      "party": "Progressive Conservative",
+      "riding": "Hastings—Lennox and Addington",
+      "email": "ric.bresee@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/ric-bresee",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Jeff Burch",
+      "party": "New Democratic",
+      "riding": "Niagara Centre",
+      "email": "jburch-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/jeff-burch",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Paul Calandra",
+      "party": "Progressive Conservative",
+      "riding": "Markham—Stouffville",
+      "email": "paul.calandra@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/paul-calandra",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Rob Cerjanec",
+      "party": "Liberal",
+      "riding": "Ajax",
+      "email": "rcerjanec.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/rob-cerjanec",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Raymond Sung Joon Cho",
+      "party": "Progressive Conservative",
+      "riding": "Scarborough North",
+      "email": "raymond.cho@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/raymond-sung-joon-cho",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Hon. Stan Cho",
+      "party": "Progressive Conservative",
+      "riding": "Willowdale",
+      "email": "stan.cho@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stan-cho",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "No Show",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Monica Ciriello",
+      "party": "Progressive Conservative",
+      "riding": "Hamilton Mountain",
+      "email": "monica.ciriello@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/monica-ciriello",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Aislinn Clancy",
+      "party": "Green",
+      "riding": "Kitchener Centre",
+      "email": "aclancy-qp@ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/aislinn-clancy",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Steve Clark",
+      "party": "Progressive Conservative",
+      "riding": "Leeds—Grenville—Thousand Islands and Rideau Lakes",
+      "email": "steve.clark@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/steve-clark",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Lorne Coe",
+      "party": "Progressive Conservative",
+      "riding": "Whitby",
+      "email": "lorne.coe@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/lorne-coe",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Lucille Collard",
+      "party": "Liberal",
+      "riding": "Ottawa—Vanier",
+      "email": "lcollard.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/lucille-collard",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No Show",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Michelle Cooper",
+      "party": "Progressive Conservative",
+      "riding": "Eglinton—Lawrence",
+      "email": "michelle.cooper@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/michelle-cooper",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Stephen Crawford",
+      "party": "Progressive Conservative",
+      "riding": "Oakville",
+      "email": "stephen.crawford@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stephen-crawford",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Rudy Cuzzetto",
+      "party": "Progressive Conservative",
+      "riding": "Mississauga—Lakeshore",
+      "email": "rudy.cuzzetto@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/rudy-cuzzetto",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "George Darouze",
+      "party": "Progressive Conservative",
+      "riding": "Carleton",
+      "email": "george.darouze@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/george-darouze",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "Yes",
+        "Bill 17": "No Show",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Billy Denault",
+      "party": "Progressive Conservative",
+      "riding": "Renfrew—Nipissing—Pembroke",
+      "email": "billy.denault@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/billy-denault",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Jess Dixon",
+      "party": "Progressive Conservative",
+      "riding": "Kitchener South—Hespeler",
+      "email": "jess.dixon@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/jess-dixon",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Andrew Dowie",
+      "party": "Progressive Conservative",
+      "riding": "Windsor—Tecumseh",
+      "email": "andrew.dowie@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/andrew-dowie",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Doug Downey",
+      "party": "Progressive Conservative",
+      "riding": "Barrie—Springwater—Oro-Medonte",
+      "email": "doug.downey@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/doug-downey",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Jill Dunlop",
+      "party": "Progressive Conservative",
+      "riding": "Simcoe North",
+      "email": "jill.dunlop@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/jill-dunlop",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Lee Fairclough",
+      "party": "Liberal",
+      "riding": "Etobicoke—Lakeshore",
+      "email": "lfairclough.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/lee-fairclough",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Victor Fedeli",
+      "party": "Progressive Conservative",
+      "riding": "Nipissing",
+      "email": "vic.fedeli@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/victor-fedeli",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Catherine Fife",
+      "party": "New Democratic",
+      "riding": "Waterloo",
+      "email": "cfife-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/catherine-fife",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Mohamed Firin",
+      "party": "Progressive Conservative",
+      "riding": "York South—Weston",
+      "email": "mohamed.firin@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/mohamed-firin",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Rob Flack",
+      "party": "Progressive Conservative",
+      "riding": "Elgin—Middlesex—London",
+      "email": "rob.flack@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/rob-flack",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Doug Ford",
+      "party": "Progressive Conservative",
+      "riding": "Etobicoke North",
+      "email": "doug.fordco@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/doug-ford",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "John Fraser",
+      "party": "Liberal",
+      "riding": "Ottawa South",
+      "email": "jfraser.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/john-fraser",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Jennifer K. French",
+      "party": "New Democratic",
+      "riding": "Oshawa",
+      "email": "jfrench-co@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/jennifer-k-french",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No Show",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Wayne Gates",
+      "party": "New Democratic",
+      "riding": "Niagara Falls",
+      "email": "wgates-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/wayne-gates",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Alexa Gilmour",
+      "party": "New Democratic",
+      "riding": "Parkdale—High Park",
+      "email": "agilmour-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/alexa-gilmour",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Chris Glover",
+      "party": "New Democratic",
+      "riding": "Spadina—Fort York",
+      "email": "cglover-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/chris-glover",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Lisa Gretzky",
+      "party": "New Democratic",
+      "riding": "Windsor West",
+      "email": "lgretzky-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/lisa-gretzky",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No Show",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Hardeep Singh Grewal",
+      "party": "Progressive Conservative",
+      "riding": "Brampton East",
+      "email": "hardeep.grewal@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/hardeep-singh-grewal",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "No Show",
+        "Bill 60": "No Show",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Silvia Gualtieri",
+      "party": "Progressive Conservative",
+      "riding": "Mississauga East—Cooksville",
+      "email": "silvia.gualtieri@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/silvia-gualtieri",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "France Gélinas",
+      "party": "New Democratic",
+      "riding": "Nickel Belt",
+      "email": "gelinas-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/france-glinas",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Zee Hamid",
+      "party": "Progressive Conservative",
+      "riding": "Milton",
+      "email": "zee.hamid@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/zee-hamid",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Ernie Hardeman",
+      "party": "Progressive Conservative",
+      "riding": "Oxford",
+      "email": "ernie.hardeman@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/ernie-hardeman",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Mike Harris",
+      "party": "Progressive Conservative",
+      "riding": "Kitchener—Conestoga",
+      "email": "mike.harris@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/mike-harris",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "No Show",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Andrea Hazell",
+      "party": "Liberal",
+      "riding": "Scarborough—Guildwood",
+      "email": "ahazell.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/andrea-hazell",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Kevin Holland",
+      "party": "Progressive Conservative",
+      "riding": "Thunder Bay—Atikokan",
+      "email": "kevin.holland@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/kevin-holland",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Ted Hsu",
+      "party": "Liberal",
+      "riding": "Kingston and the Islands",
+      "email": "thsu.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/ted-hsu",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Sylvia Jones",
+      "party": "Progressive Conservative",
+      "riding": "Dufferin—Caledon",
+      "email": "sylvia.jones@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/sylvia-jones",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Trevor Jones",
+      "party": "Progressive Conservative",
+      "riding": "Chatham-Kent—Leamington",
+      "email": "trevor.jones@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/trevor-jones",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "John Jordan",
+      "party": "Progressive Conservative",
+      "riding": "Lanark—Frontenac—Kingston",
+      "email": "john.jordan@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/john-jordan",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Logan Kanapathi",
+      "party": "Progressive Conservative",
+      "riding": "Markham—Thornhill",
+      "email": "logan.kanapathico@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/logan-kanapathi",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Terence Kernaghan",
+      "party": "New Democratic",
+      "riding": "London North Centre",
+      "email": "tkernaghan-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/terence-kernaghan",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Michael S. Kerzner",
+      "party": "Progressive Conservative",
+      "riding": "York Centre",
+      "email": "michael.kerzner@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/michael-s-kerzner",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Andrea Khanjin",
+      "party": "Progressive Conservative",
+      "riding": "Barrie—Innisfil",
+      "email": "andrea.khanjin@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/andrea-khanjin",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "No Show",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Natalia Kusendova-Bashta",
+      "party": "Progressive Conservative",
+      "riding": "Mississauga Centre",
+      "email": "natalia.kusendova@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/natalia-kusendova-bashta",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "No Show",
+        "Bill 17": "No Show",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Anthony Leardi",
+      "party": "Progressive Conservative",
+      "riding": "Essex",
+      "email": "anthony.leardi@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/anthony-leardi",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Stephen Lecce",
+      "party": "Progressive Conservative",
+      "riding": "King—Vaughan",
+      "email": "stephen.lecce@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stephen-lecce",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Robin Lennox",
+      "party": "New Democratic",
+      "riding": "Hamilton Centre",
+      "email": "rlennox-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/robin-lennox",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No Show",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Neil Lumsden",
+      "party": "Progressive Conservative",
+      "riding": "Hamilton East—Stoney Creek",
+      "email": "neil.lumsden@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/neil-lumsden",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No Show",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Sol Mamakwa",
+      "party": "New Democratic",
+      "riding": "iiwetinoong",
+      "email": "smamakwa-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/sol-mamakwa",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "No",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Todd J. McCarthy",
+      "party": "Progressive Conservative",
+      "riding": "Durham",
+      "email": "todd.mccarthy@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/todd-j-mccarthy",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Karen McCrimmon",
+      "party": "Liberal",
+      "riding": "Kanata—Carleton",
+      "email": "kmccrimmon-co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/karen-mccrimmon",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Graham McGregor",
+      "party": "Progressive Conservative",
+      "riding": "Brampton North",
+      "email": "graham.mcgregor@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/graham-mcgregor",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Catherine McKenney",
+      "party": "New Democratic",
+      "riding": "Ottawa Centre",
+      "email": "cmckenney-co@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/catherine-mckenney",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Mary-Margaret McMahon",
+      "party": "Liberal",
+      "riding": "Beaches—East York",
+      "email": "mmcmahon.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/mary-margaret-mcmahon",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Caroline Mulroney",
+      "party": "Progressive Conservative",
+      "riding": "York—Simcoe",
+      "email": "caroline.mulroney@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/caroline-mulroney",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Dawn Gallagher Murphy",
+      "party": "Progressive Conservative",
+      "riding": "Newmarket—Aurora",
+      "email": "dawn.gallaghermurphy@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/dawn-gallagher-murphy",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Sam Oosterhoff",
+      "party": "Progressive Conservative",
+      "riding": "Niagara West",
+      "email": "sam.oosterhoff@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/sam-oosterhoff",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Billy Pang",
+      "party": "Progressive Conservative",
+      "riding": "Markham—Unionville",
+      "email": "billy.pangco@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/billy-pang",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Michael Parsa",
+      "party": "Progressive Conservative",
+      "riding": "Aurora—Oak Ridges—Richmond Hill",
+      "email": "michael.parsaco@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/michael-parsa",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Chandra Pasma",
+      "party": "New Democratic",
+      "riding": "Ottawa West—Nepean",
+      "email": "cpasma-co@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/chandra-pasma",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. David Piccini",
+      "party": "Progressive Conservative",
+      "riding": "Northumberland—Peterborough South",
+      "email": "david.piccini@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/david-piccini",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "No Show",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Natalie Pierre",
+      "party": "Progressive Conservative",
+      "riding": "Burlington",
+      "email": "natalie.pierre@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/natalie-pierre",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Steve Pinsonneault",
+      "party": "Progressive Conservative",
+      "riding": "Lambton—Kent—Middlesex",
+      "email": "steve.pinsonneault@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/steve-pinsonneault",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "Yes",
+        "Bill 17": "No Show",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Hon. George Pirie",
+      "party": "Progressive Conservative",
+      "riding": "Timmins",
+      "email": "george.pirie@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/george-pirie",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Nolan Quinn",
+      "party": "Progressive Conservative",
+      "riding": "Stormont—Dundas—South Glengarry",
+      "email": "nolan.quinn@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/nolan-quinn",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Joseph Racinsky",
+      "party": "Progressive Conservative",
+      "riding": "Wellington—Halton Hills",
+      "email": "joseph.racinsky@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/joseph-racinsky",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Matthew Rae",
+      "party": "Progressive Conservative",
+      "riding": "Perth—Wellington",
+      "email": "matthew.rae@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/matthew-rae",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Tom Rakocevic",
+      "party": "New Democratic",
+      "riding": "Humber River—Black Creek",
+      "email": "trakocevic-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/tom-rakocevic",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Greg Rickford",
+      "party": "Progressive Conservative",
+      "riding": "Kenora—Rainy River",
+      "email": "greg.rickford@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/greg-rickford",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Brian Riddell",
+      "party": "Progressive Conservative",
+      "riding": "Cambridge",
+      "email": "brian.riddell@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/brian-riddell",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Bill Rosenberg",
+      "party": "Progressive Conservative",
+      "riding": "Algoma—Manitoulin",
+      "email": "bill.rosenberg@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/bill-rosenberg",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Sheref Sabawy",
+      "party": "Progressive Conservative",
+      "riding": "Mississauga—Erin Mills",
+      "email": "sheref.sabawy@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/sheref-sabawy",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Amarjot Sandhu",
+      "party": "Progressive Conservative",
+      "riding": "Brampton West",
+      "email": "amarjot.sandhu@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/amarjot-sandhu",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Prabmeet Singh Sarkaria",
+      "party": "Progressive Conservative",
+      "riding": "Brampton South",
+      "email": "prabmeet.sarkaria@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/prabmeet-singh-sarkaria",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Stéphane Sarrazin",
+      "party": "Progressive Conservative",
+      "riding": "Glengarry—Prescott—Russell",
+      "email": "stephane.sarrazin@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stphane-sarrazin",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Peggy Sattler",
+      "party": "New Democratic",
+      "riding": "London West",
+      "email": "psattler-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/peggy-sattler",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Brian Saunderson",
+      "party": "Progressive Conservative",
+      "riding": "Simcoe—Grey",
+      "email": "brian.saunderson@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/brian-saunderson",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Mike Schreiner",
+      "party": "Green",
+      "riding": "Guelph",
+      "email": "mschreiner@ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/mike-schreiner",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Chris Scott",
+      "party": "Independent",
+      "riding": "Sault Ste. Marie",
+      "email": "cscott-co@ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/chris-scott",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Laurie Scott",
+      "party": "Progressive Conservative",
+      "riding": "Haliburton—Kawartha Lakes—Brock",
+      "email": "laurie.scott@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/laurie-scott",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Adil Shamji",
+      "party": "Liberal",
+      "riding": "Don Valley East",
+      "email": "ashamji.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/adil-shamji",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Sandy Shaw",
+      "party": "New Democratic",
+      "riding": "Hamilton West—Ancaster—Dundas",
+      "email": "sshaw-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/sandy-shaw",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Donna Skelly",
+      "party": "Progressive Conservative",
+      "riding": "Flamborough—Glanbrook",
+      "email": "donna.skelly@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/donna-skelly",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "No Show",
+        "Bill 17": "No Show",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Dave Smith",
+      "party": "Progressive Conservative",
+      "riding": "Peterborough—Kawartha",
+      "email": "dave.smith@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/dave-smith",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "David Smith",
+      "party": "Progressive Conservative",
+      "riding": "Scarborough Centre",
+      "email": "david.smith1@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/david-smith",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Graydon Smith",
+      "party": "Progressive Conservative",
+      "riding": "Parry Sound—Muskoka",
+      "email": "graydon.smith@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/graydon-smith",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Laura Smith",
+      "party": "Progressive Conservative",
+      "riding": "Thornhill",
+      "email": "laura.smith@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/laura-smith",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Stephanie Smyth",
+      "party": "Liberal",
+      "riding": "Toronto—St. Paul's",
+      "email": "ssmyth.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/stephanie-smyth",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Jennifer (Jennie) Stevens",
+      "party": "New Democratic",
+      "riding": "St. Catharines",
+      "email": "jstevens-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/jennifer-jennie-stevens",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Marit Stiles",
+      "party": "New Democratic",
+      "riding": "Davenport",
+      "email": "mstiles-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/marit-stiles",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Kinga Surma",
+      "party": "Progressive Conservative",
+      "riding": "Etobicoke Centre",
+      "email": "kinga.surma@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/kinga-surma",
+      "votes": {
+        "Bill 5": "No Show",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No Show",
+        "Bill 68": "No Show",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Peter Tabuns",
+      "party": "New Democratic",
+      "riding": "Toronto—Danforth",
+      "email": "tabunsp-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/peter-tabuns",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Hon. Nina Tangri",
+      "party": "Progressive Conservative",
+      "riding": "Mississauga—Streetsville",
+      "email": "nina.tangri@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/nina-tangri",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Vijay Thanigasalam",
+      "party": "Progressive Conservative",
+      "riding": "Scarborough—Rouge Park",
+      "email": "vijay.thanigasalam@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/vijay-thanigasalam",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "No Show",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Lisa M. Thompson",
+      "party": "Progressive Conservative",
+      "riding": "Huron—Bruce",
+      "email": "lisa.thompson@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/lisa-m-thompson",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Hon. Michael A. Tibollo",
+      "party": "Progressive Conservative",
+      "riding": "Vaughan—Woodbridge",
+      "email": "michael.tibolloco@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/michael-a-tibollo",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Effie J. Triantafilopoulos",
+      "party": "Progressive Conservative",
+      "riding": "Oakville North—Burlington",
+      "email": "effie.triantafilopoulos@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/effie-j-triantafilopoulos",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Jonathan Tsao",
+      "party": "Liberal",
+      "riding": "Don Valley North",
+      "email": "jtsao.mpp.co@liberal.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/jonathan-tsao",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "John Vanthof",
+      "party": "New Democratic",
+      "riding": "Timiskaming—Cochrane",
+      "email": "jvanthof-co@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/john-vanthof",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Lise Vaugeois",
+      "party": "New Democratic",
+      "riding": "Thunder Bay—Superior North",
+      "email": "lvaugeois-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/lise-vaugeois",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Paul Vickers",
+      "party": "Progressive Conservative",
+      "riding": "Bruce—Grey—Owen Sound",
+      "email": "paul.vickers@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/paul-vickers",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Daisy Wai",
+      "party": "Progressive Conservative",
+      "riding": "Richmond Hill",
+      "email": "daisy.wai@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/daisy-wai",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Tyler Watt",
+      "party": "Liberal",
+      "riding": "Nepean",
+      "email": "tylerwatt.mpp.co@ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/tyler-watt",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "Yes",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    },
+    {
+      "name": "Jamie West",
+      "party": "New Democratic",
+      "riding": "Sudbury",
+      "email": "jwest-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/jamie-west",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No Show",
+        "Bill 17": "No Show",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No Show"
+      }
+    },
+    {
+      "name": "Hon. Charmaine A. Williams",
+      "party": "Progressive Conservative",
+      "riding": "Brampton Centre",
+      "email": "charmaine.williams@pc.ola.org",
+      "profileUrl": "https://www.ola.org/en/members/all/charmaine-a-williams",
+      "votes": {
+        "Bill 5": "Yes",
+        "Bill 97": "Yes",
+        "Bill 17": "Yes",
+        "Bill 60": "Yes",
+        "Bill 68": "Yes",
+        "Bill 24": "Yes"
+      }
+    },
+    {
+      "name": "Kristyn Wong-Tam",
+      "party": "New Democratic",
+      "riding": "Toronto Centre",
+      "email": "kwong-tam-qp@ndp.on.ca",
+      "profileUrl": "https://www.ola.org/en/members/all/kristyn-wong-tam",
+      "votes": {
+        "Bill 5": "No",
+        "Bill 97": "No",
+        "Bill 17": "No",
+        "Bill 60": "No",
+        "Bill 68": "No",
+        "Bill 24": "No"
+      }
+    }
+  ]
+}
