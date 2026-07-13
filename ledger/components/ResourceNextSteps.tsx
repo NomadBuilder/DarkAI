@@ -22,9 +22,9 @@ const STEPS = [
     blurb: 'Signs, shirts, stickers, and protest prep',
   },
   {
-    href: '/reports',
+    href: '/reports/they-called-it-protection',
     title: 'Reports',
-    blurb: 'Accountability briefs — including how your MPP voted',
+    blurb: 'Accountability brief — how your MPP voted on the six bills',
   },
   {
     href: '/take-action',

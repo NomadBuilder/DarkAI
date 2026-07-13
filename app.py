@@ -535,12 +535,9 @@ def protect_ontario_and_ledger_redirect():
                 return send_from_directory(
                     "templates", "report_protectont_accountability.html"
                 )
-        # /reports hub — Flask template (avoids mismatched Next CSS hashes from partial out commits)
+        # Single report for now — /reports goes straight to the brief
         if path in ("reports", "reports/", "reports/index.html"):
-            try:
-                return render_template("reports_hub.html")
-            except Exception:
-                return send_from_directory("templates", "reports_hub.html")
+            return redirect("/reports/they-called-it-protection", code=302)
         return serve_ledger_at_root(path)
     if request.path == "/ledger" or request.path.startswith("/ledger/"):
         rest = request.path[7:].strip("/")

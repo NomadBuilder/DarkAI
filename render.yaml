@@ -230,27 +230,18 @@ services:
           cp -f ledger/public/reports/they-called-it-protection.html static/protectont/reports/
           echo "✅ Copied they-called-it-protection.html into static/protectont/reports/"
         fi
-        # Prefer Flask-styled reports hub over Next export (avoids CSS hash mismatch)
-        if [ -f "templates/reports_hub.html" ]; then
-          mkdir -p static/protectont/reports
-          cp -f templates/reports_hub.html static/protectont/reports/index.html
-          echo "✅ Installed Flask reports hub as static/protectont/reports/index.html"
-        elif [ -f "ledger/out/reports/index.html" ]; then
-          mkdir -p static/protectont/reports
-          cp -f ledger/out/reports/index.html static/protectont/reports/
-          echo "✅ Ensured /reports hub index.html is in static/protectont/reports/"
-        fi
+        # No reports hub for now — Flask redirects /reports → brief
+        rm -f static/protectont/reports/index.html static/protectont/reports/index.txt
         echo "✅ static/protectont populated (app.py will serve from here if present)"
         ls -la static/protectont/ | head -5
         ls -la static/protectont/reports/ 2>/dev/null | head -10 || true
         echo ""
-        echo "=========================================="
-        # Fail loudly if homepage nav is missing Reports (TopNavigation regression)
         if ! grep -q '>Reports<' out/index.html; then
           echo "❌ out/index.html missing Reports nav item — TopNavigation not in build"
           exit 1
         fi
         echo "✅ Homepage nav includes Reports"
+        echo "=========================================="
         echo "✅ Ledger build successful!"
         echo "=========================================="
       else

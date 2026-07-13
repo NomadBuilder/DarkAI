@@ -385,20 +385,207 @@
     @media print { .mpp-lookup-form, .mpp-actions { display: none !important; } }
 
     @media print {
-      .po-main-nav, .band::before, .hero::before { display: none !important; }
+      .po-main-nav, .po-print-row, .band::before, .hero::before { display: none !important; }
       .hero, .band { background: #fff !important; color: #111 !important; }
       h1, .lead, .meta, .pill { color: #111 !important; text-shadow: none !important; }
       .wrap { max-width: none; }
       .stat, .card, .callout, .bill { break-inside: avoid; }
     }
+
+    /* Homepage-matching ProtectOnt nav (no Tailwind CDN — avoids white button boxes) */
+    .po-main-nav {
+      position: sticky; top: 0; left: 0; right: 0; z-index: 50; width: 100%;
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+    .po-main-nav * { box-sizing: border-box; }
+    .po-main-nav-bar {
+      width: 100%;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(249, 224, 76, 0.15);
+      background: rgba(61, 43, 122, 0.9);
+    }
+    .po-main-nav-inner {
+      max-width: 80rem;
+      margin: 0 auto;
+      padding: 0 1rem;
+      height: 3.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    @media (min-width: 640px) {
+      .po-main-nav-inner { height: 4rem; padding: 0 1.5rem; }
+    }
+    @media (min-width: 1024px) {
+      .po-main-nav-inner { padding: 0 2rem; }
+    }
+    .po-brand {
+      display: flex; align-items: center; flex-shrink: 0;
+      text-decoration: none;
+    }
+    .po-brand img { display: block; width: auto; height: 2.25rem; }
+    @media (min-width: 640px) { .po-brand img { height: 2.5rem; } }
+    .po-links {
+      display: none;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 1;
+      gap: 0.25rem;
+      margin: 0 1rem;
+      max-width: 72rem;
+    }
+    @media (min-width: 768px) { .po-links { display: flex; } }
+    @media (min-width: 1024px) { .po-links { gap: 0.5rem; } }
+    @media (min-width: 1280px) { .po-links { gap: 0.75rem; } }
+    .po-item {
+      position: relative;
+    }
+    .po-link, .po-drop-btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent !important;
+      border: 0 !important;
+      box-shadow: none !important;
+      margin: 0;
+      font-family: inherit;
+      font-weight: 300;
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      color: rgba(249, 224, 76, 0.85) !important;
+      text-decoration: none !important;
+      padding: 0.5rem 0.75rem;
+      border-radius: 0.375rem;
+      white-space: nowrap;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    @media (min-width: 1024px) {
+      .po-link, .po-drop-btn { font-size: 1rem; padding: 0.5rem 1rem; }
+    }
+    .po-link:hover, .po-drop-btn:hover,
+    .po-item:hover > .po-drop-btn, .po-item:focus-within > .po-drop-btn {
+      color: #f9e04c !important;
+      background: rgba(255, 255, 255, 0.1) !important;
+    }
+    .po-chevron { width: 1rem; height: 1rem; flex-shrink: 0; }
+    .po-panel {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      padding-top: 0.25rem;
+      z-index: 60;
+      min-width: 13rem;
+    }
+    .po-item:hover > .po-panel,
+    .po-item:focus-within > .po-panel { display: block; }
+    .po-panel-inner {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+      padding: 0.5rem 0;
+    }
+    .po-panel a {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 300;
+      color: #374151 !important;
+      text-decoration: none !important;
+      background: transparent !important;
+    }
+    .po-panel a:hover {
+      background: #f9fafb !important;
+      color: #111827 !important;
+    }
+    .po-join {
+      margin-left: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      padding: 0.625rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 0.5rem;
+      background: #f9e04c !important;
+      color: #1a1a1a !important;
+      text-decoration: none !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (min-width: 1024px) {
+      .po-join { padding: 0.625rem 1.25rem; font-size: 1rem; }
+    }
+    .po-join:hover { background: #f5d84a !important; color: #1a1a1a !important; }
+    .po-mobile { display: flex; align-items: center; position: relative; z-index: 90; }
+    @media (min-width: 768px) { .po-mobile { display: none; } }
+    .po-mobile > summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      color: rgba(249, 224, 76, 0.9);
+      background: transparent;
+      border: 0;
+    }
+    .po-mobile > summary::-webkit-details-marker { display: none; }
+    .po-mobile-panel {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 0.5rem;
+      width: 14rem;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.15);
+      padding: 0.5rem 0;
+      z-index: 70;
+    }
+    .po-mobile-panel a {
+      display: block;
+      padding: 0.65rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 300;
+      color: #374151 !important;
+      text-decoration: none !important;
+    }
+    .po-mobile-panel a:hover { background: #f9fafb; color: #111827 !important; }
+    .po-print-row {
+      display: none;
+    }
+    @media (min-width: 768px) {
+      .po-print-row {
+        display: flex;
+        justify-content: flex-end;
+        max-width: 80rem;
+        margin: 0.35rem auto 0;
+        padding: 0 1.5rem;
+      }
+      .po-print-row button {
+        font-family: Inter, system-ui, sans-serif;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #6b7280;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+    @media print {
+      .po-main-nav, .po-print-row { display: none !important; }
+    }
+
   </style>
 </head>
 <body>
-
-
-    <script src="https://cdn.tailwindcss.com"></script>
-  <script>tailwind.config={corePlugins:{preflight:false}}</script>
-  <nav class="po-main-nav sticky top-0 left-0 right-0 z-50 w-full" aria-label="Main">
+<nav class="po-main-nav sticky top-0 left-0 right-0 z-50 w-full" aria-label="Main">
     <div class="backdrop-blur-md transition-all duration-300 w-full border-b border-[#f9e04c]/15 bg-[#3d2b7a]/90">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         <div class="flex items-center justify-between h-14 sm:h-16">
@@ -478,28 +665,78 @@
   <div class="hidden md:flex justify-end max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-0">
     <button type="button" onclick="window.print()" class="sr-only">Print</button>
   </div>
-  <style>
-    .po-main-nav summary::-webkit-details-marker { display: none; }
-    .po-main-nav a { text-decoration: none; }
-    @media print { .po-main-nav { display: none !important; } }
-    /* desktop print control under bar */
-    .po-print-row {
-      display: none;
-    }
-    @media (min-width: 768px) {
-      .po-print-row {
-        display: flex; justify-content: flex-end;
-        max-width: 80rem; margin: 0.35rem auto 0;
-        padding: 0 1rem;
-      }
-      .po-print-row button {
-        font-family: Inter, system-ui, sans-serif;
-        font-size: 0.75rem; font-weight: 500;
-        color: #6b7280; background: transparent; border: 0;
-        cursor: pointer; text-decoration: underline;
-      }
-    }
-  </style>
+<div class="po-print-row"><button type="button" onclick="window.print()">Print / Save PDF</button></div>
+
+    <nav class="po-main-nav" aria-label="Main">
+    <div class="po-main-nav-bar">
+      <div class="po-main-nav-inner">
+        <a class="po-brand" href="https://protectont.ca/" aria-label="Protect Ontario – Home">
+          <img src="https://protectont.ca/logo-icon-text-dark.svg" alt="" width="180" height="40">
+        </a>
+        <div class="po-links">
+          <div class="po-item">
+            <button type="button" class="po-drop-btn">The Issues<svg class="po-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            <div class="po-panel"><div class="po-panel-inner">
+              <a href="https://protectont.ca/healthcare">Healthcare</a>
+              <a href="https://protectont.ca/water">Water</a>
+              <a href="https://protectont.ca/public-land">Public land</a>
+              <a href="https://protectont.ca/wildlife">Wildlife Impact</a>
+              <a href="https://protectont.ca/indigenous-rights">Indigenous rights</a>
+            </div></div>
+          </div>
+          <div class="po-item">
+            <button type="button" class="po-drop-btn">Take action<svg class="po-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            <div class="po-panel"><div class="po-panel-inner">
+              <a href="https://protectont.ca/join/">Join — get a sign</a>
+              <a href="https://protectont.ca/take-action">Contact your MPP</a>
+              <a href="https://buy.stripe.com/9B614n0UY3CtdbQ5CM4gg00">Donate</a>
+            </div></div>
+          </div>
+          <a class="po-link" href="https://protectont.ca/protests">Protests</a>
+          <div class="po-item">
+            <button type="button" class="po-drop-btn">Materials<svg class="po-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            <div class="po-panel"><div class="po-panel-inner">
+              <a href="https://protectont.ca/materials">All materials</a>
+              <a href="https://protectont.ca/flyers">Printable flyers</a>
+              <a href="https://protectont.ca/products">Products</a>
+            </div></div>
+          </div>
+          <div class="po-item">
+            <button type="button" class="po-drop-btn">Reports<svg class="po-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            <div class="po-panel"><div class="po-panel-inner">
+              <a href="https://protectont.ca/reports/they-called-it-protection">They sold it as protection</a>
+            </div></div>
+          </div>
+          <div class="po-item">
+            <button type="button" class="po-drop-btn">About<svg class="po-chevron" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg></button>
+            <div class="po-panel"><div class="po-panel-inner">
+              <a href="https://protectont.ca/about">About</a>
+              <a href="https://protectont.ca/media">Press room</a>
+              <a href="https://protectont.ca/receipts">The Receipts</a>
+              <a href="https://protectont.ca/methodology">Methodology</a>
+            </div></div>
+          </div>
+          <a class="po-join" href="https://protectont.ca/join/">Join us</a>
+        </div>
+        <div class="po-mobile">
+          <details>
+            <summary aria-label="Menu">
+              <svg width="24" height="24" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+            </summary>
+            <div class="po-mobile-panel">
+              <a href="https://protectont.ca/healthcare">The Issues</a>
+              <a href="https://protectont.ca/take-action">Take action</a>
+              <a href="https://protectont.ca/protests">Protests</a>
+              <a href="https://protectont.ca/materials">Materials</a>
+              <a href="https://protectont.ca/reports/they-called-it-protection">Reports</a>
+              <a href="https://protectont.ca/about">About</a>
+              <a href="https://protectont.ca/join/">Join us</a>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </nav>
   <div class="po-print-row"><button type="button" onclick="window.print()">Print / Save PDF</button></div>
 
   <header class="hero">

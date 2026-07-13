@@ -73,7 +73,7 @@ const protestPrep = [
   { title: 'Free sign downloads', href: '/join#download-a-sign', cta: 'Download on Join' },
   { title: 'Signs in the wild', href: '/signs-in-the-wild', cta: 'Upload a photo' },
   { title: 'Find a protest', href: '/protests#event-list', cta: 'See events' },
-  { title: 'Reports', href: '/reports', cta: 'Read briefs' },
+  { title: 'Reports', href: '/reports/they-called-it-protection', cta: 'Read brief' },
   { title: 'Contact your MPP', href: '/take-action', cta: 'Take action' },
 ]
 
