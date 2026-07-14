@@ -416,6 +416,8 @@
         margin: 0 0 0.4rem !important;
         break-inside: auto;
         page-break-inside: auto;
+        border-radius: 0 !important;
+        box-shadow: none !important;
       }
       .hero h1, .hero .lead, .band h3, .band p, .band .cite { color: #fff !important; text-shadow: none !important; }
       .hero h1 em { color: #f9e04c !important; }
@@ -428,25 +430,92 @@
       }
       .lead { font-size: 0.95rem !important; }
       .wrap { max-width: none; padding-top: 0 !important; }
-      /* Web-only nav tiles — skip in print/PDF */
+
+      /* Digital-only UI */
       .explore-heading,
-      .explore {
+      .explore,
+      .cta-row,
+      .mpp-lookup,
+      .mpp-lookup-form,
+      .mpp-actions {
         display: none !important;
       }
-      .explore a,
-      .stat,
+
+      /* Flatten cards / tiles into plain document flow */
+      .card,
       .bill,
-      .timeline .item {
+      .callout,
+      .callout.info,
+      .callout.danger,
+      .compare-row,
+      .stat,
+      .data-credit,
+      .stats {
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0.65rem 0 !important;
+      }
+      .bill {
+        border-left: 3px solid #f9e04c !important;
+        padding-left: 0.75rem !important;
+        margin: 0.85rem 0 !important;
+      }
+      .compare {
+        display: block !important;
+        gap: 0 !important;
+        margin: 0.5rem 0 0.85rem !important;
+      }
+      .compare-row {
+        display: block !important;
+        margin: 0 0 0.85rem !important;
+        padding: 0 0 0.65rem !important;
+        border-bottom: 1px solid #e5e7eb !important;
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
-      .callout, .card, section, article.wrap, .data-credit {
+      .compare-row .says,
+      .compare-row .does { display: block !important; margin: 0.15rem 0 !important; }
+      .stats {
+        display: block !important;
+        margin: 0.5rem 0 !important;
+      }
+      .stat {
+        display: inline-block !important;
+        margin: 0 1rem 0.35rem 0 !important;
+        break-inside: avoid !important;
+      }
+      .stat .n { font-size: 1.05rem !important; }
+      .stat .l { font-size: 0.75rem !important; }
+      .bill .tag {
+        border-radius: 0 !important;
+        padding: 0.1rem 0.35rem !important;
+      }
+      .bill .more,
+      .bill .more a {
+        display: inline !important;
+        background: none !important;
+        border: none !important;
+        padding: 0 !important;
+        color: #1e3a5f !important;
+        text-decoration: underline !important;
+      }
+
+      .timeline .item,
+      .bill {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      section, article.wrap, .callout, .card {
         break-inside: auto !important;
         page-break-inside: auto !important;
       }
       .data-credit {
         margin: 0.35rem 0 0.25rem !important;
-        padding: 0.35rem 0.55rem !important;
+        padding: 0.25rem 0 !important;
+        border-bottom: 1px solid #e5e7eb !important;
         gap: 0.45rem !important;
       }
       .data-credit p {
@@ -456,10 +525,6 @@
       .data-credit img {
         height: 12px !important;
         max-width: 40px !important;
-      }
-      .callout {
-        margin: 0.35rem 0 !important;
-        padding: 0.75rem 0.85rem !important;
       }
       h2, h3 {
         break-after: avoid;
