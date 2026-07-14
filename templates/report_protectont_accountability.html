@@ -163,6 +163,7 @@
     }
     .chart-box { position: relative; height: 260px; }
     .chart-box.tall { height: 300px; }
+    .chart-box img.chart-print-img { display: none; }
     .caption { font-size: 0.74rem; color: var(--dim); margin-top: 0.65rem; }
     .grid-2 { display: grid; gap: 1rem; }
     @media (min-width: 720px) { .grid-2 { grid-template-columns: 1fr 1fr; } }
@@ -503,8 +504,28 @@
         text-decoration: underline !important;
       }
 
+      /* Charts: prefer frozen PNG (canvas often blanks in PDF engines) */
+      .chart-box {
+        height: auto !important;
+        min-height: 200px;
+        margin: 0.5rem 0 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+      }
+      .chart-box canvas { display: none !important; }
+      .chart-box img.chart-print-img {
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        max-height: 280px;
+        object-fit: contain;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
       .timeline .item,
-      .bill {
+      .bill,
+      .chart-box {
         break-inside: avoid !important;
         page-break-inside: avoid !important;
       }
@@ -985,8 +1006,28 @@
     Chart.defaults.color = muted;
     Chart.defaults.borderColor = grid;
     Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+    Chart.defaults.animation = false;
 
     const money = (v) => '$' + Math.round(v / 1e6 * 10) / 10 + 'M';
+
+    function freezeChartsForPrint() {
+      document.querySelectorAll('.chart-box canvas').forEach((canvas) => {
+        let img = canvas.parentElement.querySelector('img.chart-print-img');
+        if (!img) {
+          img = document.createElement('img');
+          img.className = 'chart-print-img';
+          img.alt = '';
+          img.setAttribute('aria-hidden', 'true');
+          canvas.after(img);
+        }
+        try {
+          img.src = canvas.toDataURL('image/png');
+        } catch (_) { /* ignore tainted/empty */ }
+      });
+    }
+    window.addEventListener('beforeprint', freezeChartsForPrint);
+    // Capture once charts have painted (for PDF / delayed print)
+    requestAnimationFrame(() => requestAnimationFrame(freezeChartsForPrint));
 
     new Chart(document.getElementById('chartDays'), {
       type: 'bar',
