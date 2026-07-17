@@ -179,7 +179,7 @@ export default function WildfireSupportPage() {
             Community fundraiser · Match active
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold tracking-tight leading-[1.15] text-white drop-shadow-md">
-            An entire First Nation was displaced by wildfire.
+            An entire community was displaced by wildfire.
             <span className="block mt-2 text-[#f9e04c] drop-shadow-md">Help them recover.</span>
           </h1>
           <p className="mt-5 text-lg sm:text-xl text-white font-medium leading-relaxed max-w-2xl drop-shadow">
@@ -205,8 +205,24 @@ export default function WildfireSupportPage() {
               Already donated? Add it to our total →
             </a>
           </div>
-          <p className="mt-4 text-sm text-white/80 max-w-xl">
-            Donations go directly to Anishinabek Nation 7th Generation Charity. ProtectOnt never handles the money.
+          <p className="mt-4 text-sm text-white/90 max-w-xl">
+            Donate online at{' '}
+            <a
+              href={campaign.officialDonationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`font-semibold text-[#f9e04c] underline underline-offset-2 ${focusRing} rounded-sm`}
+            >
+              an7gc.ca/donate
+            </a>
+            {' '}or e-transfer{' '}
+            <a
+              href={`mailto:${campaign.etransferEmail}`}
+              className={`font-semibold text-[#f9e04c] underline underline-offset-2 ${focusRing} rounded-sm`}
+            >
+              {campaign.etransferEmail}
+            </a>
+            . ProtectOnt never handles the money.
           </p>
         </div>
       </header>
@@ -224,6 +240,25 @@ export default function WildfireSupportPage() {
             <p className={`mt-3 text-base sm:text-lg ${bodyClass}`}>
               Dollar for dollar. One pool — not {matchMax} per person. When the community gives {matchMax},
               ProtectOnt adds {matchMax}. After that, every extra dollar still grows our impact.
+            </p>
+            <p className={`mt-3 text-sm sm:text-base ${bodyClass}`}>
+              Give online at{' '}
+              <a
+                href={campaign.officialDonationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold text-[#152a45] underline underline-offset-2"
+              >
+                an7gc.ca/donate
+              </a>
+              {' '}or by e-transfer to{' '}
+              <a
+                href={`mailto:${campaign.etransferEmail}`}
+                className="font-semibold text-[#152a45] underline underline-offset-2"
+              >
+                {campaign.etransferEmail}
+              </a>
+              .
             </p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-2">

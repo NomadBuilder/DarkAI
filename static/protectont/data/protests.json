@@ -1,10 +1,10 @@
 {
   "lastUpdated": "2026-06-25",
   "featuredCampaign": {
-    "enabled": false,
-    "label": "Province-wide protest Saturday June 27, 2026 — find your city and join in",
-    "href": "#event-list",
-    "campaignId": "june-27-2026"
+    "enabled": true,
+    "label": "Wildfire relief: ProtectOnt matches the first $250 — donate for Namaygoosisagagun First Nation →",
+    "href": "/support-wildfires/",
+    "campaignId": "support-wildfires-2026"
   },
   "events": [
     {

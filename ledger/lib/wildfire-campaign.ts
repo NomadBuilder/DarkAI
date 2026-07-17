@@ -34,6 +34,8 @@ export type WildfireCampaignConfig = {
   donations: WildfireDonationEntry[]
   campaignLaunchDate: string
   officialDonationUrl: string
+  /** Official e-transfer address for the charity fundraiser */
+  etransferEmail: string
   pagePath: string
   canonicalUrl: string
   milestones: number[]
@@ -54,6 +56,7 @@ export const WILDFIRE_CAMPAIGN: WildfireCampaignConfig = {
   donations: [],
   campaignLaunchDate: '2026-07-17',
   officialDonationUrl: 'https://an7gc.ca/donate/',
+  etransferEmail: 'an7gc@anishinabek.ca',
   pagePath: '/support-wildfires/',
   canonicalUrl: 'https://protectont.ca/support-wildfires/',
   milestones: [250, 500, 1000, 2500, 5000],
