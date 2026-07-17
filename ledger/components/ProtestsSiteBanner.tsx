@@ -16,7 +16,7 @@ function resolveBannerHref(campaign: FeaturedCampaign, basePath: string): string
     return `${protestsHref}${raw || '#event-list'}`
   }
   if (/^https?:\/\//i.test(raw)) return raw
-  // Absolute site path, e.g. /support-wildfires/
+  // Absolute site path, e.g. /support-for-wildfires/
   return getNavHref(raw, basePath)
 }
 

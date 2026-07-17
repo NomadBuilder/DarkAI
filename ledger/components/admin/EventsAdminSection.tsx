@@ -437,11 +437,11 @@ export default function AdminEventsPage({ embedded = false }: { embedded?: boole
                 type="text"
                 value={featuredCampaign.href ?? ''}
                 onChange={(e) => setFeaturedCampaign((c) => ({ ...c, href: e.target.value }))}
-                placeholder="/support-wildfires/ or #event-list"
+                placeholder="/support-for-wildfires/ or #event-list"
                 className={inputClass}
               />
               <p className="mt-1 text-xs text-slate-500 font-light">
-                Site path (e.g. /support-wildfires/), protest hash (#event-list), or full https URL.
+                Site path (e.g. /support-for-wildfires/), protest hash (#event-list), or full https URL.
               </p>
             </div>
             <div>

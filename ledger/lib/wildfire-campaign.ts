@@ -1,5 +1,5 @@
 /**
- * Editable campaign data for /support-wildfires/
+ * Editable campaign data for /support-for-wildfires/
  *
  * Update communityTotal, donorCount, donations, and match status here
  * when confirming community donations. Do not scatter these values
@@ -57,8 +57,8 @@ export const WILDFIRE_CAMPAIGN: WildfireCampaignConfig = {
   campaignLaunchDate: '2026-07-17',
   officialDonationUrl: 'https://an7gc.ca/donate/',
   etransferEmail: 'an7gc@anishinabek.ca',
-  pagePath: '/support-wildfires/',
-  canonicalUrl: 'https://protectont.ca/support-wildfires/',
+  pagePath: '/support-for-wildfires/',
+  canonicalUrl: 'https://protectont.ca/support-for-wildfires/',
   milestones: [250, 500, 1000, 2500, 5000],
   shareMessage:
     'ProtectOnt is matching the first $250 donated by our community for Namaygoosisagagun First Nation wildfire relief. Donate through the official fundraiser and help grow our collective impact.',

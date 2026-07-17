@@ -237,10 +237,6 @@ export default function WildfireSupportPage() {
             <h2 id="match-heading" className="text-2xl sm:text-3xl font-bold tracking-tight text-[#152a45]">
               ProtectOnt matches the first {matchMax}
             </h2>
-            <p className={`mt-3 text-base sm:text-lg ${bodyClass}`}>
-              Dollar for dollar. One pool — not {matchMax} per person. When the community gives {matchMax},
-              ProtectOnt adds {matchMax}. After that, every extra dollar still grows our impact.
-            </p>
             <p className={`mt-3 text-sm sm:text-base ${bodyClass}`}>
               Give online at{' '}
               <a
