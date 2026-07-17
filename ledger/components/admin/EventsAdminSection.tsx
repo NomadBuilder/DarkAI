@@ -432,6 +432,19 @@ export default function AdminEventsPage({ embedded = false }: { embedded?: boole
               />
             </div>
             <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">Link URL</label>
+              <input
+                type="text"
+                value={featuredCampaign.href ?? ''}
+                onChange={(e) => setFeaturedCampaign((c) => ({ ...c, href: e.target.value }))}
+                placeholder="/support-wildfires/ or #event-list"
+                className={inputClass}
+              />
+              <p className="mt-1 text-xs text-slate-500 font-light">
+                Site path (e.g. /support-wildfires/), protest hash (#event-list), or full https URL.
+              </p>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">List last updated</label>
               <input
                 type="date"
