@@ -18,7 +18,7 @@ const cardClass = 'rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shado
 const h2Class = 'text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900'
 const bodyClass = 'text-slate-700 leading-relaxed'
 const focusRing =
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f9e04c]'
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3d2b7a]'
 
 function DonateButton({
   href,
@@ -34,7 +34,7 @@ function DonateButton({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center justify-center rounded-xl bg-[#f9e04c] px-6 py-3.5 text-base font-bold text-[#1a1a1a] hover:bg-[#ffe566] transition-colors ${focusRing} ${className}`}
+      className={`inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-[#9f1239] to-[#7f1230] px-6 py-3.5 text-base font-bold text-white shadow-md hover:opacity-95 transition-opacity ${focusRing} ${className}`}
     >
       {children}
     </a>
@@ -87,7 +87,7 @@ function MilestoneTracker({
                 reached
                   ? 'bg-[#2E4A6B] text-white border-[#2E4A6B]'
                   : isNext
-                    ? 'bg-[#f9e04c]/25 text-[#152a45] border-[#f9e04c]/60'
+                    ? 'bg-violet-50 text-[#3d2b7a] border-violet-200'
                     : 'bg-white text-slate-500 border-slate-200'
               }`}
             >
@@ -175,23 +175,23 @@ export default function WildfireSupportPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/40" aria-hidden />
 
         <div className="relative mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-14 sm:py-20">
-          <p className="text-xs uppercase tracking-[0.28em] text-[#f9e04c] font-semibold mb-3 drop-shadow">
+          <p className="text-xs uppercase tracking-[0.28em] text-white/80 font-semibold mb-3 drop-shadow">
             Community fundraiser · Match active
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold tracking-tight leading-[1.15] text-white drop-shadow-md">
             An entire community was displaced by wildfire.
-            <span className="block mt-2 text-[#f9e04c] drop-shadow-md">Help them recover.</span>
+            <span className="block mt-2 text-white drop-shadow-md">Help them recover.</span>
           </h1>
           <p className="mt-5 text-lg sm:text-xl text-white font-medium leading-relaxed max-w-2xl drop-shadow">
             Namaygoosisagagun First Nation lost homes and community when wildfire forced everyone out.
             Donate through the official fundraiser — ProtectOnt will match the first {matchMax}.
           </p>
 
-          <div className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-2xl border border-[#f9e04c]/50 bg-black/55 backdrop-blur-sm px-4 py-3 shadow-lg">
-            <span className="text-[#f9e04c] font-bold text-sm uppercase tracking-wide">
+          <div className="mt-6 inline-flex flex-wrap items-center gap-2 rounded-2xl border border-white/30 bg-[#152a45]/70 backdrop-blur-sm px-4 py-3 shadow-lg">
+            <span className="text-white font-bold text-sm uppercase tracking-wide">
               ProtectOnt match
             </span>
-            <span className="text-white font-semibold text-sm sm:text-base">
+            <span className="text-white/95 font-semibold text-sm sm:text-base">
               Your gift doubles until we hit {matchMax}
             </span>
           </div>
@@ -211,14 +211,14 @@ export default function WildfireSupportPage() {
               href={campaign.officialDonationUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`font-semibold text-[#f9e04c] underline underline-offset-2 ${focusRing} rounded-sm`}
+              className={`font-semibold text-white underline underline-offset-2 ${focusRing} rounded-sm`}
             >
               an7gc.ca/donate
             </a>
             {' '}or e-transfer{' '}
             <a
               href={`mailto:${campaign.etransferEmail}`}
-              className={`font-semibold text-[#f9e04c] underline underline-offset-2 ${focusRing} rounded-sm`}
+              className={`font-semibold text-white underline underline-offset-2 ${focusRing} rounded-sm`}
             >
               {campaign.etransferEmail}
             </a>
@@ -230,8 +230,8 @@ export default function WildfireSupportPage() {
       <main className="mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-10 sm:py-14 space-y-10 sm:space-y-12">
         {/* MATCH — high on the page */}
         <section id="match" className={sectionClass} aria-labelledby="match-heading">
-          <div className="rounded-2xl border-2 border-[#f9e04c] bg-gradient-to-br from-[#f9e04c]/20 via-white to-white p-6 sm:p-8 shadow-md">
-            <p className="text-xs uppercase tracking-[0.25em] text-[#152a45]/70 font-bold mb-2">
+          <div className="rounded-2xl border-2 border-[#3d2b7a]/25 bg-gradient-to-br from-violet-50 via-white to-white p-6 sm:p-8 shadow-md">
+            <p className="text-xs uppercase tracking-[0.25em] text-[#3d2b7a] font-bold mb-2">
               Limited match
             </p>
             <h2 id="match-heading" className="text-2xl sm:text-3xl font-bold tracking-tight text-[#152a45]">
@@ -553,7 +553,7 @@ export default function WildfireSupportPage() {
           />
           <div className="absolute inset-0 bg-black/75" aria-hidden />
           <div className="relative">
-            <p className="text-[#f9e04c] text-xs uppercase tracking-[0.25em] font-bold">Double your impact</p>
+            <p className="text-white/80 text-xs uppercase tracking-[0.25em] font-bold">Double your impact</p>
             <p className="mt-2 text-2xl sm:text-3xl font-bold">
               Donate now — ProtectOnt matches the first {matchMax}
             </p>
