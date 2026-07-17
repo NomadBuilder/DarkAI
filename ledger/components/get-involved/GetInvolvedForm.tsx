@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react'
 import {
   buildGetInvolvedSubmitPayload,
   emptyGetInvolvedFormState,
@@ -63,7 +63,10 @@ export default function GetInvolvedForm({
   const [form, setForm] = useState<GetInvolvedFormState>(emptyGetInvolvedFormState)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [showEmailCheckModal, setShowEmailCheckModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const emailModalTitleId = useId()
+  const emailModalCloseRef = useRef<HTMLButtonElement>(null)
   const [lastSubmittedRole, setLastSubmittedRole] = useState<InvolvementRole | ''>('')
   const [submitViaApi, setSubmitViaApi] = useState(false)
   const [sheetSubmitUrl, setSheetSubmitUrl] = useState('')
@@ -187,6 +190,7 @@ export default function GetInvolvedForm({
 
       setLastSubmittedRole(form.role as InvolvementRole)
       setSubmitStatus('success')
+      setShowEmailCheckModal(true)
       setForm(emptyGetInvolvedFormState)
     } catch {
       setSubmitStatus('error')
@@ -198,26 +202,88 @@ export default function GetInvolvedForm({
 
   const sy = formCopy.successYardSign
 
+  useEffect(() => {
+    if (!showEmailCheckModal) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    emailModalCloseRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowEmailCheckModal(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = prev
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [showEmailCheckModal])
+
   if (submitStatus === 'success') {
     return (
-      <div className={`${shellClass} text-center`}>
-        <h2 className="text-2xl font-light text-gray-900">{formCopy.successTitle}</h2>
-        <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">{formCopy.successBody}</p>
-        {lastSubmittedRole === 'yard-sign' && (
-          <FormHtml
-            html={sy.bodyHtml}
-            className="text-sm text-gray-500 font-light max-w-md mx-auto"
-            linkClassName={formHtmlLinkClass}
-          />
-        )}
-        <button
-          type="button"
-          onClick={() => setSubmitStatus('idle')}
-          className={`mt-4 text-sm ${linkClass} font-light`}
-        >
-          {formCopy.shared.submitAnotherLabel}
-        </button>
-      </div>
+      <>
+        <div className={`${shellClass} text-center`}>
+          <h2 className="text-2xl font-light text-gray-900">{formCopy.successTitle}</h2>
+          <p className="text-gray-600 font-light leading-relaxed max-w-md mx-auto">{formCopy.successBody}</p>
+          {lastSubmittedRole === 'yard-sign' && (
+            <FormHtml
+              html={sy.bodyHtml}
+              className="text-sm text-gray-500 font-light max-w-md mx-auto"
+              linkClassName={formHtmlLinkClass}
+            />
+          )}
+          <button
+            type="button"
+            onClick={() => {
+              setShowEmailCheckModal(false)
+              setSubmitStatus('idle')
+            }}
+            className={`mt-4 text-sm ${linkClass} font-light`}
+          >
+            {formCopy.shared.submitAnotherLabel}
+          </button>
+        </div>
+
+        {showEmailCheckModal ? (
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/55"
+            role="presentation"
+            onClick={() => setShowEmailCheckModal(false)}
+          >
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={emailModalTitleId}
+              className="relative w-full max-w-md rounded-2xl bg-white p-6 sm:p-8 shadow-2xl border border-slate-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3
+                id={emailModalTitleId}
+                className="text-xl sm:text-2xl font-semibold tracking-tight text-slate-900"
+              >
+                Check your email
+              </h3>
+              <p className="mt-3 text-slate-700 leading-relaxed">
+                Thanks for signing up. Please check your inbox — and your junk or spam folder — for a
+                reply from ProtectOnt. Messages sometimes land there.
+              </p>
+              <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+                A volunteer will follow up when they can match you locally.
+              </p>
+              <button
+                ref={emailModalCloseRef}
+                type="button"
+                onClick={() => setShowEmailCheckModal(false)}
+                className={
+                  isFf
+                    ? 'mt-6 w-full rounded-xl bg-[#3d2b7a] px-5 py-3.5 text-base font-semibold text-[#f9e04c] hover:bg-[#2f2260] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3d2b7a]'
+                    : 'mt-6 w-full rounded-xl bg-slate-900 px-5 py-3.5 text-base font-medium text-white hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900'
+                }
+              >
+                Got it
+              </button>
+            </div>
+          </div>
+        ) : null}
+      </>
     )
   }
 

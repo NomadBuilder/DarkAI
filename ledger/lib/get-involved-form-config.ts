@@ -174,7 +174,7 @@ export const defaultGetInvolvedFormCopy = (): GetInvolvedFormCopy => ({
   footerLinkLabel: 'About contact form',
   successTitle: 'Thank you',
   successBody:
-    'We received your sign-up. A volunteer will follow up by email when we can match you locally.',
+    'We received your sign-up. Please check your email (including junk/spam) for a reply from ProtectOnt — a volunteer will follow up when we can match you locally.',
   consentText:
     'I agree that Protect Ontario volunteers may contact me about this sign-up. My details are used only for organizing—not sold to third parties. *',
   roles: involvementRoles.map((r) => ({
