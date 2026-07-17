@@ -6,7 +6,7 @@ const description =
   'Join the Protect Ontario community in supporting Namaygoosisagagun First Nation following wildfire displacement. Donate directly through the official fundraiser and help grow our collective impact.'
 const ogTitle = 'Help Support Namaygoosisagagun First Nation'
 const ogDescription =
-  'See how much the Protect Ontario community can raise together. The first $250 donated by our community will be personally matched.'
+  'ProtectOnt is matching the first $250. Join our community in supporting Namaygoosisagagun First Nation after wildfire displacement — donate through the official fundraiser.'
 
 export const metadata: Metadata = {
   title,

@@ -14,11 +14,16 @@ export type WildfireDonationEntry = {
   date: string
 }
 
+export type WildfirePressLink = {
+  label: string
+  href: string
+}
+
 export type WildfireCampaignConfig = {
   communityTotal: number
   donorCount: number
   matchMaximum: number
-  /** True once the personal matching donation has actually been made */
+  /** True once the matching donation has actually been made */
   matchCompleted: boolean
   /** Public confirmation page/image URL (private info removed). Empty = hide link. */
   matchConfirmationUrl: string
@@ -33,6 +38,8 @@ export type WildfireCampaignConfig = {
   canonicalUrl: string
   milestones: number[]
   shareMessage: string
+  heroImageUrl: string
+  pressLinks: WildfirePressLink[]
 }
 
 export const WILDFIRE_CAMPAIGN: WildfireCampaignConfig = {
@@ -51,7 +58,18 @@ export const WILDFIRE_CAMPAIGN: WildfireCampaignConfig = {
   canonicalUrl: 'https://protectont.ca/support-wildfires/',
   milestones: [250, 500, 1000, 2500, 5000],
   shareMessage:
-    'The Protect Ontario community is raising funds for Namaygoosisagagun First Nation following wildfire displacement. The first $250 donated by our community will also be personally matched.',
+    'ProtectOnt is matching the first $250 donated by our community for Namaygoosisagagun First Nation wildfire relief. Donate through the official fundraiser and help grow our collective impact.',
+  heroImageUrl: '/support-wildfires-hero.jpg',
+  pressLinks: [
+    {
+      label: 'CBC News: Entire community displaced by wildfire',
+      href: 'https://www.cbc.ca/news/canada/thunder-bay/namaygoosisagagun-first-nation-wildfire-9.7272350',
+    },
+    {
+      label: 'Watch the CBC video report',
+      href: 'https://www.cbc.ca/player/play/video/9.7274270',
+    },
+  ],
 }
 
 export type WildfireCampaignDerived = {
