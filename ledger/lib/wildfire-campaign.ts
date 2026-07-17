@@ -1,9 +1,8 @@
 /**
- * Editable campaign data for /support-for-wildfires/
+ * Defaults + helpers for /support-for-wildfires/.
  *
- * Update communityTotal, donorCount, donations, and match status here
- * when confirming community donations. Do not scatter these values
- * across components.
+ * Live totals are edited in admin and saved to public/data/wildfire-campaign.json
+ * (see wildfire-campaign-store.ts). This object is the fallback/default shape.
  */
 
 export type WildfireDonationEntry = {
@@ -48,7 +47,7 @@ export const WILDFIRE_CAMPAIGN: WildfireCampaignConfig = {
   communityTotal: 0,
   donorCount: 0,
   matchMaximum: 250,
-  matchCompleted: false,
+  matchCompleted: true,
   matchConfirmationUrl: '',
   contactEmail: 'protectont@gmail.com',
   confirmationFormUrl: '',

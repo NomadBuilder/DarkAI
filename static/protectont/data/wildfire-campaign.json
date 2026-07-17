@@ -1,0 +1,29 @@
+{
+  "communityTotal": 0,
+  "donorCount": 0,
+  "matchMaximum": 250,
+  "matchCompleted": true,
+  "matchConfirmationUrl": "",
+  "contactEmail": "protectont@gmail.com",
+  "confirmationFormUrl": "",
+  "showDonorList": true,
+  "donations": [],
+  "campaignLaunchDate": "2026-07-17",
+  "officialDonationUrl": "https://an7gc.ca/donate/",
+  "etransferEmail": "an7gc@anishinabek.ca",
+  "pagePath": "/support-for-wildfires/",
+  "canonicalUrl": "https://protectont.ca/support-for-wildfires/",
+  "milestones": [250, 500, 1000, 2500, 5000],
+  "shareMessage": "ProtectOnt is matching the first $250 donated by our community for Namaygoosisagagun First Nation wildfire relief. Donate through the official fundraiser and help grow our collective impact.",
+  "heroImageUrl": "/support-wildfires-hero.jpg",
+  "pressLinks": [
+    {
+      "label": "CBC News: Entire community displaced by wildfire",
+      "href": "https://www.cbc.ca/news/canada/thunder-bay/namaygoosisagagun-first-nation-wildfire-9.7272350"
+    },
+    {
+      "label": "Watch the CBC video report",
+      "href": "https://www.cbc.ca/player/play/video/9.7274270"
+    }
+  ]
+}

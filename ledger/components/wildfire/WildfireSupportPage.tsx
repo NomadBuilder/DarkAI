@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import TopNavigation from '@/components/TopNavigation'
 import { facebookShareUrl } from '@/lib/flyer-share'
 import {
@@ -12,6 +12,7 @@ import {
   shareEmailHref,
   type WildfireCampaignConfig,
 } from '@/lib/wildfire-campaign'
+import { loadWildfireCampaign } from '@/lib/wildfire-campaign-store'
 
 const sectionClass = 'scroll-mt-24'
 const cardClass = 'rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm'
@@ -152,12 +153,32 @@ function ShareActions({ campaign }: { campaign: WildfireCampaignConfig }) {
 }
 
 export default function WildfireSupportPage() {
-  const campaign = WILDFIRE_CAMPAIGN
+  const [campaign, setCampaign] = useState<WildfireCampaignConfig>(WILDFIRE_CAMPAIGN)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    loadWildfireCampaign().then((data) => {
+      if (!cancelled) {
+        setCampaign(data)
+        setLoaded(true)
+      }
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
   const derived = deriveWildfireCampaign(campaign)
   const matchMax = formatCad(campaign.matchMaximum)
+  const matchActiveLabel = campaign.matchCompleted
+    ? 'Match completed'
+    : derived.matchUnlocked
+      ? 'Match unlocked'
+      : 'Match active'
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    <div className={`min-h-screen bg-slate-50 text-slate-900 ${loaded ? '' : ''}`}>
       <TopNavigation />
 
       {/* HERO — full-bleed image + high-contrast copy */}
@@ -176,7 +197,7 @@ export default function WildfireSupportPage() {
 
         <div className="relative mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-14 sm:py-20">
           <p className="text-xs uppercase tracking-[0.28em] text-white/80 font-semibold mb-3 drop-shadow">
-            Community fundraiser · Match active
+            Community fundraiser · {matchActiveLabel}
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-[2.75rem] font-bold tracking-tight leading-[1.15] text-white drop-shadow-md">
             An entire community was displaced by wildfire.

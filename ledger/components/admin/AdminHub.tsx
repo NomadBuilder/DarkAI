@@ -9,6 +9,7 @@ import FormAdminPage from '@/components/admin/FormAdminSection'
 import SubmissionsAdminPage from '@/components/admin/SubmissionsAdminSection'
 import SignDeliveriesAdminPage from '@/components/admin/SignDeliveriesAdminSection'
 import SocialAdminSection from '@/components/admin/SocialAdminSection'
+import WildfireAdminSection from '@/components/admin/WildfireAdminSection'
 
 export const ADMIN_SECTIONS = [
   {
@@ -24,6 +25,13 @@ export const ADMIN_SECTIONS = [
     blurb: 'Create and edit letter-size issue flyers.',
     viewHref: '/flyers',
     viewLabel: 'View /flyers',
+  },
+  {
+    id: 'wildfire',
+    label: 'Wildfire fundraiser',
+    blurb: 'Update community totals, donor list, and ProtectOnt match status for /support-for-wildfires/.',
+    viewHref: '/support-for-wildfires/',
+    viewLabel: 'View fundraiser page',
   },
   {
     id: 'social-posts',
@@ -171,6 +179,7 @@ function AdminHubInner() {
 
         {section === 'events' && <EventsAdminPage embedded />}
         {section === 'flyers' && <FlyerAdminPage embedded />}
+        {section === 'wildfire' && <WildfireAdminSection embedded />}
         {section === 'social-posts' && (
           <>
             <p className="text-sm text-violet-900/90 bg-violet-50 border border-violet-200 rounded-xl px-4 py-3 mb-6 font-light">

@@ -462,6 +462,50 @@ def api_protectont_social_post_ideas():
     return jsonify({"success": True}), 200
 
 
+@app.route('/api/protectont/wildfire-campaign', methods=['GET', 'POST', 'OPTIONS'])
+def api_protectont_wildfire_campaign():
+    """GET/POST wildfire community fundraiser totals for admin."""
+    from protectont_wildfire import (
+        read_wildfire_campaign_json,
+        save_wildfire_campaign_allowed,
+        wildfire_save_enabled,
+        write_wildfire_campaign_json,
+    )
+
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    if request.method == 'GET':
+        data, err = read_wildfire_campaign_json()
+        if err:
+            return jsonify({"error": err}), 404
+        return jsonify(data), 200
+
+    if not wildfire_save_enabled():
+        return jsonify({
+            "error": "Server save disabled",
+            "message": "Unset PROTECTONT_WILDFIRE_DISABLE_SAVE to allow saves from admin",
+        }), 503
+
+    origin = request.headers.get("Origin", "")
+    referer = request.headers.get("Referer", "")
+    if not save_wildfire_campaign_allowed(origin, referer):
+        return jsonify({
+            "error": "Forbidden",
+            "message": "Saves are only accepted from protectont.ca/admin",
+        }), 403
+
+    raw = request.get_data(as_text=True)
+    if not raw:
+        return jsonify({"error": "Empty body"}), 400
+
+    ok, err = write_wildfire_campaign_json(raw)
+    if not ok:
+        return jsonify({"error": err or "Save failed"}), 400
+
+    return jsonify({"success": True}), 200
+
+
 @app.route('/api/get-involved-submit', methods=['POST', 'OPTIONS'])
 def get_involved_submit_route():
     """Save get-involved sign-up to Google Sheet and email organizers via Resend."""
