@@ -349,12 +349,12 @@ export default function WildfireSupportPage() {
           </p>
 
           <div className={`${cardClass} mt-6 border-[#2E4A6B]/20`}>
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-500 font-semibold">Community total</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-slate-500 font-semibold">Combined impact</p>
             <p className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-[#152a45]">
-              {formatCad(campaign.communityTotal)}
+              {formatCad(derived.combinedImpact)}
             </p>
             <p className="mt-1 text-slate-600">
-              raised by our community ·{' '}
+              community donations + ProtectOnt match ·{' '}
               <strong className="text-slate-900">{campaign.donorCount}</strong>{' '}
               {campaign.donorCount === 1 ? 'donor' : 'donors'}
             </p>
