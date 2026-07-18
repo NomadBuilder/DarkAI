@@ -249,7 +249,51 @@ export default function WildfireSupportPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 sm:px-6 md:px-8 py-10 sm:py-14 space-y-10 sm:space-y-12">
-        {/* MATCH — high on the page */}
+        {/* COMMUNITY TOTAL — high on the page */}
+        <section id="progress" className={sectionClass} aria-labelledby="progress-heading">
+          <h2 id="progress-heading" className={h2Class}>
+            How much can we raise together?
+          </h2>
+          <p className={`mt-2 ${bodyClass}`}>
+            Every confirmed ProtectOnt community donation shows up here.
+          </p>
+
+          <div className={`${cardClass} mt-6 border-[#2E4A6B]/20`}>
+            <p className="text-xs uppercase tracking-[0.25em] text-slate-500 font-semibold">Combined impact</p>
+            <p className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-[#152a45]">
+              {formatCad(derived.combinedImpact)}
+            </p>
+            <p className="mt-1 text-slate-600">
+              community donations + ProtectOnt match ·{' '}
+              <strong className="text-slate-900">{campaign.donorCount}</strong>{' '}
+              {campaign.donorCount === 1 ? 'donor' : 'donors'}
+            </p>
+
+            <div className="mt-6 grid gap-3 sm:grid-cols-3 text-center sm:text-left">
+              <div className="rounded-xl bg-slate-50 px-3 py-3">
+                <p className="text-xs uppercase tracking-wider text-slate-500">Community</p>
+                <p className="text-xl font-bold text-[#152a45]">{formatCad(campaign.communityTotal)}</p>
+              </div>
+              <div className="rounded-xl bg-slate-50 px-3 py-3">
+                <p className="text-xs uppercase tracking-wider text-slate-500">ProtectOnt match</p>
+                <p className="text-xl font-bold text-slate-800">{formatCad(derived.personalMatch)}</p>
+              </div>
+              <div className="rounded-xl bg-[#152a45] text-white px-3 py-3">
+                <p className="text-xs uppercase tracking-wider text-white/70">Combined impact</p>
+                <p className="text-xl font-bold">{formatCad(derived.combinedImpact)}</p>
+              </div>
+            </div>
+
+            <MilestoneTracker
+              communityTotal={campaign.communityTotal}
+              milestones={campaign.milestones}
+              nextMilestone={derived.nextMilestone}
+              amountToNextMilestone={derived.amountToNextMilestone}
+            />
+          </div>
+        </section>
+
+        {/* MATCH */}
         <section id="match" className={sectionClass} aria-labelledby="match-heading">
           <div className="rounded-2xl border-2 border-[#3d2b7a]/25 bg-gradient-to-br from-violet-50 via-white to-white p-6 sm:p-8 shadow-md">
             <p className="text-xs uppercase tracking-[0.25em] text-[#3d2b7a] font-bold mb-2">
@@ -336,50 +380,6 @@ export default function WildfireSupportPage() {
             <div className="mt-6">
               <DonateButton href={campaign.officialDonationUrl} className="w-full sm:w-auto" />
             </div>
-          </div>
-        </section>
-
-        {/* COMMUNITY TOTAL */}
-        <section id="progress" className={sectionClass} aria-labelledby="progress-heading">
-          <h2 id="progress-heading" className={h2Class}>
-            How much can we raise together?
-          </h2>
-          <p className={`mt-2 ${bodyClass}`}>
-            Every confirmed ProtectOnt community donation shows up here.
-          </p>
-
-          <div className={`${cardClass} mt-6 border-[#2E4A6B]/20`}>
-            <p className="text-xs uppercase tracking-[0.25em] text-slate-500 font-semibold">Combined impact</p>
-            <p className="mt-2 text-4xl sm:text-5xl font-bold tracking-tight text-[#152a45]">
-              {formatCad(derived.combinedImpact)}
-            </p>
-            <p className="mt-1 text-slate-600">
-              community donations + ProtectOnt match ·{' '}
-              <strong className="text-slate-900">{campaign.donorCount}</strong>{' '}
-              {campaign.donorCount === 1 ? 'donor' : 'donors'}
-            </p>
-
-            <div className="mt-6 grid gap-3 sm:grid-cols-3 text-center sm:text-left">
-              <div className="rounded-xl bg-slate-50 px-3 py-3">
-                <p className="text-xs uppercase tracking-wider text-slate-500">Community</p>
-                <p className="text-xl font-bold text-[#152a45]">{formatCad(campaign.communityTotal)}</p>
-              </div>
-              <div className="rounded-xl bg-slate-50 px-3 py-3">
-                <p className="text-xs uppercase tracking-wider text-slate-500">ProtectOnt match</p>
-                <p className="text-xl font-bold text-slate-800">{formatCad(derived.personalMatch)}</p>
-              </div>
-              <div className="rounded-xl bg-[#152a45] text-white px-3 py-3">
-                <p className="text-xs uppercase tracking-wider text-white/70">Combined impact</p>
-                <p className="text-xl font-bold">{formatCad(derived.combinedImpact)}</p>
-              </div>
-            </div>
-
-            <MilestoneTracker
-              communityTotal={campaign.communityTotal}
-              milestones={campaign.milestones}
-              nextMilestone={derived.nextMilestone}
-              amountToNextMilestone={derived.amountToNextMilestone}
-            />
           </div>
         </section>
 

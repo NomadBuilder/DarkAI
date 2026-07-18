@@ -1,19 +1,46 @@
 {
-  "communityTotal": 0,
-  "donorCount": 0,
+  "communityTotal": 170,
+  "donorCount": 3,
   "matchMaximum": 250,
   "matchCompleted": true,
   "matchConfirmationUrl": "",
   "contactEmail": "protectont@gmail.com",
   "confirmationFormUrl": "",
   "showDonorList": true,
-  "donations": [],
+  "donations": [
+    {
+      "displayName": "Anonymous",
+      "amount": 100,
+      "date": "2026-07-18"
+    },
+    {
+      "displayName": "Anonymous",
+      "amount": 10,
+      "date": "2026-07-18"
+    },
+    {
+      "displayName": "Anonymous",
+      "amount": 10,
+      "date": "2026-07-18"
+    },
+    {
+      "displayName": "Anonymous",
+      "amount": 50,
+      "date": "2026-07-17"
+    }
+  ],
   "campaignLaunchDate": "2026-07-17",
   "officialDonationUrl": "https://an7gc.ca/donate/",
   "etransferEmail": "an7gc@anishinabek.ca",
   "pagePath": "/support-for-wildfires/",
   "canonicalUrl": "https://protectont.ca/support-for-wildfires/",
-  "milestones": [250, 500, 1000, 2500, 5000],
+  "milestones": [
+    250,
+    500,
+    1000,
+    2500,
+    5000
+  ],
   "shareMessage": "ProtectOnt is matching the first $250 donated by our community for Namaygoosisagagun First Nation wildfire relief. Donate through the official fundraiser and help grow our collective impact.",
   "heroImageUrl": "/support-wildfires-hero.jpg",
   "pressLinks": [
