@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What MPP expense disclosure actually shows — ProtectOnt.ca</title>
+  <meta name="description" content="Don’t judge an MPP by the headline total. Split travel (distance) from hospitality (discretion). House medians, rankings, and a postal lookup — from OLA Members’ expense disclosure.">
+  <meta name="theme-color" content="#2a1f58">
+  <link rel="icon" href="https://protectont.ca/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --yellow: #f9e04c; --yellow-hover: #f5d84a; --purple-deep: #2a1f58;
+      --purple: #35266d; --purple-mid: #3d2b7a; --navy: #2E4A6B;
+      --ink: #1a1a1a; --text: #111827; --muted: #4b5563; --dim: #6b7280;
+      --border: #e8e4f0; --bg: #faf9fc; --bg-card: #ffffff; --danger: #b91c1c;
+      --font: Inter, system-ui, -apple-system, sans-serif;
+      --display: Fraunces, Georgia, serif; --max: 880px;
+      --hero-grad: linear-gradient(168deg, #5c4899 0%, #4a3888 18%, #3d2b7a 42%, #35266d 68%, #2a1f58 100%);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); line-height: 1.65; -webkit-font-smoothing: antialiased; }
+    a { color: var(--navy); text-underline-offset: 2px; }
+    a:hover { color: var(--purple-mid); }
+    .hero { position: relative; overflow: hidden; background: var(--hero-grad); padding: 3rem 1.25rem 2.5rem; }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(245,184,122,0.4) 0%, transparent 42%),
+        radial-gradient(circle at 88% 78%, rgba(224,120,48,0.32) 0%, transparent 46%),
+        linear-gradient(to bottom, rgba(255,255,255,0.08) 0%, transparent 30%, rgba(0,0,0,0.14) 100%);
+    }
+    .hero-inner { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; }
+    .hero-brand { margin-bottom: 1rem; }
+    .hero-brand img { height: 2.75rem; width: auto; }
+    .eyebrow { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .pill {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+      padding: 0.35rem 0.7rem; border: 1px solid rgba(249,224,76,0.4); border-radius: 999px; color: rgba(249,224,76,0.95);
+    }
+    .pill.solid { color: var(--ink); background: var(--yellow); border-color: var(--yellow); }
+    h1 {
+      font-family: var(--display); font-size: clamp(2.1rem, 5.5vw, 3.2rem); font-weight: 600;
+      letter-spacing: -0.03em; line-height: 1.08; margin-bottom: 0.85rem; color: #fff;
+      text-shadow: 0 4px 32px rgba(0,0,0,0.35);
+    }
+    h1 em { font-style: normal; color: var(--yellow); }
+    .lead { color: rgba(249,224,76,0.92); font-size: 1.08rem; max-width: 36rem; line-height: 1.45; }
+    .wrap { max-width: var(--max); margin: 0 auto; padding: 2rem 1.25rem 4rem; }
+    .data-credit {
+      display: flex; gap: 0.85rem; align-items: flex-start; margin-bottom: 1.5rem;
+      padding: 0.85rem 1rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 0.85rem;
+    }
+    .data-credit p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+    .callout {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 1rem;
+      padding: 1.35rem; margin-bottom: 1.75rem; box-shadow: 0 10px 36px rgba(42,31,88,0.07);
+    }
+    .callout h3 { font-family: var(--display); font-size: 1.35rem; color: var(--ink); margin-bottom: 0.5rem; }
+    .callout p { color: var(--muted); font-size: 0.98rem; }
+    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin: 1.25rem 0; }
+    @media (min-width: 640px) { .stats { grid-template-columns: repeat(4, 1fr); } }
+    .stat {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 0.9rem; padding: 1.05rem;
+    }
+    .stat .n { font-family: var(--display); font-size: 1.45rem; font-weight: 600; color: var(--ink); line-height: 1.1; }
+    .stat .l { font-size: 0.72rem; color: var(--dim); margin-top: 0.35rem; text-transform: uppercase; letter-spacing: 0.04em; font-weight: 600; }
+    h2 {
+      font-family: var(--display); font-size: clamp(1.45rem, 3vw, 1.85rem); font-weight: 600;
+      color: var(--ink); margin: 2rem 0 0.75rem; letter-spacing: -0.02em;
+    }
+    h2 .num { color: var(--purple); margin-right: 0.35rem; }
+    p.body { color: var(--muted); margin-bottom: 0.85rem; }
+    .compare {
+      display: grid; gap: 0.65rem; margin: 1rem 0 1.5rem;
+    }
+    .compare-row {
+      display: grid; gap: 0.35rem; background: #fff; border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 0.9rem 1rem;
+    }
+    @media (min-width: 640px) {
+      .compare-row { grid-template-columns: 1fr 1.4fr; align-items: start; }
+    }
+    .compare-row .says { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--purple); }
+    .compare-row .does { color: var(--text); font-size: 0.95rem; }
+    table {
+      width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.75rem 0 1.25rem;
+      background: #fff; border: 1px solid var(--border); border-radius: 0.75rem; overflow: hidden;
+    }
+    th, td { text-align: left; padding: 0.6rem 0.65rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+    th { color: var(--dim); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; background: #f8f7fb; }
+    td:first-child { font-weight: 600; color: var(--ink); }
+    td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .tag {
+      display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 0.15rem 0.4rem;
+      border-radius: 0.3rem; background: #fef3c7; color: #92400e;
+    }
+    .tag.travel { background: #eff6ff; color: #1e40af; }
+    .party-grid { display: grid; gap: 0.55rem; margin: 0.75rem 0 1.5rem; }
+    @media (min-width: 560px) { .party-grid { grid-template-columns: 1fr 1fr; } }
+    .party-card {
+      background: #fff; border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.85rem 1rem;
+    }
+    .party-card .p { font-weight: 700; color: var(--ink); font-size: 0.92rem; }
+    .party-card .m { font-size: 0.82rem; color: var(--muted); margin-top: 0.25rem; }
+    .mpp-lookup {
+      scroll-margin-top: 4.5rem; background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 1rem; padding: 1.35rem; margin: 1.5rem 0; box-shadow: 0 10px 36px rgba(42,31,88,0.07);
+    }
+    .mpp-lookup .eyebrow-sm {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--purple); margin-bottom: 0.4rem;
+    }
+    .mpp-lookup h3 {
+      font-family: var(--display); font-size: clamp(1.35rem, 3vw, 1.7rem); font-weight: 600;
+      color: var(--ink); margin: 0 0 0.45rem;
+    }
+    .mpp-lookup .blurb { color: var(--muted); font-size: 0.95rem; margin: 0 0 1rem; max-width: 36rem; }
+    .mpp-lookup-form { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .mpp-lookup-form label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .mpp-lookup-form input {
+      flex: 1 1 10rem; font: inherit; font-size: 1rem; border: 1px solid var(--border);
+      border-radius: 0.55rem; padding: 0.7rem 0.85rem;
+    }
+    .mpp-lookup-form button {
+      font: inherit; font-weight: 600; background: var(--yellow); color: var(--ink); border: 0;
+      border-radius: 0.55rem; padding: 0.7rem 1.1rem; cursor: pointer;
+    }
+    .mpp-lookup-form button:disabled { opacity: 0.65; cursor: wait; }
+    .mpp-lookup-error { margin-top: 0.75rem; color: var(--danger); font-size: 0.9rem; display: none; }
+    .mpp-lookup-error.show { display: block; }
+    .mpp-lookup-result { display: none; margin-top: 1.15rem; }
+    .mpp-lookup-result.show { display: block; }
+    .mpp-lookup-meta { font-size: 0.9rem; color: var(--muted); margin: 0.2rem 0 0.85rem; }
+    .exp-cats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; margin: 0.75rem 0; font-size: 0.88rem; color: var(--muted); }
+    .exp-cats strong { color: var(--ink); }
+    .mpp-actions { display: flex; flex-wrap: wrap; gap: 0.55rem; margin-top: 0.85rem; }
+    .mpp-actions a {
+      font-weight: 600; font-size: 0.88rem; border-radius: 0.5rem; padding: 0.55rem 0.9rem;
+      text-decoration: none; border: 1px solid var(--border); background: #fff; color: var(--ink);
+    }
+    .mpp-actions a.primary { background: var(--yellow); border-color: var(--yellow); }
+    .mpp-lookup-foot { margin-top: 0.85rem; font-size: 0.75rem; color: var(--dim); }
+    .explore { display: grid; gap: 0.5rem; margin-top: 0.85rem; }
+    @media (min-width: 560px) { .explore { grid-template-columns: 1fr 1fr; } }
+    .explore a {
+      display: block; text-decoration: none; background: #fff; border: 1px solid var(--border);
+      border-radius: 0.75rem; padding: 0.85rem 1rem; color: var(--ink); font-weight: 600; font-size: 0.92rem;
+    }
+    .explore a span { display: block; font-size: 0.7rem; color: var(--purple); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.2rem; }
+    .sources { font-size: 0.82rem; color: var(--dim); margin: 1.5rem 0; }
+    .sources li { margin-bottom: 0.4rem; }
+    footer {
+      margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border);
+      font-size: 0.78rem; color: var(--dim);
+    }
+    .note {
+      font-size: 0.88rem; color: #92400e; background: #fffbeb; border: 1px solid #fde68a;
+      border-radius: 0.65rem; padding: 0.75rem 0.9rem; margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="hero-brand">
+        <a href="https://protectont.ca/" aria-label="ProtectOnt.ca — Home">
+          <img src="https://protectont.ca/logo-icon-text-dark.svg" alt="ProtectOnt.ca" width="200" height="44">
+        </a>
+      </div>
+      <div class="eyebrow">
+        <span class="pill solid">ProtectOnt.ca</span>
+        <span class="pill">Expense disclosure · July 2026</span>
+      </div>
+      <h1>Don’t trust the <em>headline total</em></h1>
+      <p class="lead">
+        OLA expense disclosure is mostly travel and hospitality. Distance looks like waste until you split the categories. Discretion is where the story is.
+      </p>
+    </div>
+  </header>
+
+  <article class="wrap">
+    <div class="data-credit">
+      <a href="https://www.onac.ca/" target="_blank" rel="noopener noreferrer" aria-label="Ontarians Against Corruption">
+        <img src="https://protectont.ca/partners/onac.png" alt="Ontarians Against Corruption" width="52" height="16">
+      </a>
+      <p>
+        <strong>Expense data</strong> maintained with the ONAC / OAC MPP tracker<br>
+        Source: <a href="https://www.ola.org/en/members/expense-disclosure/list" target="_blank" rel="noopener noreferrer">OLA Members’ expense disclosure</a>
+        · As of <span id="as-of">—</span>
+      </p>
+    </div>
+
+    <div class="callout">
+      <h3>Two archetypes. One bad habit.</h3>
+      <p>
+        Ranking MPPs by total dollars alone punishes northern and distant ridings and hides hospitality-heavy spenders closer to Queen’s Park.
+        This brief splits the categories, shows House and caucus medians, then lets you look up your MPP.
+      </p>
+      <div class="explore">
+        <a href="#lookup"><span>Act</span>Look up your MPP’s expenses</a>
+        <a href="https://protectont.ca/reports/they-called-it-protection#your-mpp-record"><span>Votes</span>Same riding · six “Protect Ontario” bills</a>
+      </div>
+    </div>
+
+    <div class="stats" id="house-stats" aria-live="polite">
+      <div class="stat"><div class="n" id="stat-sum">—</div><div class="l">Disclosed (2yr)</div></div>
+      <div class="stat"><div class="n" id="stat-median">—</div><div class="l">House median</div></div>
+      <div class="stat"><div class="n" id="stat-hosp">—</div><div class="l">Hospitality share</div></div>
+      <div class="stat"><div class="n" id="stat-100k">—</div><div class="l">Members over $100k</div></div>
+    </div>
+
+    <h2><span class="num">1.</span> Split travel from hospitality</h2>
+    <p class="body">
+      These figures are <strong>claim categories</strong> — travel, accommodation, meals, hospitality — not full office or staff budgets.
+      Across the House, hospitality is about <strong>three-fifths</strong> of disclosed dollars. That is the discretionary pile worth ranking.
+    </p>
+    <div class="compare">
+      <div class="compare-row">
+        <div><span class="says">Travel-heavy</span><div class="does">Northern and distant ridings: large travel, modest hospitality. Expect this. Geography is not a scandal.</div></div>
+        <div><span class="says">Examples</span><div class="does">Sol Mamakwa (Kiiwetinoong), Greg Rickford (Kenora—Rainy River), Guy Bourgouin (Mushkegowuk—James Bay).</div></div>
+      </div>
+      <div class="compare-row">
+        <div><span class="says">Hospitality-heavy</span><div class="does">Totals driven by hospitality — often GTA / 905 — with travel a smaller share. This is the accountability hook.</div></div>
+        <div><span class="says">Examples</span><div class="does">Hardeep Singh Grewal, Sheref Sabawy, Zee Hamid, Aris Babikian, Rudy Cuzzetto, Paul Calandra, Caroline Mulroney.</div></div>
+      </div>
+    </div>
+
+    <h2><span class="num">2.</span> Caucus medians are close — composition is not</h2>
+    <p class="body">
+      Total medians by party sit in a similar band. The sharper signal is <strong>who concentrates spend in hospitality</strong>, not which caucus “spends more” overall.
+    </p>
+    <div class="party-grid" id="party-grid"></div>
+
+    <h2><span class="num">3.</span> Top hospitality (discretion)</h2>
+    <p class="body">Highest hospitality claims in the OLA window. Link through to the official disclosure page.</p>
+    <div id="table-hosp"></div>
+
+    <h2><span class="num">4.</span> Top travel (distance)</h2>
+    <p class="body">Highest travel claims — read as geography first, gotcha second.</p>
+    <div id="table-travel"></div>
+
+    <div class="note" id="missing-note" hidden></div>
+
+    <div class="mpp-lookup" id="lookup">
+      <p class="eyebrow-sm">One riding · disclosed claims</p>
+      <h3>Your MPP’s expense disclosure</h3>
+      <p class="blurb">Enter your postal code. See total, category split, House rank, and a link to the OLA page.</p>
+      <form class="mpp-lookup-form" id="mpp-lookup-form">
+        <label for="mpp-postal">Ontario postal code</label>
+        <input id="mpp-postal" name="postal" type="text" inputmode="text" autocomplete="postal-code" placeholder="e.g. M5V 2T6" required>
+        <button type="submit" id="mpp-lookup-btn">See their expenses</button>
+      </form>
+      <p class="mpp-lookup-error" id="mpp-lookup-error" role="alert"></p>
+      <div class="mpp-lookup-result" id="mpp-lookup-result" role="status" aria-live="polite"></div>
+      <p class="mpp-lookup-foot">Riding match via OpenNorth Represent · expenses from OLA · dataset with ONAC / OAC</p>
+    </div>
+
+    <h2><span class="num">5.</span> Methodology</h2>
+    <ul class="sources">
+      <li>Source pages: <a href="https://www.ola.org/en/members/expense-disclosure/list" target="_blank" rel="noopener noreferrer">ola.org/en/members/expense-disclosure/list</a> and each member’s claim table (travel, accommodation, meals, hospitality).</li>
+      <li>Window: roughly the past two years of published claims; refresh date shown above.</li>
+      <li>Pull &amp; storage live in the OAC / ONAC MPP tracker — ProtectOnt publishes a synced snapshot (no second scrape).</li>
+      <li>Not included: full members’ office expenditures PDFs, staff salaries, or Premier claims when OLA has none in this window.</li>
+    </ul>
+
+    <div class="callout">
+      <h3>Also see their votes</h3>
+      <p>Expense context pairs with the six “Protect Ontario” bills — species law, SEZs, water corporations, and budget omnibuses.</p>
+      <div class="explore">
+        <a href="https://protectont.ca/reports/they-called-it-protection"><span>Brief</span>They sold it as protection</a>
+        <a href="https://protectont.ca/reports/they-called-it-protection#your-mpp-record"><span>Act</span>Your MPP’s six-bill record</a>
+      </div>
+    </div>
+
+    <footer>
+      ProtectOnt · protectont.ca · Expense dataset with Ontarians Against Corruption · Advocacy / public education ·
+      Not affiliated with the Legislative Assembly · Figures from OLA primary sources
+    </footer>
+  </article>
+
+  <script>
+  (function () {
+    const REPRESENT = 'https://represent.opennorth.ca';
+    const EXPENSE_URLS = [
+      '/data/mpp-expenses.json',
+      'https://protectont.ca/data/mpp-expenses.json'
+    ];
+    const SHARE_URL = 'https://protectont.ca/reports/mpp-expense-disclosure#lookup';
+
+    let expenseData = null;
+    const form = document.getElementById('mpp-lookup-form');
+    const input = document.getElementById('mpp-postal');
+    const btn = document.getElementById('mpp-lookup-btn');
+    const errEl = document.getElementById('mpp-lookup-error');
+    const resultEl = document.getElementById('mpp-lookup-result');
+
+    function formatCad(n) {
+      return new Intl.NumberFormat('en-CA', {
+        style: 'currency', currency: 'CAD', maximumFractionDigits: 0
+      }).format(Number(n) || 0);
+    }
+    function normalizePostal(raw) {
+      return String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    }
+    function formatPostal(raw) {
+      const n = normalizePostal(raw).slice(0, 6);
+      return n.length > 3 ? n.slice(0, 3) + ' ' + n.slice(3) : n;
+    }
+    function isValidPostal(raw) {
+      return /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z]\d[ABCEGHJ-NPRSTV-Z]\d$/i.test(String(raw || '').trim().replace(/\s+/g, ''));
+    }
+    function normalizeRiding(name) {
+      return String(name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[—–−‑]/g, '-').replace(/[''`]/g, '').replace(/\s+/g, ' ').trim();
+    }
+    function normalizePersonName(name) {
+      return String(name || '').toLowerCase().replace(/^(hon\.|dr\.)\s*/i, '')
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z\s-]/g, '')
+        .replace(/\s+/g, ' ').trim();
+    }
+    function memberByName(name) {
+      if (!expenseData) return null;
+      return expenseData.members.find(m => m.name === name) || null;
+    }
+    function findByRidingOrName(districtName, apiName) {
+      const byRiding = expenseData.byRiding || {};
+      const byName = expenseData.byName || {};
+      const wantRiding = normalizeRiding(districtName);
+      const mapped = (wantRiding && byRiding[wantRiding]) || byName[normalizePersonName(apiName)];
+      if (mapped) return memberByName(mapped);
+      return expenseData.members.find(m =>
+        normalizeRiding(m.riding) === wantRiding ||
+        normalizePersonName(m.name) === normalizePersonName(apiName)
+      ) || null;
+    }
+
+    function renderTable(containerId, names, mode) {
+      const el = document.getElementById(containerId);
+      if (!el || !expenseData) return;
+      const rows = names.map(n => memberByName(n)).filter(Boolean);
+      const head = mode === 'hosp'
+        ? '<th>#</th><th>MPP</th><th>Hospitality</th><th>Total</th><th>Share</th>'
+        : '<th>#</th><th>MPP</th><th>Travel</th><th>Total</th><th>Share</th>';
+      const body = rows.map((m, i) => {
+        const primary = mode === 'hosp' ? m.hospitality : m.travel;
+        const share = mode === 'hosp' ? m.hospShare : m.travelShare;
+        const tag = mode === 'hosp'
+          ? (m.hospShare >= 0.7 ? '<span class="tag">Hospitality-heavy</span>' : '')
+          : (m.travelShare >= 0.5 ? '<span class="tag travel">Travel-heavy</span>' : '');
+        const link = m.sourceUrl
+          ? '<a href="' + m.sourceUrl + '" target="_blank" rel="noopener noreferrer">' + m.name + '</a>'
+          : m.name;
+        return '<tr><td class="num">' + (i + 1) + '</td><td>' + link
+          + '<div style="font-size:0.75rem;color:var(--dim);font-weight:500">' + (m.party || '') + ' · ' + (m.riding || '') + ' ' + tag + '</div></td>'
+          + '<td class="num">' + formatCad(primary) + '</td>'
+          + '<td class="num">' + formatCad(m.total) + '</td>'
+          + '<td class="num">' + Math.round(share * 100) + '%</td></tr>';
+      }).join('');
+      el.innerHTML = '<table><thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table>';
+    }
+
+    function paintHouse() {
+      const h = expenseData.house || {};
+      document.getElementById('as-of').textContent = expenseData.fetchedAt || '—';
+      document.getElementById('stat-sum').textContent = formatCad(h.sumTotal);
+      document.getElementById('stat-median').textContent = formatCad(h.medianTotal);
+      document.getElementById('stat-hosp').textContent = Math.round((h.hospitalityShare || 0) * 100) + '%';
+      document.getElementById('stat-100k').textContent = String(h.over100k || 0);
+
+      const grid = document.getElementById('party-grid');
+      const parties = h.partyMedians || {};
+      grid.innerHTML = Object.keys(parties).map(p => {
+        const row = parties[p];
+        return '<div class="party-card"><div class="p">' + p + ' <span style="font-weight:500;color:var(--dim)">n=' + row.n + '</span></div>'
+          + '<div class="m">Total median ' + formatCad(row.total) + ' · Hospitality median ' + formatCad(row.hospitality) + '</div></div>';
+      }).join('');
+
+      renderTable('table-hosp', (expenseData.lists || {}).topHospitality || [], 'hosp');
+      renderTable('table-travel', (expenseData.lists || {}).topTravel || [], 'travel');
+
+      const note = document.getElementById('missing-note');
+      const notes = expenseData.missingNotes || [];
+      if (notes.length) {
+        note.hidden = false;
+        note.textContent = notes.join(' ');
+      }
+    }
+
+    async function loadExpenses() {
+      if (expenseData) return expenseData;
+      for (const url of EXPENSE_URLS) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          expenseData = await res.json();
+          return expenseData;
+        } catch (_) {}
+      }
+      throw new Error('Could not load expense data');
+    }
+
+    function showError(msg) {
+      errEl.textContent = msg;
+      errEl.classList.add('show');
+      resultEl.classList.remove('show');
+      resultEl.innerHTML = '';
+    }
+    function clearError() {
+      errEl.textContent = '';
+      errEl.classList.remove('show');
+    }
+
+    async function lookupByPostal(code) {
+      const res = await fetch(REPRESENT + '/postcodes/' + code + '/');
+      if (res.status === 404) return { ok: false, error: 'That postal code was not found. Double-check it and try again.' };
+      if (!res.ok) return { ok: false, error: 'Lookup service is unavailable right now. Try again in a moment.' };
+      const data = await res.json();
+      if (data.province && data.province !== 'ON') {
+        return { ok: false, error: 'That postal code is in ' + (data.province || 'another province') + ', not Ontario.' };
+      }
+      const reps = data.representatives_centroid || data.representatives_concordance || [];
+      const mppRep = reps.find(r =>
+        r.elected_office === 'MPP' && (r.representative_set_name || '').includes('Ontario')
+      );
+      if (!mppRep) return { ok: false, error: 'No Ontario MPP found for that postal code.' };
+      const row = findByRidingOrName(mppRep.district_name, mppRep.name);
+      if (!row) {
+        return {
+          ok: false,
+          error: 'Found riding “' + (mppRep.district_name || '') + '”, but expense data is not joined yet.'
+        };
+      }
+      return { ok: true, row: row, city: data.city || '', postal: formatPostal(code) };
+    }
+
+    function renderResult(lookup) {
+      const m = lookup.row;
+      const h = expenseData.house || {};
+      const ola = m.sourceUrl
+        ? '<a class="primary" href="' + m.sourceUrl + '" target="_blank" rel="noopener noreferrer">OLA disclosure ↗</a>'
+        : '';
+      resultEl.innerHTML =
+        '<h4 style="font-family:var(--display);font-size:1.35rem;margin:0;color:var(--ink)">' + m.name + '</h4>'
+        + '<p class="mpp-lookup-meta">' + (m.party || '') + ' · ' + (m.riding || '')
+        + (lookup.city ? ' · ' + lookup.city : '') + ' · ' + lookup.postal + '</p>'
+        + '<p style="font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--ink);margin:0">'
+        + formatCad(m.total) + '</p>'
+        + '<p style="font-size:0.85rem;color:var(--muted);margin:0.25rem 0 0.5rem">Rank #' + m.rankTotal
+        + ' of ' + (h.memberCount || '—') + ' · House median ' + formatCad(h.medianTotal) + '</p>'
+        + '<div class="exp-cats">'
+        + '<span>Travel <strong>' + formatCad(m.travel) + '</strong></span>'
+        + '<span>Hospitality <strong>' + formatCad(m.hospitality) + '</strong></span>'
+        + '<span>Accommodation <strong>' + formatCad(m.accommodation) + '</strong></span>'
+        + '<span>Meals <strong>' + formatCad(m.meals) + '</strong></span>'
+        + '</div>'
+        + '<div class="mpp-actions">' + ola
+        + '<a href="https://protectont.ca/reports/they-called-it-protection#your-mpp-record">Their votes on six bills</a>'
+        + '</div>';
+      resultEl.classList.add('show');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearError();
+      const code = normalizePostal(input.value);
+      if (code.length !== 6 || !isValidPostal(code)) {
+        showError('Enter a valid Ontario postal code (e.g. M5V 2T6).');
+        return;
+      }
+      input.value = formatPostal(code);
+      btn.disabled = true;
+      btn.textContent = 'Looking up…';
+      try {
+        await loadExpenses();
+        const lookup = await lookupByPostal(code);
+        if (!lookup.ok) { showError(lookup.error); return; }
+        renderResult(lookup);
+      } catch (_) {
+        showError('Lookup failed. Check your connection and try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'See their expenses';
+      }
+    });
+
+    loadExpenses().then(paintHouse).catch(() => {
+      document.getElementById('stat-sum').textContent = '—';
+    });
+  })();
+  </script>
+</body>
+</html>

@@ -404,6 +404,33 @@
     .mpp-actions a.primary:hover, .mpp-actions button.primary:hover { background: var(--yellow-hover); }
     .mpp-actions a:hover, .mpp-actions button:hover { border-color: var(--purple-mid); }
     .mpp-lookup-foot { margin-top: 0.85rem; font-size: 0.75rem; color: var(--dim); }
+    .mpp-expenses {
+      margin: 0 0 1rem; padding: 0.9rem 1rem;
+      background: #fff; border: 1px solid var(--border); border-radius: 0.75rem;
+    }
+    .mpp-expenses .label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 0.35rem;
+    }
+    .mpp-expenses .exp-total {
+      font-family: var(--display); font-size: 1.35rem; font-weight: 600; color: var(--ink);
+    }
+    .mpp-expenses .exp-meta { font-size: 0.82rem; color: var(--muted); margin: 0.2rem 0 0.55rem; }
+    .mpp-expenses .exp-cats {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 0.35rem 0.75rem;
+      font-size: 0.8rem; color: var(--muted); margin-bottom: 0.55rem;
+    }
+    .mpp-expenses .exp-cats strong { color: var(--ink); font-weight: 600; }
+    .mpp-expenses .exp-flag {
+      display: inline-block; font-size: 0.72rem; font-weight: 700;
+      padding: 0.2rem 0.45rem; border-radius: 0.35rem; margin: 0 0.3rem 0.35rem 0;
+      background: #fef3c7; color: #92400e; border: 1px solid #fde68a;
+    }
+    .mpp-expenses .exp-flag.alert { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+    .mpp-expenses .exp-flag.info { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+    .mpp-expenses .exp-links { font-size: 0.82rem; margin-top: 0.35rem; }
+    .mpp-expenses .exp-links a { font-weight: 600; }
+    .mpp-expenses.exp-empty { color: var(--muted); font-size: 0.88rem; }
     @media print { .mpp-lookup-form, .mpp-actions, .mpp-lookup { display: none !important; } }
 
     @media print {
@@ -605,6 +632,7 @@
         <a href="https://protectont.ca/water"><span>Bill 60</span>Water corporations · privatization pathway</a>
         <a href="https://protectont.ca/greenbelt"><span>Precedent</span>Greenbelt preferential treatment</a>
         <a href="#your-mpp-record"><span>Act</span>Your MPP’s record on these six</a>
+        <a href="https://protectont.ca/reports/mpp-expense-disclosure"><span>Expenses</span>Hospitality vs travel deep dive</a>
       </div>
     </div>
 
@@ -612,7 +640,7 @@
       <p class="eyebrow-sm">Six bills · one riding</p>
       <h3>Your MPP’s record on these six</h3>
       <p class="blurb">
-        Enter your postal code. See Yes / No / No Show on Bills 5, 17, 24, 60, 68 &amp; 97 — then a one-line ask you can send.
+        Enter your postal code. See Yes / No / No Show on Bills 5, 17, 24, 60, 68 &amp; 97 — plus their OLA expense disclosure — then a one-line ask you can send.
       </p>
       <form class="mpp-lookup-form" id="mpp-lookup-form">
         <label for="mpp-postal">Ontario postal code</label>
@@ -621,7 +649,7 @@
       </form>
       <p class="mpp-lookup-error" id="mpp-lookup-error" role="alert"></p>
       <div class="mpp-lookup-result" id="mpp-lookup-result" role="status" aria-live="polite"></div>
-      <p class="mpp-lookup-foot">Riding match via OpenNorth Represent · vote data from the ProtectOnt / ONAC MPP tracker</p>
+      <p class="mpp-lookup-foot">Riding match via OpenNorth Represent · vote data from the ProtectOnt / ONAC MPP tracker · expenses from <a href="https://www.ola.org/en/members/expense-disclosure/list" target="_blank" rel="noopener noreferrer">OLA disclosure</a></p>
     </div>
 
     <hr>
@@ -986,7 +1014,8 @@
         <li>Financial Accountability Office of Ontario — Commentary on the 2025 Ontario Budget</li>
         <li>Auditor General of Ontario — Special Report on Changes to the Greenbelt (2023)</li>
         <li>Office of the Integrity Commissioner — Report re Minister Clark (30 Aug 2023)</li>
-        <li>ProtectOnt.ca — wildlife, water, public land, Indigenous rights, greenbelt, healthcare; MPP tracker (dataset with Ontarians Against Corruption / <a href="https://www.onac.ca/" target="_blank" rel="noopener">onac.ca</a>)</li>
+        <li>ProtectOnt.ca — wildlife, water, public land, Indigenous rights, greenbelt, healthcare; MPP tracker (dataset with Ontarians Against Corruption / <a href="https://www.onac.ca/" target="_blank" rel="noopener">onac.ca</a>); <a href="https://protectont.ca/reports/mpp-expense-disclosure">MPP expense disclosure brief</a></li>
+        <li>Legislative Assembly of Ontario — <a href="https://www.ola.org/en/members/expense-disclosure/list" target="_blank" rel="noopener">Members’ expense disclosure</a></li>
       </ul>
     </section>
 
@@ -1151,7 +1180,12 @@
       '/data/mpp-featured-votes.json',
       'https://protectont.ca/data/mpp-featured-votes.json'
     ];
+    const EXPENSE_URLS = [
+      '/data/mpp-expenses.json',
+      'https://protectont.ca/data/mpp-expenses.json'
+    ];
     const SHARE_URL = 'https://protectont.ca/reports/they-called-it-protection#your-mpp-record';
+    const EXPENSE_REPORT = 'https://protectont.ca/reports/mpp-expense-disclosure';
 
     const form = document.getElementById('mpp-lookup-form');
     const input = document.getElementById('mpp-postal');
@@ -1161,6 +1195,7 @@
     if (!form) return;
 
     let dataset = null;
+    let expenseData = null;
 
     function normalizePostal(raw) {
       return String(raw || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
@@ -1240,6 +1275,86 @@
       }
       throw lastErr || new Error('Could not load vote data');
     }
+    async function loadExpenses() {
+      if (expenseData) return expenseData;
+      for (const url of EXPENSE_URLS) {
+        try {
+          const res = await fetch(url);
+          if (!res.ok) continue;
+          expenseData = await res.json();
+          return expenseData;
+        } catch (_) { /* try next */ }
+      }
+      expenseData = { members: [], house: {}, byName: {}, byRiding: {} };
+      return expenseData;
+    }
+    function findExpense(mpp) {
+      if (!expenseData || !expenseData.members) return null;
+      const byName = expenseData.byName || {};
+      const byRiding = expenseData.byRiding || {};
+      const nameKey = normalizePersonName(mpp.name);
+      const want = byName[nameKey] || byRiding[normalizeRiding(mpp.riding)];
+      if (!want) {
+        return expenseData.members.find(m =>
+          normalizePersonName(m.name) === nameKey ||
+          normalizeRiding(m.riding) === normalizeRiding(mpp.riding)
+        ) || null;
+      }
+      return expenseData.members.find(m => m.name === want) || null;
+    }
+    function formatCad(n) {
+      return new Intl.NumberFormat('en-CA', {
+        style: 'currency', currency: 'CAD', maximumFractionDigits: 0
+      }).format(Number(n) || 0);
+    }
+    function expenseFlags(row, house) {
+      const flags = [];
+      if (!row) return flags;
+      const med = house && house.medianTotal;
+      if (row.total >= 100000) flags.push({ t: 'alert', l: '$100k+ disclosed' });
+      else if (row.total >= 50000) flags.push({ t: 'warn', l: '$50k+ disclosed' });
+      if (med && row.total >= med * 1.35) flags.push({ t: 'warn', l: 'Above House median' });
+      if (row.hospShare >= 0.7 && row.total >= 20000) flags.push({ t: 'warn', l: 'Hospitality-heavy' });
+      else if (row.travelShare >= 0.5 && row.total >= 20000) flags.push({ t: 'info', l: 'Travel-heavy' });
+      if (row.rankTotal && row.rankTotal <= Math.ceil((house.memberCount || 144) * 0.1)) {
+        flags.push({ t: 'alert', l: 'Top 10% spender' });
+      }
+      return flags;
+    }
+    function renderExpenses(mpp) {
+      const row = findExpense(mpp);
+      const house = (expenseData && expenseData.house) || {};
+      if (!row) {
+        return '<div class="mpp-expenses exp-empty">'
+          + '<p class="label">OLA expense disclosure</p>'
+          + '<p>No matching claims in the current OLA window (or not yet joined).</p>'
+          + '<p class="exp-links"><a href="' + EXPENSE_REPORT + '">Read the expense deep dive →</a></p>'
+          + '</div>';
+      }
+      const flags = expenseFlags(row, house).map(f =>
+        '<span class="exp-flag ' + f.t + '">' + f.l + '</span>'
+      ).join('');
+      const vs = house.medianTotal
+        ? ' · House median ' + formatCad(house.medianTotal)
+        : '';
+      const ola = row.sourceUrl
+        ? ' · <a href="' + row.sourceUrl + '" target="_blank" rel="noopener noreferrer">OLA claims ↗</a>'
+        : '';
+      return '<div class="mpp-expenses">'
+        + '<p class="label">OLA expense disclosure (~2 years)</p>'
+        + '<p class="exp-total">' + formatCad(row.total) + '</p>'
+        + '<p class="exp-meta">Rank #' + row.rankTotal + ' of ' + (house.memberCount || '—')
+        + vs + ' · not full office budgets</p>'
+        + (flags ? '<div>' + flags + '</div>' : '')
+        + '<div class="exp-cats">'
+        + '<span>Travel <strong>' + formatCad(row.travel) + '</strong></span>'
+        + '<span>Hospitality <strong>' + formatCad(row.hospitality) + '</strong></span>'
+        + '<span>Accommodation <strong>' + formatCad(row.accommodation) + '</strong></span>'
+        + '<span>Meals <strong>' + formatCad(row.meals) + '</strong></span>'
+        + '</div>'
+        + '<p class="exp-links"><a href="' + EXPENSE_REPORT + '">Compare to the House →</a>' + ola + '</p>'
+        + '</div>';
+    }
     async function lookupByPostal(code, mpps) {
       const res = await fetch(REPRESENT + '/postcodes/' + code + '/');
       if (res.status === 404) return { ok: false, error: 'That postal code was not found. Double-check it and try again.' };
@@ -1316,6 +1431,7 @@
         + (lookup.city ? ' · ' + lookup.city : '') + ' · ' + postal + profile + '</p>'
         + warn
         + '<ul class="mpp-votes">' + voteItems + '</ul>'
+        + renderExpenses(mpp)
         + '<div class="mpp-ask"><div class="label">One-line ask</div><p>' + ask + '</p></div>'
         + '<div class="mpp-actions">'
         + '<a class="primary" id="mpp-email" href="' + mailto(mpp, bills, ask) + '">Email this MPP</a>'
@@ -1363,6 +1479,7 @@
       btn.textContent = 'Looking up…';
       try {
         const data = await loadDataset();
+        await loadExpenses();
         const lookup = await lookupByPostal(code, data.mpps || []);
         if (!lookup.ok) { showError(lookup.error); return; }
         const bills = (data.bills && data.bills.length)

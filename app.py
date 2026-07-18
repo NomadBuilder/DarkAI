@@ -1104,6 +1104,24 @@ def protectont_accountability_report():
         return send_from_directory('templates', 'report_protectont_accountability.html')
 
 
+@app.route('/reports/mpp-expense-disclosure')
+@app.route('/reports/mpp-expense-disclosure/')
+def protectont_mpp_expense_disclosure_report():
+    """Serve the MPP expense disclosure deep dive from static export."""
+    ledger_dir = _ledger_dir()
+    for relative in (
+        os.path.join('reports', 'mpp-expense-disclosure', 'index.html'),
+        os.path.join('reports', 'mpp-expense-disclosure.html'),
+    ):
+        full = os.path.join(ledger_dir, relative)
+        if os.path.isfile(full):
+            return send_from_directory(os.path.dirname(full), os.path.basename(full))
+    try:
+        return render_template('report_mpp_expense_disclosure.html')
+    except Exception:
+        return send_from_directory('templates', 'report_mpp_expense_disclosure.html')
+
+
 @app.route('/reports/2025-deepfake-report')
 def deepfake_report_2025():
     """2025 Deepfake Report page."""
