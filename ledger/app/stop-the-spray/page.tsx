@@ -367,7 +367,7 @@ export default function StopTheSprayPage() {
           </div>
 
           <p className="text-xs uppercase tracking-[0.16em] text-white/35 font-semibold mb-3">
-            Coalition tools
+            Stop the Spray Canada Tools
           </p>
           <div className="flex flex-wrap gap-2">
             {[
