@@ -55,6 +55,7 @@ const issuesDropdownItems: NavItem[] = [
   { id: 'water', label: 'Water', href: '/water' },
   { id: 'public-land', label: 'Public land', href: '/public-land' },
   { id: 'wildlife', label: 'Wildlife Impact', href: '/wildlife' },
+  { id: 'stop-the-spray', label: 'Stop the Spray', href: '/stop-the-spray' },
   { id: 'indigenous-rights', label: 'Indigenous rights', href: '/indigenous-rights' },
   { id: 'indigenous-hub', label: HUB_SITE_NAME, href: '/stand4land' },
 ]

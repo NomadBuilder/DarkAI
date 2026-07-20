@@ -40,4 +40,10 @@ export const partnerOrganizations: PartnerOrganization[] = [
     href: 'https://darkai.ca/',
     logoSrc: '/partners/dark-ai.png',
   },
+  {
+    id: 'stop-the-spray-canada',
+    name: 'Stop the Spray Canada',
+    href: 'https://stopthespraycanada.ca/',
+    logoSrc: '/partners/stop-the-spray-canada.jpg',
+  },
 ]
