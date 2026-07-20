@@ -9,6 +9,7 @@ Combines three services:
 
 import os
 from datetime import datetime
+import html
 from flask import Flask, send_from_directory, send_file, jsonify, request, render_template, redirect, abort, Response
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -525,6 +526,85 @@ def get_involved_submit_route():
     if ok:
         return jsonify({"success": True}), 200
     return jsonify({"success": False, "error": err or "Submission failed"}), 500
+
+
+def _join_email_cron_authorized() -> bool:
+    auth = (request.headers.get("Authorization") or "").strip()
+    token = ""
+    if auth.lower().startswith("bearer "):
+        token = auth[7:].strip()
+    else:
+        token = (request.args.get("token") or request.headers.get("X-Cron-Token") or "").strip()
+    expected = (
+        os.environ.get("JOIN_EMAIL_CRON_TOKEN", "").strip()
+        or os.environ.get("SUBMISSIONS_ADMIN_TOKEN", "").strip()
+        or os.environ.get("SECRET_KEY", "").strip()
+    )
+    return bool(expected) and token == expected
+
+
+@app.route('/api/protectont/join-confirm', methods=['GET'])
+def protectont_join_confirm():
+    """Tracked “I'm still interested” link from joiner confirmation emails."""
+    from get_involved_joiner_email import mark_confirmed, verify_confirm_token
+
+    sid = (request.args.get("id") or "").strip()
+    token = (request.args.get("t") or "").strip()
+    if not sid or not verify_confirm_token(sid, token):
+        return (
+            "<!doctype html><html><body style='font-family:sans-serif;padding:2rem'>"
+            "<h1>Link invalid</h1><p>This confirmation link is missing or expired.</p>"
+            "<p><a href='https://protectont.ca/join/'>Back to Join</a></p></body></html>",
+            400,
+            {"Content-Type": "text/html; charset=utf-8"},
+        )
+    row = mark_confirmed(sid)
+    if not row:
+        return (
+            "<!doctype html><html><body style='font-family:sans-serif;padding:2rem'>"
+            "<h1>Sign-up not found</h1><p><a href='https://protectont.ca/join/'>Join</a></p>"
+            "</body></html>",
+            404,
+            {"Content-Type": "text/html; charset=utf-8"},
+        )
+    name = (row.get("name") or "").split()[0] or "there"
+    safe_name = html.escape(name)
+    return (
+        "<!doctype html><html><body style='font-family:sans-serif;padding:2rem;max-width:32rem'>"
+        f"<h1>Thanks, {safe_name}</h1>"
+        "<p>We've marked you as still interested. A ProtectOnt volunteer will follow up when they can match you locally.</p>"
+        "<p><a href='https://protectont.ca/'>protectont.ca</a></p>"
+        "</body></html>",
+        200,
+        {"Content-Type": "text/html; charset=utf-8"},
+    )
+
+
+@app.route('/api/protectont/resend-webhook', methods=['POST', 'OPTIONS'])
+def protectont_resend_webhook():
+    """Resend open/click events → mark join email engagement."""
+    if request.method == 'OPTIONS':
+        return Response(status=204)
+
+    payload = request.get_json(silent=True) or {}
+    event_type = (payload.get("type") or "").strip()
+    data = payload.get("data") if isinstance(payload.get("data"), dict) else payload
+    if event_type in ("email.opened", "email.clicked") or (payload.get("type") in ("opened", "clicked")):
+        from get_involved_joiner_email import mark_engagement_from_resend_event
+
+        mark_engagement_from_resend_event(event_type or str(payload.get("type") or ""), data or {})
+    return jsonify({"ok": True}), 200
+
+
+@app.route('/api/protectont/join-email-followups', methods=['POST', 'GET'])
+def protectont_join_email_followups():
+    """Cron: send one follow-up to joiners who have not opened/clicked/confirmed."""
+    if not _join_email_cron_authorized():
+        return jsonify({"error": "Unauthorized"}), 401
+    from get_involved_joiner_email import process_due_followups
+
+    result = process_due_followups(limit=int(request.args.get("limit") or 50))
+    return jsonify({"success": True, **result}), 200
 
 
 # robots.txt for protectont.ca: allow all crawlers including Facebook (fixes FB Sharing Debugger 403)

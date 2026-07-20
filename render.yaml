@@ -343,6 +343,25 @@ services:
         value: onboarding@resend.dev
       - key: CONTACT_EMAIL
         value: aazirmun@gmail.com
+      # Join joiner confirmation follow-ups (POST /api/protectont/join-email-followups)
+      - key: JOIN_EMAIL_CRON_TOKEN
+        sync: false
+      - key: JOIN_FOLLOWUP_HOURS
+        value: "48"
+
+  # Daily nudge for join sign-ups that never engaged with the confirmation email
+  - type: cron
+    name: protectont-join-email-followups
+    env: python
+    schedule: "0 14 * * *"
+    buildCommand: pip install --disable-pip-version-check requests
+    startCommand: |
+      python -c "import os,urllib.request; t=os.environ.get('JOIN_EMAIL_CRON_TOKEN') or os.environ.get('SECRET_KEY') or ''; req=urllib.request.Request('https://protectont.ca/api/protectont/join-email-followups', method='POST', headers={'Authorization':'Bearer '+t}); print(urllib.request.urlopen(req, timeout=60).read().decode())"
+    envVars:
+      - key: JOIN_EMAIL_CRON_TOKEN
+        sync: false
+      - key: SECRET_KEY
+        sync: false
 
 databases:
   # Using existing blackwire database (shared by all services)

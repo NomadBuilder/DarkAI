@@ -58,6 +58,18 @@ def normalize_submission(data: dict[str, Any]) -> dict[str, Any]:
         "hubName": (data.get("hubName") or "").strip(),
         "hubPhone": (data.get("hubPhone") or "").strip(),
         "organizerEmail": (data.get("organizerEmail") or "").strip(),
+        # Joiner email tracking (confirmation + follow-up)
+        "joinerAckStatus": (data.get("joinerAckStatus") or "").strip(),
+        "joinerAckSentAt": (data.get("joinerAckSentAt") or "").strip(),
+        "joinerAckResendId": (data.get("joinerAckResendId") or "").strip(),
+        "joinerAckError": (data.get("joinerAckError") or "").strip(),
+        "joinerFollowUpStatus": (data.get("joinerFollowUpStatus") or "").strip(),
+        "joinerFollowUpSentAt": (data.get("joinerFollowUpSentAt") or "").strip(),
+        "joinerFollowUpResendId": (data.get("joinerFollowUpResendId") or "").strip(),
+        "joinerFollowUpError": (data.get("joinerFollowUpError") or "").strip(),
+        "joinerEmailOpenedAt": (data.get("joinerEmailOpenedAt") or "").strip(),
+        "joinerEmailClickedAt": (data.get("joinerEmailClickedAt") or "").strip(),
+        "joinerConfirmedAt": (data.get("joinerConfirmedAt") or "").strip(),
     }
 
 
@@ -190,3 +202,23 @@ def list_submissions() -> list[dict[str, Any]]:
 
     rows.sort(key=lambda row: row.get("submittedAt") or "", reverse=True)
     return rows
+
+
+def get_submission(submission_id: str) -> dict[str, Any] | None:
+    sid = (submission_id or "").strip()
+    if not sid:
+        return None
+    for row in list_submissions():
+        if row.get("id") == sid:
+            return row
+    return None
+
+
+def find_submission_by_resend_id(resend_id: str) -> dict[str, Any] | None:
+    rid = (resend_id or "").strip()
+    if not rid:
+        return None
+    for row in list_submissions():
+        if row.get("joinerAckResendId") == rid or row.get("joinerFollowUpResendId") == rid:
+            return row
+    return None

@@ -25,6 +25,12 @@ type SignupRow = {
   updatesTopics?: string
   additionalNotes?: string
   sourcePage?: string
+  joinerAckStatus?: string
+  joinerAckSentAt?: string
+  joinerFollowUpSentAt?: string
+  joinerEmailOpenedAt?: string
+  joinerEmailClickedAt?: string
+  joinerConfirmedAt?: string
 }
 
 type PaymentRow = {
@@ -123,6 +129,16 @@ function requestBadgeClass(request?: string) {
   if (value.includes('drop')) return 'bg-sky-100 text-sky-900 border-sky-200'
   if (value.includes('volunteer')) return 'bg-emerald-100 text-emerald-900 border-emerald-200'
   return 'bg-slate-100 text-slate-800 border-slate-200'
+}
+
+function joinerEmailStatus(row: SignupRow): string {
+  if (row.joinerConfirmedAt) return 'Confirmed interested'
+  if (row.joinerEmailClickedAt) return 'Clicked'
+  if (row.joinerEmailOpenedAt) return 'Opened'
+  if (row.joinerFollowUpSentAt) return 'Follow-up sent'
+  if (row.joinerAckSentAt || row.joinerAckStatus === 'sent') return 'Ack sent'
+  if (row.joinerAckStatus === 'failed') return 'Ack failed'
+  return '—'
 }
 
 function matchesSearch(text: string, query: string) {
@@ -273,6 +289,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
         'Phone',
         'City',
         'Postal',
+        'Email status',
         'Sign design',
         'Sign qty',
         'Payment',
@@ -286,6 +303,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
         r.phone || '',
         r.city || '',
         r.postalCode || '',
+        joinerEmailStatus(r),
         r.yardSignDesign || '',
         r.yardSignQuantity || '',
         r.yardSignPaymentStatus || '',
@@ -437,6 +455,7 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
                   { key: 'request', label: 'Request' },
                   { key: 'contact', label: 'Contact' },
                   { key: 'location', label: 'Location' },
+                  { key: 'emailStatus', label: 'Email' },
                   { key: 'details', label: 'Details' },
                 ]}
                 emptyMessage="No sign-ups loaded yet."
@@ -463,6 +482,9 @@ export default function SubmissionsAdminSection({ embedded = false }: { embedded
                         <p>{row.city || '—'}</p>
                         {row.postalCode ? <p className="text-xs text-slate-500">{row.postalCode}</p> : null}
                       </div>
+                    ),
+                    emailStatus: (
+                      <span className="whitespace-nowrap text-xs text-slate-600">{joinerEmailStatus(row)}</span>
                     ),
                     details: (
                       <div className="max-w-md text-xs text-slate-600 space-y-1">

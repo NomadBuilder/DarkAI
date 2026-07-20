@@ -287,6 +287,14 @@ def process_get_involved_submission(data: dict[str, Any]) -> tuple[bool, str | N
 
         send_sign_delivery_alert(record)
 
+    # Always try to email the joiner a confirmation (needs RESEND_API_KEY + usable FROM_EMAIL).
+    try:
+        from get_involved_joiner_email import send_joiner_ack
+
+        send_joiner_ack(record)
+    except Exception:
+        logger.exception("Joiner confirmation email failed")
+
     sheet_url = _sheet_submit_url()
     if sheet_url:
         sheet_ok, sheet_err = forward_to_google_sheet(data)

@@ -262,11 +262,12 @@ export default function GetInvolvedForm({
                 Check your email
               </h3>
               <p className="mt-3 text-slate-700 leading-relaxed">
-                Thanks for signing up. Please check your inbox — and your junk or spam folder — for a
-                reply from ProtectOnt. Messages sometimes land there.
+                We sent a confirmation to your inbox. Please check there — and your junk or spam folder —
+                for a message from ProtectOnt.
               </p>
               <p className="mt-3 text-sm text-slate-600 leading-relaxed">
-                A volunteer will follow up when they can match you locally.
+                If you can, tap <strong className="font-medium text-slate-800">I&apos;m still interested</strong> in
+                that email. A volunteer will follow up when they can match you locally.
               </p>
               <button
                 ref={emailModalCloseRef}

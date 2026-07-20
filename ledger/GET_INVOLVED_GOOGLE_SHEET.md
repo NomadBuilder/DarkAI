@@ -181,11 +181,43 @@ The site posts to **`/api/get-involved-submit`** → Flask forwards to this scri
 
 **You must:** paste the full script in section 2 (including `sendNotificationEmail`) and **Deploy → New version** on the web app.
 
-Resend is **off** by default for get-involved. To use Resend later (verified domain), set on Render: `GET_INVOLVED_USE_RESEND=true`.
+Organizer Resend alerts are **off** by default (`GET_INVOLVED_USE_RESEND=true` to enable). Joiner confirmation emails use Resend whenever `RESEND_API_KEY` is set (see below).
 
 **Common mistake:** env key truncated (e.g. `NEXT_PUBLIC_GET_` instead of `NEXT_PUBLIC_GET_INVOLVED_SUBMIT_URL`). Copy the full key name.
 
 For local dev, put the URL in `ledger/.env.local` or repo-root `.env` and rebuild, or rely on Flask with the var in the environment.
+
+---
+
+## Joiner confirmation + follow-up (Resend)
+
+On every successful `/join` submit, Flask also emails **the person who signed up**:
+
+1. Immediate **“We got your ProtectOnt sign-up”** with an **I’m still interested** link  
+2. After **`JOIN_FOLLOWUP_HOURS`** (default 48), one follow-up **if** they have not opened, clicked, or confirmed  
+
+Setup on Render:
+
+| Env | Purpose |
+|-----|---------|
+| `RESEND_API_KEY` | Required for joiner emails |
+| `FROM_EMAIL` | Prefer a verified domain (e.g. `ProtectOnt <hello@protectont.ca>`), not `onboarding@resend.dev` in production |
+| `JOIN_FOLLOWUP_HOURS` | Optional; default `48` |
+| `JOIN_EMAIL_CRON_TOKEN` | Bearer token for the follow-up cron |
+
+**Cron (required for auto follow-ups):** once or twice a day, call:
+
+```bash
+curl -X POST -H "Authorization: Bearer $JOIN_EMAIL_CRON_TOKEN" \
+  https://protectont.ca/api/protectont/join-email-followups
+```
+
+(Render Cron Job, or any scheduler.)
+
+**Open/click tracking (optional but recommended):** in Resend, enable open + click tracking on your domain, then add a webhook to  
+`https://protectont.ca/api/protectont/resend-webhook` for `email.opened` and `email.clicked`.
+
+Confirm link: `GET /api/protectont/join-confirm?id=…&t=…` marks the sign-up engaged so they won’t get the nudge.
 
 ---
 
@@ -205,7 +237,9 @@ For local dev, put the URL in `ledger/.env.local` or repo-root `.env` and rebuil
 |------|----------------|
 | User submits form | Browser POSTs to `/api/get-involved-submit` (Flask) |
 | Flask | Saves to `instance/get_involved_submissions.jsonl` on the server |
+| Flask | Emails the joiner a confirmation (Resend) when `RESEND_API_KEY` is set |
 | Flask (optional) | Forwards to Google Apps Script if `GET_INVOLVED_SUBMIT_URL` is set |
+| Cron | `/api/protectont/join-email-followups` sends one nudge if they never engaged |
 | Admin | `/admin?section=submissions` reads sign-ups from server storage |
 
 Roles on the form: `yard-sign` (I want a sign), `dropoff`, `volunteer`, `other` (something else → `additional_notes` column).
