@@ -18,7 +18,7 @@ export default function GuidePage() {
       </div>
 
       <div className="relative mx-auto max-w-5xl px-6 pt-10 pb-20 md:px-10">
-        <SiteNav active="guide" />
+        <SiteNav active="rules" />
 
         <p className="animate-rise text-xs uppercase tracking-[0.2em] text-[var(--indigo)] mb-4">
           Team style guide

@@ -379,13 +379,6 @@ export function ReviewApp() {
             >
               Tune rules
             </Link>
-            {" · "}
-            <Link
-              href="/guide"
-              className="text-[var(--moss-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
-            >
-              Style guide
-            </Link>
             {drift.disabled > 0 ? (
               <span className="text-[var(--warn)]">
                 {" "}

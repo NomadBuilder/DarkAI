@@ -3,7 +3,7 @@ import Link from "next/link";
 export function SiteNav({
   active,
 }: {
-  active?: "home" | "swap" | "rules" | "guide" | "sources";
+  active?: "home" | "swap" | "rules" | "sources";
 }) {
   return (
     <nav
@@ -26,9 +26,6 @@ export function SiteNav({
         </NavLink>
         <NavLink href="/rules" active={active === "rules"} accent="var(--coral)">
           Rules
-        </NavLink>
-        <NavLink href="/guide" active={active === "guide"} accent="var(--indigo)">
-          Guide
         </NavLink>
         <NavLink
           href="/sources"
