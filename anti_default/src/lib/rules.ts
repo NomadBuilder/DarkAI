@@ -230,6 +230,32 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     ],
   },
   {
+    id: "mother-tongue-gate",
+    pattern: "\\bmother tongue must be\\b|\\bmother[- ]tongue(?:\\s+english)?\\b",
+    category: "colonial",
+    severity: "medium",
+    label: "Mother-tongue gatekeeping",
+    why: "Often used to exclude fluent speakers and privilege a colonial language default.",
+    suggestions: [
+      "fluent in English",
+      "professional proficiency in…",
+      "strong written and spoken English",
+    ],
+  },
+  {
+    id: "virgin-land",
+    pattern: "\\bvirgin (?:land|territory|wilderness|soil)\\b",
+    category: "colonial",
+    severity: "high",
+    label: "“Virgin land”",
+    why: "Settler framing that treats inhabited places as empty and unused before colonization.",
+    suggestions: [
+      "name who already lived there",
+      "uncultivated by settlers",
+      "land already stewarded by…",
+    ],
+  },
+  {
     id: "dark-continent",
     pattern: "\\bdark continent\\b",
     category: "colonial",
@@ -496,7 +522,7 @@ export const LANGUAGE_RULES: LanguageRule[] = [
   },
   {
     id: "suffers-from",
-    pattern: "\\bsuffers from\\b",
+    pattern: "\\bsuffer(?:s)? from\\b",
     category: "ableist",
     severity: "low",
     label: "“Suffers from”",
@@ -511,6 +537,19 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Handicapped”",
     why: "Outdated in many style guides; prefer “disabled people” or specific access language.",
     suggestions: ["disabled people", "people with disabilities", "accessible"],
+  },
+  {
+    id: "special-needs",
+    pattern: "\\bspecial needs\\b",
+    category: "ableist",
+    severity: "medium",
+    label: "“Special needs”",
+    why: "Vague and often othering; many prefer naming the disability or support needed.",
+    suggestions: [
+      "disabled children / disabled people (when accurate)",
+      "children with disabilities",
+      "name the specific support or disability",
+    ],
   },
   {
     id: "retard",
@@ -855,6 +894,24 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Senile”",
     why: "Often used as an ageist insult rather than a precise clinical description.",
     suggestions: ["describe the specific cognitive concern", "person with dementia (when accurate)"],
+  },
+  {
+    id: "digital-native",
+    pattern: "\\bdigital natives?\\b",
+    category: "age",
+    severity: "medium",
+    label: "“Digital native”",
+    why: "Ages people as inherently tech-fluent or obsolete; skills are learned, not born.",
+    suggestions: ["experienced with…", "proficient in…", "familiar with digital tools"],
+  },
+  {
+    id: "young-energetic",
+    pattern: "\\byoung and energetic\\b|\\byoung,? energetic\\b",
+    category: "age",
+    severity: "medium",
+    label: "“Young and energetic” hiring filter",
+    why: "Often codes age discrimination in job ads. Ask for the actual stamina or schedule needs.",
+    suggestions: ["high-energy role", "fast-paced environment", "describe the schedule or physical demands"],
   },
 
   // ── General inclusion ───────────────────────────────────────────────

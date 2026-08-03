@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "analyze": "tsx scripts/analyze-code.ts",
+    "corpus": "tsx scripts/check-corpus.ts",
     "extension:rules": "tsx scripts/export-extension-rules.ts",
     "extension:assets": "python3 scripts/generate-extension-assets.py",
     "extension:pack": "bash scripts/pack-extension.sh"

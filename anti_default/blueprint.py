@@ -22,18 +22,33 @@ FETCH_TIMEOUT = 12
 SKIP_TAGS = {"script", "style", "noscript", "svg", "canvas", "iframe", "template"}
 
 
-def _out_dir() -> str:
-    return os.path.join(os.path.dirname(__file__), "out")
+def _normalize_url(raw: str) -> str:
+    """Accept bare hostnames like livingoutloud.life by defaulting to https."""
+    value = (raw or "").strip()
+    if not value:
+        return value
+    if "://" not in value:
+        value = "https://" + value
+    return value
 
 
-def _is_safe_public_url(raw: str) -> bool:
+def _is_safe_public_url(raw: str) -> tuple[bool, str]:
+    """
+    Returns (ok, error_message). error_message is empty when ok.
+    """
     try:
-        parsed = urlparse(raw)
+        normalized = _normalize_url(raw)
+        parsed = urlparse(normalized)
         if parsed.scheme not in ("http", "https"):
-            return False
+            return False, "Use an http:// or https:// web address."
         host = (parsed.hostname or "").lower()
-        if not host or host == "localhost" or host.endswith(".local"):
-            return False
+        if not host:
+            return False, "That doesn’t look like a valid web address."
+        if host == "localhost" or host.endswith(".local"):
+            return (
+                False,
+                "Local addresses can’t be scraped. Use a public https:// site.",
+            )
         infos = socket.getaddrinfo(host, None)
         for info in infos:
             ip = ipaddress.ip_address(info[4][0])
@@ -44,10 +59,19 @@ def _is_safe_public_url(raw: str) -> bool:
                 or ip.is_reserved
                 or ip.is_multicast
             ):
-                return False
-        return True
+                return (
+                    False,
+                    "Private or local network targets are blocked. Use a public site.",
+                )
+        return True, ""
+    except socket.gaierror:
+        return False, "Couldn’t look up that hostname. Check the spelling and try again."
     except Exception:
-        return False
+        return False, "That URL couldn’t be validated. Try a full https:// address."
+
+
+def _out_dir() -> str:
+    return os.path.join(os.path.dirname(__file__), "out")
 
 
 def _extract_text(html: str, final_url: str) -> dict:
@@ -156,7 +180,8 @@ def _related_links(html: str, base_url: str) -> list[str]:
         absolute = urldefrag(absolute)[0]
         if absolute.rstrip("/") == base_norm:
             continue
-        if not _is_safe_public_url(absolute):
+        ok, _ = _is_safe_public_url(absolute)
+        if not ok:
             continue
         if not _same_registrable_host(base_url, absolute):
             continue
@@ -181,15 +206,14 @@ def scrape():
     crawl_related = payload.get("crawlRelated", True)
     if not raw_url:
         return jsonify({"error": "Provide a URL."}), 400
-    if not _is_safe_public_url(raw_url):
-        return jsonify(
-            {
-                "error": "Only public http(s) URLs are allowed. Local and private network targets are blocked."
-            }
-        ), 400
+    ok, err = _is_safe_public_url(raw_url)
+    if not ok:
+        return jsonify({"error": err}), 400
+
+    url = _normalize_url(raw_url)
 
     try:
-        html, final_url = _fetch_html(raw_url)
+        html, final_url = _fetch_html(url)
         primary = _extract_text(html, final_url)
         pages = [
             {

@@ -33,6 +33,14 @@ Then run the Flask app from the repo root; open `/anti-default`.
 
 Open `/anti-default/rules` or edit `src/lib/rules.ts` for shared defaults.
 
+Practice-test the catch list against real-ish snippets:
+
+```bash
+npm run corpus
+```
+
+See `fixtures/corpus/README.md`.
+
 ## Style guide
 
 Open `/anti-default/guide` to share a team style guide from your tuned rules (copy link or download Markdown).

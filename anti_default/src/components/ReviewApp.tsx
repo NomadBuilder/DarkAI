@@ -133,10 +133,14 @@ export function ReviewApp() {
           return;
         }
 
+        const normalizedUrl =
+          /^https?:\/\//i.test(url.trim()) ? url.trim() : `https://${url.trim()}`;
+        setUrl(normalizedUrl);
+
         const response = await fetch(withBasePath("/api/scrape"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url, crawlRelated }),
+          body: JSON.stringify({ url: normalizedUrl, crawlRelated }),
         });
         const data = await response.json();
         if (!response.ok) {
@@ -275,9 +279,9 @@ export function ReviewApp() {
         {mode === "url" && (
           <div className="grid gap-3">
             <label className="grid gap-2">
-              <span className="text-sm text-[var(--ink-soft)]">
-                Public page to scrape and review
-              </span>
+            <span className="text-sm text-[var(--ink-soft)]">
+              Public page to scrape and review (https:// is added if you omit it)
+            </span>
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -414,7 +418,7 @@ export function ReviewApp() {
               {findings.length === 0
                 ? ignoredInResult > 0
                   ? "All matches ignored"
-                  : "No rule matches found"
+                  : "Nothing flagged"
                 : `${findings.length} phrase${findings.length === 1 ? "" : "s"} to reconsider`}
             </h2>
             <p className="text-[var(--ink-soft)]">
