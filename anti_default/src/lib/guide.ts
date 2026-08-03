@@ -2,6 +2,7 @@ import type { RulePreferences } from "./types";
 import { LANGUAGE_RULES } from "./rules";
 import { resolveRules } from "./preferences";
 import { CATEGORY_META, CATEGORY_ORDER } from "./types";
+import { severityLabel } from "./severity";
 
 /** Compact prefs for URL sharing (only non-defaults). */
 export function prefsToSharePayload(prefs: RulePreferences): string {
@@ -56,7 +57,7 @@ export function buildGuideMarkdown(prefs: RulePreferences): string {
     lines.push(CATEGORY_META[category].description);
     lines.push(``);
     for (const rule of group) {
-      lines.push(`### ${rule.label} (${rule.severity})`);
+      lines.push(`### ${rule.label} (${severityLabel(rule.severity)})`);
       lines.push(``);
       lines.push(rule.why);
       lines.push(``);

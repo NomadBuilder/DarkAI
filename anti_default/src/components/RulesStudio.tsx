@@ -2,25 +2,18 @@
 
 import { useMemo, useState } from "react";
 import { LANGUAGE_RULES } from "@/lib/rules";
+import { sourcesForRule } from "@/lib/rule-sources";
+import { severityLabel } from "@/lib/severity";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
 import {
   CATEGORY_META,
   CATEGORY_ORDER,
-  SEVERITIES,
   type Category,
-  type Severity,
 } from "@/lib/types";
 
 export function RulesStudio() {
-  const {
-    preferences,
-    hydrated,
-    toggleRule,
-    changeSeverity,
-    toggleCategory,
-    reset,
-    drift,
-  } = useRulePreferences();
+  const { preferences, hydrated, toggleRule, reset, drift } =
+    useRulePreferences();
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
   const [showDisabledOnly, setShowDisabledOnly] = useState(false);
@@ -65,17 +58,13 @@ export function RulesStudio() {
         <div>
           <p className="text-sm text-[var(--ink-soft)]">
             {LANGUAGE_RULES.length} rules · {enabledCount} active
-            {hydrated && (drift.disabled > 0 || drift.severityChanged > 0) ? (
-              <span>
-                {" "}
-                · {drift.disabled} off · {drift.severityChanged} severity
-                changed
-              </span>
+            {hydrated && drift.disabled > 0 ? (
+              <span> · {drift.disabled} off</span>
             ) : null}
           </p>
           <p className="text-sm text-[var(--ink-soft)] mt-1 max-w-xl">
-            Changes save in this browser and apply to reviews on the home page.
-            Defaults stay in the open-source repo for everyone else.
+            Turn rules on or off for your reviews. Changes save in this browser.
+            Each rule links to the style guides that informed it.
           </p>
         </div>
         <button
@@ -101,7 +90,7 @@ export function RulesStudio() {
         </label>
         <label className="grid gap-1">
           <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Category
+            Browse
           </span>
           <select
             value={categoryFilter}
@@ -110,7 +99,7 @@ export function RulesStudio() {
             }
             className="bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-3 py-2 outline-none focus:border-[var(--moss)]"
           >
-            <option value="all">All</option>
+            <option value="all">All topics</option>
             {CATEGORY_ORDER.map((id) => (
               <option key={id} value={id}>
                 {CATEGORY_META[id].title}
@@ -131,58 +120,30 @@ export function RulesStudio() {
       {CATEGORY_ORDER.map((category) => {
         const rules = grouped.get(category) ?? [];
         if (rules.length === 0) return null;
-        const allOn = rules.every(
-          (rule) => preferences[rule.id]?.enabled !== false,
-        );
-        const allOff = rules.every(
-          (rule) => preferences[rule.id]?.enabled === false,
-        );
 
         return (
           <section key={category} className="grid gap-4">
-            <header className="flex flex-wrap items-start justify-between gap-3 border-b border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pb-3">
-              <div>
-                <h2
-                  className="text-2xl text-[var(--ink)]"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  {CATEGORY_META[category].title}
-                </h2>
-                <p className="text-sm text-[var(--ink-soft)] mt-1 max-w-2xl">
-                  {CATEGORY_META[category].description}
-                </p>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  disabled={allOn}
-                  onClick={() => toggleCategory(category, true)}
-                  className="text-xs px-3 py-1.5 border border-[color-mix(in_oklab,var(--ink)_18%,transparent)] disabled:opacity-40 hover:border-[var(--ink-soft)]"
-                >
-                  Enable all
-                </button>
-                <button
-                  type="button"
-                  disabled={allOff}
-                  onClick={() => toggleCategory(category, false)}
-                  className="text-xs px-3 py-1.5 border border-[color-mix(in_oklab,var(--ink)_18%,transparent)] disabled:opacity-40 hover:border-[var(--ink-soft)]"
-                >
-                  Disable all
-                </button>
-              </div>
+            <header className="border-b border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pb-3">
+              <h2
+                className="text-2xl text-[var(--ink)]"
+                style={{ fontFamily: "var(--font-display)" }}
+              >
+                {CATEGORY_META[category].title}
+              </h2>
+              <p className="text-sm text-[var(--ink-soft)] mt-1 max-w-2xl">
+                {CATEGORY_META[category].description}
+              </p>
             </header>
 
             <ul className="grid gap-4">
               {rules.map((rule) => {
                 const enabled = preferences[rule.id]?.enabled !== false;
-                const severity =
-                  preferences[rule.id]?.severity ?? rule.severity;
-                const severityCustom = severity !== rule.severity;
+                const sources = sourcesForRule(rule);
 
                 return (
                   <li
                     key={rule.id}
-                    className={`grid gap-3 md:grid-cols-[auto_1fr_auto] md:items-start border-b border-[color-mix(in_oklab,var(--ink)_8%,transparent)] pb-4 ${
+                    className={`grid gap-3 md:grid-cols-[auto_1fr] md:items-start border-b border-[color-mix(in_oklab,var(--ink)_8%,transparent)] pb-4 ${
                       enabled ? "" : "opacity-55"
                     }`}
                   >
@@ -206,6 +167,9 @@ export function RulesStudio() {
                         >
                           {rule.label}
                         </h3>
+                        <span className="text-xs text-[var(--ink-soft)]">
+                          {severityLabel(rule.severity)}
+                        </span>
                         <code className="text-xs font-[family-name:var(--font-mono)] text-[var(--moss-deep)] break-all">
                           /{rule.pattern}/i
                         </code>
@@ -217,34 +181,31 @@ export function RulesStudio() {
                         <span className="text-[var(--ink-soft)]">Try: </span>
                         {rule.suggestions.join(" · ")}
                       </p>
+                      {sources.length > 0 ? (
+                        <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+                          <span className="uppercase tracking-wider text-[var(--moss)]">
+                            Sources
+                          </span>
+                          {" · "}
+                          {sources.map((s, i) => (
+                            <span key={s.href + s.title}>
+                              {i > 0 ? " · " : null}
+                              <a
+                                href={s.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+                              >
+                                {s.title}
+                              </a>
+                            </span>
+                          ))}
+                        </p>
+                      ) : null}
                       <p className="text-xs font-[family-name:var(--font-mono)] text-[var(--ink-soft)]">
                         {rule.id}
-                        {severityCustom ? (
-                          <span> · default severity: {rule.severity}</span>
-                        ) : null}
                       </p>
                     </div>
-
-                    <label className="grid gap-1 text-xs uppercase tracking-wider text-[var(--moss)]">
-                      Severity
-                      <select
-                        value={severity}
-                        disabled={!enabled}
-                        onChange={(e) =>
-                          changeSeverity(
-                            rule.id,
-                            e.target.value as Severity,
-                          )
-                        }
-                        className="normal-case tracking-normal text-sm bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-2 py-1.5 outline-none focus:border-[var(--moss)] disabled:opacity-50"
-                      >
-                        {SEVERITIES.map((level) => (
-                          <option key={level} value={level}>
-                            {level}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
                   </li>
                 );
               })}

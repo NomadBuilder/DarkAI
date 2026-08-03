@@ -1,5 +1,6 @@
 import type { AnalysisResult, Finding } from "./types";
 import { CATEGORY_META } from "./types";
+import { severityLabel } from "./severity";
 
 function downloadBlob(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -34,13 +35,18 @@ export function findingsToMarkdown(
   }
 
   for (const f of findings) {
-    lines.push(`## ${f.label} (${f.severity})`);
+    lines.push(`## ${f.label} (${severityLabel(f.severity)})`);
     lines.push(``);
     lines.push(`- **Match:** “${f.match}”`);
     lines.push(`- **Category:** ${CATEGORY_META[f.category].title}`);
     lines.push(`- **Why:** ${f.why}`);
     lines.push(`- **Try:** ${f.suggestions.join("; ")}`);
     lines.push(`- **Context:** ${f.context}`);
+    if (f.likelyFalsePositive) {
+      lines.push(
+        `- **Soft-flag:** likely false positive${f.contextNote ? ` — ${f.contextNote}` : ""}`,
+      );
+    }
     if (f.source) lines.push(`- **Where:** ${f.source}`);
     lines.push(``);
   }
@@ -60,12 +66,13 @@ export function findingsToCsv(findings: Finding[]): string {
       "suggestions",
       "context",
       "source",
+      "likely_false_positive",
     ].join(","),
   ];
   for (const f of findings) {
     rows.push(
       [
-        f.severity,
+        severityLabel(f.severity),
         f.category,
         escape(f.label),
         escape(f.match),
@@ -73,6 +80,7 @@ export function findingsToCsv(findings: Finding[]): string {
         escape(f.suggestions.join(" | ")),
         escape(f.context),
         escape(f.source ?? ""),
+        f.likelyFalsePositive ? "yes" : "no",
       ].join(","),
     );
   }
@@ -96,7 +104,9 @@ export function findingsToGithubChecklist(
   for (const f of findings) {
     const tryOne = f.suggestions[0] ?? "rephrase";
     lines.push(
-      `- [ ] **${f.label}** — replace “${f.match}” (e.g. ${tryOne}) — _${f.severity}_`,
+      `- [ ] **${f.label}** — replace “${f.match}” (e.g. ${tryOne}) — _${severityLabel(f.severity)}_${
+        f.likelyFalsePositive ? " _(likely false positive)_" : ""
+      }`,
     );
   }
   return lines.join("\n");

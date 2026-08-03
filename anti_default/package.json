@@ -8,7 +8,8 @@
     "build:darkai": "NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default next build",
     "start": "next start",
     "lint": "eslint",
-    "analyze": "tsx scripts/analyze-code.ts"
+    "analyze": "tsx scripts/analyze-code.ts",
+    "extension:rules": "tsx scripts/export-extension-rules.ts"
   },
   "dependencies": {
     "cheerio": "^1.2.0",

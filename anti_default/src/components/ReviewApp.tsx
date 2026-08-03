@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import Link from "next/link";
 import { analyzeText } from "@/lib/analyzer";
 import { withBasePath } from "@/lib/base-path";
+import { DocumentHighlight } from "@/components/DocumentHighlight";
 import { downloadFindingsExport } from "@/lib/export";
 import {
   filterIgnoredFindings,
@@ -12,11 +13,14 @@ import {
   saveIgnoredKeys,
 } from "@/lib/ignores";
 import { applySuggestionToText, previewRewrite } from "@/lib/rewrite";
-import type { AnalysisResult, Category, Finding, Severity } from "@/lib/types";
+import { reportFindingIssueUrl } from "@/lib/report";
+import { severityLabel } from "@/lib/severity";
+import type { AnalysisResult, Finding, Severity } from "@/lib/types";
 import { CATEGORY_META } from "@/lib/types";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
 
 type Mode = "url" | "text" | "docs";
+type ResultsView = "cards" | "document";
 
 const FALLBACK_TEXT =
   "Paste marketing copy, docs, or UI strings here to review inclusive language.";
@@ -40,29 +44,18 @@ function severityClass(severity: Severity): string {
   return "text-[var(--moss-deep)] bg-[color-mix(in_oklab,var(--leaf)_18%,white)]";
 }
 
-function categoryAccent(category: Category): string {
-  const map: Record<Category, string> = {
-    colonial: "var(--moss)",
-    gender: "var(--ink-soft)",
-    ableist: "var(--warn)",
-    racialized: "var(--danger)",
-    lgbtq: "var(--moss-deep)",
-    class: "var(--ink)",
-    age: "var(--leaf)",
-    general: "var(--ink-soft)",
-  };
-  return map[category];
-}
-
 export function ReviewApp() {
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState("https://example.com");
+  const [crawlRelated, setCrawlRelated] = useState(true);
   const [text, setText] = useState(FALLBACK_TEXT);
   const [docLabel, setDocLabel] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<Category | "all">("all");
   const [ignoredKeys, setIgnoredKeys] = useState<string[]>([]);
+  const [resultsView, setResultsView] = useState<ResultsView>("cards");
+  const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
+  const [pageCount, setPageCount] = useState<number | null>(null);
   const [isPending, startTransition] = useTransition();
   const { preferences, drift } = useRulePreferences();
 
@@ -118,7 +111,7 @@ export function ReviewApp() {
         preferences,
       }),
     );
-    setFilter("all");
+    setActiveFindingId(null);
   }
 
   function runReview() {
@@ -129,9 +122,12 @@ export function ReviewApp() {
           if (!text.trim()) {
             throw new Error("Add some text or upload a document first.");
           }
+          setPageCount(null);
           analyzeSource(text, {
             sourceType: mode === "docs" ? "document" : "text",
-            sourceLabel: docLabel ?? (mode === "docs" ? "uploaded document" : "pasted text"),
+            sourceLabel:
+              docLabel ??
+              (mode === "docs" ? "uploaded document" : "pasted text"),
             title: mode === "docs" ? "Document review" : "Text review",
           });
           return;
@@ -140,20 +136,35 @@ export function ReviewApp() {
         const response = await fetch(withBasePath("/api/scrape"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ url }),
+          body: JSON.stringify({ url, crawlRelated }),
         });
         const data = await response.json();
         if (!response.ok) {
           throw new Error(data.error || "Could not scrape URL.");
         }
 
-        const scraped = data.text || "";
-        setText(scraped);
+        const pages: Array<{ url: string; title: string; text: string }> =
+          Array.isArray(data.pages) && data.pages.length
+            ? data.pages
+            : [
+                {
+                  url: data.url || url,
+                  title: data.title || "Page",
+                  text: data.text || "",
+                },
+              ];
+
+        setPageCount(pages.length);
+        const combined = data.text || pages.map((p) => p.text).join("\n\n");
+        setText(combined);
         setDocLabel(null);
-        analyzeSource(scraped, {
+
+        analyzeSource(combined, {
           sourceType: "url",
           sourceLabel: data.url || url,
-          title: data.title || "Page review",
+          title:
+            data.title ||
+            (pages.length > 1 ? "Multi-page review" : "Page review"),
         });
       } catch (err) {
         setResult(null);
@@ -213,36 +224,27 @@ export function ReviewApp() {
     });
   }
 
-  const visibleAll = useMemo(() => {
+  const findings = useMemo(() => {
     if (!result) return [];
     return filterIgnoredFindings(result.findings, ignoredKeys);
   }, [result, ignoredKeys]);
 
-  const findings = useMemo(
-    () =>
-      visibleAll.filter((f) => filter === "all" || f.category === filter),
-    [visibleAll, filter],
-  );
-
   const ignoredInResult = result
-    ? result.findings.length - visibleAll.length
+    ? result.findings.length - findings.length
     : 0;
-
-  const categoryCounts = useMemo(() => {
-    const counts: Partial<Record<Category, number>> = {};
-    for (const f of visibleAll) {
-      counts[f.category] = (counts[f.category] ?? 0) + 1;
-    }
-    return counts;
-  }, [visibleAll]);
 
   const severityCounts = useMemo(() => {
     const counts: Partial<Record<Severity, number>> = {};
-    for (const f of visibleAll) {
+    for (const f of findings) {
       counts[f.severity] = (counts[f.severity] ?? 0) + 1;
     }
     return counts;
-  }, [visibleAll]);
+  }, [findings]);
+
+  const softFlagCount = useMemo(
+    () => findings.filter((f) => f.likelyFalsePositive).length,
+    [findings],
+  );
 
   return (
     <div className="w-full">
@@ -271,17 +273,31 @@ export function ReviewApp() {
 
       <div className="grid gap-4">
         {mode === "url" && (
-          <label className="grid gap-2">
-            <span className="text-sm text-[var(--ink-soft)]">
-              Public page to scrape and review
-            </span>
-            <input
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://"
-              className="w-full bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--moss)]"
-            />
-          </label>
+          <div className="grid gap-3">
+            <label className="grid gap-2">
+              <span className="text-sm text-[var(--ink-soft)]">
+                Public page to scrape and review
+              </span>
+              <input
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="https://"
+                className="w-full bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-4 py-3 text-[var(--ink)] outline-none focus:border-[var(--moss)]"
+              />
+            </label>
+            <label className="flex items-start gap-2 text-sm text-[var(--ink-soft)] max-w-xl">
+              <input
+                type="checkbox"
+                checked={crawlRelated}
+                onChange={(e) => setCrawlRelated(e.target.checked)}
+                className="mt-1"
+              />
+              <span>
+                Also crawl related same-site pages (about, careers, product,
+                team…) — up to 4 extra URLs
+              </span>
+            </label>
+          </div>
         )}
 
         {mode === "text" && (
@@ -366,10 +382,10 @@ export function ReviewApp() {
             >
               Style guide
             </Link>
-            {drift.disabled > 0 || drift.severityChanged > 0 ? (
+            {drift.disabled > 0 ? (
               <span className="text-[var(--warn)]">
                 {" "}
-                ({drift.disabled} off, {drift.severityChanged} retuned)
+                ({drift.disabled} rules off)
               </span>
             ) : null}
           </p>
@@ -395,15 +411,18 @@ export function ReviewApp() {
               className="text-3xl md:text-4xl text-[var(--ink)] mb-2"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              {visibleAll.length === 0
+              {findings.length === 0
                 ? ignoredInResult > 0
                   ? "All matches ignored"
                   : "No rule matches found"
-                : `${visibleAll.length} phrase${visibleAll.length === 1 ? "" : "s"} to reconsider`}
+                : `${findings.length} phrase${findings.length === 1 ? "" : "s"} to reconsider`}
             </h2>
             <p className="text-[var(--ink-soft)]">
               {result.title ? `${result.title} · ` : ""}
               {result.sourceLabel}
+              {pageCount && pageCount > 1 ? (
+                <span> · {pageCount} pages crawled</span>
+              ) : null}
               {ignoredInResult > 0 ? (
                 <span>
                   {" "}
@@ -423,23 +442,31 @@ export function ReviewApp() {
           <div className="flex flex-wrap items-center gap-3 mb-6">
             <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--ink-soft)]">
               <span>
-                High{" "}
+                Worth fixing{" "}
                 <strong className="text-[var(--danger)] font-medium">
                   {severityCounts.high ?? 0}
                 </strong>
               </span>
               <span>
-                Medium{" "}
+                Consider{" "}
                 <strong className="text-[var(--warn)] font-medium">
                   {severityCounts.medium ?? 0}
                 </strong>
               </span>
               <span>
-                Low{" "}
+                Optional{" "}
                 <strong className="text-[var(--moss)] font-medium">
                   {severityCounts.low ?? 0}
                 </strong>
               </span>
+              {softFlagCount > 0 ? (
+                <span>
+                  Likely false positive{" "}
+                  <strong className="text-[var(--warn)] font-medium">
+                    {softFlagCount}
+                  </strong>
+                </span>
+              ) : null}
             </div>
             <div className="flex flex-wrap gap-2 ml-auto">
               <ExportButton
@@ -465,30 +492,81 @@ export function ReviewApp() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-8">
-            <FilterChip
-              active={filter === "all"}
-              onClick={() => setFilter("all")}
-              label={`All (${visibleAll.length})`}
-            />
-            {(Object.entries(categoryCounts) as Array<[Category, number]>).map(
-              ([category, count]) => (
-                <FilterChip
-                  key={category}
-                  active={filter === category}
-                  onClick={() => setFilter(category)}
-                  label={`${CATEGORY_META[category].title} (${count})`}
-                  accent={categoryAccent(category)}
-                />
-              ),
-            )}
-          </div>
+          {findings.length > 0 ? (
+            <div className="flex flex-wrap gap-2 mb-6">
+              <button
+                type="button"
+                onClick={() => setResultsView("cards")}
+                className={`text-xs px-3 py-1.5 border transition-colors ${
+                  resultsView === "cards"
+                    ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
+                    : "text-[var(--ink-soft)] border-[color-mix(in_oklab,var(--ink)_18%,transparent)]"
+                }`}
+              >
+                Finding cards
+              </button>
+              <button
+                type="button"
+                onClick={() => setResultsView("document")}
+                className={`text-xs px-3 py-1.5 border transition-colors ${
+                  resultsView === "document"
+                    ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
+                    : "text-[var(--ink-soft)] border-[color-mix(in_oklab,var(--ink)_18%,transparent)]"
+                }`}
+              >
+                Side-by-side document
+              </button>
+            </div>
+          ) : null}
 
           {findings.length === 0 ? (
             <p className="text-[var(--ink-soft)]">
-              Nothing in this filter. Ignored matches stay quiet until you clear
-              them.
+              Nothing to show. Ignored matches stay quiet until you clear them.
             </p>
+          ) : resultsView === "document" ? (
+            <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+              <div className="grid gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-xs uppercase tracking-wider text-[var(--moss)]">
+                    Source with highlights
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode("text");
+                      setResultsView("cards");
+                    }}
+                    className="text-xs text-[var(--ink-soft)] underline underline-offset-2"
+                  >
+                    Edit source text
+                  </button>
+                </div>
+                <DocumentHighlight
+                  text={text}
+                  findings={findings}
+                  activeId={activeFindingId}
+                  onSelect={(f) => {
+                    setActiveFindingId(f.id);
+                    document
+                      .getElementById(`finding-${f.id}`)
+                      ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                  }}
+                />
+              </div>
+              <ul className="grid gap-5 max-h-[min(70vh,36rem)] overflow-auto pr-1">
+                {findings.map((finding) => (
+                  <FindingRow
+                    key={finding.id}
+                    finding={finding}
+                    active={activeFindingId === finding.id}
+                    onIgnore={() => ignoreFinding(finding)}
+                    onApply={(suggestion) => applyRewrite(finding, suggestion)}
+                    canApplyToSource={Boolean(text)}
+                    onFocus={() => setActiveFindingId(finding.id)}
+                  />
+                ))}
+              </ul>
+            </div>
           ) : (
             <ul className="grid gap-5">
               {findings.map((finding) => (
@@ -526,59 +604,43 @@ function ExportButton({
   );
 }
 
-function FilterChip({
-  label,
-  active,
-  onClick,
-  accent,
-}: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-  accent?: string;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`text-xs px-3 py-1.5 border transition-colors ${
-        active
-          ? "bg-[var(--ink)] text-[var(--paper)] border-[var(--ink)]"
-          : "bg-transparent text-[var(--ink-soft)] border-[color-mix(in_oklab,var(--ink)_18%,transparent)] hover:border-[var(--ink-soft)]"
-      }`}
-      style={
-        !active && accent
-          ? { borderLeftColor: accent, borderLeftWidth: 3 }
-          : undefined
-      }
-    >
-      {label}
-    </button>
-  );
-}
-
 function FindingRow({
   finding,
   onIgnore,
   onApply,
   canApplyToSource,
+  active,
+  onFocus,
 }: {
   finding: Finding;
   onIgnore: () => void;
   onApply: (suggestion: string) => void;
   canApplyToSource: boolean;
+  active?: boolean;
+  onFocus?: () => void;
 }) {
   const [chosen, setChosen] = useState(finding.suggestions[0] ?? "");
   const preview = chosen ? previewRewrite(finding, chosen) : null;
 
   return (
-    <li className="grid gap-3 md:grid-cols-[7rem_1fr] border-b border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pb-5">
-      <div className="pt-1">
+    <li
+      id={`finding-${finding.id}`}
+      onClick={onFocus}
+      className={`grid gap-3 md:grid-cols-[7.5rem_1fr] border-b border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pb-5 ${
+        active ? "bg-[color-mix(in_oklab,var(--moss)_8%,transparent)] -mx-2 px-2 rounded-sm" : ""
+      }`}
+    >
+      <div className="pt-1 grid gap-2">
         <span
-          className={`inline-block text-[0.7rem] uppercase tracking-wider px-2 py-1 ${severityClass(finding.severity)}`}
+          className={`inline-block text-[0.7rem] tracking-wide px-2 py-1 ${severityClass(finding.severity)}`}
         >
-          {finding.severity}
+          {severityLabel(finding.severity)}
         </span>
+        {finding.likelyFalsePositive ? (
+          <span className="inline-block text-[0.65rem] tracking-wide px-2 py-1 text-[var(--warn)] bg-[color-mix(in_oklab,var(--warn)_12%,white)]">
+            Likely false positive
+          </span>
+        ) : null}
       </div>
       <div className="grid gap-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -593,13 +655,23 @@ function FindingRow({
               {CATEGORY_META[finding.category].title}
             </span>
           </div>
-          <button
-            type="button"
-            onClick={onIgnore}
-            className="text-xs text-[var(--ink-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
-          >
-            Not this match
-          </button>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={onIgnore}
+              className="text-xs text-[var(--ink-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
+            >
+              Not this match
+            </button>
+            <a
+              href={reportFindingIssueUrl(finding)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-[var(--ink-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
+            >
+              Report wrong suggestion
+            </a>
+          </div>
         </div>
         <p className="font-[family-name:var(--font-mono)] text-sm text-[var(--ink)]">
           “{finding.match}”
@@ -610,6 +682,11 @@ function FindingRow({
         <p className="text-[var(--ink-soft)] text-[0.95rem] leading-relaxed max-w-3xl">
           {finding.why}
         </p>
+        {finding.contextNote ? (
+          <p className="text-sm text-[var(--warn)] max-w-3xl">
+            {finding.contextNote}
+          </p>
+        ) : null}
 
         {finding.suggestions.length > 0 ? (
           <div className="grid gap-2 max-w-3xl">
@@ -653,12 +730,7 @@ function FindingRow({
               </button>
             ) : null}
           </div>
-        ) : (
-          <p className="text-sm text-[var(--moss-deep)]">
-            <span className="text-[var(--ink-soft)]">Try: </span>
-            {finding.suggestions.join(" · ")}
-          </p>
-        )}
+        ) : null}
       </div>
     </li>
   );

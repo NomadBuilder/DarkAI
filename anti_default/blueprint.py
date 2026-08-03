@@ -89,10 +89,96 @@ def _extract_text(html: str, final_url: str) -> dict:
     return {"url": final_url, "title": title, "text": "\n".join(blocks)}
 
 
+RELATED_PATH_HINTS = re.compile(
+    r"(about|careers?|jobs?|product|products|team|mission|company|values|"
+    r"culture|story|who[-_]?we[-_]?are|our[-_]?story|join|work[-_]?with|"
+    r"solutions?|platform|features?)",
+    re.I,
+)
+MAX_RELATED_PAGES = 4
+
+
+def _fetch_html(url: str) -> tuple[str, str]:
+    """Return (html, final_url). Raises on soft failures with a message."""
+    response = requests.get(
+        url,
+        timeout=FETCH_TIMEOUT,
+        headers={
+            "User-Agent": "AntiDefaultInclusiveReview/1.0 (+https://darkai.ca/anti-default)",
+            "Accept": "text/html,application/xhtml+xml",
+        },
+        allow_redirects=True,
+    )
+    if response.status_code >= 400:
+        raise ValueError(f"Could not fetch URL (HTTP {response.status_code}).")
+
+    content_type = response.headers.get("content-type", "")
+    if content_type and "html" not in content_type.lower() and "xml" not in content_type.lower():
+        raise ValueError("URL did not return HTML content.")
+
+    raw = response.content
+    if len(raw) > MAX_HTML_BYTES:
+        raise ValueError("Page is too large to analyze safely.")
+
+    html = raw.decode(response.encoding or "utf-8", errors="replace")
+    return html, response.url or url
+
+
+def _same_registrable_host(a: str, b: str) -> bool:
+    try:
+        ha = (urlparse(a).hostname or "").lower()
+        hb = (urlparse(b).hostname or "").lower()
+        if not ha or not hb:
+            return False
+        if ha.startswith("www."):
+            ha = ha[4:]
+        if hb.startswith("www."):
+            hb = hb[4:]
+        return ha == hb
+    except Exception:
+        return False
+
+
+def _related_links(html: str, base_url: str) -> list[str]:
+    """Find same-site about / careers / product-style links."""
+    from urllib.parse import urljoin, urldefrag
+
+    soup = BeautifulSoup(html, "lxml")
+    found: list[str] = []
+    seen: set[str] = set()
+    base_norm = urldefrag(base_url)[0].rstrip("/")
+
+    for a in soup.find_all("a", href=True):
+        href = (a.get("href") or "").strip()
+        if not href or href.startswith(("#", "mailto:", "tel:", "javascript:")):
+            continue
+        absolute = urljoin(base_url, href)
+        absolute = urldefrag(absolute)[0]
+        if absolute.rstrip("/") == base_norm:
+            continue
+        if not _is_safe_public_url(absolute):
+            continue
+        if not _same_registrable_host(base_url, absolute):
+            continue
+        path = urlparse(absolute).path or "/"
+        label = f"{path} {a.get_text(' ', strip=True)}"
+        if not RELATED_PATH_HINTS.search(label):
+            continue
+        key = absolute.rstrip("/").lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        found.append(absolute)
+        if len(found) >= MAX_RELATED_PAGES:
+            break
+    return found
+
+
 @anti_default_bp.route("/api/scrape", methods=["POST"])
 def scrape():
     payload = request.get_json(silent=True) or {}
     raw_url = (payload.get("url") or "").strip()
+    crawl_related = payload.get("crawlRelated", True)
     if not raw_url:
         return jsonify({"error": "Provide a URL."}), 400
     if not _is_safe_public_url(raw_url):
@@ -103,30 +189,52 @@ def scrape():
         ), 400
 
     try:
-        response = requests.get(
-            raw_url,
-            timeout=FETCH_TIMEOUT,
-            headers={
-                "User-Agent": "AntiDefaultInclusiveReview/1.0 (+https://darkai.ca/anti-default)",
-                "Accept": "text/html,application/xhtml+xml",
-            },
-            allow_redirects=True,
+        html, final_url = _fetch_html(raw_url)
+        primary = _extract_text(html, final_url)
+        pages = [
+            {
+                "url": primary["url"],
+                "title": primary["title"],
+                "text": primary["text"],
+            }
+        ]
+
+        if crawl_related:
+            for link in _related_links(html, final_url):
+                try:
+                    related_html, related_final = _fetch_html(link)
+                    extracted = _extract_text(related_html, related_final)
+                    pages.append(
+                        {
+                            "url": extracted["url"],
+                            "title": extracted["title"],
+                            "text": extracted["text"],
+                        }
+                    )
+                except Exception:
+                    # Related pages are best-effort
+                    continue
+
+        combined_parts = []
+        for page in pages:
+            label = page.get("title") or page["url"]
+            combined_parts.append(f"--- {label} ({page['url']}) ---\n{page['text']}")
+
+        return jsonify(
+            {
+                "url": primary["url"],
+                "title": primary["title"]
+                if len(pages) == 1
+                else f"{primary['title']} (+{len(pages) - 1} related)",
+                "text": "\n\n".join(combined_parts),
+                "pages": pages,
+                "pageCount": len(pages),
+            }
         )
-        if response.status_code >= 400:
-            return jsonify({"error": f"Could not fetch URL (HTTP {response.status_code})."}), 400
-
-        content_type = response.headers.get("content-type", "")
-        if content_type and "html" not in content_type.lower() and "xml" not in content_type.lower():
-            return jsonify({"error": "URL did not return HTML content."}), 400
-
-        raw = response.content
-        if len(raw) > MAX_HTML_BYTES:
-            return jsonify({"error": "Page is too large to analyze safely."}), 400
-
-        html = raw.decode(response.encoding or "utf-8", errors="replace")
-        return jsonify(_extract_text(html, response.url or raw_url))
     except requests.Timeout:
         return jsonify({"error": "Timed out while fetching the page."}), 400
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
     except Exception as exc:
         return jsonify({"error": str(exc) or "Failed to scrape URL."}), 400
 

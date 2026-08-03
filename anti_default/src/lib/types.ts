@@ -10,6 +10,12 @@ export type Category =
 
 export type Severity = "high" | "medium" | "low";
 
+/** Link to a style-guide entry that informed this rule. */
+export interface RuleSourceRef {
+  title: string;
+  href: string;
+}
+
 export interface LanguageRule {
   id: string;
   pattern: string;
@@ -19,6 +25,8 @@ export interface LanguageRule {
   label: string;
   why: string;
   suggestions: string[];
+  /** Style-guide footnotes shown on /rules. */
+  sources?: RuleSourceRef[];
 }
 
 /** Per-rule overrides stored in the browser (or sent with API requests). */
@@ -41,6 +49,10 @@ export interface Finding {
   context: string;
   index: number;
   source?: string;
+  /** Soft-flag: common in quotes / idioms — review carefully. */
+  likelyFalsePositive?: boolean;
+  contextNote?: string;
+  contextModes?: Array<"quote" | "legal" | "selfDescription" | "techIdiom">;
 }
 
 export interface AnalysisSummary {

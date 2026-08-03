@@ -1,0 +1,43 @@
+name: Anti-Default — wrong suggestion
+description: Report a false positive or contested inclusive-language suggestion
+title: "[Anti-Default] Wrong suggestion: "
+labels: ["anti-default", "false-positive"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping tune Anti-Default. Context always wins — tell us what was wrong.
+  - type: input
+    id: rule-id
+    attributes:
+      label: Rule ID
+      description: e.g. discover-land (from the finding or /rules page)
+      placeholder: discover-land
+    validations:
+      required: true
+  - type: input
+    id: match
+    attributes:
+      label: Matched phrase
+      placeholder: discovered
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Surrounding sentence / context
+      description: Paste the snippet so we can see why this was a miss.
+    validations:
+      required: true
+  - type: textarea
+    id: why-wrong
+    attributes:
+      label: Why is this wrong?
+      description: False positive? Bad suggestion? Missing context mode?
+    validations:
+      required: true
+  - type: input
+    id: source-url
+    attributes:
+      label: Source URL (optional)
+      placeholder: https://…

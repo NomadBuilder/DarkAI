@@ -62,7 +62,7 @@ export default function Home() {
           <ApproachCard
             title="What we check"
             accent="var(--coral)"
-            body="When you enter a website URL, we read the visible copy on the page — titles, paragraphs, links, and buttons — the same text a visitor would see."
+            body="When you enter a website URL, we read the visible copy — and can follow about, careers, and product pages on the same site — then review titles, paragraphs, links, and buttons."
           />
           <ApproachCard
             title="Many standards"
@@ -76,7 +76,9 @@ export default function Home() {
                 >
                   /rules
                 </Link>
-                . Turn rules on or off, or change how serious each one is — inclusion is not one checklist.
+                , each with style-guide footnotes. Turn rules on or off —
+                inclusion is not one checklist. Optional browser extension
+                highlights the same patterns on live pages.
               </>
             }
           />

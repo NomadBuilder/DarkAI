@@ -43,7 +43,21 @@ Open `/anti-default/sources` for the style guides and references that informed t
 
 ## Review features
 
+- Context-aware matching (e.g. “discovered a bug” ≠ discovery framing) with soft-flags for quotes
+- Multi-page crawl (about / careers / product on the same site)
+- Side-by-side document highlights + finding cards
+- Plain-language urgency: Worth fixing / Consider / Optional
+- Per-rule source footnotes on `/rules`
+- Report a wrong suggestion → GitHub issue template
 - Ignore false positives (“Not this match”)
 - Export findings as Markdown, CSV, or a GitHub checklist
 - Upload PDF / DOCX / text docs
 - Apply a suggestion and preview the rewrite
+
+## Browser extension
+
+Load `anti_default/extension` as an unpacked Chrome/Edge extension to highlight matches on any live page. See `extension/README.md`.
+
+```bash
+npm run extension:rules
+```

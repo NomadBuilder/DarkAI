@@ -1,5 +1,6 @@
 import { LANGUAGE_RULES } from "./rules";
 import { resolveRules } from "./preferences";
+import { evaluateMatchContext } from "./context";
 import type {
   AnalysisResult,
   AnalysisSummary,
@@ -66,6 +67,19 @@ export function analyzeText(
 
     while ((match = regex.exec(normalized)) !== null) {
       const matchedText = match[0];
+      const ctx = evaluateMatchContext(
+        normalized,
+        match.index,
+        matchedText.length,
+        rule.id,
+      );
+      if (ctx.skip) {
+        if (match.index === regex.lastIndex) {
+          regex.lastIndex += 1;
+        }
+        continue;
+      }
+
       findings.push({
         id: `${rule.id}-${match.index}-${findings.length}`,
         ruleId: rule.id,
@@ -78,6 +92,9 @@ export function analyzeText(
         context: snippetAround(normalized, match.index, matchedText.length),
         index: match.index,
         source: options.sourceTag,
+        likelyFalsePositive: ctx.likelyFalsePositive || undefined,
+        contextNote: ctx.note,
+        contextModes: ctx.modes.length ? ctx.modes : undefined,
       });
 
       if (match.index === regex.lastIndex) {
@@ -87,6 +104,7 @@ export function analyzeText(
   }
 
   findings.sort((a, b) => {
+    // Soft-flagged findings sort after confident ones within the same severity
     const severityRank: Record<Severity, number> = {
       high: 0,
       medium: 1,
@@ -95,6 +113,10 @@ export function analyzeText(
     const severityDiff =
       severityRank[a.severity] - severityRank[b.severity];
     if (severityDiff !== 0) return severityDiff;
+    const fpDiff =
+      Number(Boolean(a.likelyFalsePositive)) -
+      Number(Boolean(b.likelyFalsePositive));
+    if (fpDiff !== 0) return fpDiff;
     return a.index - b.index;
   });
 
@@ -122,6 +144,7 @@ export function analyzeSegments(
       sourceTag: segment.source,
     });
     totalChars += segment.text.trim().length;
+    // Re-base indices are per-segment; keep segment tags for display
     findings.push(...partial.findings);
   }
 
@@ -131,7 +154,13 @@ export function analyzeSegments(
       medium: 1,
       low: 2,
     };
-    return severityRank[a.severity] - severityRank[b.severity];
+    const severityDiff =
+      severityRank[a.severity] - severityRank[b.severity];
+    if (severityDiff !== 0) return severityDiff;
+    return (
+      Number(Boolean(a.likelyFalsePositive)) -
+      Number(Boolean(b.likelyFalsePositive))
+    );
   });
 
   return {
