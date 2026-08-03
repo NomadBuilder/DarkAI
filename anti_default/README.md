@@ -32,3 +32,14 @@ Then run the Flask app from the repo root; open `/anti-default`.
 ## Tune rules
 
 Open `/anti-default/rules` or edit `src/lib/rules.ts` for shared defaults.
+
+## Style guide
+
+Open `/anti-default/guide` to share a team style guide from your tuned rules (copy link or download Markdown).
+
+## Review features
+
+- Ignore false positives (“Not this match”)
+- Export findings as Markdown, CSV, or a GitHub checklist
+- Upload PDF / DOCX / text docs
+- Apply a suggestion and preview the rewrite

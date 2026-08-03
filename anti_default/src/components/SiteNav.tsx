@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-export function SiteNav({ active }: { active?: "home" | "rules" }) {
+export function SiteNav({
+  active,
+}: {
+  active?: "home" | "rules" | "guide";
+}) {
   return (
     <nav
       className="relative z-10 flex items-center justify-between gap-4 mb-10"
@@ -14,30 +18,44 @@ export function SiteNav({ active }: { active?: "home" | "rules" }) {
         Anti-Default
       </Link>
       <div className="flex items-center gap-1 text-sm">
-        <Link
-          href="/"
-          className={`nav-quiet px-3 py-2 transition-colors ${
-            active === "home"
-              ? "text-[var(--ink)] border-b-[3px] border-[var(--ochre)]"
-              : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-          }`}
-          aria-current={active === "home" ? "page" : undefined}
-        >
+        <NavLink href="/" active={active === "home"} accent="var(--ochre)">
           Review
-        </Link>
-        <Link
-          href="/rules"
-          className={`nav-quiet px-3 py-2 transition-colors ${
-            active === "rules"
-              ? "text-[var(--ink)] border-b-[3px] border-[var(--coral)]"
-              : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
-          }`}
-          aria-current={active === "rules" ? "page" : undefined}
-        >
+        </NavLink>
+        <NavLink href="/rules" active={active === "rules"} accent="var(--coral)">
           Rules
-        </Link>
+        </NavLink>
+        <NavLink href="/guide" active={active === "guide"} accent="var(--indigo)">
+          Guide
+        </NavLink>
       </div>
     </nav>
+  );
+}
+
+function NavLink({
+  href,
+  active,
+  accent,
+  children,
+}: {
+  href: string;
+  active: boolean;
+  accent: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`nav-quiet px-3 py-2 transition-colors ${
+        active
+          ? "text-[var(--ink)] border-b-[3px]"
+          : "text-[var(--ink-soft)] hover:text-[var(--ink)]"
+      }`}
+      style={active ? { borderBottomColor: accent } : undefined}
+      aria-current={active ? "page" : undefined}
+    >
+      {children}
+    </Link>
   );
 }
 

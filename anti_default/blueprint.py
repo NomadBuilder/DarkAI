@@ -131,6 +131,88 @@ def scrape():
         return jsonify({"error": str(exc) or "Failed to scrape URL."}), 400
 
 
+MAX_UPLOAD_BYTES = 8_000_000
+
+
+@anti_default_bp.route("/api/extract", methods=["POST"])
+def extract_document():
+    """Extract text from uploaded PDF / DOCX / plain text for review."""
+    upload = request.files.get("file")
+    if upload is None or not upload.filename:
+        return jsonify({"error": "Upload a PDF, DOCX, or text file."}), 400
+
+    filename = upload.filename
+    ext = filename.rsplit(".", 1)[-1].lower() if "." in filename else ""
+    raw = upload.read(MAX_UPLOAD_BYTES + 1)
+    if len(raw) > MAX_UPLOAD_BYTES:
+        return jsonify({"error": "File is too large (max 8MB)."}), 400
+
+    try:
+        if ext in {"txt", "md", "markdown", "csv", "json", "html", "htm", "rtf"}:
+            text = raw.decode("utf-8", errors="replace")
+        elif ext == "pdf":
+            text = _extract_pdf(raw)
+        elif ext in {"docx"}:
+            text = _extract_docx(raw)
+        elif ext == "doc":
+            return jsonify(
+                {
+                    "error": "Legacy .doc is not supported — save as .docx or PDF and try again."
+                }
+            ), 400
+        else:
+            return jsonify(
+                {
+                    "error": "Unsupported file type. Use PDF, DOCX, TXT, MD, CSV, HTML, or JSON."
+                }
+            ), 400
+
+        text = re.sub(r"\s+", " ", text).strip()
+        if not text:
+            return jsonify({"error": "No readable text found in that file."}), 400
+
+        return jsonify(
+            {
+                "filename": filename,
+                "text": text[:200_000],
+                "chars": min(len(text), 200_000),
+            }
+        )
+    except Exception as exc:
+        return jsonify({"error": str(exc) or "Could not extract text."}), 400
+
+
+def _extract_pdf(raw: bytes) -> str:
+    from io import BytesIO
+
+    try:
+        from pypdf import PdfReader
+    except ImportError as exc:
+        raise RuntimeError(
+            "PDF support is not installed on the server (pypdf)."
+        ) from exc
+
+    reader = PdfReader(BytesIO(raw))
+    parts: list[str] = []
+    for page in reader.pages[:80]:
+        parts.append(page.extract_text() or "")
+    return "\n".join(parts)
+
+
+def _extract_docx(raw: bytes) -> str:
+    from io import BytesIO
+
+    try:
+        from docx import Document
+    except ImportError as exc:
+        raise RuntimeError(
+            "DOCX support is not installed on the server (python-docx)."
+        ) from exc
+
+    document = Document(BytesIO(raw))
+    return "\n".join(p.text for p in document.paragraphs if p.text)
+
+
 @anti_default_bp.route("/")
 @anti_default_bp.route("/<path:path>")
 def serve_static(path: str = ""):

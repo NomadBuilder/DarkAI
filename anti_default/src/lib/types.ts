@@ -50,7 +50,7 @@ export interface AnalysisSummary {
 }
 
 export interface AnalysisResult {
-  sourceType: "url" | "text" | "code";
+  sourceType: "url" | "text" | "code" | "document";
   sourceLabel: string;
   title?: string;
   excerptCount: number;
