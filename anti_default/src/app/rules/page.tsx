@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 import { RulesStudio } from "@/components/RulesStudio";
 import { LANGUAGE_RULES } from "@/lib/rules";
@@ -37,8 +38,15 @@ export default function RulesPage() {
           change severity for your reviews, or edit shared defaults in{" "}
           <code className="font-[family-name:var(--font-mono)] text-sm text-[var(--teal-deep)]">
             src/lib/rules.ts
-          </code>{" "}
-          so the whole community benefits.
+          </code>
+          . See{" "}
+          <Link
+            href="/sources"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Sources
+          </Link>{" "}
+          for the style guides that informed this catalog.
         </p>
 
         <RulesStudio />

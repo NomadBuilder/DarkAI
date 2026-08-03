@@ -37,6 +37,10 @@ Open `/anti-default/rules` or edit `src/lib/rules.ts` for shared defaults.
 
 Open `/anti-default/guide` to share a team style guide from your tuned rules (copy link or download Markdown).
 
+## Sources
+
+Open `/anti-default/sources` for the style guides and references that informed the rule catalog.
+
 ## Review features
 
 - Ignore false positives (“Not this match”)

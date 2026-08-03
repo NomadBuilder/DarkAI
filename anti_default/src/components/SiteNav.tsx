@@ -3,7 +3,7 @@ import Link from "next/link";
 export function SiteNav({
   active,
 }: {
-  active?: "home" | "rules" | "guide";
+  active?: "home" | "rules" | "guide" | "sources";
 }) {
   return (
     <nav
@@ -17,7 +17,7 @@ export function SiteNav({
       >
         Anti-Default
       </Link>
-      <div className="flex items-center gap-1 text-sm">
+      <div className="flex flex-wrap items-center gap-1 text-sm justify-end">
         <NavLink href="/" active={active === "home"} accent="var(--ochre)">
           Review
         </NavLink>
@@ -26,6 +26,13 @@ export function SiteNav({
         </NavLink>
         <NavLink href="/guide" active={active === "guide"} accent="var(--indigo)">
           Guide
+        </NavLink>
+        <NavLink
+          href="/sources"
+          active={active === "sources"}
+          accent="var(--teal)"
+        >
+          Sources
         </NavLink>
       </div>
     </nav>
