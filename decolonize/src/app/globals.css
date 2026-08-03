@@ -1,0 +1,294 @@
+@import "tailwindcss";
+
+:root {
+  /* Plural palette — many voices, not one “nature default” */
+  --ink: #1a1f2e;
+  --ink-soft: #3d4558;
+  --coral: #c45c4a;
+  --ochre: #c4923a;
+  --teal: #2a7a6e;
+  --teal-deep: #1a524a;
+  --indigo: #4a5d8a;
+  --rose: #b86b7a;
+  --clay: #d4a574;
+  --paper: #f6f1e8;
+  --sand: #ebe3d6;
+  --mist: #e0e8e6;
+  --band-1: #c45c4a;
+  --band-2: #c4923a;
+  --band-3: #2a7a6e;
+  --band-4: #4a5d8a;
+  --band-5: #b86b7a;
+  --danger: #a33b32;
+  --warn: #9a6b18;
+  --ok: #1f6b56;
+  /* Aliases used across existing components */
+  --moss: var(--teal);
+  --moss-deep: var(--teal-deep);
+  --leaf: #6aada0;
+  --straw: var(--ochre);
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --focus: #2a7a6e;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-moss: var(--moss);
+  --color-moss-deep: var(--moss-deep);
+  --color-leaf: var(--leaf);
+  --color-straw: var(--straw);
+  --color-sand: var(--sand);
+  --color-paper: var(--paper);
+  --color-mist: var(--mist);
+  --color-danger: var(--danger);
+  --color-warn: var(--warn);
+  --color-ok: var(--ok);
+  --color-coral: var(--coral);
+  --color-ochre: var(--ochre);
+  --color-teal: var(--teal);
+  --color-indigo: var(--indigo);
+  --color-rose: var(--rose);
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  min-height: 100%;
+  color: var(--foreground);
+  background:
+    radial-gradient(900px 560px at 8% -8%, color-mix(in oklab, var(--coral) 18%, white), transparent 58%),
+    radial-gradient(780px 480px at 92% 4%, color-mix(in oklab, var(--ochre) 22%, white), transparent 52%),
+    radial-gradient(700px 520px at 70% 90%, color-mix(in oklab, var(--indigo) 14%, white), transparent 55%),
+    radial-gradient(640px 420px at 18% 85%, color-mix(in oklab, var(--teal) 16%, white), transparent 50%),
+    linear-gradient(165deg, #f8f4ec 0%, #f0ebe3 42%, #e8eee9 100%);
+  font-family: var(--font-body), "Segoe UI", sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+}
+
+/* Soft woven grain — many threads */
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M0 20h80M0 40h80M0 60h80M20 0v80M40 0v80M60 0v80' stroke='%231a1f2e' stroke-width='0.6' fill='none'/%3E%3C/svg%3E");
+  z-index: 0;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--ochre) 55%, white);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -3rem;
+  z-index: 100;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.65rem 1rem;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Plural brand band — five threads, equal weight */
+.inclusive-band {
+  display: flex;
+  height: 5px;
+  width: min(14rem, 55vw);
+  overflow: hidden;
+}
+
+.inclusive-band span {
+  flex: 1;
+  transform-origin: left;
+  animation: draw-line 0.85s ease-out both;
+}
+
+.inclusive-band span:nth-child(1) {
+  background: var(--band-1);
+  animation-delay: 0.2s;
+}
+.inclusive-band span:nth-child(2) {
+  background: var(--band-2);
+  animation-delay: 0.28s;
+}
+.inclusive-band span:nth-child(3) {
+  background: var(--band-3);
+  animation-delay: 0.36s;
+}
+.inclusive-band span:nth-child(4) {
+  background: var(--band-4);
+  animation-delay: 0.44s;
+}
+.inclusive-band span:nth-child(5) {
+  background: var(--band-5);
+  animation-delay: 0.52s;
+}
+
+.voice-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.voice-orbs i {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(28px);
+  opacity: 0.45;
+  animation: drift 18s ease-in-out infinite alternate;
+}
+
+.voice-orbs i:nth-child(1) {
+  width: 18rem;
+  height: 18rem;
+  top: 6%;
+  right: -4%;
+  background: color-mix(in oklab, var(--coral) 55%, transparent);
+  animation-delay: 0s;
+}
+.voice-orbs i:nth-child(2) {
+  width: 14rem;
+  height: 14rem;
+  top: 28%;
+  right: 18%;
+  background: color-mix(in oklab, var(--ochre) 50%, transparent);
+  animation-delay: -4s;
+}
+.voice-orbs i:nth-child(3) {
+  width: 16rem;
+  height: 16rem;
+  bottom: 12%;
+  right: 4%;
+  background: color-mix(in oklab, var(--teal) 45%, transparent);
+  animation-delay: -8s;
+}
+.voice-orbs i:nth-child(4) {
+  width: 12rem;
+  height: 12rem;
+  top: 48%;
+  left: -2%;
+  background: color-mix(in oklab, var(--indigo) 40%, transparent);
+  animation-delay: -2s;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes draw-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(-18px, 22px) scale(1.06);
+  }
+}
+
+.animate-rise {
+  animation: rise-in 0.7s ease-out both;
+}
+
+.animate-rise-delay {
+  animation: rise-in 0.8s ease-out 0.12s both;
+}
+
+.animate-rise-delay-2 {
+  animation: rise-in 0.85s ease-out 0.22s both;
+}
+
+.brand-underline {
+  transform-origin: left;
+  animation: draw-line 0.9s ease-out 0.35s both;
+}
+
+.loading-dot {
+  animation: pulse-soft 1.2s ease-in-out infinite;
+}
+
+/* Comfortable interactive defaults for primary controls */
+input,
+textarea,
+select,
+button.btn-primary {
+  min-height: 2.75rem;
+}
+
+a.nav-quiet,
+.nav-quiet {
+  min-height: auto;
+}

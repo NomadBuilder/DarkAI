@@ -1,0 +1,135 @@
+import { analyzeSegments } from "./analyzer";
+import type { AnalysisResult, RulePreferences } from "./types";
+
+const STRING_LITERAL_RE =
+  /(?<!\\)(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\]|\$\{[^}]*\})*`)/g;
+
+const COMMENT_RE =
+  /\/\/[^\n]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|#(?!\!)[^\n]*/g;
+
+const JSX_TEXT_RE = />([^<>{][^<>]*)</g;
+
+export interface CodeFileInput {
+  path: string;
+  content: string;
+}
+
+function stripQuotes(literal: string): string {
+  if (
+    (literal.startsWith('"') && literal.endsWith('"')) ||
+    (literal.startsWith("'") && literal.endsWith("'")) ||
+    (literal.startsWith("`") && literal.endsWith("`"))
+  ) {
+    return literal.slice(1, -1);
+  }
+  return literal;
+}
+
+function isLikelyUserFacing(text: string): boolean {
+  const trimmed = text.trim();
+  if (trimmed.length < 3) return false;
+  if (/^[A-Z0-9_./:-]+$/.test(trimmed) && !/\s/.test(trimmed)) return false;
+  if (/^https?:\/\//i.test(trimmed)) return false;
+  if (/^[\w.-]+@[\w.-]+$/.test(trimmed)) return false;
+  if (/^[.#]?[a-z]+(-[a-z0-9]+)+$/.test(trimmed)) return false; // css-ish
+  if (/^\$\{/.test(trimmed)) return false;
+  // Prefer strings with letters/spaces — UI copy, comments, messages
+  return /[A-Za-z]/.test(trimmed);
+}
+
+export function extractReviewableSegments(
+  file: CodeFileInput,
+): Array<{ text: string; source: string }> {
+  const segments: Array<{ text: string; source: string }> = [];
+  const { path, content } = file;
+
+  for (const match of content.matchAll(STRING_LITERAL_RE)) {
+    const text = stripQuotes(match[0])
+      .replace(/\\n/g, " ")
+      .replace(/\\t/g, " ")
+      .replace(/\\"/g, '"')
+      .replace(/\\'/g, "'")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!isLikelyUserFacing(text)) continue;
+    const line = content.slice(0, match.index ?? 0).split("\n").length;
+    segments.push({ text, source: `${path}:${line}` });
+  }
+
+  for (const match of content.matchAll(COMMENT_RE)) {
+    const text = match[0]
+      .replace(/^\/\/\s?/, "")
+      .replace(/^\/\*+/, "")
+      .replace(/\*+\/$/, "")
+      .replace(/^<!--/, "")
+      .replace(/-->$/, "")
+      .replace(/^#\s?/, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+    if (!isLikelyUserFacing(text) || text.length < 8) continue;
+    const line = content.slice(0, match.index ?? 0).split("\n").length;
+    segments.push({ text, source: `${path}:${line} (comment)` });
+  }
+
+  if (/\.(tsx|jsx|vue|svelte|html?)$/i.test(path)) {
+    for (const match of content.matchAll(JSX_TEXT_RE)) {
+      const text = (match[1] ?? "").replace(/\s+/g, " ").trim();
+      if (!isLikelyUserFacing(text)) continue;
+      const line = content.slice(0, match.index ?? 0).split("\n").length;
+      segments.push({ text, source: `${path}:${line} (markup)` });
+    }
+  }
+
+  return segments;
+}
+
+export function analyzeCodeFiles(
+  files: CodeFileInput[],
+  preferences?: RulePreferences | null,
+): AnalysisResult {
+  const segments = files.flatMap(extractReviewableSegments);
+  const label =
+    files.length === 1
+      ? files[0].path
+      : `${files.length} files`;
+
+  return analyzeSegments(segments, {
+    sourceType: "code",
+    sourceLabel: label,
+    title: "Code language review",
+    preferences,
+  });
+}
+
+export const CODE_EXTENSIONS = [
+  ".ts",
+  ".tsx",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+  ".py",
+  ".rb",
+  ".go",
+  ".java",
+  ".kt",
+  ".swift",
+  ".rs",
+  ".php",
+  ".vue",
+  ".svelte",
+  ".html",
+  ".htm",
+  ".md",
+  ".mdx",
+  ".json",
+  ".yml",
+  ".yaml",
+];
+
+export function hasSupportedExtension(filename: string): boolean {
+  const lower = filename.toLowerCase();
+  return CODE_EXTENSIONS.some((ext) => lower.endsWith(ext));
+}

@@ -268,6 +268,38 @@ services:
         ls -la | head -10
         exit 1
       fi
+
+      echo ""
+      echo "=========================================="
+      echo "📦 Building Decolonize"
+      echo "=========================================="
+      if [ -d "decolonize" ]; then
+        echo "✅ decolonize/ directory found!"
+        if [ -n "$NODE_VERSION" ]; then
+          NODE_DIR="/opt/render/project/nodes/node-$NODE_VERSION"
+        else
+          NODE_DIR=$(ls -d /opt/render/project/nodes/node-* 2>/dev/null | head -1)
+        fi
+        if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
+          export PATH="$NODE_DIR/bin:$PATH"
+        fi
+        cd decolonize || { echo "❌ Failed to cd into decolonize"; exit 1; }
+        rm -rf .next out
+        npm install || { echo "❌ decolonize npm install failed"; exit 1; }
+        echo "🔨 Building Decolonize with BASE_PATH=/decolonize"
+        NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/decolonize npm run build || {
+          echo "❌ decolonize build failed"
+          exit 1
+        }
+        if [ ! -f "out/index.html" ]; then
+          echo "❌ decolonize/out/index.html missing"
+          exit 1
+        fi
+        echo "✅ Decolonize build successful!"
+        cd ..
+      else
+        echo "⚠️  decolonize/ not found — skipping"
+      fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
