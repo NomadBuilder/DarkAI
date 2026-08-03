@@ -3,7 +3,7 @@ import Link from "next/link";
 export function SiteNav({
   active,
 }: {
-  active?: "home" | "rules" | "guide" | "sources";
+  active?: "home" | "swap" | "rules" | "guide" | "sources";
 }) {
   return (
     <nav
@@ -20,6 +20,9 @@ export function SiteNav({
       <div className="flex flex-wrap items-center gap-1 text-sm justify-end">
         <NavLink href="/" active={active === "home"} accent="var(--ochre)">
           Review
+        </NavLink>
+        <NavLink href="/swap" active={active === "swap"} accent="var(--leaf)">
+          Swap
         </NavLink>
         <NavLink href="/rules" active={active === "rules"} accent="var(--coral)">
           Rules

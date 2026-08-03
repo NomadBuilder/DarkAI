@@ -34,8 +34,15 @@ export default function Home() {
             other excluding phrasing.
           </p>
           <p className="animate-rise-delay text-base text-[var(--ink-soft)] max-w-xl mb-10 leading-relaxed">
-            Suggestions are invitations, not a single “correct” English. Tune
-            what matters for{" "}
+            Suggestions are invitations, not a single “correct” English. Need one
+            phrase?{" "}
+            <Link
+              href="/swap"
+              className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+            >
+              Swap
+            </Link>{" "}
+            looks up alternatives. Tune what matters for{" "}
             <Link
               href="/rules"
               className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"

@@ -142,8 +142,9 @@ export function RulesStudio() {
 
                 return (
                   <li
+                    id={rule.id}
                     key={rule.id}
-                    className={`grid gap-3 md:grid-cols-[auto_1fr] md:items-start border-b border-[color-mix(in_oklab,var(--ink)_8%,transparent)] pb-4 ${
+                    className={`scroll-mt-24 grid gap-3 md:grid-cols-[auto_1fr] md:items-start border-b border-[color-mix(in_oklab,var(--ink)_8%,transparent)] pb-4 ${
                       enabled ? "" : "opacity-55"
                     }`}
                   >
