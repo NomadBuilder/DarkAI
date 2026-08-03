@@ -15,7 +15,8 @@
 
 # next.js
 /.next/
-/out/
+# Commit static export for Render (dashboard build may only run Ledger)
+# /out/
 
 # production
 /build

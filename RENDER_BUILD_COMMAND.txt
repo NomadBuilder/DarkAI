@@ -1,3 +1,4 @@
 # Copy this into Render Dashboard → Settings → Build Command
+# (Existing services often ignore render.yaml buildCommand updates.)
 
-pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt && if [ -d "ledger" ]; then export PATH="/opt/render/project/nodes/node-22.16.0/bin:$PATH" && cd ledger && npm install --include=dev && NODE_ENV=production BASE_PATH=/ledger STATIC_EXPORT=true npm run build && cd ..; fi
+pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt && export PATH="/opt/render/project/nodes/node-${NODE_VERSION:-22.16.0}/bin:$PATH" && if [ -d "ledger" ]; then cd ledger && npm install --include=dev && NODE_ENV=production STATIC_EXPORT=true npm run build:protectont 2>/dev/null || (NODE_ENV=production STATIC_EXPORT=true npm run build) && cd ..; fi && if [ -d "anti_default" ]; then cd anti_default && npm install && NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build && test -f out/index.html && cd .. && echo "✅ Anti-Default build completed"; else echo "⚠️ anti_default missing"; fi
