@@ -60,9 +60,9 @@ export default function Home() {
       >
         <div className="mx-auto max-w-5xl px-6 py-16 md:px-10 grid gap-12 md:grid-cols-3">
           <ApproachCard
-            title="Listen first"
+            title="What we check"
             accent="var(--coral)"
-            body="We pull the words people actually meet on a page — headings, links, buttons, labels — so review starts from lived reading, not a raw HTML dump."
+            body="When you enter a website URL, we read the visible copy on the page — titles, paragraphs, links, and buttons — the same text a visitor would see."
           />
           <ApproachCard
             title="Many standards"
@@ -76,8 +76,7 @@ export default function Home() {
                 >
                   /rules
                 </Link>
-                . Enable, quiet, or retune severity for your context — inclusion
-                is not one checklist.
+                . Turn rules on or off, or change how serious each one is — inclusion is not one checklist.
               </>
             }
           />
