@@ -97,6 +97,13 @@ export default function Home() {
         </p>
         <p className="font-[family-name:var(--font-mono)] text-xs self-end">
           npm run analyze -- ./src
+          {" · "}
+          <Link
+            href="/privacy"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Privacy
+          </Link>
         </p>
       </footer>
     </main>

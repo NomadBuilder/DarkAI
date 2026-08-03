@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "analyze": "tsx scripts/analyze-code.ts",
-    "extension:rules": "tsx scripts/export-extension-rules.ts"
+    "extension:rules": "tsx scripts/export-extension-rules.ts",
+    "extension:assets": "python3 scripts/generate-extension-assets.py",
+    "extension:pack": "bash scripts/pack-extension.sh"
   },
   "dependencies": {
     "cheerio": "^1.2.0",

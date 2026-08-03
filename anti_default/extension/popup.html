@@ -6,46 +6,57 @@
     <style>
       body {
         margin: 0;
-        min-width: 240px;
-        font: 14px/1.4 system-ui, sans-serif;
-        color: #1a2e28;
-        background: #f4f0e8;
-        padding: 14px;
+        min-width: 260px;
+        font: 14px/1.45 system-ui, -apple-system, sans-serif;
+        color: #1a1f2e;
+        background: #f6f1e8;
+        padding: 16px;
       }
       h1 {
-        font-size: 1.1rem;
-        margin: 0 0 8px;
-        font-weight: 600;
+        font-size: 1.15rem;
+        margin: 0 0 6px;
+        font-weight: 650;
       }
       p {
         margin: 0 0 12px;
-        color: #4a5c55;
+        color: #3d4558;
         font-size: 12px;
       }
       label {
         display: flex;
         gap: 8px;
         align-items: center;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
+        font-size: 13px;
       }
       a {
-        color: #1d6b56;
+        color: #1a524a;
         font-size: 12px;
+      }
+      .links {
+        display: grid;
+        gap: 6px;
       }
     </style>
   </head>
   <body>
     <h1>Anti-Default</h1>
-    <p>Highlight inclusive-language suggestions on this page.</p>
+    <p>Highlight inclusive-language suggestions on this page. Matching stays on your device.</p>
     <label>
       <input type="checkbox" id="enabled" checked />
       Highlights on
     </label>
-    <p>
+    <div class="links">
       <a href="https://darkai.ca/anti-default/" target="_blank" rel="noopener"
-        >Full reviewer on darkai.ca</a
+        >Full reviewer</a
       >
-    </p>
+      <a
+        href="https://darkai.ca/anti-default/privacy/"
+        target="_blank"
+        rel="noopener"
+        >Privacy</a
+      >
+    </div>
     <script src="popup.js"></script>
   </body>
 </html>
