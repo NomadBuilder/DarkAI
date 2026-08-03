@@ -11,7 +11,7 @@ export function SiteNav({ active }: { active?: "home" | "rules" }) {
         className="nav-quiet text-base tracking-wide text-[var(--ink)] hover:text-[var(--teal-deep)] transition-colors py-1"
         style={{ fontFamily: "var(--font-display)" }}
       >
-        Decolonize
+        Anti-Default
       </Link>
       <div className="flex items-center gap-1 text-sm">
         <Link

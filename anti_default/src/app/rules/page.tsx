@@ -3,9 +3,9 @@ import { RulesStudio } from "@/components/RulesStudio";
 import { LANGUAGE_RULES } from "@/lib/rules";
 
 export const metadata = {
-  title: "Rules — Decolonize",
+  title: "Rules — Anti-Default",
   description:
-    "Browse, enable, disable, and retune the inclusive-language rules used by Decolonize.",
+    "Browse, enable, disable, and retune the inclusive-language rules used by Anti-Default.",
 };
 
 export default function RulesPage() {

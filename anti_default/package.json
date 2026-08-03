@@ -1,11 +1,11 @@
 {
-  "name": "decolonize",
+  "name": "anti-default",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:darkai": "NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/decolonize next build",
+    "build:darkai": "NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default next build",
     "start": "next start",
     "lint": "eslint",
     "analyze": "tsx scripts/analyze-code.ts"
@@ -28,5 +28,5 @@
     "tsx": "^4.23.5",
     "typescript": "^5"
   },
-  "description": "Inclusive language reviewer for websites and code"
+  "description": "Anti-Default — inclusive language reviewer for websites and code"
 }

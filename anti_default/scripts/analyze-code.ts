@@ -114,7 +114,7 @@ async function main() {
 
   const result = analyzeCodeFiles(files);
 
-  console.log("Decolonize — code language review");
+  console.log("Anti-Default — code language review");
   console.log(`Files scanned: ${files.length}`);
   console.log(`Findings: ${result.summary.total}`);
   console.log(

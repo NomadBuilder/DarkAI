@@ -271,10 +271,10 @@ services:
 
       echo ""
       echo "=========================================="
-      echo "📦 Building Decolonize"
+      echo "📦 Building Anti-Default"
       echo "=========================================="
-      if [ -d "decolonize" ]; then
-        echo "✅ decolonize/ directory found!"
+      if [ -d "anti_default" ]; then
+        echo "✅ anti_default/ directory found!"
         if [ -n "$NODE_VERSION" ]; then
           NODE_DIR="/opt/render/project/nodes/node-$NODE_VERSION"
         else
@@ -283,22 +283,22 @@ services:
         if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
           export PATH="$NODE_DIR/bin:$PATH"
         fi
-        cd decolonize || { echo "❌ Failed to cd into decolonize"; exit 1; }
+        cd anti_default || { echo "❌ Failed to cd into anti_default"; exit 1; }
         rm -rf .next out
-        npm install || { echo "❌ decolonize npm install failed"; exit 1; }
-        echo "🔨 Building Decolonize with BASE_PATH=/decolonize"
-        NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/decolonize npm run build || {
-          echo "❌ decolonize build failed"
+        npm install || { echo "❌ anti_default npm install failed"; exit 1; }
+        echo "🔨 Building Anti-Default with BASE_PATH=/anti-default"
+        NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build || {
+          echo "❌ anti_default build failed"
           exit 1
         }
         if [ ! -f "out/index.html" ]; then
-          echo "❌ decolonize/out/index.html missing"
+          echo "❌ anti_default/out/index.html missing"
           exit 1
         fi
-        echo "✅ Decolonize build successful!"
+        echo "✅ Anti-Default build successful!"
         cd ..
       else
-        echo "⚠️  decolonize/ not found — skipping"
+        echo "⚠️  anti_default/ not found — skipping"
       fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
     envVars:

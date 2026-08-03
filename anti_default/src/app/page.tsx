@@ -24,7 +24,7 @@ export default function Home() {
             className="animate-rise text-[clamp(3.4rem,12vw,6.5rem)] leading-[0.92] tracking-[-0.03em] text-[var(--ink)] max-w-4xl"
             style={{ fontFamily: "var(--font-display)", fontWeight: 500 }}
           >
-            Decolonize
+            Anti-Default
           </h1>
           <InclusiveBand className="mt-5 mb-8" />
 

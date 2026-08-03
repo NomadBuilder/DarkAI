@@ -96,11 +96,11 @@ if os.getenv("SKIP_BLUEPRINTS") != "1":
     import_blueprint('personaforge', '/personaforge')
     import_blueprint('blackwire', '/blackwire')
     import_blueprint('shadowstack', '/shadowstack')
-    import_blueprint('decolonize', '/decolonize')
+    import_blueprint('anti_default', '/anti-default')
 else:
     print("⚠️  SKIP_BLUEPRINTS=1: Only ProtectOnt/Ledger routes and core routes will work.")
-    # Decolonize has no heavy deps — still register for local/ProtectOnt-adjacent testing
-    import_blueprint('decolonize', '/decolonize')
+    # Anti-Default has no heavy deps — still register for local/ProtectOnt-adjacent testing
+    import_blueprint('anti_default', '/anti-default')
 
 # Run initial discovery for PersonaForge if database is empty
 import threading

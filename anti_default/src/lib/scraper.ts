@@ -30,7 +30,7 @@ export async function scrapeUrl(rawUrl: string): Promise<ScrapeResult> {
       signal: controller.signal,
       headers: {
         "User-Agent":
-          "DecolonizeInclusiveReview/1.0 (+https://github.com/local/decolonize)",
+          "AntiDefaultInclusiveReview/1.0 (+https://darkai.ca/anti-default)",
         Accept: "text/html,application/xhtml+xml",
       },
     });

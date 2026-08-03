@@ -1,6 +1,6 @@
 """
-Decolonize — inclusive language review UI (static Next export) + scrape API.
-Served at /decolonize on the DarkAI consolidated platform.
+Anti-Default — inclusive language review UI (static Next export) + scrape API.
+Served at /anti-default on the DarkAI consolidated platform.
 """
 
 from __future__ import annotations
@@ -15,7 +15,7 @@ import requests
 from bs4 import BeautifulSoup
 from flask import Blueprint, jsonify, request, send_from_directory, abort
 
-decolonize_bp = Blueprint("decolonize", __name__)
+anti_default_bp = Blueprint("anti_default", __name__)
 
 MAX_HTML_BYTES = 1_500_000
 FETCH_TIMEOUT = 12
@@ -34,7 +34,6 @@ def _is_safe_public_url(raw: str) -> bool:
         host = (parsed.hostname or "").lower()
         if not host or host == "localhost" or host.endswith(".local"):
             return False
-        # Resolve and reject private / link-local addresses
         infos = socket.getaddrinfo(host, None)
         for info in infos:
             ip = ipaddress.ip_address(info[4][0])
@@ -90,7 +89,7 @@ def _extract_text(html: str, final_url: str) -> dict:
     return {"url": final_url, "title": title, "text": "\n".join(blocks)}
 
 
-@decolonize_bp.route("/api/scrape", methods=["POST"])
+@anti_default_bp.route("/api/scrape", methods=["POST"])
 def scrape():
     payload = request.get_json(silent=True) or {}
     raw_url = (payload.get("url") or "").strip()
@@ -108,7 +107,7 @@ def scrape():
             raw_url,
             timeout=FETCH_TIMEOUT,
             headers={
-                "User-Agent": "DecolonizeInclusiveReview/1.0 (+https://darkai.ca/decolonize)",
+                "User-Agent": "AntiDefaultInclusiveReview/1.0 (+https://darkai.ca/anti-default)",
                 "Accept": "text/html,application/xhtml+xml",
             },
             allow_redirects=True,
@@ -132,20 +131,19 @@ def scrape():
         return jsonify({"error": str(exc) or "Failed to scrape URL."}), 400
 
 
-@decolonize_bp.route("/")
-@decolonize_bp.route("/<path:path>")
+@anti_default_bp.route("/")
+@anti_default_bp.route("/<path:path>")
 def serve_static(path: str = ""):
-    """Serve the Next.js static export under /decolonize."""
+    """Serve the Next.js static export under /anti-default."""
     root = _out_dir()
     if not os.path.isdir(root):
         return jsonify(
             {
-                "error": "Decolonize UI not built. Run: cd decolonize && BASE_PATH=/decolonize STATIC_EXPORT=true npm run build",
+                "error": "Anti-Default UI not built. Run: cd anti_default && BASE_PATH=/anti-default STATIC_EXPORT=true npm run build",
                 "out_dir": root,
             }
         ), 503
 
-    # Never serve API through the static catch-all (registered separately above)
     if path.startswith("api/") or path == "api":
         abort(404)
 
@@ -158,12 +156,10 @@ def serve_static(path: str = ""):
     if os.path.isfile(full):
         return send_from_directory(root, path)
 
-    # trailingSlash export: /rules -> rules/index.html
     index_candidate = os.path.join(root, path, "index.html")
     if os.path.isfile(index_candidate):
         return send_from_directory(os.path.join(root, path), "index.html")
 
-    # SPA-ish fallback to root index for unknown client paths
     index = os.path.join(root, "index.html")
     if os.path.isfile(index):
         return send_from_directory(root, "index.html")

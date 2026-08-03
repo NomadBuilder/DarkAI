@@ -25,9 +25,9 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Decolonize — Inclusive language review",
+  title: "Anti-Default — Inclusive language review",
   description:
-    "A welcoming tool to review website copy for colonial, gendered, ableist, and other excluding language — with concrete rewrite suggestions anyone can tune.",
+    "A welcoming tool to review website copy for colonial, gendered, ableist, and other excluding language — catch defaults, then rewrite with care.",
 };
 
 export default function RootLayout({
