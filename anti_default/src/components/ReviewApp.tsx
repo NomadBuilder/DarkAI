@@ -12,7 +12,11 @@ import {
   loadIgnoredKeys,
   saveIgnoredKeys,
 } from "@/lib/ignores";
-import { applySuggestionToText, previewRewrite } from "@/lib/rewrite";
+import {
+  applyPassageRewrites,
+  applySuggestionToText,
+  previewRewrite,
+} from "@/lib/rewrite";
 import { reportFindingIssueUrl } from "@/lib/report";
 import { severityLabel } from "@/lib/severity";
 import type { AnalysisResult, Finding, Severity } from "@/lib/types";
@@ -225,6 +229,31 @@ export function ReviewApp() {
       sourceType: result?.sourceType === "document" ? "document" : "text",
       sourceLabel: docLabel ?? result?.sourceLabel ?? "edited text",
       title: "Rewrite preview applied",
+    });
+  }
+
+  function applyPassage() {
+    if (!text || findings.length === 0) return;
+    const { text: next, applied, skippedSoft } = applyPassageRewrites(
+      text,
+      findings,
+      { skipSoft: true },
+    );
+    if (applied === 0) {
+      setError(
+        skippedSoft > 0
+          ? "Nothing to apply — remaining matches look like false positives (quotes, legal, etc.)."
+          : "Nothing to apply.",
+      );
+      return;
+    }
+    setError(null);
+    setText(next);
+    setMode((m) => (m === "url" ? "text" : m));
+    analyzeSource(next, {
+      sourceType: result?.sourceType === "document" ? "document" : "text",
+      sourceLabel: docLabel ?? result?.sourceLabel ?? "edited text",
+      title: `Passage rewrite (${applied} applied${skippedSoft ? `, ${skippedSoft} soft skipped` : ""})`,
     });
   }
 
@@ -466,6 +495,15 @@ export function ReviewApp() {
               ) : null}
             </div>
             <div className="flex flex-wrap gap-2 ml-auto">
+              {findings.some((f) => !f.likelyFalsePositive && f.suggestions[0]) ? (
+                <button
+                  type="button"
+                  onClick={applyPassage}
+                  className="text-xs px-3 py-1.5 bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--moss-deep)] transition-colors"
+                >
+                  Rewrite passage
+                </button>
+              ) : null}
               <ExportButton
                 label="Markdown"
                 onClick={() =>
@@ -653,6 +691,12 @@ function FindingRow({
             </span>
           </div>
           <div className="flex flex-wrap gap-3">
+            <Link
+              href={`/swap/?q=${encodeURIComponent(finding.match)}`}
+              className="text-xs text-[var(--moss-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+            >
+              Look up in Swap
+            </Link>
             <button
               type="button"
               onClick={onIgnore}

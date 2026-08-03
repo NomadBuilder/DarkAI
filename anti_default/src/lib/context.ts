@@ -1,10 +1,17 @@
 /**
- * Context heuristics for matches — skip tech idioms, soft-flag quotes / legal / self-ID.
+ * Context heuristics for matches — skip tech idioms, quotes, org names,
+ * first-person illness stories; soft-flag remaining ambiguous cases.
  */
 
 const WINDOW = 90;
 
-export type ContextMode = "quote" | "legal" | "selfDescription" | "techIdiom";
+export type ContextMode =
+  | "quote"
+  | "legal"
+  | "selfDescription"
+  | "techIdiom"
+  | "orgName"
+  | "illnessStory";
 
 export interface MatchContext {
   modes: ContextMode[];
@@ -22,10 +29,37 @@ const PLACE_OR_PEOPLE =
   /\b(?:land|lands|america|americas|continent|island|islands|country|countries|nation|nations|people|peoples|tribe|tribes|world|africa|asia|australia|india|canada|mexico|brazil|territory|territories|shore|coast|caribbean|pacific|atlantic|indigenous|native|aboriginal|settler|colony|colon(?:y|ies)|voyage|explorer|expedition)\b/i;
 
 const LEGAL_NEAR =
-  /\b(?:pursuant\s+to|hereinafter|whereas|plaintiff|defendant|statute|section\s+\d|u\.?s\.?\s*c\.|cfr|herein|thereof|notwithstanding|exhibit\s+[A-Z])\b/i;
+  /\b(?:pursuant\s+to|hereinafter|whereas|plaintiff|defendant|statute|section\s+\d|u\.?s\.?\s*c\.|cfr|herein|thereof|notwithstanding|exhibit\s+[A-Z]|bill\s+\d+|regulation|ordinance|code\s+of\s+conduct|terms\s+of\s+(?:use|service)|privacy\s+policy)\b/i;
 
 const SELF_DESC_NEAR =
   /\b(?:i\s+am|i'm|we\s+are|we're|as\s+a|identify\s+as|my\s+pronouns|our\s+pronouns)\b/i;
+
+const FIRST_PERSON_NEAR =
+  /\b(?:i|i'm|i've|i'd|me|my|myself|we|we're|we've|our|ours)\b/i;
+
+const ILLNESS_NEAR =
+  /\b(?:cancer|illness|disease|diagnos(?:is|ed)|depression|anxiety|ptsd|bipolar|schizophrenia|chronic|pain|hospital|symptom|flare|remission|chemotherapy|treatment|disability|disabled|neurodiverg)\w*\b/i;
+
+const ORG_SUFFIX_NEAR =
+  /\b(?:cancer|foundation|society|campaign|organization|organisation|initiative|project|coalition|alliance|network|fund|institute|association|collective)\b/i;
+
+/** Ableist metaphor / insult rules — skip more aggressively in quotes & illness stories. */
+const ABLEIST_METAPHOR_RULES = new Set([
+  "crazy",
+  "lame",
+  "dumb",
+  "stupid-as-default",
+  "blind-to",
+  "crippled",
+  "suffers-from",
+  "spaz",
+  "sanity-check",
+  "ocd-metaphor",
+  "bipolar-metaphor",
+  "wheelchair-bound",
+  "handicapped",
+  "retarded",
+]);
 
 function windowAround(text: string, index: number, length: number): string {
   const start = Math.max(0, index - WINDOW);
@@ -53,6 +87,38 @@ export function isInsideQuotes(
   const openSingle = (before.match(/(?:^|[\s([{])'/g) || []).length;
   const closeSingle = (after.match(/'(?:$|[\s)\]}.,;:!?])/g) || []).length;
   if (openSingle > 0 && closeSingle > 0 && openSingle >= closeSingle) return true;
+
+  return false;
+}
+
+/**
+ * Proper-name / org-style uses: "Stupid Cancer", "Crazy Horse Foundation",
+ * or “called/named …”. Avoids Title Case job titles like “Congressman Max”.
+ */
+export function looksLikeOrgOrProperName(
+  text: string,
+  index: number,
+  length: number,
+): boolean {
+  const matched = text.slice(index, index + length);
+  if (!matched || matched[0] !== matched[0].toUpperCase()) return false;
+
+  const after = text.slice(index + length, index + length + 48);
+  const before = text.slice(Math.max(0, index - 48), index);
+  const afterWord = after.match(/^\s+([A-Za-z']+)/)?.[1];
+
+  // Capitalized match + org-ish next word (Stupid Cancer, Lame Duck Society)
+  if (afterWord && /^[A-Z]/.test(afterWord) && ORG_SUFFIX_NEAR.test(afterWord)) {
+    return true;
+  }
+
+  // “… called Crazy …” / “… named Stupid Cancer …”
+  if (
+    /\b(?:called|named|known\s+as)\b/i.test(before) &&
+    /^[A-Z]/.test(matched)
+  ) {
+    return true;
+  }
 
   return false;
 }
@@ -110,6 +176,7 @@ export function evaluateMatchContext(
   let note: string | undefined;
   const nearby = windowAround(text, index, length);
   const hints = hintsForRule(ruleId);
+  const ableistMetaphor = ABLEIST_METAPHOR_RULES.has(ruleId);
 
   if (hints?.excludeNear?.test(nearby)) {
     skip = true;
@@ -119,28 +186,62 @@ export function evaluateMatchContext(
     note = "Skipped — no place/people context near “discovered.”";
   }
 
+  if (!skip && looksLikeOrgOrProperName(text, index, length)) {
+    modes.push("orgName");
+    skip = true;
+    note = "Skipped — looks like an organization or proper name.";
+  }
+
+  if (
+    !skip &&
+    ableistMetaphor &&
+    FIRST_PERSON_NEAR.test(nearby) &&
+    ILLNESS_NEAR.test(nearby)
+  ) {
+    modes.push("illnessStory");
+    skip = true;
+    note =
+      "Skipped — first-person illness or disability story; not treating lived experience as a metaphor to “fix.”";
+  }
+
   if (!skip && hints?.softExcludeNear?.test(nearby)) {
     likelyFalsePositive = true;
     note = "Likely fine in this context — soft-flagged.";
   }
 
-  if (isInsideQuotes(text, index, length)) {
+  if (!skip && isInsideQuotes(text, index, length)) {
     modes.push("quote");
-    likelyFalsePositive = true;
-    note =
-      note ??
-      "Inside quotation marks — often a cited speaker, not the author’s framing.";
+    if (ableistMetaphor) {
+      // Quoted ableist metaphors are almost always someone else’s words.
+      skip = true;
+      note = "Skipped — inside quotation marks (cited speech, not author framing).";
+    } else {
+      likelyFalsePositive = true;
+      note =
+        note ??
+        "Inside quotation marks — often a cited speaker, not the author’s framing.";
+    }
   }
 
-  if (LEGAL_NEAR.test(nearby)) {
+  if (!skip && LEGAL_NEAR.test(nearby)) {
     modes.push("legal");
-    likelyFalsePositive = true;
-    note = note ?? "Near legal boilerplate — may be a required term of art.";
+    // Legal / policy citations: skip ableist & tech hierarchy metaphors; soft elsewhere.
+    if (
+      ableistMetaphor ||
+      ruleId === "master-slave" ||
+      ruleId === "whitelist-blacklist" ||
+      ruleId === "grandfathered"
+    ) {
+      skip = true;
+      note = "Skipped — near legal or policy language; may be a required term of art.";
+    } else {
+      likelyFalsePositive = true;
+      note = note ?? "Near legal or policy boilerplate — may be a required term of art.";
+    }
   }
 
-  if (SELF_DESC_NEAR.test(nearby)) {
+  if (!skip && SELF_DESC_NEAR.test(nearby)) {
     modes.push("selfDescription");
-    // Self-ID is usually intentional; soft-flag identity rules only
     if (
       /^(guys|ladies|homosexual|transgendered|biological-|preferred-pronoun)/.test(
         ruleId,

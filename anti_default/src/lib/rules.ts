@@ -917,11 +917,11 @@ export const LANGUAGE_RULES: LanguageRule[] = [
   // ── General inclusion ───────────────────────────────────────────────
   {
     id: "ninja-rockstar",
-    pattern: "\\b(?:ninjas?|rockstars?|wizards?)\\b",
+    pattern: "\\b(?:coding )?ninjas?\\b|\\b(?:marketing )?rockstars?\\b",
     category: "general",
     severity: "low",
     label: "Hyperbolic job titles",
-    why: "Can feel exclusionary in hiring copy and often imports cultural metaphors casually.",
+    why: "Can feel exclusionary in hiring copy and often imports cultural metaphors casually. (UI “wizard” steps are not flagged.)",
     suggestions: ["skilled", "experienced", "strong contributor"],
   },
   {

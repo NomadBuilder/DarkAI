@@ -73,12 +73,23 @@ export function extractReviewableSegments(
     segments.push({ text, source: `${path}:${line} (comment)` });
   }
 
-  if (/\.(tsx|jsx|vue|svelte|html?)$/i.test(path)) {
+  if (/\.(tsx|jsx|vue|svelte|html?|cshtml|razor)$/i.test(path)) {
     for (const match of content.matchAll(JSX_TEXT_RE)) {
       const text = (match[1] ?? "").replace(/\s+/g, " ").trim();
       if (!isLikelyUserFacing(text)) continue;
       const line = content.slice(0, match.index ?? 0).split("\n").length;
       segments.push({ text, source: `${path}:${line} (markup)` });
+    }
+  }
+
+  // Razor / C#: @"..." and plain string content between tags already partly covered;
+  // also pull visible-ish text from @* *@ comments via COMMENT_RE-style
+  if (/\.(cshtml|razor)$/i.test(path)) {
+    for (const match of content.matchAll(/@\*([\s\S]*?)\*@/g)) {
+      const text = (match[1] ?? "").replace(/\s+/g, " ").trim();
+      if (!isLikelyUserFacing(text) || text.length < 8) continue;
+      const line = content.slice(0, match.index ?? 0).split("\n").length;
+      segments.push({ text, source: `${path}:${line} (razor comment)` });
     }
   }
 
@@ -110,6 +121,9 @@ export const CODE_EXTENSIONS = [
   ".jsx",
   ".mjs",
   ".cjs",
+  ".cs",
+  ".cshtml",
+  ".razor",
   ".py",
   ".rb",
   ".go",

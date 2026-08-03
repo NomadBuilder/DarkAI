@@ -1,8 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useDeferredValue, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { LOOKUP_EXAMPLES, lookupPhrase } from "@/lib/lookup";
+import {
+  compactSourceName,
+  sourcesForRuleId,
+} from "@/lib/rule-sources";
 import { CATEGORY_META } from "@/lib/types";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
 
@@ -10,6 +14,22 @@ export function PhraseLookup() {
   const [query, setQuery] = useState("");
   const deferred = useDeferredValue(query);
   const { preferences } = useRulePreferences();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q) setQuery(q);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const trimmed = query.trim();
+    const url = new URL(window.location.href);
+    if (trimmed) url.searchParams.set("q", trimmed);
+    else url.searchParams.delete("q");
+    window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+  }, [query]);
 
   const hits = useMemo(
     () => lookupPhrase(deferred, preferences),
@@ -83,48 +103,75 @@ export function PhraseLookup() {
 
       {avoidHits.length > 0 ? (
         <div className="grid gap-6">
-          {avoidHits.map((hit) => (
-            <article
-              key={hit.ruleId}
-              className="border-t border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pt-6"
-            >
-              <p className="text-xs uppercase tracking-[0.16em] text-[var(--coral)] mb-3">
-                {CATEGORY_META[hit.category].title}
-              </p>
-              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
-                <p
-                  className="text-2xl md:text-3xl text-[var(--ink)]"
-                  style={{ fontFamily: "var(--font-display)" }}
-                >
-                  <span className="line-through decoration-[var(--coral)] decoration-2 text-[var(--ink-soft)]">
-                    {hit.from}
-                  </span>
-                  <span className="mx-3 text-[var(--ink-soft)]" aria-hidden>
-                    →
-                  </span>
-                  <span>{hit.suggestions[0]}</span>
+          {avoidHits.map((hit) => {
+            const sources = sourcesForRuleId(hit.ruleId, hit.category);
+            const badges = [
+              ...new Map(
+                sources.map((s) => [compactSourceName(s.title), s] as const),
+              ).values(),
+            ].slice(0, 4);
+
+            return (
+              <article
+                key={hit.ruleId}
+                className="border-t border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pt-6"
+              >
+                <p className="text-xs uppercase tracking-[0.16em] text-[var(--coral)] mb-3">
+                  {CATEGORY_META[hit.category].title}
                 </p>
-              </div>
-              {hit.suggestions.length > 1 ? (
-                <p className="text-base text-[var(--ink)] mb-3">
-                  <span className="text-[var(--ink-soft)]">Also try: </span>
-                  {hit.suggestions.slice(1).join(" · ")}
+                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
+                  <p
+                    className="text-2xl md:text-3xl text-[var(--ink)]"
+                    style={{ fontFamily: "var(--font-display)" }}
+                  >
+                    <span className="line-through decoration-[var(--coral)] decoration-2 text-[var(--ink-soft)]">
+                      {hit.from}
+                    </span>
+                    <span className="mx-3 text-[var(--ink-soft)]" aria-hidden>
+                      →
+                    </span>
+                    <span>{hit.suggestions[0]}</span>
+                  </p>
+                </div>
+                {hit.suggestions.length > 1 ? (
+                  <p className="text-base text-[var(--ink)] mb-3">
+                    <span className="text-[var(--ink-soft)]">Also try: </span>
+                    {hit.suggestions.slice(1).join(" · ")}
+                  </p>
+                ) : null}
+                <p className="text-[var(--ink-soft)] leading-relaxed max-w-2xl mb-3">
+                  {hit.why}
                 </p>
-              ) : null}
-              <p className="text-[var(--ink-soft)] leading-relaxed max-w-2xl mb-2">
-                {hit.why}
-              </p>
-              <p className="text-sm text-[var(--ink-soft)]">
-                Rule:{" "}
-                <Link
-                  href={`/rules#${hit.ruleId}`}
-                  className="text-[var(--teal-deep)] underline underline-offset-2"
-                >
-                  {hit.label}
-                </Link>
-              </p>
-            </article>
-          ))}
+                {badges.length > 0 ? (
+                  <p className="text-sm text-[var(--ink-soft)] mb-2">
+                    <span className="text-[var(--ink)]">Supported by: </span>
+                    {badges.map((s, i) => (
+                      <span key={s.href + s.title}>
+                        {i > 0 ? " · " : null}
+                        <a
+                          href={s.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+                        >
+                          {compactSourceName(s.title)}
+                        </a>
+                      </span>
+                    ))}
+                  </p>
+                ) : null}
+                <p className="text-sm text-[var(--ink-soft)]">
+                  Rule:{" "}
+                  <Link
+                    href={`/rules#${hit.ruleId}`}
+                    className="text-[var(--teal-deep)] underline underline-offset-2"
+                  >
+                    {hit.label}
+                  </Link>
+                </p>
+              </article>
+            );
+          })}
         </div>
       ) : null}
 

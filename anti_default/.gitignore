@@ -15,7 +15,8 @@
 
 # next.js
 /.next/
-# Commit static export for Render (dashboard build may only run Ledger)
+# Prefer rebuilding out/ on Render every deploy (see RENDER_BUILD_COMMAND*.txt).
+# Committed out/ is a fallback if the dashboard build skips anti_default.
 # /out/
 
 # production

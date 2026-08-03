@@ -1,4 +1,4 @@
-# Add this to the END of your existing Render build command
-# (after the ledger build section)
+# Append to an existing Render build command if Ledger is already covered.
+# Forces a fresh Anti-Default static export every deploy.
 
- && if [ -d "anti_default" ]; then export PATH="/opt/render/project/nodes/node-${NODE_VERSION:-22.16.0}/bin:$PATH" && cd anti_default && npm install && NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build && test -f out/index.html && cd .. && echo "✅ Anti-Default build completed"; fi
+ && if [ -d "anti_default" ]; then export PATH="/opt/render/project/nodes/node-${NODE_VERSION:-22.16.0}/bin:$PATH" && cd anti_default && rm -rf .next out && npm install && NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build && test -f out/index.html && test -f out/swap/index.html && cd .. && echo "✅ Anti-Default build completed"; fi

@@ -34,14 +34,12 @@ export default function PrivacyContent() {
             browsing history, page content, or personal information with us.
           </li>
           <li>
-            The only setting stored is whether highlights are on or off, via
-            Chrome’s <code>storage.sync</code> (stays in your Google account /
-            browser sync if you use it).
+            Findings are shown in the extension popup from text already on the
+            page. Nothing from that scan is uploaded to our servers.
           </li>
           <li>
-            Optional links in the UI open the public Anti-Default site
-            (https://darkai.ca/anti-default/) in a normal browser tab. Those
-            visits are ordinary website traffic.
+            A small Privacy link may open
+            https://darkai.ca/anti-default/privacy/ in a normal browser tab.
           </li>
           <li>
             We do not use advertising SDKs, analytics SDKs, or remote code in

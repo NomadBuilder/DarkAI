@@ -295,6 +295,10 @@ services:
           echo "❌ anti_default/out/index.html missing"
           exit 1
         fi
+        if [ ! -f "out/swap/index.html" ]; then
+          echo "❌ anti_default/out/swap/index.html missing — Swap route not exported"
+          exit 1
+        fi
         echo "✅ Anti-Default build successful!"
         cd ..
       else

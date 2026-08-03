@@ -123,7 +123,29 @@ const BY_ID: Partial<Record<string, RuleSourceRef[]>> = {
  */
 export function sourcesForRule(rule: LanguageRule): RuleSourceRef[] {
   if (rule.sources && rule.sources.length > 0) return rule.sources;
-  const specific = BY_ID[rule.id];
+  return sourcesForRuleId(rule.id, rule.category);
+}
+
+export function sourcesForRuleId(
+  ruleId: string,
+  category: Category,
+): RuleSourceRef[] {
+  const specific = BY_ID[ruleId];
   if (specific) return specific;
-  return CATEGORY_DEFAULTS[rule.category];
+  return CATEGORY_DEFAULTS[category];
+}
+
+/** Short badge label for Swap / cards (APA, GLAAD, NCDJ…). */
+export function compactSourceName(title: string): string {
+  if (/\bAPA\b/i.test(title)) return "APA";
+  if (/\bGLAAD\b/i.test(title)) return "GLAAD";
+  if (/\bNCDJ\b/i.test(title)) return "NCDJ";
+  if (/\bCDC\b/i.test(title)) return "CDC";
+  if (/United Nations|\bUN\b/i.test(title)) return "UN";
+  if (/Conscious Style Guide/i.test(title)) return "Conscious Style Guide";
+  if (/\bGitHub\b/i.test(title)) return "GitHub";
+  if (/Associated Press|\bAP\b —/i.test(title)) return "AP";
+  if (/Native American Journalists|\bNAJA\b/i.test(title)) return "NAJA";
+  if (/World Bank/i.test(title)) return "World Bank";
+  return title.replace(/\s*[—–-].*$/, "").trim().slice(0, 42);
 }

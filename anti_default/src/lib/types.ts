@@ -52,7 +52,14 @@ export interface Finding {
   /** Soft-flag: common in quotes / idioms — review carefully. */
   likelyFalsePositive?: boolean;
   contextNote?: string;
-  contextModes?: Array<"quote" | "legal" | "selfDescription" | "techIdiom">;
+  contextModes?: Array<
+    | "quote"
+    | "legal"
+    | "selfDescription"
+    | "techIdiom"
+    | "orgName"
+    | "illnessStory"
+  >;
 }
 
 export interface AnalysisSummary {

@@ -36,3 +36,51 @@ export function applySuggestionToText(
   );
   return source.replace(re, suggestion);
 }
+
+export interface PassageRewriteResult {
+  text: string;
+  applied: number;
+  skippedSoft: number;
+  skippedNoSuggestion: number;
+}
+
+/**
+ * Walk findings and apply the first suggestion to each, right-to-left so
+ * indices stay valid. Soft-flags (likely false positives) are skipped.
+ */
+export function applyPassageRewrites(
+  source: string,
+  findings: Finding[],
+  options?: { skipSoft?: boolean },
+): PassageRewriteResult {
+  const skipSoft = options?.skipSoft !== false;
+  let skippedSoft = 0;
+  let skippedNoSuggestion = 0;
+
+  const actionable = findings
+    .filter((f) => {
+      if (skipSoft && f.likelyFalsePositive) {
+        skippedSoft += 1;
+        return false;
+      }
+      if (!f.suggestions[0]) {
+        skippedNoSuggestion += 1;
+        return false;
+      }
+      return true;
+    })
+    .slice()
+    .sort((a, b) => b.index - a.index);
+
+  let text = source;
+  for (const finding of actionable) {
+    text = applySuggestionToText(text, finding, finding.suggestions[0]!);
+  }
+
+  return {
+    text,
+    applied: actionable.length,
+    skippedSoft,
+    skippedNoSuggestion,
+  };
+}
