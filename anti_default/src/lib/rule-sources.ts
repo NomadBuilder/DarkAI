@@ -22,6 +22,17 @@ const S = {
   apIllegal:
     "https://www.ap.org/the-definitive-source/announcements/illegal-immigrant-no-more/",
   githubMain: "https://github.com/github/renaming",
+  rationalWikiAltRight:
+    "https://rationalwiki.org/wiki/Alt-right_glossary",
+  indiecatorDogwhistles:
+    "https://indiecator.org/2025/08/03/the-language-of-extremism-on-dogwhistles/",
+  conspiracyChart: "https://conspiracychart.com/",
+  adlGreatReplacement:
+    "https://www.adl.org/resources/backgrounder/great-replacement-explainer",
+  splcCulturalMarxism:
+    "https://www.splcenter.org/resources/hatewatch/cultural-marxism-catching/",
+  redditDogwhistleGlossary:
+    "https://www.reddit.com/r/AntifascistsofReddit/comments/10uprvw/a_glossary_of_lesser_known_alt_right_dogwhistles/",
 } as const;
 
 const CATEGORY_DEFAULTS: Record<Category, RuleSourceRef[]> = {
@@ -47,6 +58,16 @@ const CATEGORY_DEFAULTS: Record<Category, RuleSourceRef[]> = {
   ],
   class: [{ title: "Conscious Style Guide — workplace & bias", href: S.csg }],
   age: [{ title: "APA Style — Age", href: S.apaAge }],
+  coded: [
+    {
+      title: "Indiecator — The language of extremism (dogwhistles)",
+      href: S.indiecatorDogwhistles,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
   general: [{ title: "Conscious Style Guide", href: S.csg }],
 };
 
@@ -116,6 +137,97 @@ const BY_ID: Partial<Record<string, RuleSourceRef[]>> = {
   "native-speaker-only": [
     { title: "Conscious Style Guide — workplace & bias", href: S.csg },
   ],
+  "cultural-marxism": [
+    {
+      title: "SPLC — ‘Cultural Marxism’ catching on",
+      href: S.splcCulturalMarxism,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+    { title: "Conspiracy Chart", href: S.conspiracyChart },
+  ],
+  "great-replacement": [
+    {
+      title: "ADL — Great Replacement explainer",
+      href: S.adlGreatReplacement,
+    },
+    { title: "Conspiracy Chart", href: S.conspiracyChart },
+  ],
+  "blood-and-soil": [
+    {
+      title: "Indiecator — dogwhistles (Blood and soil)",
+      href: S.indiecatorDogwhistles,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "echo-parentheses": [
+    {
+      title: "Indiecator — (((echo))) markers",
+      href: S.indiecatorDogwhistles,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "fourteen-eighty-eight": [
+    {
+      title: "Indiecator — 14 / 88 numerical codes",
+      href: S.indiecatorDogwhistles,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "globalist-smear": [
+    {
+      title: "Indiecator — globalist & Cultural Marxism",
+      href: S.indiecatorDogwhistles,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "western-values-dogwhistle": [
+    {
+      title: "Indiecator — Western values / culture",
+      href: S.indiecatorDogwhistles,
+    },
+  ],
+  "trans-agenda": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+    { title: "Conspiracy Chart", href: S.conspiracyChart },
+  ],
+  "groomer-smear": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "go-woke-go-broke": [
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+    {
+      title: "Antifascists of Reddit — dogwhistle glossary",
+      href: S.redditDogwhistleGlossary,
+    },
+  ],
+  "modern-audience": [
+    {
+      title: "Indiecator — anti-woke / gaming dogwhistles",
+      href: S.indiecatorDogwhistles,
+    },
+  ],
 };
 
 /**
@@ -147,5 +259,10 @@ export function compactSourceName(title: string): string {
   if (/Associated Press|\bAP\b —/i.test(title)) return "AP";
   if (/Native American Journalists|\bNAJA\b/i.test(title)) return "NAJA";
   if (/World Bank/i.test(title)) return "World Bank";
+  if (/\bADL\b/i.test(title)) return "ADL";
+  if (/\bSPLC\b/i.test(title)) return "SPLC";
+  if (/RationalWiki/i.test(title)) return "RationalWiki";
+  if (/Indiecator/i.test(title)) return "Indiecator";
+  if (/Conspiracy Chart/i.test(title)) return "Conspiracy Chart";
   return title.replace(/\s*[—–-].*$/, "").trim().slice(0, 42);
 }

@@ -22,6 +22,7 @@ export interface CorpusCase {
     | "lgbtq"
     | "class"
     | "age"
+    | "coded"
     | "general"
     | "mixed";
   text: string;
@@ -304,5 +305,49 @@ export const CORPUS_CASES: CorpusCase[] = [
     text: "Mother tongue must be English; accents will struggle with clients.",
     expect: "flag",
     ruleIds: ["mother-tongue-gate"],
+  },
+
+  // ── Coded / dogwhistle ───────────────────────────────────────────────
+  {
+    id: "coded-cultural-marxism",
+    axis: "coded",
+    text: "They say Cultural Marxism is destroying the universities.",
+    expect: "flag",
+    ruleIds: ["cultural-marxism"],
+  },
+  {
+    id: "coded-great-replacement",
+    axis: "coded",
+    text: "Commenters pushed the Great Replacement theory under the video.",
+    expect: "flag",
+    ruleIds: ["great-replacement"],
+  },
+  {
+    id: "coded-blood-and-soil",
+    axis: "coded",
+    text: "The flyer ended with blood and soil rhetoric.",
+    expect: "flag",
+    ruleIds: ["blood-and-soil"],
+  },
+  {
+    id: "coded-globalist-soft",
+    axis: "coded",
+    text: "Stop the globalists before they open the borders.",
+    expect: "soft",
+    ruleIds: ["globalist-smear"],
+  },
+  {
+    id: "coded-dog-groomer-skip",
+    axis: "coded",
+    text: "We take our poodle to the best dog groomer in town.",
+    expect: "no-flag",
+    ruleIds: ["groomer-smear"],
+  },
+  {
+    id: "coded-echo-markers",
+    axis: "coded",
+    text: "They attacked (((the media))) in the thread.",
+    expect: "flag",
+    ruleIds: ["echo-parentheses"],
   },
 ];

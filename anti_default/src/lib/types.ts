@@ -6,6 +6,7 @@ export type Category =
   | "lgbtq"
   | "class"
   | "age"
+  | "coded"
   | "general";
 
 export type Severity = "high" | "medium" | "low";
@@ -27,6 +28,11 @@ export interface LanguageRule {
   suggestions: string[];
   /** Style-guide footnotes shown on /rules. */
   sources?: RuleSourceRef[];
+  /**
+   * Start as a soft-flag (heads-up / decode). Used for dogwhistles people
+   * may repeat without knowing the coded meaning.
+   */
+  defaultSoft?: boolean;
 }
 
 /** Per-rule overrides stored in the browser (or sent with API requests). */
@@ -116,6 +122,11 @@ export const CATEGORY_META: Record<
     title: "Age-inclusive",
     description: "Stereotypes that dismiss people based on age.",
   },
+  coded: {
+    title: "Coded & dogwhistle",
+    description:
+      "Phrases that can carry far-right or conspiracy meanings people may repeat without knowing. Shown as heads-ups — context always wins.",
+  },
   general: {
     title: "General inclusion",
     description: "Broader phrasing that can exclude or flatten communities.",
@@ -130,6 +141,7 @@ export const CATEGORY_ORDER: Category[] = [
   "lgbtq",
   "class",
   "age",
+  "coded",
   "general",
 ];
 

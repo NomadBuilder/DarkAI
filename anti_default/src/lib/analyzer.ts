@@ -92,8 +92,13 @@ export function analyzeText(
         context: snippetAround(normalized, match.index, matchedText.length),
         index: match.index,
         source: options.sourceTag,
-        likelyFalsePositive: ctx.likelyFalsePositive || undefined,
-        contextNote: ctx.note,
+        likelyFalsePositive:
+          ctx.likelyFalsePositive || rule.defaultSoft || undefined,
+        contextNote:
+          ctx.note ??
+          (rule.defaultSoft
+            ? "Coded language often spreads without intent — a heads-up to check context, not a verdict."
+            : undefined),
         contextModes: ctx.modes.length ? ctx.modes : undefined,
       });
 

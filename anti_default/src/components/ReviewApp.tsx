@@ -673,7 +673,9 @@ function FindingRow({
         </span>
         {finding.likelyFalsePositive ? (
           <span className="inline-block text-[0.65rem] tracking-wide px-2 py-1 text-[var(--warn)] bg-[color-mix(in_oklab,var(--warn)_12%,white)]">
-            Likely false positive
+            {finding.category === "coded"
+              ? "Heads-up — check context"
+              : "Likely false positive"}
           </span>
         ) : null}
       </div>

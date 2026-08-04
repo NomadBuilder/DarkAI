@@ -161,6 +161,18 @@ export function hintsForRule(ruleId: string): RuleContextHints | null {
       softExcludeNear: /\b(?:sikh|hindu|spiritual|religious|ashram|teacher)\b/i,
     };
   }
+  if (ruleId === "groomer-smear") {
+    return {
+      excludeNear:
+        /\b(?:dog|cat|pet|horse|animal|hair|nail|salon|spa)\b.{0,20}\bgroomers?\b|\bgroomers?\b.{0,20}\b(?:dog|cat|pet|salon|spa|business)\b/i,
+    };
+  }
+  if (ruleId === "globalist-smear") {
+    return {
+      softExcludeNear:
+        /\b(?:trade|WTO|IMF|World Bank|multilateral|supply chain|offshoring)\b/i,
+    };
+  }
   return null;
 }
 

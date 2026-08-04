@@ -20,7 +20,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
     id: "how",
     title: "How the list was built",
     summary:
-      "Anti-Default’s rules were curated from common inclusive-language guidance — major style guides, journalism handbooks, disability and LGBTQ+ media guides, and tech writing norms. It is a starting set you can tune, not an official standard or original research study.",
+      "Anti-Default’s rules were curated from inclusive-language guidance — style guides, journalism handbooks, disability and LGBTQ+ media guides, tech writing norms — plus a small set of widely documented dogwhistles so people can notice coded language they may repeat without knowing. It is a starting set you can tune, not an official standard.",
     links: [],
   },
   {
@@ -148,6 +148,44 @@ export const SOURCE_GROUPS: SourceGroup[] = [
         title: "Conscious Style Guide — workplace & bias",
         href: "https://consciousstyleguide.com/",
         note: "culture fit, hyperbolic job titles, class-coded language",
+      },
+    ],
+  },
+  {
+    id: "coded",
+    title: "Coded language & dogwhistles",
+    summary:
+      "Far-right and conspiracy phrases that can look ordinary to outsiders. We flag them so people can learn — many are soft heads-ups, because intent isn’t always present. Turn the Coded category off on /rules if you only want inclusive-style checks.",
+    links: [
+      {
+        title: "Indiecator — The language of extremism (dogwhistles)",
+        href: "https://indiecator.org/2025/08/03/the-language-of-extremism-on-dogwhistles/",
+        note: "14/88, (((echo))), Western values, globalist, Cultural Marxism; notes that not every hit is intentional",
+      },
+      {
+        title: "RationalWiki — Alt-right glossary",
+        href: "https://rationalwiki.org/wiki/Alt-right_glossary",
+        note: "Broad catalog of memes, codes, and euphemisms — use with context",
+      },
+      {
+        title: "Conspiracy Chart",
+        href: "https://conspiracychart.com/",
+        note: "Interactive map of conspiracy claims with explainers (Great Replacement, Cultural Marxism, etc.)",
+      },
+      {
+        title: "ADL — Great Replacement explainer",
+        href: "https://www.adl.org/resources/backgrounder/great-replacement-explainer",
+        note: "Background on the white-nationalist demographic conspiracy frame",
+      },
+      {
+        title: "SPLC — ‘Cultural Marxism’ catching on",
+        href: "https://www.splcenter.org/resources/hatewatch/cultural-marxism-catching/",
+        note: "How the phrase moved from fringe theory into mainstream smear",
+      },
+      {
+        title: "Antifascists of Reddit — lesser-known dogwhistle glossary",
+        href: "https://www.reddit.com/r/AntifascistsofReddit/comments/10uprvw/a_glossary_of_lesser_known_alt_right_dogwhistles/",
+        note: "Crowdsourced secondary list — not a style guide",
       },
     ],
   },

@@ -32,17 +32,17 @@ export default function SourcesPage() {
         </h1>
         <InclusiveBand className="mb-8" />
         <p className="animate-rise-delay max-w-2xl text-lg text-[var(--ink-soft)] leading-relaxed mb-4">
-          The rule catalog is a curated heuristic set drawn from common
-          inclusive-language guidance. It is not an official standard, and
-          communities do not always agree on every term — that is why you can
-          tune rules on the{" "}
+          The rule catalog is a curated heuristic set drawn from inclusive-language
+          guidance and, separately, documented dogwhistles so people can notice
+          coded language they may repeat without knowing. It is not an official
+          standard — tune what matters on{" "}
           <Link
             href="/rules"
             className="text-[var(--teal-deep)] underline underline-offset-2"
           >
             Rules
-          </Link>{" "}
-          page.
+          </Link>
+          .
         </p>
         <p className="text-sm text-[var(--ink-soft)] max-w-2xl mb-12 leading-relaxed">
           Links point to living documents; wording on those sites may change.

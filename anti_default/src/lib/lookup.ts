@@ -169,8 +169,8 @@ export function lookupPhrase(
 export const LOOKUP_EXAMPLES = [
   "you guys",
   "chairman",
+  "cultural marxism",
   "crazy",
   "whitelist",
-  "manpower",
-  "the elderly",
+  "globalist",
 ] as const;
