@@ -41,6 +41,14 @@ export function SiteNav({
         >
           Sources
         </NavLink>
+        <a
+          href="https://github.com/NomadBuilder/anti-default"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="nav-quiet px-3 py-2 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
+        >
+          GitHub
+        </a>
       </div>
     </nav>
   );

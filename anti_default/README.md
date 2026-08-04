@@ -1,8 +1,11 @@
-# Anti-Default (DarkAI)
+# Anti-Default
 
-Inclusive language review for website copy — colonial defaults, gendered assumptions, ableist metaphors, and more.
+Inclusive language review for websites, docs, and code — colonial defaults, gendered assumptions, ableist metaphors, and a careful set of documented dogwhistles.
 
-**Live:** [https://darkai.ca/anti-default](https://darkai.ca/anti-default)
+**Live:** [https://darkai.ca/anti-default](https://darkai.ca/anti-default)  
+**Shareable repo:** [github.com/NomadBuilder/anti-default](https://github.com/NomadBuilder/anti-default) ← clone this to run CLI / local UI against your own content
+
+This folder is the copy vendored into the [DarkAI](https://github.com/NomadBuilder/DarkAI) monorepo for production hosting. Prefer opening issues and PRs on **anti-default** unless the change is deploy-only (Flask blueprint, Render build).
 
 ## In this monorepo
 
@@ -11,7 +14,7 @@ Inclusive language review for website copy — colonial defaults, gendered assum
 - Language analysis runs in the browser from curated rules in `src/lib/rules.ts`
 - CLI for scanning repos: `npm run analyze -- ./src`
 
-## Local UI (standalone)
+## Local UI
 
 ```bash
 cd anti_default
@@ -33,37 +36,9 @@ Then run the Flask app from the repo root; open `/anti-default`.
 
 Open `/anti-default/rules` or edit `src/lib/rules.ts` for shared defaults.
 
-Practice-test the catch list against real-ish snippets:
-
 ```bash
 npm run corpus
 ```
-
-See `fixtures/corpus/README.md`.
-
-## Style guide
-
-Open `/anti-default/guide` to share a team style guide from your tuned rules (copy link or download Markdown).
-
-## Sources
-
-Open `/anti-default/sources` for the style guides and references that informed the rule catalog.
-
-## Review features
-
-- Home **Swap door**: look up one phrase without pasting a page
-- Findings deep-link to `/swap/?q=…`
-- **Rewrite passage**: apply first suggestions in order (skips soft-flags)
-- Context-aware matching (quotes, org names, first-person illness stories, legal/policy) with soft-flags only when still ambiguous
-- Multi-page crawl (about / careers / product on the same site)
-- Side-by-side document highlights + finding cards
-- Plain-language urgency: Worth fixing / Consider / Optional
-- Per-rule source footnotes on `/rules`; Swap shows “Supported by: APA / GLAAD / …”
-- Report a wrong suggestion → GitHub issue template
-- Ignore false positives (“Not this match”)
-- Export findings as Markdown, CSV, or a GitHub checklist
-- Upload PDF / DOCX / text docs
-- Apply a suggestion and preview the rewrite
 
 ## Deploy note
 
@@ -71,8 +46,4 @@ Render must rebuild `anti_default/out` every deploy (`rm -rf .next out` then `BA
 
 ## Browser extension
 
-Load `anti_default/extension` as an unpacked Chrome/Edge extension to highlight matches on any live page. See `extension/README.md`.
-
-```bash
-npm run extension:rules
-```
+See the standalone repo’s [`extension/README.md`](https://github.com/NomadBuilder/anti-default/blob/main/extension/README.md), or load `anti_default/extension` unpacked after `npm run extension:pack`.

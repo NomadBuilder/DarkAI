@@ -1,7 +1,7 @@
 import type { Finding } from "./types";
 
 const ISSUE_NEW =
-  "https://github.com/NomadBuilder/DarkAI/issues/new";
+  "https://github.com/NomadBuilder/anti-default/issues/new";
 
 /**
  * Opens a pre-filled GitHub issue for a bad / contested suggestion.
