@@ -1,49 +1,107 @@
+> **Shareable home:** [github.com/NomadBuilder/anti-default](https://github.com/NomadBuilder/anti-default)  
+> This folder is the copy vendored into [DarkAI](https://github.com/NomadBuilder/DarkAI) for darkai.ca hosting.
+
 # Anti-Default
 
-Inclusive language review for websites, docs, and code — colonial defaults, gendered assumptions, ableist metaphors, and a careful set of documented dogwhistles.
+**Catch default language before it ships.**
 
-**Live:** [https://darkai.ca/anti-default](https://darkai.ca/anti-default)  
-**Shareable repo:** [github.com/NomadBuilder/anti-default](https://github.com/NomadBuilder/anti-default) ← clone this to run CLI / local UI against your own content
+Anti-Default flags colonial defaults, gendered assumptions, ableist metaphors, and widely documented dogwhistles in websites, docs, and code — then offers clearer alternatives you can use right away.
 
-This folder is the copy vendored into the [DarkAI](https://github.com/NomadBuilder/DarkAI) monorepo for production hosting. Prefer opening issues and PRs on **anti-default** unless the change is deploy-only (Flask blueprint, Render build).
+**[Try it live →](https://darkai.ca/anti-default)** · No account · Runs locally from open rules · No AI required for matching
 
-## In this monorepo
+---
 
-- Static Next.js UI exported to `anti_default/out` with `BASE_PATH=/anti-default`
-- Flask blueprint (`blueprint.py`) serves the UI and `/anti-default/api/scrape`
-- Language analysis runs in the browser from curated rules in `src/lib/rules.ts`
-- CLI for scanning repos: `npm run analyze -- ./src`
+## Why teams use it
 
-## Local UI
+- **Review copy before publish** — paste text, upload a doc, or scan a page
+- **Swap one phrase fast** — `you guys` → `you all` / `folks` / `y’all`
+- **Learn coded language** — dogwhistle guide with signal, context, and clearer wording
+- **Scan your repo** — CLI over source and docs
+- **Tune what matters** — turn rules on/off and export a shareable style guide
+
+Every suggestion cites the style guides and references behind it.
+
+---
+
+## Quick start
 
 ```bash
-cd anti_default
+git clone https://github.com/NomadBuilder/anti-default.git
+cd anti-default
 npm install
+```
+
+### Scan your own content
+
+```bash
+npm run analyze -- .
+npm run analyze -- ./src ./docs ./README.md
+```
+
+### Run the app locally
+
+```bash
 npm run dev
 ```
 
-## Build for DarkAI
+Open [http://localhost:3000](http://localhost:3000) — Review, Swap, Dogwhistles, Rules, and Sources.
+
+### Load the browser extension
 
 ```bash
-cd anti_default
-npm install
-npm run build:darkai
+npm run extension:pack
 ```
 
-Then run the Flask app from the repo root; open `/anti-default`.
+Chrome / Edge → Developer mode → **Load unpacked** → `extension/`  
+Details: [`extension/README.md`](extension/README.md)
 
-## Tune rules
+---
 
-Open `/anti-default/rules` or edit `src/lib/rules.ts` for shared defaults.
+## What’s included
+
+| | |
+| --- | --- |
+| **Review** | Paste, upload PDF/DOCX/text, or review a URL. Export Markdown, CSV, or a GitHub checklist. |
+| **Swap** | Look up a word or short phrase for inclusive alternatives. |
+| **Dogwhistles** | What a phrase can signal, when context matters, and what to say instead. |
+| **Rules** | Browse and tune the catalog. Soft heads-ups stay gentle when language is ambiguous. |
+| **CLI** | `npm run analyze` over your repo — offline, same rules as the UI. |
+
+---
+
+## Customize
+
+- UI: `/rules`
+- Code: `src/lib/rules.ts`
+- Background reading: `/sources`
+
+Practice-test the catch list:
 
 ```bash
 npm run corpus
 ```
 
-## Deploy note
+---
 
-Render must rebuild `anti_default/out` every deploy (`rm -rf .next out` then `BASE_PATH=/anti-default npm run build`). Dashboard build commands often ignore `render.yaml` — copy from `RENDER_BUILD_COMMAND.txt` (or `_SIMPLE` / `_APPEND`) at the repo root. The build **fails** unless `out/index.html`, `out/swap/index.html`, and `out/dogwhistles/index.html` all exist.
+## Host your own build
 
-## Browser extension
+```bash
+npm run build
+# → static site in out/
 
-See the standalone repo’s [`extension/README.md`](https://github.com/NomadBuilder/anti-default/blob/main/extension/README.md), or load `anti_default/extension` unpacked after `npm run extension:pack`.
+# Subpath deploy (e.g. darkai.ca/anti-default)
+NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build
+```
+
+---
+
+## Live site & DarkAI
+
+Production: [darkai.ca/anti-default](https://darkai.ca/anti-default)  
+Also vendored in [DarkAI](https://github.com/NomadBuilder/DarkAI) for that deploy.
+
+**This repo** is the home for cloning, CLI use, PRs, and issues.
+
+## License
+
+[MIT](LICENSE)

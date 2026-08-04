@@ -65,9 +65,9 @@ export function DogwhistleGuide() {
         </p>
         <p className="text-[var(--ink-soft)] leading-relaxed">
           This page is for learning: what a phrase can signal, when the same
-          words may be fine, and how to say what you actually mean. It is not a
-          purity test. Review still shows coded hits as a separate “Possible
-          coded signals” lane so you can decide in context.
+          words may be fine, and how to say what you actually mean. Review still
+          shows coded hits as a separate “Possible coded signals” lane so you
+          can decide in context.
         </p>
         <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
           Deeper reading on{" "}

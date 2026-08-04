@@ -43,7 +43,7 @@ export function buildGuideMarkdown(prefs: RulePreferences): string {
   const lines = [
     `# Anti-Default style guide`,
     ``,
-    `_Generated from tuned rules — invitations to reconsider defaults, not a purity test._`,
+    `_Generated from tuned rules — invitations to reconsider defaults._`,
     ``,
     `Active rules: **${rules.length}**`,
     ``,

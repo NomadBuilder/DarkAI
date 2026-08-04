@@ -106,8 +106,7 @@ export default function Home() {
 
       <footer className="mx-auto max-w-5xl px-6 py-10 md:px-10 text-sm text-[var(--ink-soft)] flex flex-wrap gap-x-8 gap-y-3 justify-between">
         <p className="max-w-xl leading-relaxed">
-          Language moves with people. This tool offers care, not purity tests —
-          keep humans and communities in the loop.
+          Language moves with people. Keep humans and communities in the loop.
         </p>
         <p className="font-[family-name:var(--font-mono)] text-xs self-end">
           npm run analyze -- ./src

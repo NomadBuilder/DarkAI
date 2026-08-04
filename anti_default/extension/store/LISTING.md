@@ -17,7 +17,7 @@ https://darkai.ca/anti-default/
 Support URL (issues):
 
 ```
-https://github.com/NomadBuilder/DarkAI/issues
+https://github.com/NomadBuilder/anti-default/issues
 ```
 
 ---
@@ -31,32 +31,27 @@ Anti-Default — Inclusive Language Highlights
 ## Short description (max 132)
 
 ```
-Highlight inclusive-language suggestions on any page. Offline local rules — no AI calls, no tracking.
+See inclusive-language findings for the current page in the popup. Offline local rules — no AI, no tracking.
 ```
 
 ## Detailed description
 
 ```
-Anti-Default highlights phrases on live web pages that often carry colonial, gendered, ableist, or other default-heavy framing — so you can rethink them in context.
+Anti-Default reviews the page you’re on and lists inclusive-language findings in the extension popup — match, why it was flagged, and suggested rewrites. Phrases are also highlighted on the page; click a finding to jump to it.
 
 How it works
 • Matching runs entirely on your device from a bundled rule list
 • No AI / LLM API calls and no account required
-• Hover a highlight to see why it was flagged and suggested alternatives
+What to expect
+• Context always wins — suggestions are starting points, not verdicts
 • Soft-flags quoted text that is often a false positive
-• Toggle highlights on or off from the toolbar popup
-
-What this is not
-• Not a purity test or automated “cancel” tool
-• Context always wins — suggestions are starting points
-• For deeper multi-page review, rewrite preview, and exports, use the free web app: https://darkai.ca/anti-default/
+• Re-scan when a page loads new content
 
 Privacy
 • Page content is not sent to our servers by the extension
-• Only the on/off preference is stored (Chrome sync storage)
 • Full policy: https://darkai.ca/anti-default/privacy/
 
-Open source as part of DarkAI: https://github.com/NomadBuilder/DarkAI
+Open source: https://github.com/NomadBuilder/anti-default
 ```
 
 ## Category
@@ -71,19 +66,24 @@ English
 ## Single purpose (justification — store asks this)
 
 ```
-Highlight inclusive-language suggestions on web pages using a local rule list so writers and reviewers can notice default-heavy phrasing.
+Review inclusive-language suggestions on the current web page using a local rule list, shown in the extension popup.
 ```
 
 ## Permission justifications
 
-**storage**
+**activeTab**
 ```
-Saves whether highlights are turned on or off in the popup.
+Lets the popup ask the current tab for scan results when you open Anti-Default.
+```
+
+**scripting**
+```
+If the page was open before the extension loaded, injects the scanner when you open the popup so results still appear.
 ```
 
 **Host permission / content scripts on http(s)://*/***
 ```
-Needed to scan visible text on pages you visit and insert highlight marks. Page content stays on your device; the extension does not upload it.
+Needed to scan visible text on pages you visit, highlight matches, and return findings to the popup. Page content stays on your device; the extension does not upload it.
 ```
 
 ## Remote code
@@ -103,9 +103,9 @@ Declare clearly that you do **not**:
 
 ## Screenshots to upload
 
-From `extension/store/assets/`:
+From `extension/store/assets/` (real popup captures):
 
-1. `screenshot-1-highlights-1280x800.png` (required — at least one 1280×800 or 640×400)
+1. `screenshot-1-highlights-1280x800.png`
 2. `screenshot-2-popup-1280x800.png`
 3. Optional promo tile: `promo-tile-440x280.png`
 
