@@ -116,10 +116,15 @@ def _extract_text(html: str, final_url: str) -> dict:
 RELATED_PATH_HINTS = re.compile(
     r"(about|careers?|jobs?|product|products|team|mission|company|values|"
     r"culture|story|who[-_]?we[-_]?are|our[-_]?story|join|work[-_]?with|"
-    r"solutions?|platform|features?)",
+    r"solutions?|platform|features?|contact|newsroom|press|media|blog|"
+    r"services?|faq|community|diversity|inclusion|equity|sustainability|"
+    r"impact|editorial|staff|writers?|columnists?|contribute|advertise|"
+    r"subscribe|newsletter|policies|guidelines|standards|ethics)",
     re.I,
 )
-MAX_RELATED_PAGES = 4
+# Primary URL + up to this many related pages. Keep modest vs gunicorn timeout
+# (FETCH_TIMEOUT * (1 + MAX_RELATED_PAGES) should stay under ~120s worst case).
+MAX_RELATED_PAGES = 10
 
 
 def _fetch_html(url: str) -> tuple[str, str]:

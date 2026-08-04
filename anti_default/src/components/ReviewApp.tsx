@@ -359,7 +359,7 @@ export function ReviewApp() {
               />
               <span>
                 Also crawl related same-site pages (about, careers, product,
-                team…) — up to 4 extra URLs
+                team, contact…) — up to 10 extra URLs
               </span>
             </label>
           </div>

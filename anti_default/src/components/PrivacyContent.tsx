@@ -62,8 +62,9 @@ export default function PrivacyContent() {
           </li>
           <li>
             If you review a URL, our server may fetch that public page (and
-            optionally a few related same-site pages) so the text can be shown
-            to you. We do not use that fetch to build marketing profiles.
+            optionally related same-site pages such as about or careers) so the
+            text can be shown to you. We do not use that fetch to build
+            marketing profiles.
           </li>
           <li>
             Rule preferences and “ignored match” choices may be saved in your
