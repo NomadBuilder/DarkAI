@@ -852,10 +852,14 @@ function FindingRow({
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href={`/swap/?q=${encodeURIComponent(finding.match)}`}
+              href={
+                lane === "coded"
+                  ? `/dogwhistles#${finding.ruleId}`
+                  : `/swap/?q=${encodeURIComponent(finding.match)}`
+              }
               className="text-xs text-[var(--moss-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
             >
-              {lane === "coded" ? "Decode in Swap" : "Look up in Swap"}
+              {lane === "coded" ? "Open dogwhistle guide" : "Look up in Swap"}
             </Link>
             <button
               type="button"

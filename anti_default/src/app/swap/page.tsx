@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 import { PhraseLookup } from "@/components/PhraseLookup";
 
@@ -31,11 +32,16 @@ export default function SwapPage() {
         </h1>
         <InclusiveBand className="mb-8" />
         <p className="animate-rise-delay max-w-2xl text-lg text-[var(--ink-soft)] leading-relaxed mb-10">
-          Type a word or short phrase. Inclusive matches get gentler alternatives;
-          coded / dogwhistle matches get a decode — what it can signal — not a
-          forced rewrite.{" "}
-          <span className="text-[var(--ink)]">you guys → you all, folks</span>
-          .
+          Type a word or short phrase for inclusive alternatives.{" "}
+          <span className="text-[var(--ink)]">you guys → you all, folks, y’all</span>
+          . For coded / far-right dogwhistles, see the{" "}
+          <Link
+            href="/dogwhistles"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Dogwhistles
+          </Link>{" "}
+          guide.
         </p>
 
         <div className="max-w-2xl">

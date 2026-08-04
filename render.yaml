@@ -299,6 +299,10 @@ services:
           echo "❌ anti_default/out/swap/index.html missing — Swap route not exported"
           exit 1
         fi
+        if [ ! -f "out/dogwhistles/index.html" ]; then
+          echo "❌ anti_default/out/dogwhistles/index.html missing — Dogwhistles route not exported"
+          exit 1
+        fi
         echo "✅ Anti-Default build successful!"
         cd ..
       else

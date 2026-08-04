@@ -3,7 +3,7 @@ import Link from "next/link";
 export function SiteNav({
   active,
 }: {
-  active?: "home" | "swap" | "rules" | "sources";
+  active?: "home" | "swap" | "dogwhistles" | "rules" | "sources";
 }) {
   return (
     <nav
@@ -23,6 +23,13 @@ export function SiteNav({
         </NavLink>
         <NavLink href="/swap" active={active === "swap"} accent="var(--leaf)">
           Swap
+        </NavLink>
+        <NavLink
+          href="/dogwhistles"
+          active={active === "dogwhistles"}
+          accent="var(--indigo)"
+        >
+          Dogwhistles
         </NavLink>
         <NavLink href="/rules" active={active === "rules"} accent="var(--coral)">
           Rules

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { ReviewApp } from "@/components/ReviewApp";
-import { SwapDoor } from "@/components/SwapDoor";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 
 export default function Home() {
@@ -34,24 +33,33 @@ export default function Home() {
             for colonial defaults, gendered assumptions, ableist metaphors, and
             other excluding phrasing.
           </p>
-          <p className="animate-rise-delay text-base text-[var(--ink-soft)] max-w-xl mb-6 leading-relaxed">
-            Suggestions are invitations, not a single “correct” English. Tune
-            what matters for{" "}
+          <p className="animate-rise-delay text-base text-[var(--ink-soft)] max-w-xl mb-10 leading-relaxed">
+            Suggestions are invitations, not a single “correct” English. Need
+            one phrase? Use{" "}
+            <Link
+              href="/swap"
+              className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+            >
+              Swap
+            </Link>
+            . Learning coded language? See{" "}
+            <Link
+              href="/dogwhistles"
+              className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+            >
+              Dogwhistles
+            </Link>
+            . Tune what matters on{" "}
             <Link
               href="/rules"
               className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
             >
-              your communities on /rules
+              /rules
             </Link>
             .
           </p>
 
-          <SwapDoor />
-
           <div className="max-w-3xl">
-            <p className="text-xs uppercase tracking-[0.18em] text-[var(--moss)] mb-4">
-              Or review a page, paste, or document
-            </p>
             <ReviewApp />
           </div>
         </div>

@@ -193,6 +193,17 @@ export function PhraseLookup() {
                   </p>
                 ) : null}
                 <p className="text-sm text-[var(--ink-soft)]">
+                  {hit.category === "coded" ? (
+                    <>
+                      <Link
+                        href={`/dogwhistles#${hit.ruleId}`}
+                        className="text-[var(--teal-deep)] underline underline-offset-2"
+                      >
+                        Full dogwhistle entry
+                      </Link>
+                      {" · "}
+                    </>
+                  ) : null}
                   Rule:{" "}
                   <Link
                     href={`/rules#${hit.ruleId}`}
