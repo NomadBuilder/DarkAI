@@ -31,9 +31,10 @@ export default function SwapPage() {
         </h1>
         <InclusiveBand className="mb-8" />
         <p className="animate-rise-delay max-w-2xl text-lg text-[var(--ink-soft)] leading-relaxed mb-10">
-          Type a word or short phrase — get gentler equivalents when we have a
-          rule for it.{" "}
-          <span className="text-[var(--ink)]">you guys → you all, folks, y’all</span>
+          Type a word or short phrase. Inclusive matches get gentler alternatives;
+          coded / dogwhistle matches get a decode — what it can signal — not a
+          forced rewrite.{" "}
+          <span className="text-[var(--ink)]">you guys → you all, folks</span>
           .
         </p>
 

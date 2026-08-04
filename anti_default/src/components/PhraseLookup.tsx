@@ -116,35 +116,67 @@ export function PhraseLookup() {
                 key={hit.ruleId}
                 className="border-t border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pt-6"
               >
-                <p className="text-xs uppercase tracking-[0.16em] text-[var(--coral)] mb-3">
+                <p
+                  className={`text-xs uppercase tracking-[0.16em] mb-3 ${
+                    hit.category === "coded"
+                      ? "text-[var(--indigo)]"
+                      : "text-[var(--coral)]"
+                  }`}
+                >
                   {CATEGORY_META[hit.category].title}
                 </p>
-                <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
-                  <p
-                    className="text-2xl md:text-3xl text-[var(--ink)]"
-                    style={{ fontFamily: "var(--font-display)" }}
-                  >
-                    <span className="line-through decoration-[var(--coral)] decoration-2 text-[var(--ink-soft)]">
-                      {hit.from}
-                    </span>
-                    <span className="mx-3 text-[var(--ink-soft)]" aria-hidden>
-                      →
-                    </span>
-                    <span>{hit.suggestions[0]}</span>
-                  </p>
-                </div>
-                {hit.suggestions.length > 1 ? (
-                  <p className="text-base text-[var(--ink)] mb-3">
-                    <span className="text-[var(--ink-soft)]">Also try: </span>
-                    {hit.suggestions.slice(1).join(" · ")}
-                  </p>
-                ) : null}
-                <p className="text-[var(--ink-soft)] leading-relaxed max-w-2xl mb-3">
-                  {hit.why}
-                </p>
+                {hit.category === "coded" ? (
+                  <>
+                    <p
+                      className="text-2xl md:text-3xl text-[var(--ink)] mb-3"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      “{hit.from}”
+                    </p>
+                    <p className="text-base text-[var(--indigo)] mb-3 leading-relaxed max-w-2xl">
+                      This can signal: {hit.why}
+                    </p>
+                    {hit.suggestions.length > 0 ? (
+                      <p className="text-base text-[var(--ink)] mb-3">
+                        <span className="text-[var(--ink-soft)]">
+                          If you didn’t mean the coded sense:{" "}
+                        </span>
+                        {hit.suggestions.join(" · ")}
+                      </p>
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 mb-4">
+                      <p
+                        className="text-2xl md:text-3xl text-[var(--ink)]"
+                        style={{ fontFamily: "var(--font-display)" }}
+                      >
+                        <span className="line-through decoration-[var(--coral)] decoration-2 text-[var(--ink-soft)]">
+                          {hit.from}
+                        </span>
+                        <span className="mx-3 text-[var(--ink-soft)]" aria-hidden>
+                          →
+                        </span>
+                        <span>{hit.suggestions[0]}</span>
+                      </p>
+                    </div>
+                    {hit.suggestions.length > 1 ? (
+                      <p className="text-base text-[var(--ink)] mb-3">
+                        <span className="text-[var(--ink-soft)]">Also try: </span>
+                        {hit.suggestions.slice(1).join(" · ")}
+                      </p>
+                    ) : null}
+                    <p className="text-[var(--ink-soft)] leading-relaxed max-w-2xl mb-3">
+                      {hit.why}
+                    </p>
+                  </>
+                )}
                 {badges.length > 0 ? (
                   <p className="text-sm text-[var(--ink-soft)] mb-2">
-                    <span className="text-[var(--ink)]">Supported by: </span>
+                    <span className="text-[var(--ink)]">
+                      {hit.category === "coded" ? "Learn more: " : "Supported by: "}
+                    </span>
                     {badges.map((s, i) => (
                       <span key={s.href + s.title}>
                         {i > 0 ? " · " : null}

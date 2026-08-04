@@ -37,13 +37,17 @@ export function DocumentHighlight({
             key={`f-${f.id}-${i}`}
             type="button"
             onClick={() => onSelect(f)}
-            title={`${f.label} · ${severityLabel(f.severity)}${
-              f.likelyFalsePositive ? " · likely false positive" : ""
-            }`}
+            title={`${f.label} · ${
+              f.category === "coded"
+                ? "possible coded signal"
+                : severityLabel(f.severity)
+            }${f.likelyFalsePositive ? " · check context" : ""}`}
             className={`rounded-sm px-0.5 mx-px transition-colors cursor-pointer text-left ${
-              f.likelyFalsePositive
-                ? "bg-[color-mix(in_oklab,var(--warn)_22%,white)] outline outline-1 outline-dashed outline-[var(--warn)]"
-                : "bg-[color-mix(in_oklab,var(--danger)_18%,white)]"
+              f.category === "coded"
+                ? "bg-[color-mix(in_oklab,var(--indigo)_18%,white)] outline outline-1 outline-dashed outline-[var(--indigo)]"
+                : f.likelyFalsePositive
+                  ? "bg-[color-mix(in_oklab,var(--warn)_22%,white)] outline outline-1 outline-dashed outline-[var(--warn)]"
+                  : "bg-[color-mix(in_oklab,var(--danger)_18%,white)]"
             } ${active ? "ring-2 ring-[var(--moss-deep)]" : ""}`}
           >
             {span.text}

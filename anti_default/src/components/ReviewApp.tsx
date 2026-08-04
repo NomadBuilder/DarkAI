@@ -13,6 +13,10 @@ import {
   saveIgnoredKeys,
 } from "@/lib/ignores";
 import {
+  compactSourceName,
+  sourcesForRuleId,
+} from "@/lib/rule-sources";
+import {
   applyPassageRewrites,
   applySuggestionToText,
   previewRewrite,
@@ -233,16 +237,16 @@ export function ReviewApp() {
   }
 
   function applyPassage() {
-    if (!text || findings.length === 0) return;
-    const { text: next, applied, skippedSoft } = applyPassageRewrites(
-      text,
-      findings,
-      { skipSoft: true },
-    );
+    if (!text || inclusiveFindings.length === 0) return;
+    const { text: next, applied, skippedSoft, skippedCoded } =
+      applyPassageRewrites(text, inclusiveFindings, {
+        skipSoft: true,
+        skipCoded: true,
+      });
     if (applied === 0) {
       setError(
-        skippedSoft > 0
-          ? "Nothing to apply — remaining matches look like false positives (quotes, legal, etc.)."
+        skippedSoft > 0 || skippedCoded > 0
+          ? "Nothing to apply — remaining matches are soft-flags or coded heads-ups (not auto-rewritten)."
           : "Nothing to apply.",
       );
       return;
@@ -262,22 +266,50 @@ export function ReviewApp() {
     return filterIgnoredFindings(result.findings, ignoredKeys);
   }, [result, ignoredKeys]);
 
+  const inclusiveFindings = useMemo(
+    () => findings.filter((f) => f.category !== "coded"),
+    [findings],
+  );
+
+  const codedFindings = useMemo(
+    () => findings.filter((f) => f.category === "coded"),
+    [findings],
+  );
+
   const ignoredInResult = result
     ? result.findings.length - findings.length
     : 0;
 
   const severityCounts = useMemo(() => {
     const counts: Partial<Record<Severity, number>> = {};
-    for (const f of findings) {
+    for (const f of inclusiveFindings) {
       counts[f.severity] = (counts[f.severity] ?? 0) + 1;
     }
     return counts;
-  }, [findings]);
+  }, [inclusiveFindings]);
 
   const softFlagCount = useMemo(
-    () => findings.filter((f) => f.likelyFalsePositive).length,
-    [findings],
+    () => inclusiveFindings.filter((f) => f.likelyFalsePositive).length,
+    [inclusiveFindings],
   );
+
+  const resultsHeading = (() => {
+    if (findings.length === 0) {
+      return ignoredInResult > 0 ? "All matches ignored" : "Nothing flagged";
+    }
+    const parts: string[] = [];
+    if (inclusiveFindings.length) {
+      parts.push(
+        `${inclusiveFindings.length} phrase${inclusiveFindings.length === 1 ? "" : "s"} to reconsider`,
+      );
+    }
+    if (codedFindings.length) {
+      parts.push(
+        `${codedFindings.length} possible coded signal${codedFindings.length === 1 ? "" : "s"}`,
+      );
+    }
+    return parts.join(" · ");
+  })();
 
   return (
     <div className="w-full">
@@ -437,11 +469,7 @@ export function ReviewApp() {
               className="text-3xl md:text-4xl text-[var(--ink)] mb-2"
               style={{ fontFamily: "var(--font-display)" }}
             >
-              {findings.length === 0
-                ? ignoredInResult > 0
-                  ? "All matches ignored"
-                  : "Nothing flagged"
-                : `${findings.length} phrase${findings.length === 1 ? "" : "s"} to reconsider`}
+              {resultsHeading}
             </h2>
             <p className="text-[var(--ink-soft)]">
               {result.title ? `${result.title} · ` : ""}
@@ -465,67 +493,82 @@ export function ReviewApp() {
             </p>
           </header>
 
-          <div className="flex flex-wrap items-center gap-3 mb-6">
-            <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--ink-soft)]">
-              <span>
-                Worth fixing{" "}
-                <strong className="text-[var(--danger)] font-medium">
-                  {severityCounts.high ?? 0}
-                </strong>
-              </span>
-              <span>
-                Consider{" "}
-                <strong className="text-[var(--warn)] font-medium">
-                  {severityCounts.medium ?? 0}
-                </strong>
-              </span>
-              <span>
-                Optional{" "}
-                <strong className="text-[var(--moss)] font-medium">
-                  {severityCounts.low ?? 0}
-                </strong>
-              </span>
-              {softFlagCount > 0 ? (
-                <span>
-                  Likely false positive{" "}
-                  <strong className="text-[var(--warn)] font-medium">
-                    {softFlagCount}
+          {inclusiveFindings.length > 0 || codedFindings.length > 0 ? (
+            <div className="flex flex-wrap items-center gap-3 mb-6">
+              {inclusiveFindings.length > 0 ? (
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--ink-soft)]">
+                  <span>
+                    Worth fixing{" "}
+                    <strong className="text-[var(--danger)] font-medium">
+                      {severityCounts.high ?? 0}
+                    </strong>
+                  </span>
+                  <span>
+                    Consider{" "}
+                    <strong className="text-[var(--warn)] font-medium">
+                      {severityCounts.medium ?? 0}
+                    </strong>
+                  </span>
+                  <span>
+                    Optional{" "}
+                    <strong className="text-[var(--moss)] font-medium">
+                      {severityCounts.low ?? 0}
+                    </strong>
+                  </span>
+                  {softFlagCount > 0 ? (
+                    <span>
+                      Likely false positive{" "}
+                      <strong className="text-[var(--warn)] font-medium">
+                        {softFlagCount}
+                      </strong>
+                    </span>
+                  ) : null}
+                </div>
+              ) : null}
+              {codedFindings.length > 0 ? (
+                <span className="text-sm text-[var(--ink-soft)]">
+                  Coded heads-ups{" "}
+                  <strong className="text-[var(--indigo)] font-medium">
+                    {codedFindings.length}
                   </strong>
                 </span>
               ) : null}
+              <div className="flex flex-wrap gap-2 ml-auto">
+                {inclusiveFindings.some(
+                  (f) => !f.likelyFalsePositive && f.suggestions[0],
+                ) ? (
+                  <button
+                    type="button"
+                    onClick={applyPassage}
+                    className="text-xs px-3 py-1.5 bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--moss-deep)] transition-colors"
+                    title="Applies inclusive suggestions only — coded signals are never auto-rewritten"
+                  >
+                    Rewrite passage
+                  </button>
+                ) : null}
+                <ExportButton
+                  label="Markdown"
+                  onClick={() =>
+                    result &&
+                    downloadFindingsExport("markdown", result, findings)
+                  }
+                />
+                <ExportButton
+                  label="CSV"
+                  onClick={() =>
+                    result && downloadFindingsExport("csv", result, findings)
+                  }
+                />
+                <ExportButton
+                  label="GitHub checklist"
+                  onClick={() =>
+                    result &&
+                    downloadFindingsExport("github", result, findings)
+                  }
+                />
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2 ml-auto">
-              {findings.some((f) => !f.likelyFalsePositive && f.suggestions[0]) ? (
-                <button
-                  type="button"
-                  onClick={applyPassage}
-                  className="text-xs px-3 py-1.5 bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--moss-deep)] transition-colors"
-                >
-                  Rewrite passage
-                </button>
-              ) : null}
-              <ExportButton
-                label="Markdown"
-                onClick={() =>
-                  result &&
-                  downloadFindingsExport("markdown", result, findings)
-                }
-              />
-              <ExportButton
-                label="CSV"
-                onClick={() =>
-                  result && downloadFindingsExport("csv", result, findings)
-                }
-              />
-              <ExportButton
-                label="GitHub checklist"
-                onClick={() =>
-                  result &&
-                  downloadFindingsExport("github", result, findings)
-                }
-              />
-            </div>
-          </div>
+          ) : null}
 
           {findings.length > 0 ? (
             <div className="flex flex-wrap gap-2 mb-6">
@@ -587,33 +630,97 @@ export function ReviewApp() {
                       ?.scrollIntoView({ behavior: "smooth", block: "nearest" });
                   }}
                 />
+                <p className="text-xs text-[var(--ink-soft)]">
+                  Coral = language to reconsider · indigo dashed = possible coded
+                  signal
+                </p>
               </div>
-              <ul className="grid gap-5 max-h-[min(70vh,36rem)] overflow-auto pr-1">
-                {findings.map((finding) => (
-                  <FindingRow
-                    key={finding.id}
-                    finding={finding}
-                    active={activeFindingId === finding.id}
-                    onIgnore={() => ignoreFinding(finding)}
-                    onApply={(suggestion) => applyRewrite(finding, suggestion)}
-                    canApplyToSource={Boolean(text)}
-                    onFocus={() => setActiveFindingId(finding.id)}
-                  />
-                ))}
-              </ul>
+              <div className="grid gap-8 max-h-[min(70vh,36rem)] overflow-auto pr-1">
+                {inclusiveFindings.length > 0 ? (
+                  <FindingsLane
+                    title="Language to reconsider"
+                    accent="var(--coral)"
+                    intro="Prefer clearer, more inclusive phrasing when it fits."
+                  >
+                    {inclusiveFindings.map((finding) => (
+                      <FindingRow
+                        key={finding.id}
+                        finding={finding}
+                        lane="inclusive"
+                        active={activeFindingId === finding.id}
+                        onIgnore={() => ignoreFinding(finding)}
+                        onApply={(suggestion) =>
+                          applyRewrite(finding, suggestion)
+                        }
+                        canApplyToSource={Boolean(text)}
+                        onFocus={() => setActiveFindingId(finding.id)}
+                      />
+                    ))}
+                  </FindingsLane>
+                ) : null}
+                {codedFindings.length > 0 ? (
+                  <FindingsLane
+                    title="Possible coded signals"
+                    accent="var(--indigo)"
+                    intro="These phrases are sometimes used as dogwhistles. Many people repeat them without knowing — a heads-up, not a verdict. Not included in Rewrite passage."
+                  >
+                    {codedFindings.map((finding) => (
+                      <FindingRow
+                        key={finding.id}
+                        finding={finding}
+                        lane="coded"
+                        active={activeFindingId === finding.id}
+                        onIgnore={() => ignoreFinding(finding)}
+                        onApply={() => undefined}
+                        canApplyToSource={false}
+                        onFocus={() => setActiveFindingId(finding.id)}
+                      />
+                    ))}
+                  </FindingsLane>
+                ) : null}
+              </div>
             </div>
           ) : (
-            <ul className="grid gap-5">
-              {findings.map((finding) => (
-                <FindingRow
-                  key={finding.id}
-                  finding={finding}
-                  onIgnore={() => ignoreFinding(finding)}
-                  onApply={(suggestion) => applyRewrite(finding, suggestion)}
-                  canApplyToSource={Boolean(text)}
-                />
-              ))}
-            </ul>
+            <div className="grid gap-12">
+              {inclusiveFindings.length > 0 ? (
+                <FindingsLane
+                  title="Language to reconsider"
+                  accent="var(--coral)"
+                  intro="Prefer clearer, more inclusive phrasing when it fits."
+                >
+                  {inclusiveFindings.map((finding) => (
+                    <FindingRow
+                      key={finding.id}
+                      finding={finding}
+                      lane="inclusive"
+                      onIgnore={() => ignoreFinding(finding)}
+                      onApply={(suggestion) =>
+                        applyRewrite(finding, suggestion)
+                      }
+                      canApplyToSource={Boolean(text)}
+                    />
+                  ))}
+                </FindingsLane>
+              ) : null}
+              {codedFindings.length > 0 ? (
+                <FindingsLane
+                  title="Possible coded signals"
+                  accent="var(--indigo)"
+                  intro="These phrases are sometimes used as dogwhistles. Many people repeat them without knowing — a heads-up, not a verdict. Not included in Rewrite passage."
+                >
+                  {codedFindings.map((finding) => (
+                    <FindingRow
+                      key={finding.id}
+                      finding={finding}
+                      lane="coded"
+                      onIgnore={() => ignoreFinding(finding)}
+                      onApply={() => undefined}
+                      canApplyToSource={false}
+                    />
+                  ))}
+                </FindingsLane>
+              ) : null}
+            </div>
           )}
         </section>
       )}
@@ -621,6 +728,35 @@ export function ReviewApp() {
   );
 }
 
+function FindingsLane({
+  title,
+  accent,
+  intro,
+  children,
+}: {
+  title: string;
+  accent: string;
+  intro: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="grid gap-4">
+      <header>
+        <div className="h-1 w-12 mb-3" style={{ background: accent }} aria-hidden />
+        <h3
+          className="text-2xl text-[var(--ink)] mb-2"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          {title}
+        </h3>
+        <p className="text-sm text-[var(--ink-soft)] leading-relaxed max-w-2xl">
+          {intro}
+        </p>
+      </header>
+      <ul className="grid gap-5">{children}</ul>
+    </section>
+  );
+}
 function ExportButton({
   label,
   onClick,
@@ -641,6 +777,7 @@ function ExportButton({
 
 function FindingRow({
   finding,
+  lane,
   onIgnore,
   onApply,
   canApplyToSource,
@@ -648,6 +785,7 @@ function FindingRow({
   onFocus,
 }: {
   finding: Finding;
+  lane: "inclusive" | "coded";
   onIgnore: () => void;
   onApply: (suggestion: string) => void;
   canApplyToSource: boolean;
@@ -655,25 +793,43 @@ function FindingRow({
   onFocus?: () => void;
 }) {
   const [chosen, setChosen] = useState(finding.suggestions[0] ?? "");
-  const preview = chosen ? previewRewrite(finding, chosen) : null;
+  const preview =
+    lane === "inclusive" && chosen ? previewRewrite(finding, chosen) : null;
+  const sources =
+    lane === "coded"
+      ? sourcesForRuleId(finding.ruleId, finding.category)
+      : [];
+  const badges = [
+    ...new Map(
+      sources.map((s) => [compactSourceName(s.title), s] as const),
+    ).values(),
+  ].slice(0, 4);
 
   return (
     <li
       id={`finding-${finding.id}`}
       onClick={onFocus}
       className={`grid gap-3 md:grid-cols-[7.5rem_1fr] border-b border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pb-5 ${
-        active ? "bg-[color-mix(in_oklab,var(--moss)_8%,transparent)] -mx-2 px-2 rounded-sm" : ""
+        active
+          ? "bg-[color-mix(in_oklab,var(--moss)_8%,transparent)] -mx-2 px-2 rounded-sm"
+          : ""
       }`}
     >
       <div className="pt-1 grid gap-2">
-        <span
-          className={`inline-block text-[0.7rem] tracking-wide px-2 py-1 ${severityClass(finding.severity)}`}
-        >
-          {severityLabel(finding.severity)}
-        </span>
+        {lane === "inclusive" ? (
+          <span
+            className={`inline-block text-[0.7rem] tracking-wide px-2 py-1 ${severityClass(finding.severity)}`}
+          >
+            {severityLabel(finding.severity)}
+          </span>
+        ) : (
+          <span className="inline-block text-[0.65rem] tracking-wide px-2 py-1 text-[var(--indigo)] bg-[color-mix(in_oklab,var(--indigo)_12%,white)]">
+            Decode
+          </span>
+        )}
         {finding.likelyFalsePositive ? (
           <span className="inline-block text-[0.65rem] tracking-wide px-2 py-1 text-[var(--warn)] bg-[color-mix(in_oklab,var(--warn)_12%,white)]">
-            {finding.category === "coded"
+            {lane === "coded"
               ? "Heads-up — check context"
               : "Likely false positive"}
           </span>
@@ -688,23 +844,25 @@ function FindingRow({
             >
               {finding.label}
             </h3>
-            <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-              {CATEGORY_META[finding.category].title}
-            </span>
+            {lane === "inclusive" ? (
+              <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+                {CATEGORY_META[finding.category].title}
+              </span>
+            ) : null}
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
               href={`/swap/?q=${encodeURIComponent(finding.match)}`}
               className="text-xs text-[var(--moss-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
             >
-              Look up in Swap
+              {lane === "coded" ? "Decode in Swap" : "Look up in Swap"}
             </Link>
             <button
               type="button"
               onClick={onIgnore}
               className="text-xs text-[var(--ink-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
             >
-              Not this match
+              {lane === "coded" ? "I meant it differently" : "Not this match"}
             </button>
             <a
               href={reportFindingIssueUrl(finding)}
@@ -722,16 +880,49 @@ function FindingRow({
             <span className="text-[var(--ink-soft)]"> · {finding.source}</span>
           ) : null}
         </p>
-        <p className="text-[var(--ink-soft)] text-[0.95rem] leading-relaxed max-w-3xl">
-          {finding.why}
-        </p>
+        {lane === "coded" ? (
+          <p className="text-sm text-[var(--indigo)] max-w-3xl leading-relaxed">
+            This can signal: {finding.why}
+          </p>
+        ) : (
+          <p className="text-[var(--ink-soft)] text-[0.95rem] leading-relaxed max-w-3xl">
+            {finding.why}
+          </p>
+        )}
         {finding.contextNote ? (
           <p className="text-sm text-[var(--warn)] max-w-3xl">
             {finding.contextNote}
           </p>
         ) : null}
 
-        {finding.suggestions.length > 0 ? (
+        {lane === "coded" && badges.length > 0 ? (
+          <p className="text-sm text-[var(--ink-soft)]">
+            <span className="text-[var(--ink)]">Learn more: </span>
+            {badges.map((s, i) => (
+              <span key={s.href + s.title}>
+                {i > 0 ? " · " : null}
+                <a
+                  href={s.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+                >
+                  {compactSourceName(s.title)}
+                </a>
+              </span>
+            ))}
+          </p>
+        ) : null}
+
+        {lane === "coded" && finding.suggestions.length > 0 ? (
+          <p className="text-sm text-[var(--ink-soft)] max-w-3xl leading-relaxed">
+            <span className="text-[var(--ink)]">If you didn’t mean the coded
+            sense: </span>
+            {finding.suggestions.join(" · ")}
+          </p>
+        ) : null}
+
+        {lane === "inclusive" && finding.suggestions.length > 0 ? (
           <div className="grid gap-2 max-w-3xl">
             <label className="text-xs uppercase tracking-wider text-[var(--moss)]">
               Rewrite preview

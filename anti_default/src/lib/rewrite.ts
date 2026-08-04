@@ -41,24 +41,31 @@ export interface PassageRewriteResult {
   text: string;
   applied: number;
   skippedSoft: number;
+  skippedCoded: number;
   skippedNoSuggestion: number;
 }
 
 /**
  * Walk findings and apply the first suggestion to each, right-to-left so
- * indices stay valid. Soft-flags (likely false positives) are skipped.
+ * indices stay valid. Soft-flags and coded/dogwhistle hits are never applied.
  */
 export function applyPassageRewrites(
   source: string,
   findings: Finding[],
-  options?: { skipSoft?: boolean },
+  options?: { skipSoft?: boolean; skipCoded?: boolean },
 ): PassageRewriteResult {
   const skipSoft = options?.skipSoft !== false;
+  const skipCoded = options?.skipCoded !== false;
   let skippedSoft = 0;
+  let skippedCoded = 0;
   let skippedNoSuggestion = 0;
 
   const actionable = findings
     .filter((f) => {
+      if (skipCoded && f.category === "coded") {
+        skippedCoded += 1;
+        return false;
+      }
       if (skipSoft && f.likelyFalsePositive) {
         skippedSoft += 1;
         return false;
@@ -81,6 +88,7 @@ export function applyPassageRewrites(
     text,
     applied: actionable.length,
     skippedSoft,
+    skippedCoded,
     skippedNoSuggestion,
   };
 }
