@@ -63,7 +63,9 @@ export function ReviewApp() {
   const [ignoredKeys, setIgnoredKeys] = useState<string[]>([]);
   const [resultsView, setResultsView] = useState<ResultsView>("cards");
   const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
-  const [pageCount, setPageCount] = useState<number | null>(null);
+  const [crawledPages, setCrawledPages] = useState<
+    Array<{ url: string; title: string }> | null
+  >(null);
   const [isPending, startTransition] = useTransition();
   const { preferences, drift } = useRulePreferences();
 
@@ -130,7 +132,7 @@ export function ReviewApp() {
           if (!text.trim()) {
             throw new Error("Add some text or upload a document first.");
           }
-          setPageCount(null);
+          setCrawledPages(null);
           analyzeSource(text, {
             sourceType: mode === "docs" ? "document" : "text",
             sourceLabel:
@@ -166,20 +168,30 @@ export function ReviewApp() {
                 },
               ];
 
-        setPageCount(pages.length);
+        setCrawledPages(
+          pages.map((p) => ({
+            url: p.url,
+            title: (p.title || "").replace(/\s*\(\+\d+\s+related\)\s*$/i, "").trim(),
+          })),
+        );
         const combined = data.text || pages.map((p) => p.text).join("\n\n");
         setText(combined);
         setDocLabel(null);
 
+        const siteTitle = (
+          pages[0]?.title ||
+          data.title ||
+          ""
+        ).replace(/\s*\(\+\d+\s+related\)\s*$/i, "").trim();
+
         analyzeSource(combined, {
           sourceType: "url",
           sourceLabel: data.url || url,
-          title:
-            data.title ||
-            (pages.length > 1 ? "Multi-page review" : "Page review"),
+          title: siteTitle || (pages.length > 1 ? "Site review" : "Page review"),
         });
       } catch (err) {
         setResult(null);
+        setCrawledPages(null);
         setError(err instanceof Error ? err.message : "Review failed.");
       }
     });
@@ -295,7 +307,9 @@ export function ReviewApp() {
 
   const resultsHeading = (() => {
     if (findings.length === 0) {
-      return ignoredInResult > 0 ? "All matches ignored" : "Nothing flagged";
+      return ignoredInResult > 0
+        ? "All matches ignored"
+        : "No phrases to reconsider";
     }
     const parts: string[] = [];
     if (inclusiveFindings.length) {
@@ -310,6 +324,12 @@ export function ReviewApp() {
     }
     return parts.join(" · ");
   })();
+
+  const siteTitle = (
+    crawledPages?.[0]?.title ||
+    result?.title ||
+    ""
+  ).replace(/\s*\(\+\d+\s+related\)\s*$/i, "").trim();
 
   return (
     <div className="w-full">
@@ -471,26 +491,57 @@ export function ReviewApp() {
             >
               {resultsHeading}
             </h2>
-            <p className="text-[var(--ink-soft)]">
-              {result.title ? `${result.title} · ` : ""}
-              {result.sourceLabel}
-              {pageCount && pageCount > 1 ? (
-                <span> · {pageCount} pages crawled</span>
-              ) : null}
-              {ignoredInResult > 0 ? (
-                <span>
-                  {" "}
-                  · {ignoredInResult} ignored{" "}
-                  <button
-                    type="button"
-                    onClick={clearIgnores}
-                    className="underline underline-offset-2 text-[var(--moss-deep)]"
-                  >
-                    clear ignores
-                  </button>
-                </span>
-              ) : null}
-            </p>
+            {crawledPages && crawledPages.length > 0 ? (
+              <div className="grid gap-2 text-[var(--ink-soft)]">
+                {siteTitle ? (
+                  <p className="text-[var(--ink)] text-lg">{siteTitle}</p>
+                ) : null}
+                <ul className="grid gap-1 text-sm font-[family-name:var(--font-mono)]">
+                  {crawledPages.map((page) => (
+                    <li key={page.url} className="break-all">
+                      <a
+                        href={page.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+                      >
+                        {page.url}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                {ignoredInResult > 0 ? (
+                  <p className="text-sm">
+                    {ignoredInResult} ignored{" "}
+                    <button
+                      type="button"
+                      onClick={clearIgnores}
+                      className="underline underline-offset-2 text-[var(--moss-deep)]"
+                    >
+                      clear ignores
+                    </button>
+                  </p>
+                ) : null}
+              </div>
+            ) : (
+              <p className="text-[var(--ink-soft)]">
+                {result.title ? `${result.title} · ` : ""}
+                {result.sourceLabel}
+                {ignoredInResult > 0 ? (
+                  <span>
+                    {" "}
+                    · {ignoredInResult} ignored{" "}
+                    <button
+                      type="button"
+                      onClick={clearIgnores}
+                      className="underline underline-offset-2 text-[var(--moss-deep)]"
+                    >
+                      clear ignores
+                    </button>
+                  </span>
+                ) : null}
+              </p>
+            )}
           </header>
 
           {inclusiveFindings.length > 0 || codedFindings.length > 0 ? (
@@ -599,7 +650,11 @@ export function ReviewApp() {
 
           {findings.length === 0 ? (
             <p className="text-[var(--ink-soft)]">
-              Nothing to show. Ignored matches stay quiet until you clear them.
+              {ignoredInResult > 0
+                ? "Ignored matches stay quiet until you clear them."
+                : crawledPages && crawledPages.length > 0
+                  ? "No rule matches in the pages reviewed above."
+                  : "No rule matches in the reviewed copy."}
             </p>
           ) : resultsView === "document" ? (
             <div className="grid gap-6 lg:grid-cols-2 lg:items-start">

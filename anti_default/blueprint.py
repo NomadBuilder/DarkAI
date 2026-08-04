@@ -252,9 +252,7 @@ def scrape():
         return jsonify(
             {
                 "url": primary["url"],
-                "title": primary["title"]
-                if len(pages) == 1
-                else f"{primary['title']} (+{len(pages) - 1} related)",
+                "title": primary["title"],
                 "text": "\n\n".join(combined_parts),
                 "pages": pages,
                 "pageCount": len(pages),
