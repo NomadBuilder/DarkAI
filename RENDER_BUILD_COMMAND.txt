@@ -1,5 +1,6 @@
 # Copy this into Render Dashboard → Settings → Build Command
 # (Existing services often ignore render.yaml buildCommand updates.)
-# ALWAYS rebuild anti_default (rm -rf out) so Swap / UI changes ship — do not rely on a committed out/ alone.
+# ALWAYS rebuild anti_default (rm -rf .next out) so Review / Swap / Dogwhistles ship — do not rely on a committed out/ alone.
+# Build fails unless out/index.html, out/swap/index.html, and out/dogwhistles/index.html exist.
 
 pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt && export PATH="/opt/render/project/nodes/node-${NODE_VERSION:-22.16.0}/bin:$PATH" && if [ -d "ledger" ]; then cd ledger && npm install --include=dev && NODE_ENV=production STATIC_EXPORT=true npm run build:protectont 2>/dev/null || (NODE_ENV=production STATIC_EXPORT=true npm run build) && cd ..; fi && if [ -d "anti_default" ]; then cd anti_default && rm -rf .next out && npm install && NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build && test -f out/index.html && test -f out/swap/index.html && test -f out/dogwhistles/index.html && cd .. && echo "✅ Anti-Default build completed"; else echo "⚠️ anti_default missing"; fi

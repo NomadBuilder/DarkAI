@@ -1,4 +1,5 @@
 # Copy this ENTIRE command into Render Dashboard → Settings → Build Command
-# Includes Ledger + Anti-Default. Anti-Default must rebuild every deploy (clears out/).
+# Includes Ledger + Anti-Default. Anti-Default must rebuild every deploy (clears .next + out/).
+# Verifies out/index.html, out/swap/index.html, and out/dogwhistles/index.html.
 
 pip install --disable-pip-version-check --upgrade pip && pip install --disable-pip-version-check -r requirements.txt && export PATH="/opt/render/project/nodes/node-${NODE_VERSION:-22.16.0}/bin:$PATH" && if [ -d "ledger" ]; then cd ledger && rm -rf .next out node_modules && npm install --include=dev && NODE_ENV=production STATIC_EXPORT=true npm run build:protectont 2>/dev/null || (NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/ledger npm run build) && cd .. && echo "✅ Ledger build completed" || echo "❌ Ledger build failed"; fi && if [ -d "anti_default" ]; then cd anti_default && rm -rf .next out && npm install && NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build && test -f out/index.html && test -f out/swap/index.html && test -f out/dogwhistles/index.html && cd .. && echo "✅ Anti-Default build completed"; else echo "⚠️ anti_default missing"; fi

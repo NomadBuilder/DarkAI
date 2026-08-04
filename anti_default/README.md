@@ -67,7 +67,7 @@ Open `/anti-default/sources` for the style guides and references that informed t
 
 ## Deploy note
 
-Render must rebuild `anti_default/out` every deploy (`rm -rf out` then `BASE_PATH=/anti-default npm run build`). Dashboard build commands often ignore `render.yaml` — copy from `RENDER_BUILD_COMMAND.txt` at the repo root. The build fails if `out/swap/index.html` is missing.
+Render must rebuild `anti_default/out` every deploy (`rm -rf .next out` then `BASE_PATH=/anti-default npm run build`). Dashboard build commands often ignore `render.yaml` — copy from `RENDER_BUILD_COMMAND.txt` (or `_SIMPLE` / `_APPEND`) at the repo root. The build **fails** unless `out/index.html`, `out/swap/index.html`, and `out/dogwhistles/index.html` all exist.
 
 ## Browser extension
 

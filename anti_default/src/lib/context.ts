@@ -173,6 +173,22 @@ export function hintsForRule(ruleId: string): RuleContextHints | null {
         /\b(?:trade|WTO|IMF|World Bank|multilateral|supply chain|offshoring)\b/i,
     };
   }
+  if (ruleId === "remigration") {
+    return {
+      softExcludeNear:
+        /\b(?:voluntary|assisted)\s+(?:return|departure|repatriation)\b|\brepatriation\s+program/i,
+    };
+  }
+  if (ruleId === "soy-boy") {
+    return {
+      softExcludeNear: /\b(?:tofu|edamame|soy\s+(?:milk|sauce|protein|beans?))\b/i,
+    };
+  }
+  if (ruleId === "race-realism") {
+    return {
+      softExcludeNear: /\b(?:biodiversity\s+(?:hotspot|conservation|index)|species)\b/i,
+    };
+  }
   return null;
 }
 

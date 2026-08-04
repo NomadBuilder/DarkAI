@@ -228,6 +228,73 @@ const BY_ID: Partial<Record<string, RuleSourceRef[]>> = {
       href: S.indiecatorDogwhistles,
     },
   ],
+  "white-genocide": [
+    {
+      title: "ADL — Great Replacement explainer",
+      href: S.adlGreatReplacement,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "race-realism": [
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+    {
+      title: "SPLC — ‘Cultural Marxism’ catching on",
+      href: S.splcCulturalMarxism,
+    },
+  ],
+  iotbw: [
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+    {
+      title: "Antifascists of Reddit — dogwhistle glossary",
+      href: S.redditDogwhistleGlossary,
+    },
+  ],
+  remigration: [
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+    {
+      title: "Indiecator — dogwhistles",
+      href: S.indiecatorDogwhistles,
+    },
+  ],
+  "soy-boy": [
+    { title: "Conspiracy Chart", href: S.conspiracyChart },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "kalergi-plan": [
+    {
+      title: "ADL — Great Replacement explainer",
+      href: S.adlGreatReplacement,
+    },
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+  ],
+  "clown-world": [
+    {
+      title: "RationalWiki — Alt-right glossary",
+      href: S.rationalWikiAltRight,
+    },
+    {
+      title: "Antifascists of Reddit — dogwhistle glossary",
+      href: S.redditDogwhistleGlossary,
+    },
+  ],
 };
 
 /**

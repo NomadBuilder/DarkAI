@@ -1307,7 +1307,7 @@
     },
     {
       "id": "cultural-marxism",
-      "pattern": "\\bcultural marxism\\b|\\bcultural marxists?\\b",
+      "pattern": "\\bcultural marxism\\b|\\bcultural marxists?\\b|\\bcultural bolshevism\\b",
       "matchWholeWord": false,
       "category": "coded",
       "severity": "high",
@@ -1453,6 +1453,98 @@
         "today’s viewers / players",
         "name the specific creative choice",
         "diverse casting (if that’s what you mean positively)"
+      ]
+    },
+    {
+      "id": "white-genocide",
+      "pattern": "\\bwhite genocide\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "high",
+      "label": "“White genocide”",
+      "why": "White-supremacist conspiracy claim that white people are being deliberately erased. Closely tied to Great Replacement rhetoric.",
+      "suggestions": [
+        "demographic change with cited data",
+        "specific policy critique without eliminationist framing"
+      ]
+    },
+    {
+      "id": "race-realism",
+      "pattern": "\\brace realism\\b|\\bhuman biodiversity\\b|\\bhbd\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "high",
+      "label": "“Race realism” / HBD",
+      "why": "Euphemisms for scientific racism — fixed racial hierarchies of intelligence or behavior. Soft-flagged for the bare acronym HBD.",
+      "suggestions": [
+        "reject racial hierarchy framing",
+        "discuss inequality via history and policy, not racial essentialism"
+      ]
+    },
+    {
+      "id": "iotbw",
+      "pattern": "\\bit['’]?s okay to be white\\b|\\biotbw\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "high",
+      "label": "“It’s okay to be white” / IOTBW",
+      "why": "4chan-origin campaign slogan used to normalize white-identity politics and bait media — not a generic anti-racism message.",
+      "suggestions": [
+        "oppose racism without the campaign slogan",
+        "affirm everyone’s dignity without ethnonational branding"
+      ]
+    },
+    {
+      "id": "remigration",
+      "pattern": "\\bremigration\\b|\\bre-?migrat(?:e|ion)\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "high",
+      "label": "“Remigration”",
+      "why": "In far-right usage, a euphemism for mass removal of immigrants and often citizens of immigrant background. Soft-flagged when voluntary-return policy is clearly meant.",
+      "suggestions": [
+        "voluntary return / assisted departure (if that’s the policy)",
+        "asylum or immigration law specifics",
+        "avoid euphemisms for mass ethnic removal"
+      ]
+    },
+    {
+      "id": "soy-boy",
+      "pattern": "\\bsoy[- ]?boys?\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "medium",
+      "label": "“Soy boy”",
+      "why": "Misogynistic insult policing masculinity and mocking progressive men via pseudoscience about soy. Soft-flagged.",
+      "suggestions": [
+        "drop the insult",
+        "critique ideas without gendered food memes"
+      ]
+    },
+    {
+      "id": "kalergi-plan",
+      "pattern": "\\bkalergi(?:\\s+plan)?\\b|\\bcoudenhove[- ]kalergi\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "high",
+      "label": "“Kalergi plan”",
+      "why": "Antisemitic conspiracy theory claiming a secret plan to destroy Europe through migration — related to Great Replacement myths.",
+      "suggestions": [
+        "discuss EU migration policy with primary sources",
+        "avoid secret-plot framing"
+      ]
+    },
+    {
+      "id": "clown-world",
+      "pattern": "\\bclown world\\b|\\bhonkler\\b|\\bhonk honk\\b",
+      "matchWholeWord": false,
+      "category": "coded",
+      "severity": "medium",
+      "label": "“Clown world” / Honkler",
+      "why": "Far-right meme framing diversity and LGBTQ+ rights as civilization collapsing into absurdity. Soft-flagged.",
+      "suggestions": [
+        "describe the specific policy failure or news event",
+        "avoid the meme branding if you don’t mean that frame"
       ]
     },
     {
