@@ -2,7 +2,6 @@ import type { RulePreferences } from "./types";
 import { LANGUAGE_RULES } from "./rules";
 import { resolveRules } from "./preferences";
 import { CATEGORY_META, CATEGORY_ORDER } from "./types";
-import { severityLabel } from "./severity";
 
 /** Compact prefs for URL sharing (only non-defaults). */
 export function prefsToSharePayload(prefs: RulePreferences): string {
@@ -11,12 +10,8 @@ export function prefsToSharePayload(prefs: RulePreferences): string {
     const p = prefs[rule.id];
     if (!p) continue;
     const enabled = p.enabled !== false;
-    const sev = p.severity ?? rule.severity;
-    if (enabled && sev === rule.severity) continue;
-    compact[rule.id] = {
-      ...(enabled ? {} : { enabled: false }),
-      ...(sev !== rule.severity ? { severity: sev } : {}),
-    };
+    if (enabled) continue;
+    compact[rule.id] = { enabled: false };
   }
   const json = JSON.stringify(compact);
   if (typeof btoa === "function") {
@@ -57,7 +52,7 @@ export function buildGuideMarkdown(prefs: RulePreferences): string {
     lines.push(CATEGORY_META[category].description);
     lines.push(``);
     for (const rule of group) {
-      lines.push(`### ${rule.label} (${severityLabel(rule.severity)})`);
+      lines.push(`### ${rule.label}`);
       lines.push(``);
       lines.push(rule.why);
       lines.push(``);

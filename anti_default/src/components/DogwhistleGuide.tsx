@@ -10,12 +10,9 @@ import {
   sourcesForRule,
 } from "@/lib/rule-sources";
 
-type SoftFilter = "all" | "soft" | "strong";
-
 /** Educational guide for coded / dogwhistle phrases — not a rewrite tool. */
 export function DogwhistleGuide() {
   const [query, setQuery] = useState("");
-  const [softFilter, setSoftFilter] = useState<SoftFilter>("all");
   const deferredQuery = useDeferredValue(query);
 
   const rules = useMemo(
@@ -26,8 +23,6 @@ export function DogwhistleGuide() {
   const filtered = useMemo(() => {
     const q = deferredQuery.trim().toLowerCase();
     return rules.filter((rule) => {
-      if (softFilter === "soft" && !rule.defaultSoft) return false;
-      if (softFilter === "strong" && rule.defaultSoft) return false;
       if (!q) return true;
       const blurb = DOGWHISTLE_BLURBS[rule.id];
       const hay = [
@@ -46,7 +41,7 @@ export function DogwhistleGuide() {
         .toLowerCase();
       return hay.includes(q);
     });
-  }, [rules, deferredQuery, softFilter]);
+  }, [rules, deferredQuery]);
 
   return (
     <div className="grid gap-14">
@@ -94,10 +89,8 @@ export function DogwhistleGuide() {
             </h2>
             <p className="text-sm text-[var(--ink-soft)] mt-2 max-w-2xl leading-relaxed">
               {rules.length} entries · showing {filtered.length}
-              {softFilter !== "all" || deferredQuery.trim()
-                ? " (filtered)"
-                : ""}
-              . Soft heads-ups fire in everyday talk and need extra care.
+              {deferredQuery.trim() ? " (filtered)" : ""}. Soft heads-ups fire
+              in everyday talk and need extra care.
             </p>
           </div>
 
@@ -111,18 +104,6 @@ export function DogwhistleGuide() {
                 placeholder="e.g. globalist, replacement, soy…"
                 className="w-full px-3 py-2 bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] text-[var(--ink)] outline-none focus:border-[var(--indigo)]"
               />
-            </label>
-            <label className="grid gap-1">
-              <span className="text-xs text-[var(--ink-soft)]">Show</span>
-              <select
-                value={softFilter}
-                onChange={(e) => setSoftFilter(e.target.value as SoftFilter)}
-                className="px-3 py-2 bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] text-[var(--ink)] outline-none focus:border-[var(--indigo)]"
-              >
-                <option value="all">All phrases</option>
-                <option value="strong">Strong signals only</option>
-                <option value="soft">Soft heads-ups only</option>
-              </select>
             </label>
           </div>
         </header>

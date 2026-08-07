@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { LANGUAGE_RULES } from "@/lib/rules";
 import { sourcesForRule } from "@/lib/rule-sources";
-import { severityLabel } from "@/lib/severity";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
 import {
   CATEGORY_META,
@@ -168,9 +167,6 @@ export function RulesStudio() {
                         >
                           {rule.label}
                         </h3>
-                        <span className="text-xs text-[var(--ink-soft)]">
-                          {severityLabel(rule.severity)}
-                        </span>
                         <code className="text-xs font-[family-name:var(--font-mono)] text-[var(--moss-deep)] break-all">
                           /{rule.pattern}/i
                         </code>

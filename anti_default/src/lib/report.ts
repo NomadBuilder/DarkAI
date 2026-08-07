@@ -19,7 +19,6 @@ export function reportFindingIssueUrl(finding: Finding): string {
     `- **Match:** “${finding.match}”`,
     `- **Label:** ${finding.label}`,
     `- **Category:** ${finding.category}`,
-    `- **Severity:** ${finding.severity}`,
     finding.likelyFalsePositive
       ? `- **Soft-flagged:** yes (${finding.contextNote ?? "likely false positive"})`
       : "",

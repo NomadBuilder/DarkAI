@@ -22,8 +22,7 @@ import {
   previewRewrite,
 } from "@/lib/rewrite";
 import { reportFindingIssueUrl } from "@/lib/report";
-import { severityLabel } from "@/lib/severity";
-import type { AnalysisResult, Finding, Severity } from "@/lib/types";
+import type { AnalysisResult, Finding } from "@/lib/types";
 import { CATEGORY_META } from "@/lib/types";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
 
@@ -43,14 +42,6 @@ const TEXT_EXTS = new Set([
   "htm",
   "rtf",
 ]);
-
-function severityClass(severity: Severity): string {
-  if (severity === "high")
-    return "text-[var(--danger)] bg-[color-mix(in_oklab,var(--danger)_12%,white)]";
-  if (severity === "medium")
-    return "text-[var(--warn)] bg-[color-mix(in_oklab,var(--warn)_12%,white)]";
-  return "text-[var(--moss-deep)] bg-[color-mix(in_oklab,var(--leaf)_18%,white)]";
-}
 
 export function ReviewApp() {
   const [mode, setMode] = useState<Mode>("url");
@@ -291,14 +282,6 @@ export function ReviewApp() {
   const ignoredInResult = result
     ? result.findings.length - findings.length
     : 0;
-
-  const severityCounts = useMemo(() => {
-    const counts: Partial<Record<Severity, number>> = {};
-    for (const f of inclusiveFindings) {
-      counts[f.severity] = (counts[f.severity] ?? 0) + 1;
-    }
-    return counts;
-  }, [inclusiveFindings]);
 
   const softFlagCount = useMemo(
     () => inclusiveFindings.filter((f) => f.likelyFalsePositive).length,
@@ -549,21 +532,9 @@ export function ReviewApp() {
               {inclusiveFindings.length > 0 ? (
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--ink-soft)]">
                   <span>
-                    Worth fixing{" "}
-                    <strong className="text-[var(--danger)] font-medium">
-                      {severityCounts.high ?? 0}
-                    </strong>
-                  </span>
-                  <span>
-                    Consider{" "}
-                    <strong className="text-[var(--warn)] font-medium">
-                      {severityCounts.medium ?? 0}
-                    </strong>
-                  </span>
-                  <span>
-                    Optional{" "}
-                    <strong className="text-[var(--moss)] font-medium">
-                      {severityCounts.low ?? 0}
+                    Language to reconsider{" "}
+                    <strong className="text-[var(--ink)] font-medium">
+                      {inclusiveFindings.length}
                     </strong>
                   </span>
                   {softFlagCount > 0 ? (
@@ -871,17 +842,11 @@ function FindingRow({
       }`}
     >
       <div className="pt-1 grid gap-2">
-        {lane === "inclusive" ? (
-          <span
-            className={`inline-block text-[0.7rem] tracking-wide px-2 py-1 ${severityClass(finding.severity)}`}
-          >
-            {severityLabel(finding.severity)}
-          </span>
-        ) : (
+        {lane === "coded" ? (
           <span className="inline-block text-[0.65rem] tracking-wide px-2 py-1 text-[var(--indigo)] bg-[color-mix(in_oklab,var(--indigo)_12%,white)]">
             Decode
           </span>
-        )}
+        ) : null}
         {finding.likelyFalsePositive ? (
           <span className="inline-block text-[0.65rem] tracking-wide px-2 py-1 text-[var(--warn)] bg-[color-mix(in_oklab,var(--warn)_12%,white)]">
             {lane === "coded"

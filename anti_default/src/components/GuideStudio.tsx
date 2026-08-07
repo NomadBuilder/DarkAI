@@ -16,7 +16,6 @@ import {
   type RulePreferences,
 } from "@/lib/types";
 import { withBasePath } from "@/lib/base-path";
-import { severityLabel } from "@/lib/severity";
 
 export function GuideStudio() {
   const { preferences: localPrefs, hydrated } = useRulePreferences();
@@ -148,9 +147,6 @@ export function GuideStudio() {
                     >
                       {rule.label}
                     </h3>
-                    <span className="text-xs tracking-wide text-[var(--moss)]">
-                      {severityLabel(rule.severity)}
-                    </span>
                   </div>
                   <p className="text-sm text-[var(--ink-soft)] leading-relaxed max-w-3xl">
                     {rule.why}

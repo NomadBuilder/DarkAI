@@ -1,7 +1,6 @@
 "use client";
 
 import type { Finding } from "@/lib/types";
-import { severityLabel } from "@/lib/severity";
 
 /**
  * Full-document view with highlights at finding indices.
@@ -37,10 +36,8 @@ export function DocumentHighlight({
             key={`f-${f.id}-${i}`}
             type="button"
             onClick={() => onSelect(f)}
-            title={`${f.label} · ${
-              f.category === "coded"
-                ? "possible coded signal"
-                : severityLabel(f.severity)
+            title={`${f.label}${
+              f.category === "coded" ? " · possible coded signal" : ""
             }${f.likelyFalsePositive ? " · check context" : ""}`}
             className={`rounded-sm px-0.5 mx-px transition-colors cursor-pointer text-left ${
               f.category === "coded"

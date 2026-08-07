@@ -1,6 +1,5 @@
 import type { AnalysisResult, Finding } from "./types";
 import { CATEGORY_META } from "./types";
-import { severityLabel } from "./severity";
 
 function downloadBlob(filename: string, content: string, mime: string) {
   const blob = new Blob([content], { type: mime });
@@ -35,7 +34,7 @@ export function findingsToMarkdown(
   }
 
   for (const f of findings) {
-    lines.push(`## ${f.label} (${severityLabel(f.severity)})`);
+    lines.push(`## ${f.label}`);
     lines.push(``);
     lines.push(`- **Match:** “${f.match}”`);
     lines.push(`- **Category:** ${CATEGORY_META[f.category].title}`);
@@ -58,7 +57,6 @@ export function findingsToCsv(findings: Finding[]): string {
   const escape = (v: string) => `"${v.replace(/"/g, '""')}"`;
   const rows = [
     [
-      "severity",
       "category",
       "label",
       "match",
@@ -72,7 +70,6 @@ export function findingsToCsv(findings: Finding[]): string {
   for (const f of findings) {
     rows.push(
       [
-        severityLabel(f.severity),
         f.category,
         escape(f.label),
         escape(f.match),
@@ -104,7 +101,7 @@ export function findingsToGithubChecklist(
   for (const f of findings) {
     const tryOne = f.suggestions[0] ?? "rephrase";
     lines.push(
-      `- [ ] **${f.label}** — replace “${f.match}” (e.g. ${tryOne}) — _${severityLabel(f.severity)}_${
+      `- [ ] **${f.label}** — replace “${f.match}” (e.g. ${tryOne})${
         f.likelyFalsePositive ? " _(likely false positive)_" : ""
       }`,
     );
