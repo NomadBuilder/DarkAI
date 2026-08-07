@@ -28,17 +28,20 @@
   /** @type {Array<Record<string, unknown>>} */
   let findings = [];
 
-  boot();
+  /** Resolves after rules load + first scan (or failed boot). */
+  const ready = boot();
 
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     if (!message || typeof message !== "object") return;
 
     if (message.type === "GET_FINDINGS") {
-      sendResponse({
-        ok: true,
-        url: location.href,
-        title: document.title,
-        findings,
+      ready.then(() => {
+        sendResponse({
+          ok: true,
+          url: location.href,
+          title: document.title,
+          findings,
+        });
       });
       return true;
     }
@@ -61,9 +64,14 @@
     }
 
     if (message.type === "RESCAN") {
-      scan().then(() => {
-        sendResponse({ ok: true, findings });
-      });
+      ready
+        .then(() => scan())
+        .then(() => {
+          sendResponse({ ok: true, findings });
+        })
+        .catch(() => {
+          sendResponse({ ok: false, findings: [] });
+        });
       return true;
     }
   });

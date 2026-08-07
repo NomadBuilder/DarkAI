@@ -111,7 +111,7 @@ Same rules as the app — on the page you’re already looking at.
 Runs offline from a bundled rule list. No tracking. No AI calls.  
 Dev / unpacked: `npm run extension:pack` → Load unpacked → `extension/` · details in [`extension/README.md`](extension/README.md)
 
-> Store listing is currently **v0.2.2**. Local / packaged build is **0.2.5** (newer LGBTQ+ / anti-trans flags). Upload the zip from `npm run extension:pack` when you’re ready to update the listing.
+> Store listing may lag local. Packaged build is **0.2.6**. Upload `npm run extension:pack` after testing with Load unpacked.
 
 ---
 

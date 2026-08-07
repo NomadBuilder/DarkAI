@@ -103,8 +103,6 @@ async function ensureContentScript(tabId) {
     target: { tabId },
     files: ["content.js"],
   });
-  // Allow boot + first scan to finish
-  await new Promise((r) => setTimeout(r, 450));
 }
 
 async function sendToTab(message) {
@@ -129,11 +127,14 @@ async function sendToTab(message) {
   }
 }
 
+/** Always run a fresh scan on open — same path as Re-scan (avoids empty race). */
 async function loadFindings() {
-  summaryEl.textContent = "Loading results…";
+  summaryEl.textContent = "Scanning…";
   try {
-    const payload = await sendToTab({ type: "GET_FINDINGS" });
-    if (!payload?.ok) throw new Error("No response from page.");
+    const payload = await sendToTab({ type: "RESCAN" });
+    if (!payload?.ok && !payload?.findings) {
+      throw new Error("No response from page.");
+    }
     renderFindings(payload);
   } catch (err) {
     summaryEl.textContent = "Review unavailable";
