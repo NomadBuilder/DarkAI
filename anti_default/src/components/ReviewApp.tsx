@@ -13,6 +13,11 @@ import {
   saveIgnoredKeys,
 } from "@/lib/ignores";
 import {
+  feedbackEventFromFinding,
+  fineInContextIssueUrl,
+  recordFeedbackLocally,
+} from "@/lib/feedback";
+import {
   compactSourceName,
   sourcesForRuleId,
 } from "@/lib/rule-sources";
@@ -92,6 +97,19 @@ export function ReviewApp() {
       persistIgnore([...ignoredKeys, key]);
     },
     [ignoredKeys, persistIgnore],
+  );
+
+  const fineInContext = useCallback(
+    (finding: Finding) => {
+      const event = feedbackEventFromFinding(finding, "fine_in_context", {
+        sourceKind: "web",
+        note: "Marked fine in context from the Review UI",
+      });
+      recordFeedbackLocally(event);
+      ignoreFinding(finding);
+      window.open(fineInContextIssueUrl(event), "_blank", "noopener,noreferrer");
+    },
+    [ignoreFinding],
   );
 
   const clearIgnores = useCallback(() => {
@@ -675,6 +693,7 @@ export function ReviewApp() {
                         lane="inclusive"
                         active={activeFindingId === finding.id}
                         onIgnore={() => ignoreFinding(finding)}
+                        onFineInContext={() => fineInContext(finding)}
                         onApply={(suggestion) =>
                           applyRewrite(finding, suggestion)
                         }
@@ -697,6 +716,7 @@ export function ReviewApp() {
                         lane="coded"
                         active={activeFindingId === finding.id}
                         onIgnore={() => ignoreFinding(finding)}
+                        onFineInContext={() => fineInContext(finding)}
                         onApply={() => undefined}
                         canApplyToSource={false}
                         onFocus={() => setActiveFindingId(finding.id)}
@@ -720,6 +740,7 @@ export function ReviewApp() {
                       finding={finding}
                       lane="inclusive"
                       onIgnore={() => ignoreFinding(finding)}
+                      onFineInContext={() => fineInContext(finding)}
                       onApply={(suggestion) =>
                         applyRewrite(finding, suggestion)
                       }
@@ -740,6 +761,7 @@ export function ReviewApp() {
                       finding={finding}
                       lane="coded"
                       onIgnore={() => ignoreFinding(finding)}
+                      onFineInContext={() => fineInContext(finding)}
                       onApply={() => undefined}
                       canApplyToSource={false}
                     />
@@ -805,6 +827,7 @@ function FindingRow({
   finding,
   lane,
   onIgnore,
+  onFineInContext,
   onApply,
   canApplyToSource,
   active,
@@ -813,6 +836,7 @@ function FindingRow({
   finding: Finding;
   lane: "inclusive" | "coded";
   onIgnore: () => void;
+  onFineInContext: () => void;
   onApply: (suggestion: string) => void;
   canApplyToSource: boolean;
   active?: boolean;
@@ -887,6 +911,16 @@ function FindingRow({
               className="text-xs text-[var(--ink-soft)] underline underline-offset-2 hover:text-[var(--ink)]"
             >
               {lane === "coded" ? "I meant it differently" : "Not this match"}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onFineInContext();
+              }}
+              className="text-xs text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+            >
+              Fine in this context
             </button>
             <a
               href={reportFindingIssueUrl(finding)}

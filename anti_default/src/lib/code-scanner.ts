@@ -8,6 +8,7 @@ const COMMENT_RE =
   /\/\/[^\n]*|\/\*[\s\S]*?\*\/|<!--[\s\S]*?-->|#(?!\!)[^\n]*/g;
 
 const JSX_TEXT_RE = />([^<>{][^<>]*)</g;
+const PROSE_EXTENSION_RE = /\.(?:md|mdx|txt|rst|adoc)$/i;
 
 export interface CodeFileInput {
   path: string;
@@ -42,6 +43,27 @@ export function extractReviewableSegments(
 ): Array<{ text: string; source: string }> {
   const segments: Array<{ text: string; source: string }> = [];
   const { path, content } = file;
+
+  if (PROSE_EXTENSION_RE.test(path)) {
+    let inFence = false;
+    for (const [index, line] of content.split(/\r?\n/).entries()) {
+      if (/^\s*(```|~~~)/.test(line)) {
+        inFence = !inFence;
+        continue;
+      }
+      const text = line
+        .replace(/^\s{0,3}#{1,6}\s+/, "")
+        .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+        .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      if (!inFence && isLikelyUserFacing(text)) {
+        segments.push({ text, source: `${path}:${index + 1}` });
+      }
+    }
+    return segments;
+  }
 
   for (const match of content.matchAll(STRING_LITERAL_RE)) {
     const text = stripQuotes(match[0])
@@ -138,6 +160,9 @@ export const CODE_EXTENSIONS = [
   ".htm",
   ".md",
   ".mdx",
+  ".txt",
+  ".rst",
+  ".adoc",
   ".json",
   ".yml",
   ".yaml",

@@ -29,6 +29,14 @@ const MAX_FILES = 2000;
 function shouldSkipBuiltin(filePath: string): boolean {
   const base = path.basename(filePath);
   if (base === "rules.ts" || base === "rules.js") return true;
+  if (
+    base === ".antidefaultbaseline.json" ||
+    base === ".antidefaultfeedback.jsonl" ||
+    base === "anti-default-report.json" ||
+    base === "anti-default.sarif"
+  ) {
+    return true;
+  }
   const normalized = filePath.replace(/\\/g, "/");
   if (normalized.includes("/public/fixtures/")) return true;
   if (normalized.includes("/fixtures/corpus/")) return true;

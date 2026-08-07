@@ -1,8 +1,8 @@
 {
   "name": "anti-default",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
-  "description": "Inclusive language review for websites, docs, and code \u2014 CLI, GitHub Action, and browser extension",
+  "description": "Inclusive language review for AI-generated and human copy \u2014 CLI fix, MCP tools, GitHub Action, and browser extension",
   "homepage": "https://darkai.ca/anti-default",
   "repository": {
     "type": "git",
@@ -15,14 +15,26 @@
   "bin": {
     "anti-default": "./bin/anti-default.js"
   },
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/types/index.d.ts",
+  "sideEffects": false,
   "files": [
     "bin",
-    "scripts/cli.ts",
-    "src/cli",
-    "src/lib",
+    "dist",
+    "skills",
+    "feedback",
     "action.yml",
     ".antidefaultignore.example",
     "README.md",
+    "CHANGELOG.md",
     "LICENSE"
   ],
   "engines": {
@@ -40,7 +52,11 @@
     "corpus": "tsx scripts/check-corpus.ts",
     "extension:rules": "tsx scripts/export-extension-rules.ts",
     "extension:assets": "python3 scripts/generate-extension-assets.py",
-    "extension:pack": "bash scripts/pack-extension.sh"
+    "extension:pack": "bash scripts/pack-extension.sh",
+    "package:build": "node scripts/build-package.mjs",
+    "package:check": "node scripts/check-package.mjs",
+    "test": "npm run corpus && npm run package:check",
+    "prepack": "npm run package:build"
   },
   "dependencies": {
     "cheerio": "^1.2.0",
@@ -55,17 +71,26 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cheerio": "^1.2.0",
+    "esbuild": "^0.28.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "tsx": "^4.23.5",
+    "typescript": "^5",
+    "zod": "^4.4.3"
   },
   "keywords": [
     "inclusive-language",
     "linter",
     "accessibility",
     "cli",
+    "mcp",
     "github-action",
-    "sarif"
+    "sarif",
+    "autofix"
   ]
 }

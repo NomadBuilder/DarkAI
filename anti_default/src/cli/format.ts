@@ -10,6 +10,7 @@ export interface ScanReport {
   targets: string[];
   filesScanned?: number;
   urlsScanned?: number;
+  suppressedByBaseline?: number;
   findings: Finding[];
   summary: {
     total: number;
@@ -43,6 +44,9 @@ export function formatText(report: ScanReport): string {
   }
   if (report.urlsScanned != null) {
     lines.push(`URLs scanned: ${report.urlsScanned}`);
+  }
+  if (report.suppressedByBaseline) {
+    lines.push(`Baseline: ${report.suppressedByBaseline} existing finding(s) hidden`);
   }
   lines.push(
     `Findings: ${report.summary.total} (${report.summary.hard} hard · ${report.summary.soft} soft)`,

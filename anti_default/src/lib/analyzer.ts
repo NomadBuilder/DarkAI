@@ -55,7 +55,7 @@ export interface AnalyzeOptions {
 
 export function analyzeText(
   text: string,
-  options: AnalyzeOptions,
+  options: Partial<AnalyzeOptions> = {},
 ): AnalysisResult {
   const findings: Finding[] = [];
   const normalized = text.replace(/\u00a0/g, " ");
@@ -126,8 +126,8 @@ export function analyzeText(
   });
 
   return {
-    sourceType: options.sourceType,
-    sourceLabel: options.sourceLabel,
+    sourceType: options.sourceType ?? "text",
+    sourceLabel: options.sourceLabel ?? "text",
     title: options.title,
     excerptCount: normalized.trim().length,
     findings,
