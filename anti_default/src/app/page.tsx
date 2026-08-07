@@ -3,7 +3,6 @@ import { ReviewApp } from "@/components/ReviewApp";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 import {
   CHROME_STORE_URL,
-  GITHUB_ACTION_URL,
   GITHUB_URL,
 } from "@/lib/links";
 
@@ -71,35 +70,10 @@ export default function Home() {
             >
               npx anti-default .
             </p>
-            <p className="text-sm text-[var(--ink-soft)] leading-relaxed mb-3">
+            <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
               Scan a folder, fail CI on hard hits, or install the extension for
-              live pages — this Review UI is for demos and tuning.
-            </p>
-            <p className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
-              <a
-                href={GITHUB_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
-              >
-                CLI on GitHub
-              </a>
-              <a
-                href={GITHUB_ACTION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
-              >
-                GitHub Action
-              </a>
-              <a
-                href={CHROME_STORE_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
-              >
-                Chrome extension
-              </a>
+              live pages — use <strong className="font-medium text-[var(--ink)]">Install</strong> in
+              the nav. This Review UI is for demos and tuning.
             </p>
           </div>
 
@@ -166,8 +140,27 @@ export default function Home() {
         <p className="max-w-xl leading-relaxed">
           Language moves with people. Keep humans and communities in the loop.
         </p>
-        <p className="font-[family-name:var(--font-mono)] text-xs self-end flex flex-wrap gap-x-3 gap-y-1 justify-end">
-          <span>npx anti-default .</span>
+        <p className="text-xs self-end flex flex-wrap gap-x-3 gap-y-1 justify-end items-center">
+          <Link
+            href="/rules"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Rules
+          </Link>
+          <Link
+            href="/sources"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Sources
+          </Link>
+          <a
+            href={GITHUB_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            GitHub
+          </a>
           <a
             href={CHROME_STORE_URL}
             target="_blank"

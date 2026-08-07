@@ -1,5 +1,12 @@
+"use client";
+
 import Link from "next/link";
-import { CHROME_STORE_URL, GITHUB_URL } from "@/lib/links";
+import { useEffect, useId, useRef, useState } from "react";
+import {
+  CHROME_STORE_URL,
+  CLI_DOCS_URL,
+  GITHUB_ACTION_URL,
+} from "@/lib/links";
 
 export function SiteNav({
   active,
@@ -18,7 +25,8 @@ export function SiteNav({
       >
         Anti-Default
       </Link>
-      <div className="flex flex-wrap items-center gap-1 text-sm justify-end">
+
+      <div className="flex flex-wrap items-center gap-1 sm:gap-2 text-sm justify-end">
         <NavLink href="/" active={active === "home"} accent="var(--ochre)">
           Review
         </NavLink>
@@ -32,32 +40,7 @@ export function SiteNav({
         >
           Dogwhistles
         </NavLink>
-        <NavLink href="/rules" active={active === "rules"} accent="var(--coral)">
-          Rules
-        </NavLink>
-        <NavLink
-          href="/sources"
-          active={active === "sources"}
-          accent="var(--teal)"
-        >
-          Sources
-        </NavLink>
-        <a
-          href={CHROME_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="nav-quiet px-3 py-2 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
-        >
-          Extension
-        </a>
-        <a
-          href={GITHUB_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="nav-quiet px-3 py-2 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
-        >
-          GitHub
-        </a>
+        <InstallMenu />
       </div>
     </nav>
   );
@@ -90,13 +73,99 @@ function NavLink({
   );
 }
 
+function InstallMenu() {
+  const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const menuId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (e: MouseEvent) => {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  return (
+    <div className="relative ml-1 sm:ml-2" ref={rootRef}>
+      <button
+        type="button"
+        className="install-cta"
+        aria-expanded={open}
+        aria-controls={menuId}
+        aria-haspopup="menu"
+        onClick={() => setOpen((v) => !v)}
+      >
+        Install
+        <span className="install-cta-chevron" aria-hidden>
+          {open ? "▴" : "▾"}
+        </span>
+      </button>
+      {open ? (
+        <div
+          id={menuId}
+          role="menu"
+          className="install-menu"
+          aria-label="Install Anti-Default"
+        >
+          <a
+            role="menuitem"
+            href={CHROME_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="install-menu-item"
+            onClick={() => setOpen(false)}
+          >
+            <span className="install-menu-title">Chrome extension</span>
+            <span className="install-menu-desc">
+              Highlights on any live page
+            </span>
+          </a>
+          <a
+            role="menuitem"
+            href={CLI_DOCS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="install-menu-item"
+            onClick={() => setOpen(false)}
+          >
+            <span className="install-menu-title">CLI</span>
+            <span className="install-menu-desc">
+              <code>npx anti-default .</code>
+            </span>
+          </a>
+          <a
+            role="menuitem"
+            href={GITHUB_ACTION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="install-menu-item"
+            onClick={() => setOpen(false)}
+          >
+            <span className="install-menu-title">GitHub Action</span>
+            <span className="install-menu-desc">Fail PRs · checklist comment</span>
+          </a>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 /** Five equal threads — visual reminder that inclusion is plural */
 export function InclusiveBand({ className = "" }: { className?: string }) {
   return (
     <div
       className={`inclusive-band ${className}`}
       role="img"
-      aria-label="A band of five equal colors standing for many communities"
+      aria-label="A band of five colors standing for many communities"
     >
       <span />
       <span />

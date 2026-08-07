@@ -292,3 +292,91 @@ a.nav-quiet,
 .nav-quiet {
   min-height: auto;
 }
+
+.install-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 2.5rem;
+  padding: 0.4rem 0.9rem;
+  border: 1.5px solid color-mix(in oklab, var(--teal-deep) 35%, transparent);
+  background: color-mix(in oklab, var(--teal) 12%, var(--paper));
+  color: var(--teal-deep);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.install-cta:hover,
+.install-cta[aria-expanded="true"] {
+  background: color-mix(in oklab, var(--teal) 22%, var(--paper));
+  border-color: var(--teal-deep);
+  color: var(--ink);
+}
+
+.install-cta-chevron {
+  font-size: 0.7em;
+  opacity: 0.75;
+}
+
+.install-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 40;
+  min-width: 15.5rem;
+  padding: 0.35rem;
+  background: var(--paper);
+  border: 1px solid color-mix(in oklab, var(--ink) 12%, transparent);
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--ink) 12%, transparent);
+  animation: install-menu-in 140ms ease-out;
+}
+
+.install-menu-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.65rem 0.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 120ms ease;
+}
+
+.install-menu-item:hover,
+.install-menu-item:focus-visible {
+  background: color-mix(in oklab, var(--teal) 10%, transparent);
+  outline: none;
+}
+
+.install-menu-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.install-menu-desc {
+  font-size: 0.75rem;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+
+.install-menu-desc code {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+@keyframes install-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
