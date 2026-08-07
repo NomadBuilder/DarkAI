@@ -13,9 +13,7 @@ Matching is **local-only** (bundled `rules.json`). No AI calls. No tracking.
 
 ## Chrome Web Store
 
-**Install:** [Anti-Default Inclusive Language](https://chromewebstore.google.com/search/Anti-Default%20Inclusive%20Language)
-
-(Once you have the permanent listing URL from the developer dashboard, replace the search link in `src/lib/links.ts` / `NEXT_PUBLIC_CHROME_STORE_URL`.)
+**Install:** [Anti-Default — Inclusive Language Highlights](https://chromewebstore.google.com/detail/anti-default-%E2%80%94-inclusive/aajdplalleopollfjegljkajkdcihmhc)
 
 See **[store/PUBLISH.md](store/PUBLISH.md)** for the upload checklist and
 **[store/LISTING.md](store/LISTING.md)** for copy-paste store text.

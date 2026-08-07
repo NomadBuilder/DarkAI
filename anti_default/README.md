@@ -1,13 +1,32 @@
 # Anti-Default
 
-**Catch default language before it ships.**
+### Catch default language before it ships.
 
-Anti-Default flags colonial defaults, gendered assumptions, ableist metaphors, and widely documented dogwhistles in websites, docs, and code — then offers clearer alternatives.
+Colonial defaults. Gendered assumptions. Ableist metaphors. Documented dogwhistles. Anti-Default flags them in your copy, docs, and code — then offers clearer alternatives you can use right away.
 
-**Default habit:** CLI · GitHub Action · browser extension  
-**Tuning surface:** [web app](https://darkai.ca/anti-default) (Review / Swap / Dogwhistles / Rules)
+No account. No AI required for matching. Open rules you can tune.
 
-[Live app](https://darkai.ca/anti-default) · [Chrome extension](https://chromewebstore.google.com/search/Anti-Default%20Inclusive%20Language) · [GitHub](https://github.com/NomadBuilder/anti-default)
+<p align="center">
+  <a href="https://darkai.ca/anti-default"><strong>Try the web app</strong></a>
+  ·
+  <a href="https://chromewebstore.google.com/detail/anti-default-%E2%80%94-inclusive/aajdplalleopollfjegljkajkdcihmhc"><strong>Add the Chrome extension</strong></a>
+  ·
+  <a href="https://github.com/NomadBuilder/anti-default"><strong>Star on GitHub</strong></a>
+</p>
+
+---
+
+## The habit (not the demo)
+
+Vibe-coders and creators maintaining content at scale don’t paste one page into a UI. Make the scan part of how you ship:
+
+| Do this every day | What it is |
+| --- | --- |
+| `npx anti-default .` | One-command folder scan — prints findings, exits non-zero |
+| GitHub Action | Fail the PR · post a fix checklist |
+| [Chrome extension](https://chromewebstore.google.com/detail/anti-default-%E2%80%94-inclusive/aajdplalleopollfjegljkajkdcihmhc) | Live highlights on any page you’re editing |
+
+The [web app](https://darkai.ca/anti-default) is for demos, Swap lookups, Dogwhistles learning, and tuning rules — not your default workflow.
 
 ---
 
@@ -17,49 +36,44 @@ Anti-Default flags colonial defaults, gendered assumptions, ableist metaphors, a
 npx anti-default .
 ```
 
-Prints findings and exits **non-zero** when hard hits remain (`--fail-on hard`, default). Soft / ambiguous hits do not fail CI unless you pass `--fail-on any`.
+Findings print to the terminal. Hard hits fail the process by default (`--fail-on hard`). Soft / ambiguous matches stay advisory unless you pass `--fail-on any`.
 
 ```bash
-# Folder or files
+# Paths
 npx anti-default ./src ./docs README.md
 
-# Machine output for CI
-npx anti-default . --format json -o report.json
+# CI formats
+npx anti-default . --format json  -o report.json
 npx anti-default . --format sarif -o results.sarif
 
-# Batch URLs (no Review UI)
+# Batch URLs — no Review UI
 npx anti-default --urls https://example.com https://example.com/about
 npx anti-default --urls-file urls.txt --format json
-
-# Never fail the process (report only)
-npx anti-default . --fail-on never
 ```
 
-Until the package is on the public npm registry, you can also run from a clone:
+Until the package is on the public npm registry:
 
 ```bash
-git clone https://github.com/NomadBuilder/anti-default.git
-cd anti-default && npm install
-node bin/anti-default.js .
-# or: npx --yes github:NomadBuilder/anti-default
+npx --yes github:NomadBuilder/anti-default .
+# or clone → npm install → node bin/anti-default.js .
 ```
 
-### Ignore / baseline
+### Ignore what doesn’t matter
 
-Commit a `.antidefaultignore` (see [`.antidefaultignore.example`](.antidefaultignore.example)):
+Commit a `.antidefaultignore` so day-two noise doesn’t drown the team ([example](.antidefaultignore.example)):
 
 ```
 node_modules/
 vendor/
 *.min.js
-rule:guys          # disable a rule id for this repo
+rule:guys          # turn off one rule for this repo
 ```
 
 ---
 
 ## GitHub Action
 
-Fail PRs and (optionally) post a checklist comment:
+Keep inclusive language in the PR loop — fail on hard hits and (optionally) leave a checklist comment:
 
 ```yaml
 # .github/workflows/anti-default.yml
@@ -79,66 +93,64 @@ jobs:
         with:
           paths: "."
           fail-on: hard
-          format: json          # use json for PR checklist comments
+          format: json
           output-file: anti-default-report.json
           comment-on-pr: "true"
 ```
 
-SARIF upload: set `format: sarif` and `output-file: anti-default.sarif` (Code Scanning permissions required).
-
-Action inputs: see [`action.yml`](action.yml).
+Prefer SARIF for Code Scanning? Set `format: sarif` and `output-file: anti-default.sarif`. Full inputs: [`action.yml`](action.yml).
 
 ---
 
-## Browser extension
+## Chrome extension
 
-Same rules as the web app, on live pages.
+Same rules as the app — on the page you’re already looking at.
 
-- **Chrome Web Store:** search [Anti-Default Inclusive Language](https://chromewebstore.google.com/search/Anti-Default%20Inclusive%20Language) (or set `NEXT_PUBLIC_CHROME_STORE_URL` to your permanent listing URL)
-- **Load unpacked:** `npm run extension:pack` → Chrome / Edge → Developer mode → Load unpacked → `extension/`
+**[Add to Chrome →](https://chromewebstore.google.com/detail/anti-default-%E2%80%94-inclusive/aajdplalleopollfjegljkajkdcihmhc)**
 
-Details: [`extension/README.md`](extension/README.md)
+Runs offline from a bundled rule list. No tracking. No AI calls.  
+Dev / unpacked: `npm run extension:pack` → Load unpacked → `extension/` · details in [`extension/README.md`](extension/README.md)
+
+> Store listing is currently **v0.2.2**. Local / packaged build is **0.2.5** (newer LGBTQ+ / anti-trans flags). Upload the zip from `npm run extension:pack` when you’re ready to update the listing.
 
 ---
 
-## Web app (demo + tuning)
+## Web app — try, learn, tune
 
-```bash
-npm install
-npm run dev
-```
+[darkai.ca/anti-default](https://darkai.ca/anti-default)
 
-Open [http://localhost:3000](http://localhost:3000) — Review, Swap, Dogwhistles, Rules, Sources.
-
-| Surface | Role |
+| | |
 | --- | --- |
-| **CLI / Action / Extension** | Day-to-day habit at scale |
-| **Review** | Paste, upload, or scan a URL; export Markdown / CSV / checklist |
-| **Swap** | One phrase → alternatives |
-| **Dogwhistles** | Signal, context, clearer wording |
-| **Rules** | Turn patterns on/off; soft heads-ups stay gentle when ambiguous |
-
----
-
-## Customize
-
-- UI: `/rules`
-- Code: `src/lib/rules.ts`
-- Sources: `/sources`
-- Corpus self-check: `npm run corpus`
-
----
-
-## Host your own build
+| **Review** | Paste, upload, or scan a URL · export Markdown / CSV / checklist |
+| **Swap** | One phrase → clearer alternatives |
+| **Dogwhistles** | What a phrase can signal, when context matters, what to say instead |
+| **Rules** | Turn patterns on/off · soft heads-ups when language is ambiguous |
 
 ```bash
-npm run build
-# → static site in out/
-
-NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build
+npm install && npm run dev   # localhost:3000
 ```
 
-Production: [darkai.ca/anti-default](https://darkai.ca/anti-default) · also vendored in [DarkAI](https://github.com/NomadBuilder/DarkAI).
+---
+
+## Why teams reach for it
+
+- **Before publish** — catch defaults in marketing, docs, and product copy  
+- **In the PR** — Action + SARIF/JSON so machines and humans both get a signal  
+- **On the live page** — extension for writers who never open a terminal  
+- **Without a lecture** — suggestions are invitations; context always wins  
+
+Every suggestion cites the style guides and references behind it → [/sources](https://darkai.ca/anti-default/sources)
+
+---
+
+## Customize & self-host
+
+- Tune in the UI: [/rules](https://darkai.ca/anti-default/rules) · edit code: `src/lib/rules.ts`
+- Practice corpus: `npm run corpus`
+- Static export: `npm run build` → `out/`  
+  Subpath (DarkAI): `STATIC_EXPORT=true BASE_PATH=/anti-default npm run build`
+
+Production lives at [darkai.ca/anti-default](https://darkai.ca/anti-default) and is also vendored in [DarkAI](https://github.com/NomadBuilder/DarkAI).
 
 ## License
 
