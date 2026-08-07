@@ -1,14 +1,42 @@
 {
   "name": "anti-default",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
+  "description": "Inclusive language review for websites, docs, and code \u2014 CLI, GitHub Action, and browser extension",
+  "homepage": "https://darkai.ca/anti-default",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NomadBuilder/anti-default.git"
+  },
+  "bugs": {
+    "url": "https://github.com/NomadBuilder/anti-default/issues"
+  },
+  "license": "MIT",
+  "bin": {
+    "anti-default": "./bin/anti-default.js"
+  },
+  "files": [
+    "bin",
+    "scripts/cli.ts",
+    "src/cli",
+    "src/lib",
+    "action.yml",
+    ".antidefaultignore.example",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "build:darkai": "NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default next build",
     "start": "next start",
     "lint": "eslint",
-    "analyze": "tsx scripts/analyze-code.ts",
+    "analyze": "node bin/anti-default.js",
+    "analyze:urls": "node bin/anti-default.js --urls",
+    "cli": "node bin/anti-default.js",
     "corpus": "tsx scripts/check-corpus.ts",
     "extension:rules": "tsx scripts/export-extension-rules.ts",
     "extension:assets": "python3 scripts/generate-extension-assets.py",
@@ -19,6 +47,7 @@
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "tsx": "^4.23.5",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -29,8 +58,14 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
     "tailwindcss": "^4",
-    "tsx": "^4.23.5",
     "typescript": "^5"
   },
-  "description": "Anti-Default — inclusive language reviewer for websites and code"
+  "keywords": [
+    "inclusive-language",
+    "linter",
+    "accessibility",
+    "cli",
+    "github-action",
+    "sarif"
+  ]
 }

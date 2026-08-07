@@ -103,7 +103,7 @@ Declare clearly that you do **not**:
 
 ## Screenshots to upload
 
-From `extension/store/assets/` (real popup captures):
+From `extension/store/assets/`:
 
 1. `screenshot-1-highlights-1280x800.png`
 2. `screenshot-2-popup-1280x800.png`

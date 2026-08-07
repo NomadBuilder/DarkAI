@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { ReviewApp } from "@/components/ReviewApp";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
+import {
+  CHROME_STORE_URL,
+  GITHUB_ACTION_URL,
+  GITHUB_URL,
+} from "@/lib/links";
 
 export default function Home() {
   return (
@@ -33,7 +38,7 @@ export default function Home() {
             for colonial defaults, gendered assumptions, ableist metaphors, and
             other excluding phrasing.
           </p>
-          <p className="animate-rise-delay text-base text-[var(--ink-soft)] max-w-xl mb-10 leading-relaxed">
+          <p className="animate-rise-delay text-base text-[var(--ink-soft)] max-w-xl mb-8 leading-relaxed">
             Suggestions are invitations, not a single “correct” English. Need
             one phrase? Use{" "}
             <Link
@@ -58,6 +63,45 @@ export default function Home() {
             </Link>
             .
           </p>
+
+          <div className="animate-rise-delay mb-10 max-w-xl">
+            <p
+              className="text-sm text-[var(--ink)] mb-3"
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              npx anti-default .
+            </p>
+            <p className="text-sm text-[var(--ink-soft)] leading-relaxed mb-3">
+              Scan a folder, fail CI on hard hits, or install the extension for
+              live pages — this Review UI is for demos and tuning.
+            </p>
+            <p className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
+              <a
+                href={GITHUB_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+              >
+                CLI on GitHub
+              </a>
+              <a
+                href={GITHUB_ACTION_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+              >
+                GitHub Action
+              </a>
+              <a
+                href={CHROME_STORE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+              >
+                Chrome extension
+              </a>
+            </p>
+          </div>
 
           <div className="max-w-3xl">
             <ReviewApp />
@@ -97,9 +141,23 @@ export default function Home() {
             }
           />
           <ApproachCard
-            title="Share the tools"
+            title="Ship at scale"
             accent="var(--indigo)"
-            body="Open-source CLI so collaborators can scan their own repos locally — no need to upload private code to the web UI."
+            body={
+              <>
+                <code className="text-[var(--ink)]">npx anti-default .</code>,
+                a GitHub Action that fails PRs / posts a checklist, and a{" "}
+                <a
+                  href={CHROME_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--teal-deep)] underline underline-offset-2"
+                >
+                  Chrome extension
+                </a>{" "}
+                — same rules, no paste-one-page bottleneck.
+              </>
+            }
           />
         </div>
       </section>
@@ -108,9 +166,16 @@ export default function Home() {
         <p className="max-w-xl leading-relaxed">
           Language moves with people. Keep humans and communities in the loop.
         </p>
-        <p className="font-[family-name:var(--font-mono)] text-xs self-end">
-          npm run analyze -- ./src
-          {" · "}
+        <p className="font-[family-name:var(--font-mono)] text-xs self-end flex flex-wrap gap-x-3 gap-y-1 justify-end">
+          <span>npx anti-default .</span>
+          <a
+            href={CHROME_STORE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Extension
+          </a>
           <Link
             href="/privacy"
             className="text-[var(--teal-deep)] underline underline-offset-2"

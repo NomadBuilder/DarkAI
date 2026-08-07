@@ -2,13 +2,13 @@
 
 ## 1. Build the upload zip
 
-From `anti_default/`:
+From the repo root:
 
 ```bash
 npm run extension:pack
 ```
 
-Creates `extension/store/anti-default-extension.zip` (runtime files only — no store docs).
+Creates `extension/store/anti-default-extension.zip` (runtime files only — not committed; regenerate before upload).
 
 ## 2. Confirm privacy page is live
 

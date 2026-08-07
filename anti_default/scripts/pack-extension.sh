@@ -18,6 +18,7 @@ STAGE="$(mktemp -d)"
 trap 'rm -rf "$STAGE"' EXIT
 
 cp "$EXT/manifest.json" "$STAGE/"
+cp "$EXT/background.js" "$STAGE/"
 cp "$EXT/content.js" "$STAGE/"
 cp "$EXT/content.css" "$STAGE/"
 cp "$EXT/popup.html" "$STAGE/"

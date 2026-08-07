@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CHROME_STORE_URL, GITHUB_URL } from "@/lib/links";
 
 export function SiteNav({
   active,
@@ -42,7 +43,15 @@ export function SiteNav({
           Sources
         </NavLink>
         <a
-          href="https://github.com/NomadBuilder/anti-default"
+          href={CHROME_STORE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="nav-quiet px-3 py-2 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
+        >
+          Extension
+        </a>
+        <a
+          href={GITHUB_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="nav-quiet px-3 py-2 text-[var(--ink-soft)] hover:text-[var(--ink)] transition-colors"
