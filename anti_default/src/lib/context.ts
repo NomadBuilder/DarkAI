@@ -184,9 +184,16 @@ export function hintsForRule(ruleId: string): RuleContextHints | null {
       softExcludeNear: /\b(?:tofu|edamame|soy\s+(?:milk|sauce|protein|beans?))\b/i,
     };
   }
-  if (ruleId === "race-realism") {
+  if (ruleId === "mutilation-transition") {
     return {
-      softExcludeNear: /\b(?:biodiversity\s+(?:hotspot|conservation|index)|species)\b/i,
+      softExcludeNear:
+        /\bfemale genital mutilation\b|\bFGM\b|\bcourt[- ]ordered\b|\bchemical castration (?:of|for) (?:sex )?offenders?\b/i,
+    };
+  }
+  if (ruleId === "social-contagion-trans") {
+    return {
+      softExcludeNear:
+        /\b(?:measles|influenza|covid|epidemiolog|virus|infection rate)\b/i,
     };
   }
   return null;

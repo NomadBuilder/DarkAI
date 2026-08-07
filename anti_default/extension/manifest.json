@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "Anti-Default — Inclusive Language Highlights",
   "short_name": "Anti-Default",
-  "version": "0.1.0",
-  "description": "Highlight inclusive-language suggestions on any page. Runs offline from local rules — no AI calls, no tracking.",
+  "version": "0.2.5",
+  "description": "Review inclusive-language suggestions on any page in the popup. Runs offline from local rules — no AI calls, no tracking.",
   "homepage_url": "https://darkai.ca/anti-default/",
   "icons": {
     "16": "icons/icon-16.png",
@@ -20,7 +20,10 @@
       "48": "icons/icon-48.png"
     }
   },
-  "permissions": ["storage"],
+  "permissions": ["activeTab", "scripting"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],

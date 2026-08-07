@@ -96,7 +96,7 @@ export const DOGWHISTLE_BLURBS: Record<string, DogwhistleBlurb> = {
     ],
   },
   "trans-agenda": {
-    looksLike: "trans agenda; transgender agenda; gender ideology",
+    looksLike: "trans agenda; gender ideology; gender critical ideology",
     signal:
       "Treats trans people’s existence and rights as a coordinated conspiracy (“agenda” / “gender ideology”) rather than civil rights or health care policy.",
     whenFine:

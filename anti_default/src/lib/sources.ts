@@ -55,7 +55,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
       {
         title: "GLAAD Media Reference Guide",
         href: "https://glaad.org/reference",
-        note: "homosexual, lifestyle, transgendered, sex change, biological male/female",
+        note: "homosexual, lifestyle, transgendered, sex change, biological male/female, closed compounds, ROGD framing",
       },
       {
         title: "APA Style — Sexual orientation",

@@ -212,6 +212,43 @@ const BY_ID: Partial<Record<string, RuleSourceRef[]>> = {
       href: S.rationalWikiAltRight,
     },
   ],
+  "transwomen-compound": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "shemale-slur": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "trans-identified": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "adult-human-female": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "rapid-onset-gd": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+    {
+      title: "APA Style — Sexual orientation",
+      href: S.apaOrientation,
+    },
+  ],
+  "social-contagion-trans": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "transing-kids": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "mutilation-transition": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "erase-women": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "men-in-dresses": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
+  "gender-confused": [
+    { title: "GLAAD Media Reference Guide", href: S.glaad },
+  ],
   "go-woke-go-broke": [
     {
       title: "RationalWiki — Alt-right glossary",
