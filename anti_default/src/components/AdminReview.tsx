@@ -23,6 +23,7 @@ import {
   REVIEW_STATUS_META,
   REVIEW_STATUS_ORDER,
   saveReviewDoc,
+  type ProposedRule,
   type ReviewDoc,
   type ReviewStatus,
   type RuleReview,
@@ -39,11 +40,15 @@ export function AdminReview() {
   const [query, setQuery] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [showAddRule, setShowAddRule] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setDoc(loadReviewDoc());
-    setHydrated(true);
+    const timer = window.setTimeout(() => {
+      setDoc(loadReviewDoc());
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -112,6 +117,39 @@ export function AdminReview() {
     }
   };
 
+  const addProposedRule = (rule: ProposedRule) => {
+    setDoc((prev) => ({
+      ...prev,
+      updatedAt: new Date().toISOString(),
+      proposedRules: [...prev.proposedRules, rule],
+    }));
+    setShowAddRule(false);
+  };
+
+  const updateProposedRule = (
+    proposalId: string,
+    patch: Partial<ProposedRule>,
+  ) => {
+    setDoc((prev) => ({
+      ...prev,
+      updatedAt: new Date().toISOString(),
+      proposedRules: prev.proposedRules.map((rule) =>
+        rule.proposalId === proposalId ? { ...rule, ...patch } : rule,
+      ),
+    }));
+  };
+
+  const removeProposedRule = (proposalId: string) => {
+    if (!window.confirm("Remove this proposed rule?")) return;
+    setDoc((prev) => ({
+      ...prev,
+      updatedAt: new Date().toISOString(),
+      proposedRules: prev.proposedRules.filter(
+        (rule) => rule.proposalId !== proposalId,
+      ),
+    }));
+  };
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return LANGUAGE_RULES.filter((rule) => {
@@ -171,6 +209,53 @@ export function AdminReview() {
           e.target.value = "";
         }}
       />
+
+      <section className="grid gap-3 border border-dashed border-[color-mix(in_oklab,var(--teal-deep)_35%,transparent)] bg-[color-mix(in_oklab,var(--teal-deep)_4%,white)] p-4 md:p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2
+              className="text-xl text-[var(--ink)]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              Missing something?
+            </h2>
+            <p className="mt-1 text-sm text-[var(--ink-soft)]">
+              Propose another phrase to flag. New rules stay in this review and
+              are included in both exports.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddRule((open) => !open)}
+            className={`${btnClass} !border-[var(--teal-deep)] !text-[var(--teal-deep)]`}
+          >
+            {showAddRule ? "Cancel" : "+ Add a rule"}
+          </button>
+        </div>
+        {showAddRule ? (
+          <AddRuleForm
+            onAdd={addProposedRule}
+            onCancel={() => setShowAddRule(false)}
+          />
+        ) : null}
+        {doc.proposedRules.length > 0 ? (
+          <div className="grid gap-3 border-t border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pt-4">
+            <p className="text-xs uppercase tracking-wider text-[var(--moss)]">
+              Proposed in this review · {doc.proposedRules.length}
+            </p>
+            {doc.proposedRules.map((rule) => (
+              <ProposedRuleEditor
+                key={rule.proposalId}
+                rule={rule}
+                onUpdate={(patch) =>
+                  updateProposedRule(rule.proposalId, patch)
+                }
+                onRemove={() => removeProposedRule(rule.proposalId)}
+              />
+            ))}
+          </div>
+        ) : null}
+      </section>
 
       <div className="flex flex-wrap gap-3 items-end">
         <label className="flex-1 min-w-[14rem] grid gap-1">
@@ -579,5 +664,379 @@ function ReviewRow({
         </p>
       ) : null}
     </li>
+  );
+}
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 64);
+}
+
+function literalPattern(value: string): string {
+  const escaped = value.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return `\\b${escaped}\\b`;
+}
+
+function AddRuleForm({
+  onAdd,
+  onCancel,
+}: {
+  onAdd: (rule: ProposedRule) => void;
+  onCancel: () => void;
+}) {
+  const [label, setLabel] = useState("");
+  const [phrase, setPhrase] = useState("");
+  const [advanced, setAdvanced] = useState(false);
+  const [category, setCategory] = useState<Category>("general");
+  const [severity, setSeverity] = useState<Severity>("low");
+  const [why, setWhy] = useState("");
+  const [suggestions, setSuggestions] = useState("");
+  const [notes, setNotes] = useState("");
+  const [sourceTitle, setSourceTitle] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [error, setError] = useState("");
+
+  const submit = () => {
+    const pattern = advanced ? phrase.trim() : literalPattern(phrase);
+    const suggestionList = suggestions
+      .split("\n")
+      .map((value) => value.trim())
+      .filter(Boolean);
+    if (!label.trim() || !phrase.trim() || !why.trim()) {
+      setError("Add a label, phrase, and reason before saving.");
+      return;
+    }
+    if (suggestionList.length === 0) {
+      setError("Add at least one suggested fix.");
+      return;
+    }
+    try {
+      new RegExp(pattern, "i");
+    } catch {
+      setError("That advanced pattern is not a valid regular expression.");
+      return;
+    }
+    if (sourceUrl && !/^https?:\/\//i.test(sourceUrl)) {
+      setError("The source URL must begin with http:// or https://.");
+      return;
+    }
+    const now = new Date().toISOString();
+    const proposalId = `proposal-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+    onAdd({
+      proposalId,
+      id: slugify(label) || proposalId,
+      pattern,
+      category,
+      severity,
+      label: label.trim(),
+      why: why.trim(),
+      suggestions: suggestionList,
+      reviewerNotes: notes.trim() || undefined,
+      sources:
+        sourceTitle.trim() && sourceUrl.trim()
+          ? [{ title: sourceTitle.trim(), href: sourceUrl.trim() }]
+          : undefined,
+      defaultSoft: true,
+      createdAt: now,
+    });
+  };
+
+  return (
+    <div className="grid gap-3 border-t border-[color-mix(in_oklab,var(--ink)_10%,transparent)] pt-4">
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Rule label *
+          </span>
+          <input
+            value={label}
+            onChange={(event) => setLabel(event.target.value)}
+            placeholder="e.g. “Tone deaf” metaphor"
+            className={inputClass}
+          />
+        </label>
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Phrase to flag *
+          </span>
+          <input
+            value={phrase}
+            onChange={(event) => setPhrase(event.target.value)}
+            placeholder={advanced ? "\\btone[- ]deaf\\b" : "tone deaf"}
+            className={`${inputClass} ${advanced ? "font-[family-name:var(--font-mono)]" : ""}`}
+          />
+        </label>
+      </div>
+      <label className="flex items-center gap-2 text-xs text-[var(--ink-soft)]">
+        <input
+          type="checkbox"
+          checked={advanced}
+          onChange={(event) => setAdvanced(event.target.checked)}
+        />
+        Advanced: treat the phrase as a regular expression
+      </label>
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Topic
+          </span>
+          <select
+            value={category}
+            onChange={(event) => setCategory(event.target.value as Category)}
+            className={inputClass}
+          >
+            {CATEGORY_ORDER.map((id) => (
+              <option key={id} value={id}>
+                {CATEGORY_META[id].title}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Severity
+          </span>
+          <select
+            value={severity}
+            onChange={(event) => setSeverity(event.target.value as Severity)}
+            className={inputClass}
+          >
+            {SEVERITIES.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Why flag it? *
+        </span>
+        <textarea
+          value={why}
+          onChange={(event) => setWhy(event.target.value)}
+          rows={2}
+          placeholder="Explain the harm, ambiguity, and when context may matter."
+          className={`${inputClass} resize-y`}
+        />
+      </label>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Suggested fixes — one per line *
+        </span>
+        <textarea
+          value={suggestions}
+          onChange={(event) => setSuggestions(event.target.value)}
+          rows={3}
+          placeholder={"clearer alternative\nname the specific group or behavior"}
+          className={`${inputClass} resize-y`}
+        />
+      </label>
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Source title
+          </span>
+          <input
+            value={sourceTitle}
+            onChange={(event) => setSourceTitle(event.target.value)}
+            placeholder="Style guide or reference"
+            className={inputClass}
+          />
+        </label>
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Source URL
+          </span>
+          <input
+            type="url"
+            value={sourceUrl}
+            onChange={(event) => setSourceUrl(event.target.value)}
+            placeholder="https://…"
+            className={inputClass}
+          />
+        </label>
+      </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Reviewer notes
+        </span>
+        <textarea
+          value={notes}
+          onChange={(event) => setNotes(event.target.value)}
+          rows={2}
+          placeholder="Examples, edge cases, or context for the maintainer."
+          className={`${inputClass} resize-y`}
+        />
+      </label>
+      {error ? (
+        <p role="alert" className="text-sm text-[var(--coral)]">
+          {error}
+        </p>
+      ) : null}
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={submit}
+          className={`${btnClass} !border-[var(--moss)] !bg-[var(--moss)] !text-white`}
+        >
+          Add proposed rule
+        </button>
+        <button type="button" onClick={onCancel} className={btnClass}>
+          Cancel
+        </button>
+      </div>
+      <p className="text-xs text-[var(--ink-soft)]">
+        New proposals start as soft flags so context wins until a maintainer
+        validates the pattern and merges it into the shared catalog.
+      </p>
+    </div>
+  );
+}
+
+function ProposedRuleEditor({
+  rule,
+  onUpdate,
+  onRemove,
+}: {
+  rule: ProposedRule;
+  onUpdate: (patch: Partial<ProposedRule>) => void;
+  onRemove: () => void;
+}) {
+  return (
+    <article className="grid gap-3 border border-[color-mix(in_oklab,var(--teal-deep)_20%,transparent)] bg-white/70 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-baseline gap-2">
+          <h3
+            className="text-lg text-[var(--ink)]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            {rule.label}
+          </h3>
+          <span className="text-xs rounded-full bg-[color-mix(in_oklab,var(--teal-deep)_14%,transparent)] px-2 py-0.5 text-[var(--teal-deep)]">
+            proposed
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={onRemove}
+          className="text-xs text-[var(--ink-soft)] underline underline-offset-2 hover:text-[var(--coral)]"
+        >
+          Remove
+        </button>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Label
+          </span>
+          <input
+            value={rule.label}
+            onChange={(event) =>
+              onUpdate({
+                label: event.target.value,
+                id: slugify(event.target.value) || rule.id,
+              })
+            }
+            className={inputClass}
+          />
+        </label>
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Pattern
+          </span>
+          <input
+            value={rule.pattern}
+            onChange={(event) => onUpdate({ pattern: event.target.value })}
+            className={`${inputClass} font-[family-name:var(--font-mono)]`}
+          />
+        </label>
+      </div>
+      <div className="grid gap-3 md:grid-cols-2">
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Topic
+          </span>
+          <select
+            value={rule.category}
+            onChange={(event) =>
+              onUpdate({ category: event.target.value as Category })
+            }
+            className={inputClass}
+          >
+            {CATEGORY_ORDER.map((id) => (
+              <option key={id} value={id}>
+                {CATEGORY_META[id].title}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="grid gap-1">
+          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Severity
+          </span>
+          <select
+            value={rule.severity}
+            onChange={(event) =>
+              onUpdate({ severity: event.target.value as Severity })
+            }
+            className={inputClass}
+          >
+            {SEVERITIES.map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Why this is flagged
+        </span>
+        <textarea
+          value={rule.why}
+          onChange={(event) => onUpdate({ why: event.target.value })}
+          rows={2}
+          className={`${inputClass} resize-y`}
+        />
+      </label>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Suggested fixes — one per line
+        </span>
+        <textarea
+          value={rule.suggestions.join("\n")}
+          onChange={(event) =>
+            onUpdate({
+              suggestions: event.target.value
+                .split("\n")
+                .map((value) => value.trim())
+                .filter(Boolean),
+            })
+          }
+          rows={3}
+          className={`${inputClass} resize-y`}
+        />
+      </label>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Reviewer notes
+        </span>
+        <textarea
+          value={rule.reviewerNotes ?? ""}
+          onChange={(event) =>
+            onUpdate({ reviewerNotes: event.target.value })
+          }
+          rows={2}
+          className={`${inputClass} resize-y`}
+        />
+      </label>
+    </article>
   );
 }

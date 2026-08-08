@@ -1391,6 +1391,105 @@
       ]
     },
     {
+      "id": "the-homeless",
+      "pattern": "\\bthe homeless\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "medium",
+      "label": "“The homeless” as a monolith",
+      "why": "Turns a varied group of people into a condition. Preferences differ, so use people-first or community-preferred language.",
+      "suggestions": [
+        "people experiencing homelessness",
+        "homeless people (when community-preferred)",
+        "people without stable housing"
+      ]
+    },
+    {
+      "id": "unskilled-labor",
+      "pattern": "\\bunskilled (?:labou?r|workers?|jobs?)\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "medium",
+      "label": "“Unskilled” labor",
+      "why": "Work described as unskilled still requires learned abilities and effort. Name the training, wage, or role distinction you mean.",
+      "suggestions": [
+        "entry-level work",
+        "lower-wage work (when accurate)",
+        "work not requiring formal credentials",
+        "name the role"
+      ]
+    },
+    {
+      "id": "low-skilled-workers",
+      "pattern": "\\blow[- ]skilled (?:labou?r|workers?|jobs?)\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "low",
+      "label": "“Low-skilled” workers",
+      "why": "Can flatten workers into a deficit label. Describe the credential or training requirement instead.",
+      "suggestions": [
+        "workers in roles requiring less formal training",
+        "entry-level workers",
+        "name the occupation"
+      ]
+    },
+    {
+      "id": "poverty-stricken",
+      "pattern": "\\bpoverty[- ]stricken\\b|\\bthe impoverished\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "low",
+      "label": "Dramatic poverty labels",
+      "why": "Can define people entirely by hardship and invite pity rather than describe material conditions precisely.",
+      "suggestions": [
+        "people living in poverty",
+        "low-income households",
+        "communities facing economic hardship"
+      ]
+    },
+    {
+      "id": "slum-language",
+      "pattern": "\\bslums?\\b|\\bslum[- ]dwellers?\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "low",
+      "label": "“Slum” as a catch-all",
+      "why": "Can stigmatize residents and erase the specific housing, infrastructure, or policy conditions involved.",
+      "suggestions": [
+        "informal settlement (when accurate)",
+        "under-resourced neighborhood",
+        "name the specific housing conditions"
+      ]
+    },
+    {
+      "id": "welfare-dependent",
+      "pattern": "\\bwelfare[- ]dependent\\b|\\bdependent on welfare\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "medium",
+      "label": "“Welfare-dependent”",
+      "why": "Frames receiving public assistance as a personal failing. Name the program or economic circumstance.",
+      "suggestions": [
+        "receives public assistance",
+        "uses [program name]",
+        "household receiving benefits"
+      ]
+    },
+    {
+      "id": "underclass",
+      "pattern": "\\bthe underclass\\b|\\bunderclass (?:people|communities|families)\\b",
+      "matchWholeWord": false,
+      "category": "class",
+      "severity": "medium",
+      "label": "“The underclass”",
+      "why": "Ranks people beneath an assumed social norm and can carry racialized stereotypes.",
+      "suggestions": [
+        "low-income communities",
+        "economically marginalized people",
+        "name the specific group or condition"
+      ]
+    },
+    {
       "id": "elderly-as-burden",
       "pattern": "\\bthe elderly\\b",
       "matchWholeWord": false,
@@ -1456,6 +1555,105 @@
         "high-energy role",
         "fast-paced environment",
         "describe the schedule or physical demands"
+      ]
+    },
+    {
+      "id": "old-people",
+      "pattern": "\\bthe old\\b|\\bold people\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "low",
+      "label": "“The old” / “old people”",
+      "why": "Can reduce older adults to age as a defining trait or use age as a dismissive category.",
+      "suggestions": [
+        "older adults",
+        "older people",
+        "people age [range]"
+      ]
+    },
+    {
+      "id": "over-the-hill",
+      "pattern": "\\bover the hill\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "medium",
+      "label": "“Over the hill”",
+      "why": "Frames aging as decline and people past an arbitrary age as no longer capable or relevant.",
+      "suggestions": [
+        "experienced",
+        "later in their career",
+        "describe the specific concern"
+      ]
+    },
+    {
+      "id": "too-old-to",
+      "pattern": "\\btoo old to\\b|\\btoo old for\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "low",
+      "label": "“Too old to…”",
+      "why": "Often substitutes an age stereotype for an actual requirement or individual preference.",
+      "suggestions": [
+        "name the specific requirement",
+        "ask about the person’s preference or ability",
+        "remove the age assumption"
+      ]
+    },
+    {
+      "id": "geriatric-insult",
+      "pattern": "\\bgeriatric\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "low",
+      "label": "“Geriatric” outside clinical context",
+      "why": "A valid medical specialty term that can become demeaning when used as a synonym for obsolete or incapable.",
+      "suggestions": [
+        "older adult",
+        "geriatric medicine (in clinical context)",
+        "describe what seems outdated"
+      ]
+    },
+    {
+      "id": "silver-tsunami",
+      "pattern": "\\bsilver tsunami\\b|\\bgrey tsunami\\b|\\bgray tsunami\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "medium",
+      "label": "“Silver tsunami”",
+      "why": "Frames population aging and older people as an overwhelming natural disaster or social burden.",
+      "suggestions": [
+        "population aging",
+        "growth in the older-adult population",
+        "demographic change"
+      ]
+    },
+    {
+      "id": "kids-these-days",
+      "pattern": "\\bkids these days\\b|\\byoung people today\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "low",
+      "label": "Generational dismissal",
+      "why": "Can dismiss a broad age group instead of naming a specific behavior, trend, or evidence.",
+      "suggestions": [
+        "name the behavior or trend",
+        "cite the age group and evidence",
+        "avoid generalizing a generation"
+      ]
+    },
+    {
+      "id": "anti-aging",
+      "pattern": "\\banti[- ]aging\\b|\\bage[- ]defying\\b",
+      "matchWholeWord": false,
+      "category": "age",
+      "severity": "low",
+      "label": "“Anti-aging” marketing",
+      "why": "Treats visible aging as a flaw to defeat. Describe the product’s concrete effect without making age the problem.",
+      "suggestions": [
+        "hydrating",
+        "supports skin elasticity",
+        "reduces the appearance of fine lines",
+        "name the specific effect"
       ]
     },
     {
@@ -1739,6 +1937,106 @@
       "suggestions": [
         "main branch",
         "default branch"
+      ]
+    },
+    {
+      "id": "diversity-hire",
+      "pattern": "\\bdiversity hire\\b|\\bdiverse hire\\b|\\bdiversity candidate\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "medium",
+      "label": "“Diversity hire”",
+      "why": "Can reduce someone to a demographic trait and imply they were hired instead of being qualified.",
+      "suggestions": [
+        "name the person’s role and qualifications",
+        "hire from an underrepresented group (when relevant)",
+        "remove the tokenizing label"
+      ]
+    },
+    {
+      "id": "dei-hire",
+      "pattern": "\\bDEI hire\\b|\\baffirmative[- ]action hire\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "high",
+      "label": "“DEI hire” as a put-down",
+      "why": "Often questions a person’s competence by attributing their job only to an inclusion policy.",
+      "suggestions": [
+        "name the actual hiring concern and evidence",
+        "describe the policy without labeling the person",
+        "refer to the person by their role"
+      ]
+    },
+    {
+      "id": "foreign-sounding",
+      "pattern": "\\bforeign[- ]sounding (?:name|accent|voice)\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "medium",
+      "label": "“Foreign-sounding”",
+      "why": "Treats one accent or naming tradition as the local default and others as not belonging.",
+      "suggestions": [
+        "name the language or accent when relevant",
+        "ask how to pronounce the person’s name",
+        "remove the belonging judgment"
+      ]
+    },
+    {
+      "id": "normal-people",
+      "pattern": "\\bnormal people\\b|\\bnormal person\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "low",
+      "label": "“Normal people”",
+      "why": "Can cast disabled, neurodivergent, LGBTQ+, or otherwise marginalized people as abnormal. Name the comparison you mean.",
+      "suggestions": [
+        "most people (if supported)",
+        "people without [specific condition]",
+        "typical in this sample",
+        "name the comparison group"
+      ]
+    },
+    {
+      "id": "minorities-noun",
+      "pattern": "\\bminorities\\b|\\ba minority person\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "low",
+      "label": "“Minorities” as a blanket noun",
+      "why": "Can flatten distinct communities and define people only by numerical or power status.",
+      "suggestions": [
+        "minoritized communities",
+        "underrepresented groups",
+        "name the specific communities"
+      ]
+    },
+    {
+      "id": "clean-cut-candidate",
+      "pattern": "\\bclean[- ]cut (?:candidate|applicant|employee|professional|person)\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "low",
+      "label": "“Clean-cut” hiring language",
+      "why": "Can encode narrow cultural expectations around hair, dress, gender expression, tattoos, and class.",
+      "suggestions": [
+        "follows role-specific safety requirements",
+        "meets the stated dress policy",
+        "remove appearance criteria unrelated to the job"
+      ]
+    },
+    {
+      "id": "real-name",
+      "pattern": "\\b(?:your|their|his|her) real name\\b|\\bwhat(?:'s| is) your real name\\b",
+      "matchWholeWord": false,
+      "category": "general",
+      "severity": "low",
+      "label": "“Real name”",
+      "why": "Can invalidate chosen names, anglicized names, stage names, or names used by trans people. Ask for the specific name type needed.",
+      "suggestions": [
+        "legal name (only when required)",
+        "name you go by",
+        "name on your identification",
+        "preferred display name"
       ]
     }
   ]

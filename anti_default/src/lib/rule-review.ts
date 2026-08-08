@@ -49,11 +49,19 @@ export interface RuleReview {
   reviewedAt?: string;
 }
 
+/** A new rule proposed by a reviewer. It is exported for maintainer review. */
+export interface ProposedRule extends LanguageRule {
+  proposalId: string;
+  reviewerNotes?: string;
+  createdAt: string;
+}
+
 export interface ReviewDoc {
   version: 1;
   reviewer: string;
   updatedAt: string;
   reviews: Record<string, RuleReview>;
+  proposedRules: ProposedRule[];
 }
 
 export const REVIEW_STORAGE_KEY = "anti-default.ruleReview.v1";
@@ -64,6 +72,7 @@ export function emptyReviewDoc(): ReviewDoc {
     reviewer: "",
     updatedAt: new Date().toISOString(),
     reviews: {},
+    proposedRules: [],
   };
 }
 
@@ -144,8 +153,8 @@ export function loadReviewDoc(): ReviewDoc {
   try {
     const raw = window.localStorage.getItem(REVIEW_STORAGE_KEY);
     if (!raw) return emptyReviewDoc();
-    const parsed = JSON.parse(raw) as ReviewDoc;
-    if (parsed && parsed.version === 1 && parsed.reviews) return parsed;
+    const parsed = coerceReviewDoc(JSON.parse(raw));
+    if (parsed) return parsed;
   } catch {
     // fall through to empty
   }
@@ -175,6 +184,9 @@ export function coerceReviewDoc(raw: unknown): ReviewDoc | null {
         ? candidate.updatedAt
         : new Date().toISOString(),
     reviews: candidate.reviews as Record<string, RuleReview>,
+    proposedRules: Array.isArray(candidate.proposedRules)
+      ? (candidate.proposedRules as ProposedRule[])
+      : [],
   };
 }
 
@@ -213,6 +225,7 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
     `- **Date:** ${stamp()}`,
     `- **Reviewed:** ${progress.reviewed} / ${progress.total} rules`,
     `- **Verified:** ${progress.verified} · **Needs changes:** ${progress.needsChanges} · **Rejected:** ${progress.rejected}`,
+    `- **New rules proposed:** ${doc.proposedRules.length}`,
     "",
   ];
 
@@ -266,6 +279,28 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
       lines.push(`- **Reviewer notes:** ${review.notes}`);
     }
     lines.push("");
+  }
+
+  if (doc.proposedRules.length > 0) {
+    lines.push("# Proposed new rules", "");
+    for (const rule of doc.proposedRules) {
+      lines.push(`## ${rule.label}  \`${rule.id}\``);
+      lines.push("");
+      lines.push(`- **Category:** ${CATEGORY_META[rule.category].title}`);
+      lines.push(`- **Severity:** ${rule.severity}`);
+      lines.push(`- **Pattern:** \`/${rule.pattern}/i\``);
+      lines.push(`- **Why:** ${rule.why}`);
+      lines.push(`- **Suggestions:** ${rule.suggestions.join("; ")}`);
+      if (rule.reviewerNotes) {
+        lines.push(`- **Reviewer notes:** ${rule.reviewerNotes}`);
+      }
+      if (rule.sources && rule.sources.length > 0) {
+        lines.push(
+          `- **Sources:** ${rule.sources.map((source) => `${source.title} — ${source.href}`).join("; ")}`,
+        );
+      }
+      lines.push("");
+    }
   }
 
   return lines.join("\n");
