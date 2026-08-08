@@ -8,10 +8,8 @@ import { examplesForRule } from "@/lib/rule-examples";
 import {
   CATEGORY_META,
   CATEGORY_ORDER,
-  SEVERITIES,
   type Category,
   type LanguageRule,
-  type Severity,
 } from "@/lib/types";
 import {
   computeProgress,
@@ -486,7 +484,6 @@ function ReviewRow({
 
   const label = review?.label ?? rule.label;
   const why = review?.why ?? rule.why;
-  const severity = review?.severity ?? rule.severity;
   const suggestionsText = (review?.suggestions ?? rule.suggestions).join("\n");
 
   const setSuggestions = (text: string) => {
@@ -510,6 +507,9 @@ function ReviewRow({
         >
           {label}
         </h3>
+        <code className="text-xs font-[family-name:var(--font-mono)] text-[var(--moss-deep)] break-all">
+          /{rule.pattern}/i
+        </code>
         {edited ? (
           <span className="text-xs px-2 py-0.5 rounded-full bg-[color-mix(in_oklab,var(--teal-deep)_16%,transparent)] text-[var(--teal-deep)]">
             edited
@@ -529,25 +529,10 @@ function ReviewRow({
           ))}
         </p>
       ) : null}
-      <details className="text-xs text-[var(--ink-soft)]">
-        <summary className="cursor-pointer hover:text-[var(--ink)]">
-          Technical matching details
-        </summary>
-        <div className="mt-2 grid gap-1 border-l border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pl-3">
-          <span>
-            Rule ID:{" "}
-            <code className="font-[family-name:var(--font-mono)]">
-              {rule.id}
-            </code>
-          </span>
-          <span>
-            Pattern:{" "}
-            <code className="font-[family-name:var(--font-mono)] break-all">
-              /{rule.pattern}/i
-            </code>
-          </span>
-        </div>
-      </details>
+      <p className="text-xs text-[var(--ink-soft)]">
+        Rule ID:{" "}
+        <code className="font-[family-name:var(--font-mono)]">{rule.id}</code>
+      </p>
 
       <div className="flex flex-wrap gap-2" role="group" aria-label="Review status">
         {REVIEW_STATUS_ORDER.map((s) => {
@@ -585,34 +570,16 @@ function ReviewRow({
         ) : null}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <label className="grid gap-1">
-          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Label
-          </span>
-          <input
-            value={label}
-            onChange={(e) => onUpdate({ label: e.target.value })}
-            className={inputClass}
-          />
-        </label>
-        <label className="grid gap-1">
-          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Severity
-          </span>
-          <select
-            value={severity}
-            onChange={(e) => onUpdate({ severity: e.target.value as Severity })}
-            className={inputClass}
-          >
-            {SEVERITIES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Label
+        </span>
+        <input
+          value={label}
+          onChange={(e) => onUpdate({ label: e.target.value })}
+          className={inputClass}
+        />
+      </label>
 
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
@@ -722,7 +689,6 @@ function AddRuleForm({
   const [phrase, setPhrase] = useState("");
   const [advanced, setAdvanced] = useState(false);
   const [category, setCategory] = useState<Category>("general");
-  const [severity, setSeverity] = useState<Severity>("low");
   const [why, setWhy] = useState("");
   const [suggestions, setSuggestions] = useState("");
   const [notes, setNotes] = useState("");
@@ -761,7 +727,7 @@ function AddRuleForm({
       id: slugify(label) || proposalId,
       pattern,
       category,
-      severity,
+      severity: "low",
       label: label.trim(),
       why: why.trim(),
       suggestions: suggestionList,
@@ -809,40 +775,22 @@ function AddRuleForm({
         />
         Advanced: treat the phrase as a regular expression
       </label>
-      <div className="grid gap-3 md:grid-cols-2">
-        <label className="grid gap-1">
-          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Topic
-          </span>
-          <select
-            value={category}
-            onChange={(event) => setCategory(event.target.value as Category)}
-            className={inputClass}
-          >
-            {CATEGORY_ORDER.map((id) => (
-              <option key={id} value={id}>
-                {CATEGORY_META[id].title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="grid gap-1">
-          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Severity
-          </span>
-          <select
-            value={severity}
-            onChange={(event) => setSeverity(event.target.value as Severity)}
-            className={inputClass}
-          >
-            {SEVERITIES.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Topic
+        </span>
+        <select
+          value={category}
+          onChange={(event) => setCategory(event.target.value as Category)}
+          className={inputClass}
+        >
+          {CATEGORY_ORDER.map((id) => (
+            <option key={id} value={id}>
+              {CATEGORY_META[id].title}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
           Why flag it? *
@@ -987,44 +935,24 @@ function ProposedRuleEditor({
           />
         </label>
       </div>
-      <div className="grid gap-3 md:grid-cols-2">
-        <label className="grid gap-1">
-          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Topic
-          </span>
-          <select
-            value={rule.category}
-            onChange={(event) =>
-              onUpdate({ category: event.target.value as Category })
-            }
-            className={inputClass}
-          >
-            {CATEGORY_ORDER.map((id) => (
-              <option key={id} value={id}>
-                {CATEGORY_META[id].title}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="grid gap-1">
-          <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Severity
-          </span>
-          <select
-            value={rule.severity}
-            onChange={(event) =>
-              onUpdate({ severity: event.target.value as Severity })
-            }
-            className={inputClass}
-          >
-            {SEVERITIES.map((value) => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Topic
+        </span>
+        <select
+          value={rule.category}
+          onChange={(event) =>
+            onUpdate({ category: event.target.value as Category })
+          }
+          className={inputClass}
+        >
+          {CATEGORY_ORDER.map((id) => (
+            <option key={id} value={id}>
+              {CATEGORY_META[id].title}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
           Why this is flagged

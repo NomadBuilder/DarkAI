@@ -36,10 +36,9 @@ export default function AdminPage() {
           Go through all {LANGUAGE_RULES.length} rules. For each one, mark it{" "}
           <strong>verified</strong>, request <strong>changes</strong>, or{" "}
           <strong>reject</strong>
-          {" "}it — and edit the label, severity, rationale, or suggested fixes
-          inline. You can also propose rules we missed. Your work stays in this
-          browser; export it when you&rsquo;re done so the changes can be merged
-          into{" "}
+          {" "}it — and edit the label, rationale, or suggested fixes inline.
+          You can also propose rules we missed. Your work stays in this browser;
+          export it when you&rsquo;re done so the changes can be merged into{" "}
           <code className="font-[family-name:var(--font-mono)] text-sm text-[var(--teal-deep)]">
             src/lib/rules.ts
           </code>

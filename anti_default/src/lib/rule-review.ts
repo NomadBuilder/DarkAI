@@ -1,5 +1,5 @@
 import { LANGUAGE_RULES } from "./rules";
-import type { LanguageRule, Severity } from "./types";
+import type { LanguageRule } from "./types";
 import { CATEGORY_META } from "./types";
 
 /**
@@ -43,7 +43,6 @@ export interface RuleReview {
   status: ReviewStatus;
   label?: string;
   why?: string;
-  severity?: Severity;
   suggestions?: string[];
   notes?: string;
   reviewedAt?: string;
@@ -81,7 +80,6 @@ export function isEdited(rule: LanguageRule, review?: RuleReview): boolean {
   if (!review) return false;
   if (review.label != null && review.label !== rule.label) return true;
   if (review.why != null && review.why !== rule.why) return true;
-  if (review.severity != null && review.severity !== rule.severity) return true;
   if (
     review.suggestions != null &&
     !suggestionsEqual(review.suggestions, rule.suggestions)
@@ -106,7 +104,6 @@ export function effectiveRule(
     ...rule,
     label: review.label ?? rule.label,
     why: review.why ?? rule.why,
-    severity: review.severity ?? rule.severity,
     suggestions: review.suggestions ?? rule.suggestions,
   };
 }
@@ -253,11 +250,6 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
     lines.push(`- **Pattern:** \`/${rule.pattern}/i\``);
     if (isEdited(rule, review)) {
       const next = effectiveRule(rule, review);
-      if (review?.severity != null && review.severity !== rule.severity) {
-        lines.push(
-          `- **Severity:** ${rule.severity} → **${next.severity}**`,
-        );
-      }
       if (review?.label != null && review.label !== rule.label) {
         lines.push(`- **Label:** “${rule.label}” → “${next.label}”`);
       }
@@ -287,7 +279,6 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
       lines.push(`## ${rule.label}  \`${rule.id}\``);
       lines.push("");
       lines.push(`- **Category:** ${CATEGORY_META[rule.category].title}`);
-      lines.push(`- **Severity:** ${rule.severity}`);
       lines.push(`- **Pattern:** \`/${rule.pattern}/i\``);
       lines.push(`- **Why:** ${rule.why}`);
       lines.push(`- **Suggestions:** ${rule.suggestions.join("; ")}`);
