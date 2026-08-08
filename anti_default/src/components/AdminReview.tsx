@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { LANGUAGE_RULES } from "@/lib/rules";
 import { sourcesForRule } from "@/lib/rule-sources";
 import { DOGWHISTLE_BLURBS } from "@/lib/dogwhistle-guide";
+import { examplesForRule } from "@/lib/rule-examples";
 import {
   CATEGORY_META,
   CATEGORY_ORDER,
@@ -479,6 +480,9 @@ function ReviewRow({
   const sources = sourcesForRule(rule);
   const blurb =
     rule.category === "coded" ? DOGWHISTLE_BLURBS[rule.id] : undefined;
+  const examples = blurb
+    ? blurb.looksLike.split(";").map((example) => example.trim())
+    : examplesForRule(rule);
 
   const label = review?.label ?? rule.label;
   const why = review?.why ?? rule.why;
@@ -506,18 +510,44 @@ function ReviewRow({
         >
           {label}
         </h3>
-        <code className="text-xs font-[family-name:var(--font-mono)] text-[var(--moss-deep)] break-all">
-          /{rule.pattern}/i
-        </code>
-        <span className="text-xs font-[family-name:var(--font-mono)] text-[var(--ink-soft)]">
-          {rule.id}
-        </span>
         {edited ? (
           <span className="text-xs px-2 py-0.5 rounded-full bg-[color-mix(in_oklab,var(--teal-deep)_16%,transparent)] text-[var(--teal-deep)]">
             edited
           </span>
         ) : null}
       </div>
+      {examples.length > 0 ? (
+        <p className="text-sm text-[var(--ink-soft)]">
+          <span className="font-medium text-[var(--moss-deep)]">
+            Flags text like:
+          </span>{" "}
+          {examples.map((example, index) => (
+            <span key={example}>
+              {index > 0 ? " · " : null}
+              <q>{example}</q>
+            </span>
+          ))}
+        </p>
+      ) : null}
+      <details className="text-xs text-[var(--ink-soft)]">
+        <summary className="cursor-pointer hover:text-[var(--ink)]">
+          Technical matching details
+        </summary>
+        <div className="mt-2 grid gap-1 border-l border-[color-mix(in_oklab,var(--ink)_12%,transparent)] pl-3">
+          <span>
+            Rule ID:{" "}
+            <code className="font-[family-name:var(--font-mono)]">
+              {rule.id}
+            </code>
+          </span>
+          <span>
+            Pattern:{" "}
+            <code className="font-[family-name:var(--font-mono)] break-all">
+              /{rule.pattern}/i
+            </code>
+          </span>
+        </div>
+      </details>
 
       <div className="flex flex-wrap gap-2" role="group" aria-label="Review status">
         {REVIEW_STATUS_ORDER.map((s) => {
@@ -948,7 +978,7 @@ function ProposedRuleEditor({
         </label>
         <label className="grid gap-1">
           <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-            Pattern
+            Matching pattern (advanced)
           </span>
           <input
             value={rule.pattern}
