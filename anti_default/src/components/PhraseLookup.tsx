@@ -5,7 +5,7 @@ import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import { LOOKUP_EXAMPLES, lookupPhrase } from "@/lib/lookup";
 import {
   compactSourceName,
-  sourcesForRuleId,
+  sourceContextForRuleId,
 } from "@/lib/rule-sources";
 import { CATEGORY_META } from "@/lib/types";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
@@ -104,7 +104,10 @@ export function PhraseLookup() {
       {avoidHits.length > 0 ? (
         <div className="grid gap-6">
           {avoidHits.map((hit) => {
-            const sources = sourcesForRuleId(hit.ruleId, hit.category);
+            const sources = sourceContextForRuleId(
+              hit.ruleId,
+              hit.category,
+            ).evidence;
             const badges = [
               ...new Map(
                 sources.map((s) => [compactSourceName(s.title), s] as const),

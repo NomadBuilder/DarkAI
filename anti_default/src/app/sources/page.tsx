@@ -45,8 +45,12 @@ export default function SourcesPage() {
           .
         </p>
         <p className="text-sm text-[var(--ink-soft)] max-w-2xl mb-12 leading-relaxed">
-          Links point to living documents; wording on those sites may change.
-          Prefer the community’s own guidance when it differs from ours.
+          On individual rules, <strong>Evidence for this rule</strong> means the
+          linked material addresses a specific claim.{" "}
+          <strong>Background reading</strong> provides context but is not proof,
+          and <strong>Contested</strong> marks a genuine framing dispute. Links
+          point to living documents; prefer the community&rsquo;s own guidance
+          when it differs from ours.
         </p>
 
         <div className="grid gap-12">

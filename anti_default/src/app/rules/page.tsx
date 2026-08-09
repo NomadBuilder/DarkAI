@@ -39,7 +39,9 @@ export default function RulesPage() {
           <code className="font-[family-name:var(--font-mono)] text-sm text-[var(--teal-deep)]">
             src/lib/rules.ts
           </code>
-          . Each rule footnotes the style guides it draws from — see{" "}
+          . Rule-specific links are shown only when evidence has been attached
+          directly; broader reading is kept separate so it cannot masquerade as
+          proof. See{" "}
           <Link
             href="/sources"
             className="text-[var(--teal-deep)] underline underline-offset-2"

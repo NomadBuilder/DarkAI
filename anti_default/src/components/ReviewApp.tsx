@@ -19,7 +19,7 @@ import {
 } from "@/lib/feedback";
 import {
   compactSourceName,
-  sourcesForRuleId,
+  sourceContextForRuleId,
 } from "@/lib/rule-sources";
 import {
   applyPassageRewrites,
@@ -847,7 +847,7 @@ function FindingRow({
     lane === "inclusive" && chosen ? previewRewrite(finding, chosen) : null;
   const sources =
     lane === "coded"
-      ? sourcesForRuleId(finding.ruleId, finding.category)
+      ? sourceContextForRuleId(finding.ruleId, finding.category).evidence
       : [];
   const badges = [
     ...new Map(

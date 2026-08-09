@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { LANGUAGE_RULES } from "@/lib/rules";
-import { sourcesForRule } from "@/lib/rule-sources";
+import { sourceContextForRule } from "@/lib/rule-sources";
 import { DOGWHISTLE_BLURBS } from "@/lib/dogwhistle-guide";
 import { examplesForRule } from "@/lib/rule-examples";
 import {
@@ -28,7 +28,7 @@ import {
   type RuleReview,
 } from "@/lib/rule-review";
 
-type StatusFilter = "all" | ReviewStatus | "edited";
+type StatusFilter = "all" | ReviewStatus | "edited" | "research_issues";
 
 const inputClass =
   "w-full bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-3 py-2 outline-none focus:border-[var(--moss)] text-sm";
@@ -158,6 +158,14 @@ export function AdminReview() {
       const review = doc.reviews[rule.id];
       if (statusFilter === "edited") {
         if (!isEdited(rule, review)) return false;
+      } else if (statusFilter === "research_issues") {
+        if (
+          !review?.sourceProblem &&
+          !review?.framingProblem &&
+          !review?.needsResearch
+        ) {
+          return false;
+        }
       } else if (statusFilter !== "all") {
         const status = review?.status ?? "pending";
         if (status !== statusFilter) return false;
@@ -302,6 +310,7 @@ export function AdminReview() {
             <option value="needs_changes">Needs changes</option>
             <option value="rejected">Rejected</option>
             <option value="edited">Edited</option>
+            <option value="research_issues">Source / research issues</option>
           </select>
         </label>
       </div>
@@ -475,7 +484,7 @@ function ReviewRow({
 }) {
   const status: ReviewStatus = review?.status ?? "pending";
   const edited = isEdited(rule, review);
-  const sources = sourcesForRule(rule);
+  const sourceContext = sourceContextForRule(rule);
   const blurb =
     rule.category === "coded" ? DOGWHISTLE_BLURBS[rule.id] : undefined;
   const examples = blurb
@@ -559,7 +568,12 @@ function ReviewRow({
             </button>
           );
         })}
-        {(status !== "pending" || edited || review?.notes) ? (
+        {status !== "pending" ||
+        edited ||
+        review?.notes ||
+        review?.sourceProblem ||
+        review?.framingProblem ||
+        review?.needsResearch ? (
           <button
             type="button"
             onClick={onReset}
@@ -639,28 +653,114 @@ function ReviewRow({
         </details>
       ) : null}
 
-      {sources.length > 0 ? (
-        <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+      <fieldset className="grid gap-2">
+        <legend className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          Research concerns
+        </legend>
+        <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--ink-soft)]">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={review?.sourceProblem ?? false}
+              onChange={(event) =>
+                onUpdate({ sourceProblem: event.target.checked })
+              }
+            />
+            Source problem
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={review?.framingProblem ?? false}
+              onChange={(event) =>
+                onUpdate({ framingProblem: event.target.checked })
+              }
+            />
+            Framing problem
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={review?.needsResearch ?? false}
+              onChange={(event) =>
+                onUpdate({ needsResearch: event.target.checked })
+              }
+            />
+            Needs research
+          </label>
+        </div>
+      </fieldset>
+
+      <div className="grid gap-2 border-t border-[color-mix(in_oklab,var(--ink)_8%,transparent)] pt-3 text-xs text-[var(--ink-soft)]">
+        {sourceContext.hasDirectEvidence ? (
+          <SourceLinks
+            label="Evidence for this rule"
+            sources={sourceContext.evidence}
+          />
+        ) : (
+          <p className="font-medium text-[var(--coral)]">
+            No direct evidence linked yet
+          </p>
+        )}
+        {sourceContext.contested.length > 0 ? (
+          <SourceLinks
+            label="Contested or context-dependent"
+            sources={sourceContext.contested}
+          />
+        ) : null}
+        {sourceContext.background.length > 0 ? (
+          <details>
+            <summary className="cursor-pointer text-[var(--ink-soft)] hover:text-[var(--ink)]">
+              Background reading for this topic
+            </summary>
+            <SourceLinks
+              sources={sourceContext.background}
+              className="mt-2 pl-3 border-l border-[color-mix(in_oklab,var(--ink)_12%,transparent)]"
+            />
+          </details>
+        ) : null}
+      </div>
+    </li>
+  );
+}
+
+function SourceLinks({
+  label,
+  sources,
+  className = "",
+}: {
+  label?: string;
+  sources: ReturnType<typeof sourceContextForRule>["evidence"];
+  className?: string;
+}) {
+  return (
+    <p className={`leading-relaxed ${className}`}>
+      {label ? (
+        <>
           <span className="uppercase tracking-wider text-[var(--moss)]">
-            Sources
+            {label}
           </span>
           {" · "}
-          {sources.map((s, i) => (
-            <span key={s.href + s.title}>
-              {i > 0 ? " · " : null}
-              <a
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
-              >
-                {s.title}
-              </a>
-            </span>
-          ))}
-        </p>
+        </>
       ) : null}
-    </li>
+      {sources.map((source, index) => (
+        <span key={source.href + source.title}>
+          {index > 0 ? " · " : null}
+          <a
+            href={source.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+          >
+            {source.title}
+          </a>
+          {source.supports ? (
+            <span> — supports: {source.supports}</span>
+          ) : null}
+          {source.note ? <span> ({source.note})</span> : null}
+        </span>
+      ))}
+    </p>
   );
 }
 
@@ -694,6 +794,7 @@ function AddRuleForm({
   const [notes, setNotes] = useState("");
   const [sourceTitle, setSourceTitle] = useState("");
   const [sourceUrl, setSourceUrl] = useState("");
+  const [sourceSupports, setSourceSupports] = useState("");
   const [error, setError] = useState("");
 
   const submit = () => {
@@ -734,7 +835,14 @@ function AddRuleForm({
       reviewerNotes: notes.trim() || undefined,
       sources:
         sourceTitle.trim() && sourceUrl.trim()
-          ? [{ title: sourceTitle.trim(), href: sourceUrl.trim() }]
+          ? [
+              {
+                title: sourceTitle.trim(),
+                href: sourceUrl.trim(),
+                role: "evidence",
+                supports: sourceSupports.trim() || undefined,
+              },
+            ]
           : undefined,
       defaultSoft: true,
       createdAt: now,
@@ -767,6 +875,17 @@ function AddRuleForm({
           />
         </label>
       </div>
+      <label className="grid gap-1">
+        <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
+          What specific claim does this source support?
+        </span>
+        <input
+          value={sourceSupports}
+          onChange={(event) => setSourceSupports(event.target.value)}
+          placeholder="e.g. recommends naming the specific nation rather than using a catch-all"
+          className={inputClass}
+        />
+      </label>
       <label className="flex items-center gap-2 text-xs text-[var(--ink-soft)]">
         <input
           type="checkbox"

@@ -36,6 +36,7 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Old World”",
     why: "Reinforces a Eurocentric map of history as the default timeline.",
     suggestions: ["Europe, Africa, and Asia", "Afro-Eurasia", "name the regions"],
+    defaultSoft: true,
   },
   {
     id: "third-world",
@@ -45,9 +46,10 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Third World”",
     why: "Cold War hierarchy that ranks countries as behind a Western “first.”",
     suggestions: [
-      "Global South",
-      "low- and middle-income countries",
-      "name the specific regions or countries",
+      "name the specific countries or regions",
+      "countries subjected to colonial extraction (when that relationship is the point)",
+      "imperial core / periphery (when using that analytical framework)",
+      "low- and middle-income countries (only when income is the measure)",
     ],
   },
   {
@@ -57,7 +59,12 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     severity: "medium",
     label: "“First World”",
     why: "Implies Western nations are the developmental default.",
-    suggestions: ["high-income countries", "Global North", "name the countries"],
+    suggestions: [
+      "name the specific countries",
+      "wealthy former colonial powers (when historically accurate)",
+      "imperial core (when using that analytical framework)",
+      "high-income countries (only when income is the measure)",
+    ],
   },
   {
     id: "developing-country",
@@ -67,9 +74,9 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Developing” countries",
     why: "Implies a single Western path of “development.” Use more precise economic or geographic terms when possible.",
     suggestions: [
-      "low- and middle-income countries",
-      "countries with emerging economies",
-      "name the region or country",
+      "name the countries and the specific change being discussed",
+      "countries shaped by colonial extraction (when relevant)",
+      "low- and middle-income countries (only when income is the measure)",
     ],
   },
   {
@@ -80,9 +87,10 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Underdeveloped”",
     why: "Ranks societies against a Western industrial ideal.",
     suggestions: [
-      "low-income",
-      "describe the specific infrastructure or resource gap",
       "name the place",
+      "describe the specific infrastructure or resource gap",
+      "describe the extraction or power relationship when that is the point",
+      "low-income (only when income is the measure)",
     ],
   },
   {
@@ -134,6 +142,7 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "Generic “tribe”",
     why: "Often applied loosely to Indigenous or African peoples in ways that flatten political complexity. Prefer the community’s own terms when known.",
     suggestions: ["nation", "people", "community", "use the specific nation’s name"],
+    defaultSoft: true,
   },
   {
     id: "exotic",
@@ -143,6 +152,7 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Exotic”",
     why: "Othering framing that treats people or cultures as curiosities relative to a Western norm.",
     suggestions: ["distinctive", "unfamiliar to [audience]", "name the culture or place"],
+    defaultSoft: true,
   },
   {
     id: "oriental-people",
@@ -159,8 +169,13 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     category: "colonial",
     severity: "high",
     label: "“Eskimo”",
-    why: "Often considered pejorative; many prefer Inuit, Yupik, or the specific nation’s name.",
-    suggestions: ["Inuit", "Yupik", "use the community’s own name"],
+    why: "The Inuit Circumpolar Council asks institutions to use Inuit, but communities are distinct and some people or organizations retain regional usage. Check identity rather than replacing mechanically.",
+    suggestions: [
+      "Inuit (when referring to Inuit)",
+      "Yup’ik / Iñupiat / the specific community’s name",
+      "ask or follow community self-identification",
+    ],
+    defaultSoft: true,
   },
   {
     id: "pow-wow-metaphor",
@@ -213,8 +228,9 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     category: "colonial",
     severity: "low",
     label: "“Guru” as casual title",
-    why: "A sacred role in South Asian traditions; casual workplace use can feel extractive.",
+    why: "Guru carries sacred significance in Sikh, Hindu, Buddhist, and Jain traditions, but also has broader teacher/expert usage in Indic contexts. A precision heads-up, not a universal prohibition.",
     suggestions: ["expert", "guide", "specialist", "mentor"],
+    defaultSoft: true,
   },
   {
     id: "native-speaker-only",
@@ -231,7 +247,8 @@ export const LANGUAGE_RULES: LanguageRule[] = [
   },
   {
     id: "mother-tongue-gate",
-    pattern: "\\bmother tongue must be\\b|\\bmother[- ]tongue(?:\\s+english)?\\b",
+    pattern:
+      "\\bmother tongue (?:must|should) be (?:english|[a-z]+)\\b|\\b(?:english|[a-z]+) (?:as )?(?:a |your )?mother tongue (?:required|preferred|only)\\b|\\bmother[- ]tongue (?:english|[a-z]+) (?:required|preferred|only)\\b",
     category: "colonial",
     severity: "medium",
     label: "Mother-tongue gatekeeping",
@@ -241,6 +258,7 @@ export const LANGUAGE_RULES: LanguageRule[] = [
       "professional proficiency in…",
       "strong written and spoken English",
     ],
+    defaultSoft: true,
   },
   {
     id: "virgin-land",
@@ -272,6 +290,7 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     label: "“Colonize” as casual metaphor",
     why: "Using colonization as a cute synonym for “expand into” can trivialize historical violence. Keep when discussing actual colonialism.",
     suggestions: ["expand into", "enter", "open in", "build presence in"],
+    defaultSoft: true,
   },
 
   // ── Gender ──────────────────────────────────────────────────────────

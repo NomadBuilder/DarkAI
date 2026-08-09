@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { LANGUAGE_RULES } from "@/lib/rules";
-import { sourcesForRule } from "@/lib/rule-sources";
+import { sourceContextForRule } from "@/lib/rule-sources";
 import { useRulePreferences } from "@/hooks/useRulePreferences";
 import {
   CATEGORY_META,
@@ -63,7 +63,8 @@ export function RulesStudio() {
           </p>
           <p className="text-sm text-[var(--ink-soft)] mt-1 max-w-xl">
             Turn rules on or off for your reviews. Changes save in this browser.
-            Each rule links to the style guides that informed it.
+            Rule-specific evidence appears only when it has been directly
+            attached; broader background reading stays separate.
           </p>
         </div>
         <button
@@ -137,7 +138,7 @@ export function RulesStudio() {
             <ul className="grid gap-4">
               {rules.map((rule) => {
                 const enabled = preferences[rule.id]?.enabled !== false;
-                const sources = sourcesForRule(rule);
+                const sourceContext = sourceContextForRule(rule);
 
                 return (
                   <li
@@ -178,13 +179,34 @@ export function RulesStudio() {
                         <span className="text-[var(--ink-soft)]">Try: </span>
                         {rule.suggestions.join(" · ")}
                       </p>
-                      {sources.length > 0 ? (
+                      {sourceContext.evidence.length > 0 ? (
                         <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
                           <span className="uppercase tracking-wider text-[var(--moss)]">
-                            Sources
+                            Rule-specific evidence
                           </span>
                           {" · "}
-                          {sources.map((s, i) => (
+                          {sourceContext.evidence.map((s, i) => (
+                            <span key={s.href + s.title}>
+                              {i > 0 ? " · " : null}
+                              <a
+                                href={s.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+                              >
+                                {s.title}
+                              </a>
+                            </span>
+                          ))}
+                        </p>
+                      ) : null}
+                      {sourceContext.contested.length > 0 ? (
+                        <p className="text-xs text-[var(--ink-soft)] leading-relaxed">
+                          <span className="uppercase tracking-wider text-[var(--ochre)]">
+                            Contested / context-dependent
+                          </span>
+                          {" · "}
+                          {sourceContext.contested.map((s, i) => (
                             <span key={s.href + s.title}>
                               {i > 0 ? " · " : null}
                               <a

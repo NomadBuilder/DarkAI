@@ -11,10 +11,16 @@ export type Category =
 
 export type Severity = "high" | "medium" | "low";
 
-/** Link to a style-guide entry that informed this rule. */
+export type RuleSourceRole = "evidence" | "background" | "contested";
+
+/** A reference connected to a rule, with its evidentiary role made explicit. */
 export interface RuleSourceRef {
   title: string;
   href: string;
+  role?: RuleSourceRole;
+  /** The specific claim this source supports; avoids implying it proves the whole rule. */
+  supports?: string;
+  note?: string;
 }
 
 export interface LanguageRule {

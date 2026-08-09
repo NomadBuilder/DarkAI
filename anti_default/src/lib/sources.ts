@@ -20,7 +20,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
     id: "how",
     title: "How the list was built",
     summary:
-      "Anti-Default’s rules were curated from inclusive-language guidance — style guides, journalism handbooks, disability and LGBTQ+ media guides, tech writing norms — plus a small set of widely documented dogwhistles so people can notice coded language they may repeat without knowing. It is a starting set you can tune, not an official standard.",
+      "Anti-Default separates direct evidence for an individual rule from broader background reading. A category guide is never treated as proof for every rule in that category. References may also be labeled contested when they document a real debate rather than a settled recommendation.",
     links: [],
   },
   {
@@ -109,22 +109,42 @@ export const SOURCE_GROUPS: SourceGroup[] = [
     id: "colonial",
     title: "Colonial & Eurocentric",
     summary:
-      "Discovery myths, Third World hierarchies, and casual appropriation of Indigenous terms.",
+      "Discovery myths, development hierarchies, colonial power, and casual appropriation of Indigenous terms. We prioritize Indigenous-led guidance and sources that name exploitation—not institutional prestige.",
     links: [
       {
-        title: "Native American Journalists Association — resources",
-        href: "https://najanewsroom.com/",
-        note: "Indigenous naming, accuracy, and media practice",
+        title: "Indigenous Journalists Association — Reporting and Indigenous Terminology Guide",
+        href: "https://indigenousjournalists.org/wp-content/uploads/2023/06/NAJA_Reporting_and_Indigenous_Terminology_Guide.pdf",
+        note: "Indigenous-led guidance on nation-specific naming, accuracy, identity, and political status",
       },
       {
-        title: "Conscious Style Guide — Indigenous & colonial language",
-        href: "https://consciousstyleguide.com/",
-        note: "discovery framing, appropriation metaphors (powwow, spirit animal, etc.)",
+        title: "Wabanaki Alliance — Media & Style Guide",
+        href: "https://wabanakialliance.com/style-guide/",
+        note: "Indigenous-led guidance that explicitly privileges Wabanaki perspective and expertise",
       },
       {
-        title: "World Bank / development language (income & region terms)",
-        href: "https://blogs.worldbank.org/en/opendata/new-world-bank-country-classifications-income-level",
-        note: "preference for precise income/region labels over “Third World”",
+        title: "Scotland’s International Development Alliance — Inclusive Language Guide",
+        href: "https://intdevalliance.scot/wp-content/uploads/2024/02/Scotlands-International-Development-Alliance-Inclusive-Language-Guide-February-2024.pdf",
+        note: "Connects first/third world and development labels to hierarchy, exploitation, and colonial power",
+      },
+      {
+        title: "MSF Anti-Racism Project — Equitable and Inclusive Language",
+        href: "https://antiracismproject.msf.mx/assets/files/GuidelinesToEquitableAndInclusiveLanguage.pdf",
+        note: "Warns against reductive development and Global South labels; recommends naming places and material conditions",
+      },
+      {
+        title: "ALNAP — Use of language",
+        href: "https://alnap.org/policies/glossary/",
+        note: "Treats Global North/South as contested relational terms that can expose—or flatten—colonial power",
+      },
+      {
+        title: "Inuit Circumpolar Council — Resolution on the use of Inuit",
+        href: "https://www.inuitcircumpolar.com/wp-content/uploads/2019/01/iccexcouncilresolutiononterminuit.pdf",
+        note: "An Inuit-led resolution calling for Inuit rather than Eskimo in research and public documents",
+      },
+      {
+        title: "Survival International — Proud, not primitive",
+        href: "https://survivalinternational.org/stampitout",
+        note: "Connects primitive, savage, and civilized hierarchies to persecution and forced development",
       },
     ],
   },

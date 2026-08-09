@@ -45,6 +45,9 @@ export interface RuleReview {
   why?: string;
   suggestions?: string[];
   notes?: string;
+  sourceProblem?: boolean;
+  framingProblem?: boolean;
+  needsResearch?: boolean;
   reviewedAt?: string;
 }
 
@@ -270,6 +273,14 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
     if (review?.notes) {
       lines.push(`- **Reviewer notes:** ${review.notes}`);
     }
+    const concerns = [
+      review?.sourceProblem ? "source problem" : null,
+      review?.framingProblem ? "framing problem" : null,
+      review?.needsResearch ? "needs research" : null,
+    ].filter(Boolean);
+    if (concerns.length > 0) {
+      lines.push(`- **Research concerns:** ${concerns.join("; ")}`);
+    }
     lines.push("");
   }
 
@@ -287,7 +298,14 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
       }
       if (rule.sources && rule.sources.length > 0) {
         lines.push(
-          `- **Sources:** ${rule.sources.map((source) => `${source.title} — ${source.href}`).join("; ")}`,
+          `- **Sources:** ${rule.sources
+            .map(
+              (source) =>
+                `${source.title} — ${source.href}${
+                  source.supports ? ` (supports: ${source.supports})` : ""
+                }`,
+            )
+            .join("; ")}`,
         );
       }
       lines.push("");
