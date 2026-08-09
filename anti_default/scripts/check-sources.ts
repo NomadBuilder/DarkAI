@@ -4,6 +4,7 @@ import {
   ruleSourceMappingIds,
   sourceContextForRule,
 } from "../src/lib/rule-sources";
+import { SOURCE_GROUPS } from "../src/lib/sources";
 
 const ruleIds = new Set(LANGUAGE_RULES.map((rule) => rule.id));
 const staleMappings = ruleSourceMappingIds().filter((id) => !ruleIds.has(id));
@@ -18,7 +19,7 @@ const colonialUnclear = colonial.filter((rule) => {
   const context = sourceContextForRule(rule);
   return !context.hasDirectEvidence && context.contested.length === 0;
 });
-const colonialEvidenceWithoutClaim = colonial.flatMap((rule) =>
+const evidenceWithoutClaim = LANGUAGE_RULES.flatMap((rule) =>
   sourceContextForRule(rule).evidence
     .filter((source) => !source.supports)
     .map((source) => `${rule.id}: ${source.title}`),
@@ -29,6 +30,23 @@ const worldBankReferences = LANGUAGE_RULES.flatMap((rule) => {
     .filter((source) => /world bank|worldbank/i.test(source.title + source.href))
     .map((source) => `${rule.id}: ${source.title}`);
 });
+const weakSourcePattern =
+  /rationalwiki|reddit\.com|indiecator|conspiracychart/i;
+const weakRuleReferences = LANGUAGE_RULES.flatMap((rule) => {
+  const context = sourceContextForRule(rule);
+  return [...context.evidence, ...context.contested, ...context.background]
+    .filter((source) =>
+      weakSourcePattern.test(`${source.title} ${source.href}`),
+    )
+    .map((source) => `${rule.id}: ${source.title}`);
+});
+const weakPublicReferences = SOURCE_GROUPS.flatMap((group) =>
+  group.links
+    .filter((source) =>
+      weakSourcePattern.test(`${source.title} ${source.href}`),
+    )
+    .map((source) => `${group.id}: ${source.title}`),
+);
 
 console.log(
   `Source audit: ${LANGUAGE_RULES.length - missing.length}/${LANGUAGE_RULES.length} rules have direct evidence.`,
@@ -46,14 +64,22 @@ const errors: string[] = [];
 if (staleMappings.length > 0) {
   errors.push(`source mappings reference unknown rule IDs: ${staleMappings.join(", ")}`);
 }
-if (colonialEvidenceWithoutClaim.length > 0) {
+if (evidenceWithoutClaim.length > 0) {
   errors.push(
-    `Colonial evidence missing a specific “supports” claim:\n- ${colonialEvidenceWithoutClaim.join("\n- ")}`,
+    `Rule evidence missing a specific “supports” claim:\n- ${evidenceWithoutClaim.join("\n- ")}`,
   );
 }
 if (worldBankReferences.length > 0) {
   errors.push(
     `World Bank references remain attached as rule evidence:\n- ${worldBankReferences.join("\n- ")}`,
+  );
+}
+if (weakRuleReferences.length > 0 || weakPublicReferences.length > 0) {
+  errors.push(
+    `Editable, crowdsourced, or personal references remain in the source model:\n- ${[
+      ...weakRuleReferences,
+      ...weakPublicReferences,
+    ].join("\n- ")}`,
   );
 }
 if (colonialWithEvidence.length < 22) {

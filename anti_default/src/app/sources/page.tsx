@@ -46,7 +46,10 @@ export default function SourcesPage() {
         </p>
         <p className="text-sm text-[var(--ink-soft)] max-w-2xl mb-12 leading-relaxed">
           On individual rules, <strong>Evidence for this rule</strong> means the
-          linked material addresses a specific claim.{" "}
+          linked material addresses a specific claim. It does not mean every
+          suggested rewrite is automatically more inclusive. The original
+          wording and each proposed alternative must be reviewed separately for
+          audience, meaning, power, and context.{" "}
           <strong>Background reading</strong> provides context but is not proof,
           and <strong>Contested</strong> marks a genuine framing dispute. Links
           point to living documents; prefer the community&rsquo;s own guidance

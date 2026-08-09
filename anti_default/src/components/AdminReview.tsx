@@ -162,6 +162,7 @@ export function AdminReview() {
         if (
           !review?.sourceProblem &&
           !review?.framingProblem &&
+          !review?.replacementProblem &&
           !review?.needsResearch
         ) {
           return false;
@@ -573,6 +574,7 @@ function ReviewRow({
         review?.notes ||
         review?.sourceProblem ||
         review?.framingProblem ||
+        review?.replacementProblem ||
         review?.needsResearch ? (
           <button
             type="button"
@@ -609,7 +611,12 @@ function ReviewRow({
 
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-          Suggested fixes (one per line)
+          Context-sensitive alternatives (one per line)
+        </span>
+        <span className="text-xs text-[var(--ink-soft)]">
+          These are options to evaluate—not automatic fixes. Check that each one
+          preserves the intended meaning and improves the framing for this
+          audience.
         </span>
         <textarea
           value={suggestionsText}
@@ -677,6 +684,16 @@ function ReviewRow({
               }
             />
             Framing problem
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={review?.replacementProblem ?? false}
+              onChange={(event) =>
+                onUpdate({ replacementProblem: event.target.checked })
+              }
+            />
+            Alternative is unsupported or not actually better
           </label>
           <label className="flex items-center gap-2">
             <input
@@ -755,7 +772,7 @@ function SourceLinks({
             {source.title}
           </a>
           {source.supports ? (
-            <span> — supports: {source.supports}</span>
+            <span> — specific claim: {source.supports}</span>
           ) : null}
           {source.note ? <span> ({source.note})</span> : null}
         </span>
@@ -821,6 +838,17 @@ function AddRuleForm({
       setError("The source URL must begin with http:// or https://.");
       return;
     }
+    const hasAnySourceField =
+      sourceTitle.trim() || sourceUrl.trim() || sourceSupports.trim();
+    if (
+      hasAnySourceField &&
+      (!sourceTitle.trim() || !sourceUrl.trim() || !sourceSupports.trim())
+    ) {
+      setError(
+        "To attach evidence, add its title, URL, and the exact flag or alternative it supports.",
+      );
+      return;
+    }
     const now = new Date().toISOString();
     const proposalId = `proposal-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
     onAdd({
@@ -840,7 +868,7 @@ function AddRuleForm({
                 title: sourceTitle.trim(),
                 href: sourceUrl.trim(),
                 role: "evidence",
-                supports: sourceSupports.trim() || undefined,
+                supports: sourceSupports.trim(),
               },
             ]
           : undefined,
@@ -877,12 +905,12 @@ function AddRuleForm({
       </div>
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-          What specific claim does this source support?
+          What exact flag or alternative does this source support?
         </span>
         <input
           value={sourceSupports}
           onChange={(event) => setSourceSupports(event.target.value)}
-          placeholder="e.g. recommends naming the specific nation rather than using a catch-all"
+          placeholder="e.g. recommends naming the specific nation; does not support swapping every use mechanically"
           className={inputClass}
         />
       </label>
@@ -924,7 +952,11 @@ function AddRuleForm({
       </label>
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-          Suggested fixes — one per line *
+          Context-sensitive alternatives — one per line *
+        </span>
+        <span className="text-xs text-[var(--ink-soft)]">
+          Add only options whose meaning and framing you can defend. “Name the
+          specific group or condition” is often safer than a universal swap.
         </span>
         <textarea
           value={suggestions}
@@ -1085,7 +1117,7 @@ function ProposedRuleEditor({
       </label>
       <label className="grid gap-1">
         <span className="text-xs uppercase tracking-wider text-[var(--moss)]">
-          Suggested fixes — one per line
+          Context-sensitive alternatives — one per line
         </span>
         <textarea
           value={rule.suggestions.join("\n")}

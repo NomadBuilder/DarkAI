@@ -176,7 +176,9 @@ export function RulesStudio() {
                         {rule.why}
                       </p>
                       <p className="text-sm text-[var(--moss-deep)]">
-                        <span className="text-[var(--ink-soft)]">Try: </span>
+                        <span className="text-[var(--ink-soft)]">
+                          Context-sensitive options (not automatic swaps):{" "}
+                        </span>
                         {rule.suggestions.join(" · ")}
                       </p>
                       {sourceContext.evidence.length > 0 ? (
@@ -196,6 +198,9 @@ export function RulesStudio() {
                               >
                                 {s.title}
                               </a>
+                              {s.supports ? (
+                                <span> — {s.supports}</span>
+                              ) : null}
                             </span>
                           ))}
                         </p>
@@ -217,6 +222,9 @@ export function RulesStudio() {
                               >
                                 {s.title}
                               </a>
+                              {s.supports ? (
+                                <span> — {s.supports}</span>
+                              ) : null}
                             </span>
                           ))}
                         </p>

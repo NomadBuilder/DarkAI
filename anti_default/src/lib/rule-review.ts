@@ -47,6 +47,7 @@ export interface RuleReview {
   notes?: string;
   sourceProblem?: boolean;
   framingProblem?: boolean;
+  replacementProblem?: boolean;
   needsResearch?: boolean;
   reviewedAt?: string;
 }
@@ -276,6 +277,9 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
     const concerns = [
       review?.sourceProblem ? "source problem" : null,
       review?.framingProblem ? "framing problem" : null,
+      review?.replacementProblem
+        ? "suggested alternative is unsupported or not better"
+        : null,
       review?.needsResearch ? "needs research" : null,
     ].filter(Boolean);
     if (concerns.length > 0) {

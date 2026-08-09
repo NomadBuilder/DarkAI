@@ -41,7 +41,9 @@ export default function RulesPage() {
           </code>
           . Rule-specific links are shown only when evidence has been attached
           directly; broader reading is kept separate so it cannot masquerade as
-          proof. See{" "}
+          proof. Suggested alternatives are prompts for contextual rewriting,
+          not universal substitutions; evidence for a flag does not
+          automatically validate every alternative. See{" "}
           <Link
             href="/sources"
             className="text-[var(--teal-deep)] underline underline-offset-2"

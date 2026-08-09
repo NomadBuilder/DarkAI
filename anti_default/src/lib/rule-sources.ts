@@ -609,22 +609,36 @@ const BY_ID: Partial<Record<string, RuleSourceRef[]>> = {
     },
   ],
   "master-slave": [
-    { title: "GitHub — Renaming default branch from master", href: S.githubMain },
-    { title: "Conscious Style Guide — tech metaphors", href: S.csg },
+    {
+      title: "GitHub — Renaming default branch from master",
+      href: S.githubMain,
+      role: "contested",
+      supports:
+        "documents one major platform’s move from master to main; it does not by itself prove every technical master/slave usage has the same context",
+    },
   ],
   "master-branch": [
-    { title: "GitHub — Renaming default branch from master", href: S.githubMain },
-  ],
-  "whitelist-blacklist": [
-    { title: "Conscious Style Guide — whitelist/blacklist", href: S.csg },
+    {
+      title: "GitHub — Renaming default branch from master",
+      href: S.githubMain,
+      supports:
+        "documents GitHub’s default-branch change and recommends main for new repositories",
+    },
   ],
   grandfathered: [
-    { title: "Conscious Style Guide", href: S.csg },
+    {
+      title: "DC Office of Human Rights — Words Matter",
+      href: S.dcWords,
+      supports:
+        "provides historical context for grandfather clause and recommends precise alternatives such as legacy status",
+    },
   ],
   "illegal-alien": [
     {
       title: "AP — ‘Illegal immigrant’ no more",
       href: S.apIllegal,
+      supports:
+        "recommends describing a person’s action or legal circumstances instead of labeling the person illegal",
     },
   ],
   "native-speaker-only": [
