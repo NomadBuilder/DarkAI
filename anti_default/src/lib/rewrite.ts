@@ -1,10 +1,34 @@
 import type { Finding } from "./types";
 
+/**
+ * True when a suggestion can be dropped into the matched phrase without
+ * producing nonsense. Advice like “name the behavior” stays guidance-only.
+ */
+export function isLexicalSuggestion(suggestion: string): boolean {
+  const value = suggestion.trim();
+  if (!value) return false;
+  if (/[\[\]]/.test(value)) return false;
+  if (/\b(?:e\.g\.|for example|if that'?s)\b/i.test(value)) return false;
+  if (
+    /^(?:name|cite|avoid|ask|describe|remove|do not|don'?t|prefer|use|keep|consider|say what|be specific)\b/i.test(
+      value,
+    )
+  ) {
+    return false;
+  }
+  // Multi-clause instructions usually aren't phrase swaps.
+  if (value.length > 48 && /\s(?:or|and|instead|when|rather than)\s/i.test(value)) {
+    return false;
+  }
+  return true;
+}
+
 /** Replace the matched phrase in context (first case-insensitive hit). */
 export function previewRewrite(
   finding: Finding,
   suggestion: string,
-): { before: string; after: string } {
+): { before: string; after: string } | null {
+  if (!isLexicalSuggestion(suggestion)) return null;
   const before = finding.context;
   const re = new RegExp(
     finding.match.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
@@ -70,7 +94,7 @@ export function applyPassageRewrites(
         skippedSoft += 1;
         return false;
       }
-      if (!f.suggestions[0]) {
+      if (!f.suggestions.find(isLexicalSuggestion)) {
         skippedNoSuggestion += 1;
         return false;
       }
@@ -81,7 +105,9 @@ export function applyPassageRewrites(
 
   let text = source;
   for (const finding of actionable) {
-    text = applySuggestionToText(text, finding, finding.suggestions[0]!);
+    const suggestion =
+      finding.suggestions.find(isLexicalSuggestion) ?? finding.suggestions[0]!;
+    text = applySuggestionToText(text, finding, suggestion);
   }
 
   return {

@@ -196,6 +196,26 @@ export function hintsForRule(ruleId: string): RuleContextHints | null {
         /\b(?:measles|influenza|covid|epidemiolog|virus|infection rate)\b/i,
     };
   }
+  if (ruleId === "old-people") {
+    return {
+      // Cultural / idiomatic uses of “the old …” that are not about older adults.
+      excludeNear:
+        /\bthe old\s+(?:ways?|days?|world|fashioned|guard|testament|school|country)\b/i,
+    };
+  }
+  if (ruleId === "kids-these-days") {
+    return {
+      // Affirmative community language, not generational sneering.
+      excludeNear:
+        /\b(?:support(?:ing|s)?|empower(?:ing|s)?|mentor(?:ing|s)?|serv(?:ing|e|es)|for|with|our|help(?:ing|s)?|invest(?:ing|s)? in)\b.{0,40}\b(?:young people today|kids these days|these kids today)\b|\b(?:young people today|kids these days|these kids today)\b.{0,40}\b(?:deserve|need|matter|future|community|culture|elders?)\b/i,
+    };
+  }
+  if (ruleId === "western-values-dogwhistle") {
+    return {
+      softExcludeNear:
+        /\b(?:first\s+nations?|inuit|m[eé]tis|indigenous|aboriginal|native|culture|cultural|heritage|tradition|traditions|ceremony|elder|elders|community|communities)\b/i,
+    };
+  }
   return null;
 }
 

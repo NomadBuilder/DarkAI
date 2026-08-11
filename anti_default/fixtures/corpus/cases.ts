@@ -434,4 +434,51 @@ export const CORPUS_CASES: CorpusCase[] = [
     expect: "soft",
     ruleIds: ["clown-world"],
   },
+
+  // ── Context false positives from cultural / community copy ──────────
+  {
+    id: "age-old-ways-skip",
+    axis: "age",
+    text: "Emotions and Support Communicating in the old ways Encouraging communication",
+    expect: "no-flag",
+    ruleIds: ["old-people"],
+    note: "“the old ways” is tradition, not a label for older adults",
+  },
+  {
+    id: "age-old-people-flag",
+    axis: "age",
+    text: "Policymakers keep talking about the old as if they are a cost center.",
+    expect: "soft",
+    ruleIds: ["old-people"],
+  },
+  {
+    id: "age-young-people-support-skip",
+    axis: "age",
+    text: "Supporting our young people today is how we keep culture alive across generations.",
+    expect: "no-flag",
+    ruleIds: ["kids-these-days"],
+    note: "affirmative community language, not generational dismissal",
+  },
+  {
+    id: "age-kids-these-days-flag",
+    axis: "age",
+    text: "Kids these days have no respect for hard work.",
+    expect: "soft",
+    ruleIds: ["kids-these-days"],
+  },
+  {
+    id: "coded-way-of-life-culture-skip",
+    axis: "coded",
+    text: "Living My Culture shares stories about our way of life across First Nations, Inuit, and Métis communities.",
+    expect: "no-flag",
+    ruleIds: ["western-values-dogwhistle"],
+    note: "bare cultural “our way of life” should not be treated as a dogwhistle",
+  },
+  {
+    id: "coded-way-of-life-threat-flag",
+    axis: "coded",
+    text: "They claimed immigration was threatening our way of life and western values.",
+    expect: "soft",
+    ruleIds: ["western-values-dogwhistle"],
+  },
 ];

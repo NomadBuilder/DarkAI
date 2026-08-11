@@ -24,6 +24,7 @@ import {
 import {
   applyPassageRewrites,
   applySuggestionToText,
+  isLexicalSuggestion,
   previewRewrite,
 } from "@/lib/rewrite";
 import { reportFindingIssueUrl } from "@/lib/report";
@@ -575,7 +576,9 @@ export function ReviewApp() {
               ) : null}
               <div className="flex flex-wrap gap-2 ml-auto">
                 {inclusiveFindings.some(
-                  (f) => !f.likelyFalsePositive && f.suggestions[0],
+                  (f) =>
+                    !f.likelyFalsePositive &&
+                    f.suggestions.some(isLexicalSuggestion),
                 ) ? (
                   <button
                     type="button"
@@ -842,9 +845,17 @@ function FindingRow({
   active?: boolean;
   onFocus?: () => void;
 }) {
-  const [chosen, setChosen] = useState(finding.suggestions[0] ?? "");
+  const lexicalSuggestions = finding.suggestions.filter(isLexicalSuggestion);
+  const guidanceSuggestions = finding.suggestions.filter(
+    (suggestion) => !isLexicalSuggestion(suggestion),
+  );
+  const [chosen, setChosen] = useState(
+    lexicalSuggestions[0] ?? finding.suggestions[0] ?? "",
+  );
   const preview =
-    lane === "inclusive" && chosen ? previewRewrite(finding, chosen) : null;
+    lane === "inclusive" && chosen && isLexicalSuggestion(chosen)
+      ? previewRewrite(finding, chosen)
+      : null;
   const sources =
     lane === "coded"
       ? sourceContextForRuleId(finding.ruleId, finding.category).evidence
@@ -982,20 +993,22 @@ function FindingRow({
 
         {lane === "inclusive" && finding.suggestions.length > 0 ? (
           <div className="grid gap-2 max-w-3xl">
-            <label className="text-xs uppercase tracking-wider text-[var(--moss)]">
-              Rewrite preview
-              <select
-                value={chosen}
-                onChange={(e) => setChosen(e.target.value)}
-                className="mt-1 block w-full normal-case tracking-normal text-sm bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-3 py-2 outline-none focus:border-[var(--moss)]"
-              >
-                {finding.suggestions.map((s) => (
-                  <option key={s} value={s}>
-                    {s}
-                  </option>
-                ))}
-              </select>
-            </label>
+            {lexicalSuggestions.length > 0 ? (
+              <label className="text-xs uppercase tracking-wider text-[var(--moss)]">
+                Rewrite preview
+                <select
+                  value={isLexicalSuggestion(chosen) ? chosen : lexicalSuggestions[0]}
+                  onChange={(e) => setChosen(e.target.value)}
+                  className="mt-1 block w-full normal-case tracking-normal text-sm bg-white/70 border border-[color-mix(in_oklab,var(--ink)_14%,transparent)] px-3 py-2 outline-none focus:border-[var(--moss)]"
+                >
+                  {lexicalSuggestions.map((s) => (
+                    <option key={s} value={s}>
+                      {s}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : null}
             {preview ? (
               <div className="grid gap-2 sm:grid-cols-2 text-sm">
                 <div className="bg-[color-mix(in_oklab,var(--danger)_8%,white)] px-3 py-2 leading-relaxed">
@@ -1012,7 +1025,13 @@ function FindingRow({
                 </div>
               </div>
             ) : null}
-            {canApplyToSource && chosen ? (
+            {guidanceSuggestions.length > 0 ? (
+              <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
+                <span className="text-[var(--ink)]">Guidance (not a drop-in swap): </span>
+                {guidanceSuggestions.join(" · ")}
+              </p>
+            ) : null}
+            {canApplyToSource && chosen && isLexicalSuggestion(chosen) ? (
               <button
                 type="button"
                 onClick={() => onApply(chosen)}

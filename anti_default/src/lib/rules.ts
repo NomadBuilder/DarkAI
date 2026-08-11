@@ -1170,11 +1170,11 @@ export const LANGUAGE_RULES: LanguageRule[] = [
   },
   {
     id: "old-people",
-    pattern: "\\bthe old\\b|\\bold people\\b",
+    pattern: "\\bold people\\b|\\bthe old\\b(?!\\s+(?:ways?|days?|world|fashioned|guard|testament|school|country|west|east|north|south|ones?|man|woman|men|women|boy|girl|kids?|timers?))",
     category: "age",
     severity: "low",
     label: "“The old” / “old people”",
-    why: "Can reduce older adults to age as a defining trait or use age as a dismissive category.",
+    why: "Can reduce older adults to age as a defining trait or use age as a dismissive category. Does not flag ordinary phrases like “the old ways.”",
     suggestions: ["older adults", "older people", "people age [range]"],
     defaultSoft: true,
   },
@@ -1234,11 +1234,11 @@ export const LANGUAGE_RULES: LanguageRule[] = [
   },
   {
     id: "kids-these-days",
-    pattern: "\\bkids these days\\b|\\byoung people today\\b",
+    pattern: "\\bkids these days\\b|\\bthese kids today\\b|\\byoung people today\\b",
     category: "age",
     severity: "low",
     label: "Generational dismissal",
-    why: "Can dismiss a broad age group instead of naming a specific behavior, trend, or evidence.",
+    why: "Can dismiss a broad age group instead of naming a specific behavior, trend, or evidence. Supportive uses like “supporting our young people today” are skipped.",
     suggestions: [
       "name the behavior or trend",
       "cite the age group and evidence",
@@ -1343,11 +1343,11 @@ export const LANGUAGE_RULES: LanguageRule[] = [
   },
   {
     id: "western-values-dogwhistle",
-    pattern: "\\bwestern values\\b|\\bwestern culture\\b|\\bour way of life\\b",
+    pattern: "\\bwestern values\\b|\\bwestern culture\\b|\\bdefend(?:ing)? our way of life\\b|\\bprotect(?:ing)? our way of life\\b|\\bthreat(?:ens?|ening)? our way of life\\b",
     category: "coded",
     severity: "low",
     label: "“Western values / culture” as code",
-    why: "Sometimes ordinary geography or history — sometimes a euphemism for ethnonationalism or anti-Muslim / anti-LGBTQ politics. Soft-flagged so you can be specific.",
+    why: "Sometimes ordinary geography or history — sometimes a euphemism for ethnonationalism or anti-Muslim / anti-LGBTQ politics. Soft-flagged so you can be specific. Bare “our way of life” in cultural or community copy is not flagged.",
     suggestions: [
       "name the specific right or tradition (e.g. free press, due process)",
       "democracy and human rights",

@@ -84,11 +84,12 @@ export const DOGWHISTLE_BLURBS: Record<string, DogwhistleBlurb> = {
     ],
   },
   "western-values-dogwhistle": {
-    looksLike: "Western values; Western culture; our way of life",
+    looksLike:
+      "Western values; Western culture; defend/protect/threaten our way of life",
     signal:
-      "Sometimes means democracy, free press, or human rights. In nationalist rhetoric it often codes for ethnocultural belonging, anti-Muslim politics, or opposition to feminism and LGBTQ+ rights (“our way of life”).",
+      "Sometimes means democracy, free press, or human rights. In nationalist rhetoric it often codes for ethnocultural belonging, anti-Muslim politics, or opposition to feminism and LGBTQ+ rights. Threat framing around “our way of life” is the stronger signal.",
     whenFine:
-      "Soft heads-up. Naming a specific tradition (due process, free expression) is clearer and harder to misuse.",
+      "Soft heads-up. Ordinary cultural or community uses of “our way of life” are not flagged. Naming a specific tradition (due process, free expression) is clearer and harder to misuse.",
     sayInstead: [
       "Name the specific right (free press, due process, equal protection)",
       "Democracy and human rights",
