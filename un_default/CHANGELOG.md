@@ -2,7 +2,8 @@
 
 ## 0.5.1
 
-- Ship `/for-agents` one-pager: after Claude writes UI copy, run `npx un-default init`.
+- Publish on npm as **`anti-default@0.5.1`** (product brand Un-Default). The name `un-default` is blocked on the registry as too similar to unrelated package `undefault`.
+- Ship `/for-agents` one-pager: after Claude writes UI copy, run `npx -y anti-default init`.
 - Paste-ready MCP config for Cursor, Claude Desktop, and Claude Code; Claude Project instructions; LinkedIn draft.
 - `init` also writes `.claude/skills/un-default/SKILL.md` and project `.mcp.json`.
 - Cursor plugin manifest (`.cursor-plugin/plugin.json`) + directory publish checklist.

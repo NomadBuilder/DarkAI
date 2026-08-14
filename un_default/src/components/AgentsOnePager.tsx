@@ -39,12 +39,12 @@ export function AgentsOnePager() {
         <ol className="grid gap-3 max-w-2xl text-[var(--ink-soft)] leading-relaxed list-decimal pl-5">
           <li>
             Safe autofix:{" "}
-            <code className="text-[var(--ink)]">npx un-default fix .</code> (or
+            <code className="text-[var(--ink)]">npx -y anti-default fix .</code> (or
             MCP <code className="text-[var(--ink)]">un_default_fix</code>)
           </li>
           <li>
             Scan:{" "}
-            <code className="text-[var(--ink)]">npx un-default .</code> (or{" "}
+            <code className="text-[var(--ink)]">npx -y anti-default .</code> (or{" "}
             <code className="text-[var(--ink)]">un_default_scan</code>)
           </li>
           <li>

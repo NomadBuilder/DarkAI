@@ -68,7 +68,7 @@ export default function Home() {
               className="text-sm text-[var(--ink)] mb-3"
               style={{ fontFamily: "var(--font-mono)" }}
             >
-              npx un-default init
+              npx -y anti-default init
             </p>
             <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
               After Claude or Cursor writes UI copy, make Un-Default the
@@ -132,7 +132,7 @@ export default function Home() {
                   Agents
                 </Link>
                 :{" "}
-                <code className="text-[var(--ink)]">npx un-default init</code>,
+                <code className="text-[var(--ink)]">npx -y anti-default init</code>,
                 MCP for Claude/Cursor, a GitHub Action that fails PRs, and a{" "}
                 <a
                   href={CHROME_STORE_URL}

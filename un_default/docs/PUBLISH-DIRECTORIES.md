@@ -4,7 +4,7 @@ Checklist for getting the skill + MCP in front of Claude / Cursor users.
 The product CTA is always:
 
 ```bash
-npx un-default init
+npx -y anti-default init
 ```
 
 One-pager: https://darkai.ca/un-default/for-agents/
@@ -52,7 +52,7 @@ Paste the same stdio config:
   "mcpServers": {
     "un-default": {
       "command": "npx",
-      "args": ["-y", "un-default", "mcp"]
+      "args": ["-y", "anti-default", "mcp"]
     }
   }
 }
@@ -76,7 +76,7 @@ Always link **https://darkai.ca/un-default/for-agents/** as the install doc.
 There is no official public “Project template store” yet. Distribution:
 
 1. Share the custom-instructions block from the for-agents page.
-2. Pin a LinkedIn / X post with the instructions + `npx un-default init`.
+2. Pin a LinkedIn / X post with the instructions + `npx -y anti-default init`.
 3. Add a gist mirroring `docs/agents/CLAUDE_PROJECT.md` for easy star/fork.
 
 ---

@@ -2,7 +2,7 @@ After Claude (or Cursor) writes UI copy, I don't mark it done until Un-Default i
 
 One command sets the habit for the whole repo — skill + MCP + PR check:
 
-npx un-default init
+npx -y anti-default init
 
 Paste-ready MCP + Claude Project instructions:
 https://darkai.ca/un-default/for-agents/

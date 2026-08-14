@@ -12,14 +12,14 @@ You are not done with user-facing language until Un-Default is clean of hard fin
 
 1. **Safe auto-heal**
    \`\`\`bash
-   npx un-default fix . --dry-run
-   npx un-default fix .
+   npx -y anti-default fix . --dry-run
+   npx -y anti-default fix .
    \`\`\`
    Only unambiguous 1:1 swaps are applied (e.g. \`policeman\` → \`police officer\`, \`whitelist\` → \`allowlist\`). Soft/coded/contextual hits are never auto-changed.
 
 2. **Scan**
    \`\`\`bash
-   npx un-default . --format json --fail-on never
+   npx -y anti-default . --format json --fail-on never
    \`\`\`
    Or via MCP tools: \`un_default_fix\` then \`un_default_scan\`.
 
@@ -28,7 +28,7 @@ You are not done with user-facing language until Un-Default is clean of hard fin
    - Identity, quoted, historical, legal, illness-story, or community self-description → explain and **ask** before changing.
    - Intentional / appropriate in context → record feedback (do not silently ignore forever without a trail):
      \`\`\`bash
-     npx un-default feedback --kind fine_in_context \\
+     npx -y anti-default feedback --kind fine_in_context \\
        --rule <ruleId> --match "<text>" --context "<snippet>" \\
        --note "<why it was fine>" --open-issue
      \`\`\`
@@ -48,7 +48,7 @@ You are not done with user-facing language until Un-Default is clean of hard fin
 ## MCP
 
 \`\`\`bash
-npx un-default mcp
+npx -y anti-default mcp
 \`\`\`
 
 Tools: \`un_default_scan\`, \`un_default_fix\`, \`un_default_feedback\`.

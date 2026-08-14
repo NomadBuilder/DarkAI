@@ -5,11 +5,11 @@ import { AGENTS_URL } from "@/lib/agent-install";
 export const metadata = {
   title: "After Claude writes UI copy — Un-Default",
   description:
-    "Make Un-Default the definition of done for AI-generated copy. One command: npx un-default init — skill, MCP, and PR check for Claude and Cursor.",
+    "Make Un-Default the definition of done for AI-generated copy. One command: npx -y anti-default init — skill, MCP, and PR check for Claude and Cursor.",
   openGraph: {
     title: "After Claude writes UI copy, run this",
     description:
-      "npx un-default init — skill + MCP + PR check so agents don’t ship colonial defaults.",
+      "npx -y anti-default init — skill + MCP + PR check so agents don’t ship colonial defaults.",
     url: AGENTS_URL,
   },
 };

@@ -187,13 +187,13 @@ export function parseArgs(argv: string[]): CliArgs {
 export const HELP = `Un-Default — inclusive language scan, safe fix, and agent tools
 
 Usage:
-  npx un-default init
-  npx un-default [paths…] [options]
-  npx un-default fix [paths…] [--dry-run]
-  npx un-default baseline [paths…]
-  npx un-default feedback --kind fine_in_context --rule <id> --match <text> --context <snippet>
-  npx un-default mcp
-  npx un-default --urls https://example.com
+  npx -y anti-default init
+  npx -y anti-default [paths…] [options]
+  npx -y anti-default fix [paths…] [--dry-run]
+  npx -y anti-default baseline [paths…]
+  npx -y anti-default feedback --kind fine_in_context --rule <id> --match <text> --context <snippet>
+  npx -y anti-default mcp
+  npx -y anti-default --urls https://example.com
 
 Options:
   --format, -f text|json|sarif   Output format (default: text)
@@ -210,16 +210,16 @@ Options:
   -v, --version                  Show version
 
 Agent / AI-copy habit:
-  npx un-default init             # skill + MCP + PR check (do this once)
-  1. npx un-default fix .          # auto-heal safe 1:1 swaps
-  2. npx un-default . --fail-on hard
+  npx -y anti-default init             # skill + MCP + PR check (do this once)
+  1. npx -y anti-default fix .          # auto-heal safe 1:1 swaps
+  2. npx -y anti-default . --fail-on hard
   3. Only ask a human about remaining contextual hits
   4. Mark intentional language: feedback --kind fine_in_context …
   Docs: https://darkai.ca/un-default/for-agents/
 
 Examples:
-  npx un-default .
-  npx un-default fix ./README.md --dry-run
-  npx un-default fix .
-  npx un-default mcp
+  npx -y anti-default .
+  npx -y anti-default fix ./README.md --dry-run
+  npx -y anti-default fix .
+  npx -y anti-default mcp
 `;

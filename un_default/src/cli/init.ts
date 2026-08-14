@@ -85,12 +85,12 @@ export async function initializeProject(cwd: string): Promise<string[]> {
     pkg.scripts ??= {};
     let touched = false;
     if (!pkg.scripts["inclusive-check"]) {
-      pkg.scripts["inclusive-check"] = "npx --yes un-default .";
+      pkg.scripts["inclusive-check"] = "npx --yes anti-default .";
       touched = true;
       created.push("package.json script: inclusive-check");
     }
     if (!pkg.scripts["inclusive-fix"]) {
-      pkg.scripts["inclusive-fix"] = "npx --yes un-default fix .";
+      pkg.scripts["inclusive-fix"] = "npx --yes anti-default fix .";
       touched = true;
       created.push("package.json script: inclusive-fix");
     }

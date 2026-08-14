@@ -5,7 +5,7 @@
 > Formerly **Anti-Default**. Same tool — the name shifted so it reads as undoing
 > defaults, not opposing people. Old URLs under
 > [`darkai.ca/anti-default`](https://darkai.ca/anti-default) redirect here.
-> `npx anti-default` still works as an alias for `npx un-default`.
+> `npx anti-default` still works as an alias for `npx -y anti-default`.
 
 Un-Default reviews copy, docs, UI strings, and live pages for colonial
 defaults, gendered assumptions, ableist metaphors, and documented dogwhistles.
@@ -30,7 +30,7 @@ No account. No AI required for matching. Open rules you can tune.
 **One command** — skill + MCP + PR check. This is the habit that sticks:
 
 ```bash
-npx un-default init
+npx -y anti-default init
 ```
 
 Paste-ready MCP JSON, Claude Project instructions, and a LinkedIn draft:
@@ -44,7 +44,7 @@ Paste-ready MCP JSON, Claude Project instructions, and a LinkedIn draft:
   "mcpServers": {
     "un-default": {
       "command": "npx",
-      "args": ["-y", "un-default", "mcp"]
+      "args": ["-y", "anti-default", "mcp"]
     }
   }
 }
@@ -63,7 +63,7 @@ Tools: `un_default_scan` · `un_default_fix` · `un_default_feedback`
 ## Add it in under a minute
 
 ```bash
-npx un-default .
+npx -y anti-default .
 ```
 
 That is the whole local setup. It prints findings and exits non-zero on clear
@@ -72,13 +72,13 @@ hits. Ambiguous or quoted matches stay advisory.
 To pin it in a team project:
 
 ```bash
-npm install --save-dev un-default
+npm install --save-dev anti-default
 ```
 
 Want the complete project setup?
 
 ```bash
-npx un-default init
+npx -y anti-default init
 ```
 
 `init` adds an ignore file, changed-files GitHub workflow, Cursor + Claude
@@ -88,8 +88,8 @@ skills, `.cursor/mcp.json` + `.mcp.json`, and `inclusive-check` /
 ### AI-copy habit (definition of done)
 
 ```bash
-npx un-default fix .          # safe 1:1 autofixes only
-npx un-default .              # remaining findings
+npx -y anti-default fix .          # safe 1:1 autofixes only
+npx -y anti-default .              # remaining findings
 ```
 
 Agents should not mark UI/docs work done until hard findings are cleared or
@@ -97,10 +97,10 @@ explicitly marked fine in context. Soft/coded hits stay advisory.
 
 ```bash
 # Preview autofixes without writing
-npx un-default fix . --dry-run
+npx -y anti-default fix . --dry-run
 
 # Intentional language — suppress locally + share structured feedback
-npx un-default feedback --kind fine_in_context \
+npx -y anti-default feedback --kind fine_in_context \
   --rule guys-generic --match "guys" --context "…snippet…" \
   --note "Quoted lyric" --open-issue
 ```
@@ -108,7 +108,7 @@ npx un-default feedback --kind fine_in_context \
 ### MCP server
 
 ```bash
-npx un-default mcp
+npx -y anti-default mcp
 ```
 
 See [for-agents](https://darkai.ca/un-default/for-agents/) for host-specific paste steps.
@@ -117,21 +117,21 @@ See [for-agents](https://darkai.ca/un-default/for-agents/) for host-specific pas
 
 ```bash
 # Paths
-npx un-default ./src ./docs README.md
+npx -y anti-default ./src ./docs README.md
 
 # CI formats
-npx un-default . --format json  -o report.json
-npx un-default . --format sarif -o results.sarif
+npx -y anti-default . --format json  -o report.json
+npx -y anti-default . --format sarif -o results.sarif
 
 # Batch URLs — no Review UI
-npx un-default --urls https://example.com https://example.com/about
-npx un-default --urls-file urls.txt --format json
+npx -y anti-default --urls https://example.com https://example.com/about
+npx -y anti-default --urls-file urls.txt --format json
 
 # Only files changed in this branch
-npx un-default . --changed-from origin/main
+npx -y anti-default . --changed-from origin/main
 
 # Keep existing findings quiet; report only new ones
-npx un-default baseline .
+npx -y anti-default baseline .
 ```
 
 ### Ignore what doesn’t matter
@@ -181,7 +181,7 @@ Prefer SARIF for Code Scanning? Set `format: sarif` and `output-file: un-default
 
 ## Agent skill
 
-`npx un-default init` installs `.cursor/skills/un-default/SKILL.md` — the
+`npx -y anti-default init` installs `.cursor/skills/un-default/SKILL.md` — the
 definition-of-done workflow for AI-generated copy: **fix → scan → ask or
 feedback → re-scan**.
 
@@ -196,7 +196,7 @@ The npm package has no runtime dependencies and exposes the same analyzer used
 by the CLI and web app:
 
 ```ts
-import { analyzeText, LANGUAGE_RULES } from "un-default";
+import { analyzeText, LANGUAGE_RULES } from "anti-default";
 
 const result = analyzeText("Welcome, you guys.");
 console.log(result.findings);

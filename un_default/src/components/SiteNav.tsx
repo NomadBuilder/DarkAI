@@ -131,7 +131,7 @@ function InstallMenu() {
           >
             <span className="install-menu-title">Claude / Cursor</span>
             <span className="install-menu-desc">
-              <code>npx un-default init</code> · MCP paste
+              <code>npx -y anti-default init</code> · MCP paste
             </span>
           </Link>
           <a
@@ -157,7 +157,7 @@ function InstallMenu() {
           >
             <span className="install-menu-title">CLI</span>
             <span className="install-menu-desc">
-              <code>npx un-default .</code>
+              <code>npx -y anti-default .</code>
             </span>
           </a>
           <a
