@@ -1,0 +1,39 @@
+/* Un-Default live-page highlights */
+mark.un-default-hit {
+  background: color-mix(in oklab, #c45c26 22%, white);
+  border-radius: 2px;
+  padding: 0 1px;
+  cursor: help;
+  text-decoration: underline wavy color-mix(in oklab, #c45c26 55%, transparent);
+}
+
+mark.un-default-hit.un-default-soft {
+  background: color-mix(in oklab, #b8860b 20%, white);
+  text-decoration-style: dashed;
+}
+
+mark.un-default-hit.un-default-focus {
+  outline: 2px solid #1a524a;
+  outline-offset: 2px;
+  background: color-mix(in oklab, #1a524a 18%, white);
+}
+
+#un-default-toast {
+  position: fixed;
+  z-index: 2147483646;
+  right: 16px;
+  bottom: 16px;
+  max-width: 18rem;
+  padding: 12px 14px;
+  background: #1a2e28;
+  color: #f4f0e8;
+  font: 13px/1.4 system-ui, sans-serif;
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 25%);
+  pointer-events: none;
+}
+
+#un-default-toast .un-default-toast-hint {
+  color: #9fd4c0;
+  font-size: 12px;
+}

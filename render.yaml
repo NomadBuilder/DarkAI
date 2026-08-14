@@ -271,10 +271,10 @@ services:
 
       echo ""
       echo "=========================================="
-      echo "📦 Building Anti-Default"
+      echo "📦 Building Un-Default"
       echo "=========================================="
-      if [ -d "anti_default" ]; then
-        echo "✅ anti_default/ directory found!"
+      if [ -d "un_default" ]; then
+        echo "✅ un_default/ directory found!"
         if [ -n "$NODE_VERSION" ]; then
           NODE_DIR="/opt/render/project/nodes/node-$NODE_VERSION"
         else
@@ -283,30 +283,30 @@ services:
         if [ -d "$NODE_DIR" ] && [ -f "$NODE_DIR/bin/node" ]; then
           export PATH="$NODE_DIR/bin:$PATH"
         fi
-        cd anti_default || { echo "❌ Failed to cd into anti_default"; exit 1; }
+        cd un_default || { echo "❌ Failed to cd into un_default"; exit 1; }
         rm -rf .next out
-        npm install || { echo "❌ anti_default npm install failed"; exit 1; }
-        echo "🔨 Building Anti-Default with BASE_PATH=/anti-default"
-        NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/anti-default npm run build || {
-          echo "❌ anti_default build failed"
+        npm install || { echo "❌ un_default npm install failed"; exit 1; }
+        echo "🔨 Building Un-Default with BASE_PATH=/un-default"
+        NODE_ENV=production STATIC_EXPORT=true BASE_PATH=/un-default npm run build || {
+          echo "❌ un_default build failed"
           exit 1
         }
         if [ ! -f "out/index.html" ]; then
-          echo "❌ anti_default/out/index.html missing"
+          echo "❌ un_default/out/index.html missing"
           exit 1
         fi
         if [ ! -f "out/swap/index.html" ]; then
-          echo "❌ anti_default/out/swap/index.html missing — Swap route not exported"
+          echo "❌ un_default/out/swap/index.html missing — Swap route not exported"
           exit 1
         fi
         if [ ! -f "out/dogwhistles/index.html" ]; then
-          echo "❌ anti_default/out/dogwhistles/index.html missing — Dogwhistles route not exported"
+          echo "❌ un_default/out/dogwhistles/index.html missing — Dogwhistles route not exported"
           exit 1
         fi
-        echo "✅ Anti-Default build successful!"
+        echo "✅ Un-Default build successful!"
         cd ..
       else
-        echo "⚠️  anti_default/ not found — skipping"
+        echo "⚠️  un_default/ not found — skipping"
       fi
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --threads 2 --timeout 120
     envVars:

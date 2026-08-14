@@ -23,8 +23,8 @@ lib64/
 !ledger/lib/
 !ledger/lib/**
 # Decolonize analyzer lives under src/lib
-!anti_default/src/lib/
-!anti_default/src/lib/**
+!un_default/src/lib/
+!un_default/src/lib/**
 parts/
 sdist/
 var/

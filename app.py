@@ -96,11 +96,22 @@ if os.getenv("SKIP_BLUEPRINTS") != "1":
     import_blueprint('personaforge', '/personaforge')
     import_blueprint('blackwire', '/blackwire')
     import_blueprint('shadowstack', '/shadowstack')
-    import_blueprint('anti_default', '/anti-default')
+    import_blueprint('un_default', '/un-default')
 else:
     print("⚠️  SKIP_BLUEPRINTS=1: Only ProtectOnt/Ledger routes and core routes will work.")
-    # Anti-Default has no heavy deps — still register for local/ProtectOnt-adjacent testing
-    import_blueprint('anti_default', '/anti-default')
+    # Un-Default has no heavy deps — still register for local/ProtectOnt-adjacent testing
+    import_blueprint('un_default', '/un-default')
+
+
+@app.route("/anti-default")
+@app.route("/anti-default/", defaults={"path": ""})
+@app.route("/anti-default/<path:path>")
+def redirect_anti_default_to_un_default(path: str = ""):
+    """Permanent redirect from the former Anti-Default URL to Un-Default."""
+    target = "/un-default/" + path if path else "/un-default/"
+    if request.query_string:
+        target = f"{target}?{request.query_string.decode()}"
+    return redirect(target, code=301)
 
 # Run initial discovery for PersonaForge if database is empty
 import threading

@@ -1,0 +1,38 @@
+name: Un-Default self-check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+  security-events: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci
+      - run: npm run corpus
+      - run: npm run sources:check
+      - run: npm run rules:check
+      - run: npm run package:check
+      - name: Compiled package is current
+        run: git diff --exit-code -- dist
+      - name: Scan this repo
+        uses: ./
+        with:
+          paths: "src scripts README.md"
+          fail-on: never
+          format: json
+          output-file: un-default-report.json
+          comment-on-pr: "true"

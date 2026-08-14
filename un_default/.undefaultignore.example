@@ -1,0 +1,15 @@
+# Paths (gitignore-style)
+node_modules/
+.next/
+dist/
+build/
+out/
+coverage/
+*.min.js
+*.min.css
+un-default-report.json
+un-default.sarif
+
+# Disable a rule for this project (optional)
+# rule:guys
+# rule:modern-audience
