@@ -1,6 +1,6 @@
 {
   "name": "anti-default",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "private": false,
   "description": "Un-Default — inclusive language review for AI-generated and human copy (CLI, MCP, GitHub Action, extension). npm name is anti-default because un-default is blocked by an unrelated package.",
   "homepage": "https://darkai.ca/un-default/for-agents",

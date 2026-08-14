@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.2
+
+- Fix GitHub Action path in `init` workflow template to `NomadBuilder/anti-default@v1` (repo was never renamed).
+- Align remaining docs/privacy copy with the published npm package name.
+
 ## 0.5.1
 
 - Publish on npm as **`anti-default@0.5.1`** (product brand Un-Default). The name `un-default` is blocked on the registry as too similar to unrelated package `undefault`.

@@ -26,4 +26,4 @@ npm run extension:pack
 ```
 
 Full review workflow (crawl, rewrite, export): [darkai.ca/un-default](https://darkai.ca/un-default/).
-Source: [github.com/NomadBuilder/un-default](https://github.com/NomadBuilder/anti-default).
+Source: [github.com/NomadBuilder/anti-default](https://github.com/NomadBuilder/anti-default).

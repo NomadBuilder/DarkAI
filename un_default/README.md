@@ -168,7 +168,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: NomadBuilder/un-default@v1
+      - uses: NomadBuilder/anti-default@v1
         with:
           changed-from: ${{ github.event.pull_request.base.sha }}
           format: json

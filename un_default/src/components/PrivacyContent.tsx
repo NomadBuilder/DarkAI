@@ -118,7 +118,7 @@ export default function PrivacyContent() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            github.com/NomadBuilder/un-default
+            github.com/NomadBuilder/anti-default
           </a>{" "}
           or use the contact options on{" "}
           <a
