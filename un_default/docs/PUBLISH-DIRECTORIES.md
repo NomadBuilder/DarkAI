@@ -7,6 +7,10 @@ The product CTA is always:
 npx -y anti-default init
 ```
 
+That writes Cursor + Claude Code skills, project MCP config, ignore file,
+`.claude/settings.json` / `.cursor/hooks.json` after-edit hooks, `CLAUDE.md`,
+and a GitHub Action workflow. Existing files are never overwritten.
+
 One-pager: https://darkai.ca/un-default/for-agents/
 
 ---

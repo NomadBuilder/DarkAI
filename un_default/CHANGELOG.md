@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.3
+
+- `init` installs Claude Code + Cursor **after-edit hooks** so agents get Un-Default findings without the user remembering a command.
+- Writes `CLAUDE.md` project instructions when missing; strengthens the skill for auto-invocation.
+
 ## 0.5.2
 
 - Fix GitHub Action path in `init` workflow template to `NomadBuilder/anti-default@v1` (repo was never renamed).

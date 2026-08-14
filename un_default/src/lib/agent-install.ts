@@ -33,6 +33,8 @@ export const MCP_CONFIG_JSON = `${JSON.stringify(MCP_CONFIG, null, 2)}\n`;
  */
 export const CLAUDE_PROJECT_INSTRUCTIONS = `You are not done with user-facing copy (UI strings, docs, READMEs, marketing, onboarding, job posts) until Un-Default is clean of hard findings — or remaining hits are intentional and recorded.
 
+This repo may include Claude/Cursor hooks that scan after file edits. Treat hook findings as blockers for finishing copy work.
+
 Workflow (every time you write or edit public language):
 1. Prefer MCP tools if available: un_default_fix (safe 1:1 only), then un_default_scan.
 2. Or run in the project shell:
@@ -49,12 +51,12 @@ Docs: ${AGENTS_URL}
 /** Short LinkedIn / social paste — keep under ~1300 chars for easy posting. */
 export const LINKEDIN_POST = `After Claude (or Cursor) writes UI copy, I don't mark it done until Un-Default is clean.
 
-One command sets the habit for the whole repo — skill + MCP + PR check:
+One command sets the habit for the whole repo — skill + MCP + after-edit hooks + PR check:
 
 ${INIT_COMMAND}
 
 Paste-ready MCP + Claude Project instructions:
 ${AGENTS_URL}
 
-Local rules. No account. Same check in CI.
+Local rules. No account. Same check in CI — and hooks catch edits even when nobody looks.
 `;

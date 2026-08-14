@@ -82,8 +82,10 @@ npx -y anti-default init
 ```
 
 `init` adds an ignore file, changed-files GitHub workflow, Cursor + Claude
-skills, `.cursor/mcp.json` + `.mcp.json`, and `inclusive-check` /
-`inclusive-fix` scripts. Existing files are never overwritten.
+skills, `.cursor/mcp.json` + `.mcp.json`, **Claude/Cursor after-edit hooks**,
+`CLAUDE.md` instructions, and `inclusive-check` / `inclusive-fix` scripts.
+Existing files are never overwritten. Hooks surface hard findings back to the
+agent after Edit/Write so Claude keeps checking even when nobody remembers.
 
 ### AI-copy habit (definition of done)
 

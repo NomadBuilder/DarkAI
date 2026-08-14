@@ -1,11 +1,13 @@
 ---
 name: un-default
-description: Makes Un-Default the definition-of-done check for AI-generated and human user-facing copy. Use after writing or editing UI text, docs, READMEs, marketing, onboarding, job posts, or any public language; before marking a task complete; or when reviewing a PR for inclusive wording.
+description: Definition-of-done for AI-written user-facing copy. Always use after writing or editing UI text, docs, READMEs, marketing, onboarding, job posts, emails, or any public language; before marking a task complete; when reviewing a PR for inclusive wording. If Un-Default hooks report findings after an edit, fix them before continuing.
 ---
 
 # Un-Default — AI copy definition of done
 
 You are not done with user-facing language until Un-Default is clean of hard findings (or remaining hits are intentional and recorded).
+
+Hooks may already scan files after Edit/Write — treat those findings as blockers for finishing copy work.
 
 ## Required workflow
 
@@ -43,6 +45,7 @@ You are not done with user-facing language until Un-Default is clean of hard fin
 - Do **not** “fix” coded/dogwhistle hits automatically — they are heads-ups; context wins.
 - Prefer `fix` before manual edits so safe cases become habit, not debate.
 - If MCP is configured, prefer MCP tools over shelling out.
+- If a hook surfaces Un-Default findings, address them before claiming the task is done.
 
 ## MCP
 

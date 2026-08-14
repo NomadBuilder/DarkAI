@@ -16,16 +16,33 @@ export function AgentsOnePager() {
       <section className="grid gap-4 max-w-2xl">
         <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
           Stars don’t change shipped language. One{" "}
-          <code className="text-[var(--ink)]">init</code> does — skill, MCP, and
-          a PR check so every agent run ends with the same definition of done.
+          <code className="text-[var(--ink)]">init</code> does — skill, MCP,
+          after-edit hooks, and a PR check so Claude keeps checking even when
+          nobody is watching.
         </p>
         <CopyBlock label="Run once in your project" text={INIT_COMMAND} language="bash" />
         <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
-          That writes Cursor + Claude Code skills, project MCP config, ignore
-          file,{" "}
+          That writes Cursor + Claude Code skills, project MCP,{" "}
+          <code className="text-[var(--ink)]">CLAUDE.md</code>, Claude/Cursor
+          after-edit hooks, ignore file,{" "}
           <code className="text-[var(--ink)]">inclusive-check</code> /{" "}
           <code className="text-[var(--ink)]">inclusive-fix</code> scripts, and
           a GitHub Action workflow. Existing files are never overwritten.
+        </p>
+      </section>
+
+      <section className="grid gap-4 max-w-2xl">
+        <h2
+          className="text-2xl text-[var(--ink)]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
+          Claude does it without asking
+        </h2>
+        <p className="text-[var(--ink-soft)] leading-relaxed">
+          After <code className="text-[var(--ink)]">init</code>, Claude Code and
+          Cursor hooks scan copy right after file edits. Hard findings are
+          pushed back into the agent loop — users don’t have to remember a
+          command.
         </p>
       </section>
 
