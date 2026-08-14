@@ -9,6 +9,7 @@ import {
   compactSourceName,
   sourcesForRule,
 } from "@/lib/rule-sources";
+import { suggestionDisplayTexts } from "@/lib/suggestions";
 
 /** Educational guide for coded / dogwhistle phrases — not a rewrite tool. */
 export function DogwhistleGuide() {
@@ -30,7 +31,7 @@ export function DogwhistleGuide() {
         rule.why,
         rule.id,
         patternAsPhrase(rule.pattern),
-        ...(rule.suggestions ?? []),
+        ...(rule.suggestions ? suggestionDisplayTexts(rule.suggestions) : []),
         blurb?.looksLike,
         blurb?.signal,
         blurb?.whenFine,
@@ -126,8 +127,9 @@ export function DogwhistleGuide() {
                   sources.map((s) => [compactSourceName(s.title), s] as const),
                 ).values(),
               ].slice(0, 5);
-              const sayInstead =
-                blurb?.sayInstead?.length ? blurb.sayInstead : rule.suggestions;
+              const sayInstead = blurb?.sayInstead?.length
+                ? blurb.sayInstead
+                : suggestionDisplayTexts(rule.suggestions);
 
               return (
                 <li

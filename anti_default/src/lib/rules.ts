@@ -141,7 +141,14 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     severity: "medium",
     label: "Generic “tribe”",
     why: "Often applied loosely to Indigenous or African peoples in ways that flatten political complexity. Prefer the community’s own terms when known.",
-    suggestions: ["nation", "people", "community", "use the specific nation’s name"],
+    suggestions: ["nation", "people", "community"],
+    guidance: ["use the specific nation’s name"],
+    examples: ["The marketing tribe owns growth this quarter."],
+    counterexamples: [
+      "First Nations, Inuit, and Métis communities",
+      "work with the specific tribe or nation named by the family",
+      "ask which Nation or tribe the person belongs to",
+    ],
     defaultSoft: true,
   },
   {
@@ -545,8 +552,14 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     category: "ableist",
     severity: "low",
     label: "“Suffers from”",
-    why: "Assumes misery; many prefer neutral “has” or “lives with.”",
+    why: "Assumes misery; many prefer neutral “has” or “lives with.” Keep when someone is describing their own suffering, or when clinical/palliative writing is naming distress.",
     suggestions: ["has", "lives with", "was diagnosed with"],
+    examples: ["The campaign says the economy suffers from bad leadership."],
+    counterexamples: [
+      "Many patients say they suffer from unmanaged pain near the end of life.",
+      "Ask whether the person describes themselves as suffering from the illness.",
+    ],
+    defaultSoft: true,
   },
   {
     id: "handicap",
@@ -564,11 +577,12 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     severity: "medium",
     label: "“Special needs”",
     why: "Vague and often othering; many prefer naming the disability or support needed.",
-    suggestions: [
+    suggestions: ["children with disabilities", "disabled people"],
+    guidance: [
       "disabled children / disabled people (when accurate)",
-      "children with disabilities",
       "name the specific support or disability",
     ],
+    examples: ["Our special needs hiring track."],
   },
   {
     id: "retard",
@@ -1129,8 +1143,16 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     category: "age",
     severity: "low",
     label: "“The elderly”",
-    why: "Can flatten older adults into a monolith. Prefer “older adults” when possible.",
+    why: "Can flatten older adults into a monolith. Prefer “older adults” when possible. Caregiving and clinical copy often uses this neutrally — soft-flagged.",
     suggestions: ["older adults", "older people", "elders (community-specific)"],
+    examples: [
+      "We can’t keep subsidizing the elderly as a burden on taxpayers.",
+    ],
+    counterexamples: [
+      "Caregiving tips for families supporting the elderly at home",
+      "palliative care resources for the elderly and their caregivers",
+    ],
+    defaultSoft: true,
   },
   {
     id: "boomer-as-insult",
@@ -1175,7 +1197,20 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     severity: "low",
     label: "“The old” / “old people”",
     why: "Can reduce older adults to age as a defining trait or use age as a dismissive category. Does not flag ordinary phrases like “the old ways.”",
-    suggestions: ["older adults", "older people", "people age [range]"],
+    suggestions: ["older adults", "older people"],
+    guidance: [
+      "people age [range]",
+      "name the specific need or role instead of age as a category",
+    ],
+    examples: [
+      "Policymakers keep talking about the old as if they are a cost center.",
+      "Old people should just retire already.",
+    ],
+    counterexamples: [
+      "Communicating in the old ways",
+      "the old days of community visiting",
+      "respect for the old world traditions of mourning",
+    ],
     defaultSoft: true,
   },
   {
@@ -1239,10 +1274,20 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     severity: "low",
     label: "Generational dismissal",
     why: "Can dismiss a broad age group instead of naming a specific behavior, trend, or evidence. Supportive uses like “supporting our young people today” are skipped.",
-    suggestions: [
+    suggestions: [],
+    guidance: [
       "name the behavior or trend",
       "cite the age group and evidence",
       "avoid generalizing a generation",
+    ],
+    examples: [
+      "Kids these days have no respect for hard work.",
+      "Young people today never want to work.",
+    ],
+    counterexamples: [
+      "Supporting our young people today",
+      "Resources by grieving youth, for grieving youth",
+      "Guidance for schools supporting grieving children and youth",
     ],
     defaultSoft: true,
   },
@@ -1348,10 +1393,20 @@ export const LANGUAGE_RULES: LanguageRule[] = [
     severity: "low",
     label: "“Western values / culture” as code",
     why: "Sometimes ordinary geography or history — sometimes a euphemism for ethnonationalism or anti-Muslim / anti-LGBTQ politics. Soft-flagged so you can be specific. Bare “our way of life” in cultural or community copy is not flagged.",
-    suggestions: [
+    suggestions: [],
+    guidance: [
       "name the specific right or tradition (e.g. free press, due process)",
       "democracy and human rights",
       "avoid vague civilizational framing",
+    ],
+    examples: [
+      "They claimed immigration was threatening our way of life and western values.",
+      "We must defend western culture from outsiders.",
+    ],
+    counterexamples: [
+      "Conversations on care, culture, and spirituality when living with serious illness",
+      "Living My Culture shares stories about our way of life",
+      "Indigenous Cultural Safety Training helping you provide culturally safer care",
     ],
     defaultSoft: true,
   },

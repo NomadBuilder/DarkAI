@@ -1,26 +1,14 @@
 import type { Finding } from "./types";
+import { inferSuggestionKind } from "./suggestions";
 
-/**
- * True when a suggestion can be dropped into the matched phrase without
- * producing nonsense. Advice like “name the behavior” stays guidance-only.
- */
+/** @deprecated Prefer inferSuggestionKind / finding.swaps */
 export function isLexicalSuggestion(suggestion: string): boolean {
-  const value = suggestion.trim();
-  if (!value) return false;
-  if (/[\[\]]/.test(value)) return false;
-  if (/\b(?:e\.g\.|for example|if that'?s)\b/i.test(value)) return false;
-  if (
-    /^(?:name|cite|avoid|ask|describe|remove|do not|don'?t|prefer|use|keep|consider|say what|be specific)\b/i.test(
-      value,
-    )
-  ) {
-    return false;
-  }
-  // Multi-clause instructions usually aren't phrase swaps.
-  if (value.length > 48 && /\s(?:or|and|instead|when|rather than)\s/i.test(value)) {
-    return false;
-  }
-  return true;
+  return inferSuggestionKind(suggestion) === "swap";
+}
+
+function swapsFor(finding: Finding): string[] {
+  if (finding.swaps && finding.swaps.length > 0) return finding.swaps;
+  return finding.suggestions.filter(isLexicalSuggestion);
 }
 
 /** Replace the matched phrase in context (first case-insensitive hit). */
@@ -53,7 +41,6 @@ export function applySuggestionToText(
   ) {
     return source.slice(0, start) + suggestion + source.slice(end);
   }
-  // Fallback: first case-insensitive occurrence
   const re = new RegExp(
     finding.match.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
     "i",
@@ -70,7 +57,7 @@ export interface PassageRewriteResult {
 }
 
 /**
- * Walk findings and apply the first suggestion to each, right-to-left so
+ * Walk findings and apply the first swap to each, right-to-left so
  * indices stay valid. Soft-flags and coded/dogwhistle hits are never applied.
  */
 export function applyPassageRewrites(
@@ -94,7 +81,7 @@ export function applyPassageRewrites(
         skippedSoft += 1;
         return false;
       }
-      if (!f.suggestions.find(isLexicalSuggestion)) {
+      if (swapsFor(f).length === 0) {
         skippedNoSuggestion += 1;
         return false;
       }
@@ -105,8 +92,7 @@ export function applyPassageRewrites(
 
   let text = source;
   for (const finding of actionable) {
-    const suggestion =
-      finding.suggestions.find(isLexicalSuggestion) ?? finding.suggestions[0]!;
+    const suggestion = swapsFor(finding)[0]!;
     text = applySuggestionToText(text, finding, suggestion);
   }
 

@@ -1,4 +1,5 @@
 import { resolveRules } from "./preferences";
+import { suggestionTexts } from "./suggestions";
 import type { Category, LanguageRule, RulePreferences, Severity } from "./types";
 
 export interface PhraseLookupHit {
@@ -79,7 +80,7 @@ function scoreAvoidMatch(query: string, rule: LanguageRule): number | null {
 
 function scorePreferredMatch(query: string, rule: LanguageRule): number | null {
   const q = query.toLowerCase();
-  for (const suggestion of rule.suggestions) {
+  for (const suggestion of suggestionTexts(rule)) {
     const s = suggestion.toLowerCase();
     // Skip long “describe…” guidance as reverse matches.
     if (s.length > 48 || /\bdescribe\b|\bname the\b|\brewrite\b/i.test(s)) {
@@ -88,7 +89,7 @@ function scorePreferredMatch(query: string, rule: LanguageRule): number | null {
     if (s === q) return 60;
     // Multi-option suggestions like "allowlist / denylist"
     const parts = s.split(/\s*[·/,;]\s*/);
-    if (parts.some((p) => p.trim() === q)) return 55;
+    if (parts.some((p: string) => p.trim() === q)) return 55;
   }
   return null;
 }
@@ -130,7 +131,7 @@ export function lookupPhrase(
         why: rule.why,
         category: rule.category,
         severity: rule.severity,
-        suggestions: rule.suggestions,
+        suggestions: suggestionTexts(rule),
         relation: "avoid",
         from: fromLabel(rule, normalized),
         score: avoid,
@@ -146,7 +147,7 @@ export function lookupPhrase(
         why: rule.why,
         category: rule.category,
         severity: rule.severity,
-        suggestions: rule.suggestions,
+        suggestions: suggestionTexts(rule),
         relation: "already-preferred",
         from: fromLabel(rule, normalized),
         score: preferred,

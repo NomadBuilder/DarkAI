@@ -1,6 +1,7 @@
 import { LANGUAGE_RULES } from "./rules";
 import type { LanguageRule } from "./types";
 import { CATEGORY_META } from "./types";
+import { suggestionDisplayTexts } from "./suggestions";
 
 /**
  * Reviewer workflow for auditing what we flag and the fixes we recommend.
@@ -79,6 +80,18 @@ export function emptyReviewDoc(): ReviewDoc {
   };
 }
 
+function suggestionsEqual(a: string[], b: string[]): boolean {
+  if (a.length !== b.length) return false;
+  return a.every((v, i) => v === b[i]);
+}
+
+function ruleSuggestionTexts(
+  suggestions: LanguageRule["suggestions"] | string[] | undefined,
+): string[] {
+  if (!suggestions) return [];
+  return suggestionDisplayTexts(suggestions);
+}
+
 /** True when the reviewer has proposed a value different from the shipped rule. */
 export function isEdited(rule: LanguageRule, review?: RuleReview): boolean {
   if (!review) return false;
@@ -86,16 +99,11 @@ export function isEdited(rule: LanguageRule, review?: RuleReview): boolean {
   if (review.why != null && review.why !== rule.why) return true;
   if (
     review.suggestions != null &&
-    !suggestionsEqual(review.suggestions, rule.suggestions)
+    !suggestionsEqual(review.suggestions, ruleSuggestionTexts(rule.suggestions))
   ) {
     return true;
   }
   return false;
-}
-
-function suggestionsEqual(a: string[], b: string[]): boolean {
-  if (a.length !== b.length) return false;
-  return a.every((v, i) => v === b[i]);
 }
 
 /** Rule as the reviewer currently proposes it (shipped value unless overridden). */
@@ -263,11 +271,16 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
       }
       if (
         review?.suggestions != null &&
-        !suggestionsEqual(review.suggestions, rule.suggestions)
+        !suggestionsEqual(
+          review.suggestions,
+          ruleSuggestionTexts(rule.suggestions),
+        )
       ) {
-        lines.push(`- **Suggestions (was):** ${rule.suggestions.join("; ")}`);
         lines.push(
-          `- **Suggestions (proposed):** ${next.suggestions.join("; ")}`,
+          `- **Suggestions (was):** ${ruleSuggestionTexts(rule.suggestions).join("; ")}`,
+        );
+        lines.push(
+          `- **Suggestions (proposed):** ${ruleSuggestionTexts(next.suggestions).join("; ")}`,
         );
       }
     }
@@ -296,7 +309,9 @@ export function reviewToMarkdown(doc: ReviewDoc): string {
       lines.push(`- **Category:** ${CATEGORY_META[rule.category].title}`);
       lines.push(`- **Pattern:** \`/${rule.pattern}/i\``);
       lines.push(`- **Why:** ${rule.why}`);
-      lines.push(`- **Suggestions:** ${rule.suggestions.join("; ")}`);
+      lines.push(
+        `- **Suggestions:** ${ruleSuggestionTexts(rule.suggestions).join("; ")}`,
+      );
       if (rule.reviewerNotes) {
         lines.push(`- **Reviewer notes:** ${rule.reviewerNotes}`);
       }

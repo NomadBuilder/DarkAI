@@ -59,6 +59,7 @@ export function ReviewApp() {
   const [error, setError] = useState<string | null>(null);
   const [ignoredKeys, setIgnoredKeys] = useState<string[]>([]);
   const [resultsView, setResultsView] = useState<ResultsView>("cards");
+  const [showUncertain, setShowUncertain] = useState(false);
   const [activeFindingId, setActiveFindingId] = useState<string | null>(null);
   const [crawledPages, setCrawledPages] = useState<
     Array<{ url: string; title: string }> | null
@@ -293,35 +294,51 @@ export function ReviewApp() {
     [findings],
   );
 
+  const confidentInclusive = useMemo(
+    () => inclusiveFindings.filter((f) => !f.likelyFalsePositive),
+    [inclusiveFindings],
+  );
+
+  const uncertainInclusive = useMemo(
+    () => inclusiveFindings.filter((f) => f.likelyFalsePositive),
+    [inclusiveFindings],
+  );
+
+  const visibleInclusive = showUncertain
+    ? inclusiveFindings
+    : confidentInclusive;
+
   const codedFindings = useMemo(
     () => findings.filter((f) => f.category === "coded"),
     [findings],
   );
 
+  const visibleCoded = showUncertain ? codedFindings : [];
+
   const ignoredInResult = result
     ? result.findings.length - findings.length
     : 0;
 
-  const softFlagCount = useMemo(
-    () => inclusiveFindings.filter((f) => f.likelyFalsePositive).length,
-    [inclusiveFindings],
-  );
+  const softFlagCount = uncertainInclusive.length;
 
   const resultsHeading = (() => {
-    if (findings.length === 0) {
-      return ignoredInResult > 0
-        ? "All matches ignored"
-        : "No phrases to reconsider";
+    const visibleCount = visibleInclusive.length + visibleCoded.length;
+    if (visibleCount === 0) {
+      if (ignoredInResult > 0) return "All matches ignored";
+      if (softFlagCount > 0 || codedFindings.length > 0) {
+        return "No confident phrases to reconsider";
+      }
+      return "No phrases to reconsider";
     }
     const parts: string[] = [];
-    if (inclusiveFindings.length) {
+    if (visibleInclusive.length) {
       parts.push(
-        `${inclusiveFindings.length} phrase${inclusiveFindings.length === 1 ? "" : "s"} to reconsider`,
+        `${visibleInclusive.length} phrase${visibleInclusive.length === 1 ? "" : "s"} to reconsider`,
       );
     }
-    if (codedFindings.length) {
+    if (visibleCoded.length) {
       parts.push(
-        `${codedFindings.length} possible coded signal${codedFindings.length === 1 ? "" : "s"}`,
+        `${visibleCoded.length} possible coded signal${visibleCoded.length === 1 ? "" : "s"}`,
       );
     }
     return parts.join(" · ");
@@ -548,43 +565,41 @@ export function ReviewApp() {
 
           {inclusiveFindings.length > 0 || codedFindings.length > 0 ? (
             <div className="flex flex-wrap items-center gap-3 mb-6">
-              {inclusiveFindings.length > 0 ? (
-                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--ink-soft)]">
-                  <span>
-                    Language to reconsider{" "}
-                    <strong className="text-[var(--ink)] font-medium">
-                      {inclusiveFindings.length}
-                    </strong>
-                  </span>
-                  {softFlagCount > 0 ? (
-                    <span>
-                      Likely false positive{" "}
-                      <strong className="text-[var(--warn)] font-medium">
-                        {softFlagCount}
-                      </strong>
-                    </span>
-                  ) : null}
-                </div>
-              ) : null}
-              {codedFindings.length > 0 ? (
-                <span className="text-sm text-[var(--ink-soft)]">
-                  Coded heads-ups{" "}
-                  <strong className="text-[var(--indigo)] font-medium">
-                    {codedFindings.length}
+              <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-[var(--ink-soft)]">
+                <span>
+                  Confident findings{" "}
+                  <strong className="text-[var(--ink)] font-medium">
+                    {confidentInclusive.length}
                   </strong>
                 </span>
-              ) : null}
+                {softFlagCount > 0 || codedFindings.length > 0 ? (
+                  <span>
+                    Uncertain / soft{" "}
+                    <strong className="text-[var(--warn)] font-medium">
+                      {softFlagCount + codedFindings.length}
+                    </strong>
+                  </span>
+                ) : null}
+              </div>
+              <label className="flex items-center gap-2 text-sm text-[var(--ink-soft)]">
+                <input
+                  type="checkbox"
+                  checked={showUncertain}
+                  onChange={(event) => setShowUncertain(event.target.checked)}
+                />
+                Show uncertain findings
+              </label>
               <div className="flex flex-wrap gap-2 ml-auto">
-                {inclusiveFindings.some(
+                {confidentInclusive.some(
                   (f) =>
-                    !f.likelyFalsePositive &&
+                    (f.swaps && f.swaps.length > 0) ||
                     f.suggestions.some(isLexicalSuggestion),
                 ) ? (
                   <button
                     type="button"
                     onClick={applyPassage}
                     className="text-xs px-3 py-1.5 bg-[var(--ink)] text-[var(--paper)] hover:bg-[var(--moss-deep)] transition-colors"
-                    title="Applies inclusive suggestions only — coded signals are never auto-rewritten"
+                    title="Applies confident inclusive swaps only — soft and coded hits are never auto-rewritten"
                   >
                     Rewrite passage
                   </button>
@@ -668,7 +683,7 @@ export function ReviewApp() {
                 </div>
                 <DocumentHighlight
                   text={text}
-                  findings={findings}
+                  findings={[...visibleInclusive, ...visibleCoded]}
                   activeId={activeFindingId}
                   onSelect={(f) => {
                     setActiveFindingId(f.id);
@@ -678,18 +693,19 @@ export function ReviewApp() {
                   }}
                 />
                 <p className="text-xs text-[var(--ink-soft)]">
-                  Coral = language to reconsider · indigo dashed = possible coded
-                  signal
+                  Coral = confident language to reconsider · indigo dashed =
+                  coded heads-ups (enable “Show uncertain findings” to include
+                  soft matches)
                 </p>
               </div>
               <div className="grid gap-8 max-h-[min(70vh,36rem)] overflow-auto pr-1">
-                {inclusiveFindings.length > 0 ? (
+                {visibleInclusive.length > 0 ? (
                   <FindingsLane
                     title="Language to reconsider"
                     accent="var(--coral)"
                     intro="Prefer clearer, more inclusive phrasing when it fits."
                   >
-                    {inclusiveFindings.map((finding) => (
+                    {visibleInclusive.map((finding) => (
                       <FindingRow
                         key={finding.id}
                         finding={finding}
@@ -706,13 +722,13 @@ export function ReviewApp() {
                     ))}
                   </FindingsLane>
                 ) : null}
-                {codedFindings.length > 0 ? (
+                {visibleCoded.length > 0 ? (
                   <FindingsLane
                     title="Possible coded signals"
                     accent="var(--indigo)"
                     intro="These phrases are sometimes used as dogwhistles. Many people repeat them without knowing — a heads-up, not a verdict. Not included in Rewrite passage."
                   >
-                    {codedFindings.map((finding) => (
+                    {visibleCoded.map((finding) => (
                       <FindingRow
                         key={finding.id}
                         finding={finding}
@@ -731,13 +747,13 @@ export function ReviewApp() {
             </div>
           ) : (
             <div className="grid gap-12">
-              {inclusiveFindings.length > 0 ? (
+              {visibleInclusive.length > 0 ? (
                 <FindingsLane
                   title="Language to reconsider"
                   accent="var(--coral)"
                   intro="Prefer clearer, more inclusive phrasing when it fits."
                 >
-                  {inclusiveFindings.map((finding) => (
+                  {visibleInclusive.map((finding) => (
                     <FindingRow
                       key={finding.id}
                       finding={finding}
@@ -752,13 +768,13 @@ export function ReviewApp() {
                   ))}
                 </FindingsLane>
               ) : null}
-              {codedFindings.length > 0 ? (
+              {visibleCoded.length > 0 ? (
                 <FindingsLane
                   title="Possible coded signals"
                   accent="var(--indigo)"
                   intro="These phrases are sometimes used as dogwhistles. Many people repeat them without knowing — a heads-up, not a verdict. Not included in Rewrite passage."
                 >
-                  {codedFindings.map((finding) => (
+                  {visibleCoded.map((finding) => (
                     <FindingRow
                       key={finding.id}
                       finding={finding}
@@ -845,12 +861,19 @@ function FindingRow({
   active?: boolean;
   onFocus?: () => void;
 }) {
-  const lexicalSuggestions = finding.suggestions.filter(isLexicalSuggestion);
-  const guidanceSuggestions = finding.suggestions.filter(
-    (suggestion) => !isLexicalSuggestion(suggestion),
-  );
+  const lexicalSuggestions =
+    finding.swaps && finding.swaps.length > 0
+      ? finding.swaps
+      : finding.suggestions.filter(isLexicalSuggestion);
+  const guidanceSuggestions =
+    finding.guidance && finding.guidance.length > 0
+      ? finding.guidance
+      : finding.suggestions.filter((suggestion) => !isLexicalSuggestion(suggestion));
   const [chosen, setChosen] = useState(
-    lexicalSuggestions[0] ?? finding.suggestions[0] ?? "",
+    (finding.swaps && finding.swaps[0]) ||
+      lexicalSuggestions[0] ||
+      finding.suggestions[0] ||
+      "",
   );
   const preview =
     lane === "inclusive" && chosen && isLexicalSuggestion(chosen)

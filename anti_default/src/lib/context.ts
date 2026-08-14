@@ -216,6 +216,19 @@ export function hintsForRule(ruleId: string): RuleContextHints | null {
         /\b(?:first\s+nations?|inuit|m[eé]tis|indigenous|aboriginal|native|culture|cultural|heritage|tradition|traditions|ceremony|elder|elders|community|communities)\b/i,
     };
   }
+  if (ruleId === "elderly-as-burden") {
+    return {
+      softExcludeNear:
+        /\b(?:caregiv|hospice|palliative|grief|bereave|illness|dying|end[- ]of[- ]life|nursing|home\s+care)\w*\b/i,
+      excludeNear: /\belders?\b/i,
+    };
+  }
+  if (ruleId === "suffers-from") {
+    return {
+      softExcludeNear:
+        /\b(?:pain|symptom|illness|disease|patient|palliative|hospice|grief|bereave|diagnos)\w*\b/i,
+    };
+  }
   return null;
 }
 
@@ -224,6 +237,7 @@ export function evaluateMatchContext(
   index: number,
   length: number,
   ruleId: string,
+  options?: { counterexamples?: string[] },
 ): MatchContext {
   const modes: ContextMode[] = [];
   let skip = false;
@@ -232,6 +246,41 @@ export function evaluateMatchContext(
   const nearby = windowAround(text, index, length);
   const hints = hintsForRule(ruleId);
   const ableistMetaphor = ABLEIST_METAPHOR_RULES.has(ruleId);
+  const matched = text.slice(index, index + length);
+
+  if (options?.counterexamples?.length) {
+    const haystack = nearby.toLowerCase();
+    const hit = options.counterexamples.find((example) => {
+      const needle = example.toLowerCase().replace(/\s+/g, " ").trim();
+      if (!needle) return false;
+      return haystack.includes(needle);
+    });
+    if (hit) {
+      return {
+        modes,
+        likelyFalsePositive: false,
+        skip: true,
+        note: `Skipped — matches a documented counterexample (“${hit}”).`,
+      };
+    }
+  }
+
+  // Extra safety for “the old …” idioms even when counterexamples are incomplete.
+  if (
+    ruleId === "old-people" &&
+    /\bthe old\s+(?:ways?|days?|world|fashioned|guard|testament|school|country)\b/i.test(
+      nearby,
+    )
+  ) {
+    return {
+      modes,
+      likelyFalsePositive: false,
+      skip: true,
+      note: "Skipped — idiomatic “the old …” (not a label for older adults).",
+    };
+  }
+
+  void matched;
 
   if (hints?.excludeNear?.test(nearby)) {
     skip = true;

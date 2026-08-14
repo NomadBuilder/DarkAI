@@ -13,6 +13,14 @@ export type Severity = "high" | "medium" | "low";
 
 export type RuleSourceRole = "evidence" | "background" | "contested";
 
+/** Drop-in phrase swap vs rewrite advice that must not be applied literally. */
+export type SuggestionKind = "swap" | "guidance";
+
+export interface RuleSuggestion {
+  text: string;
+  kind?: SuggestionKind;
+}
+
 /** A reference connected to a rule, with its evidentiary role made explicit. */
 export interface RuleSourceRef {
   title: string;
@@ -31,7 +39,23 @@ export interface LanguageRule {
   severity: Severity;
   label: string;
   why: string;
-  suggestions: string[];
+  /**
+   * Preferred replacements. Strings are fine; use `{ kind: "guidance" }` when the
+   * text is advice rather than a lexical swap.
+   */
+  suggestions: Array<string | RuleSuggestion>;
+  /**
+   * Explicit advisory alternatives (never drop-in rewrites). Prefer this over
+   * stuffing instructions into `suggestions`.
+   */
+  guidance?: string[];
+  /** Snippets that should match this rule (used in corpus / authoring checks). */
+  examples?: string[];
+  /**
+   * Snippets that look similar but must NOT match — cultural, medical, supportive,
+   * or idiomatic uses. Also consulted at scan time as hard skips.
+   */
+  counterexamples?: string[];
   /** Style-guide footnotes shown on /rules. */
   sources?: RuleSourceRef[];
   /**
@@ -57,7 +81,12 @@ export interface Finding {
   severity: Severity;
   label: string;
   why: string;
+  /** Swap + guidance texts (swaps first). Prefer `swaps` / `guidance` for UI. */
   suggestions: string[];
+  /** Lexical replacements safe to preview/apply. */
+  swaps?: string[];
+  /** Advice that must not be dropped into the sentence. */
+  guidance?: string[];
   context: string;
   index: number;
   source?: string;

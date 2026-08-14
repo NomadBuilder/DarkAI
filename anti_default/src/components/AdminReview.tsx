@@ -6,6 +6,15 @@ import { sourceContextForRule } from "@/lib/rule-sources";
 import { DOGWHISTLE_BLURBS } from "@/lib/dogwhistle-guide";
 import { examplesForRule } from "@/lib/rule-examples";
 import {
+  clearFeedbackEvents,
+  downloadFeedbackJson,
+  downloadFeedbackMarkdown,
+  loadFeedbackEvents,
+  summarizeFeedback,
+} from "@/lib/feedback-queue";
+import type { FeedbackEvent } from "@/lib/feedback";
+import { suggestionDisplayTexts } from "@/lib/suggestions";
+import {
   CATEGORY_META,
   CATEGORY_ORDER,
   type Category,
@@ -40,11 +49,13 @@ export function AdminReview() {
   const [categoryFilter, setCategoryFilter] = useState<Category | "all">("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [showAddRule, setShowAddRule] = useState(false);
+  const [feedbackEvents, setFeedbackEvents] = useState<FeedbackEvent[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setDoc(loadReviewDoc());
+      setFeedbackEvents(loadFeedbackEvents());
       setHydrated(true);
     }, 0);
     return () => window.clearTimeout(timer);
@@ -176,7 +187,9 @@ export function AdminReview() {
         rule.label.toLowerCase().includes(q) ||
         rule.why.toLowerCase().includes(q) ||
         rule.pattern.toLowerCase().includes(q) ||
-        rule.suggestions.some((s) => s.toLowerCase().includes(q)) ||
+        rule.suggestions.some((s) =>
+          (typeof s === "string" ? s : s.text).toLowerCase().includes(q),
+        ) ||
         rule.id.includes(q)
       );
     });
@@ -206,6 +219,23 @@ export function AdminReview() {
         onImportClick={() => fileInputRef.current?.click()}
         onClearAll={clearAll}
       />
+
+      <FalsePositiveQueue
+        events={feedbackEvents}
+        onRefresh={() => setFeedbackEvents(loadFeedbackEvents())}
+        onClear={() => {
+          if (
+            !window.confirm(
+              "Clear the local false-positive / fine-in-context queue?",
+            )
+          ) {
+            return;
+          }
+          clearFeedbackEvents();
+          setFeedbackEvents([]);
+        }}
+      />
+
       <input
         ref={fileInputRef}
         type="file"
@@ -494,7 +524,9 @@ function ReviewRow({
 
   const label = review?.label ?? rule.label;
   const why = review?.why ?? rule.why;
-  const suggestionsText = (review?.suggestions ?? rule.suggestions).join("\n");
+  const suggestionsText = (
+    review?.suggestions ?? suggestionDisplayTexts(rule.suggestions)
+  ).join("\n");
 
   const setSuggestions = (text: string) => {
     const list = text
@@ -1120,7 +1152,7 @@ function ProposedRuleEditor({
           Context-sensitive alternatives — one per line
         </span>
         <textarea
-          value={rule.suggestions.join("\n")}
+          value={suggestionDisplayTexts(rule.suggestions).join("\n")}
           onChange={(event) =>
             onUpdate({
               suggestions: event.target.value
@@ -1147,5 +1179,126 @@ function ProposedRuleEditor({
         />
       </label>
     </article>
+  );
+}
+
+function FalsePositiveQueue({
+  events,
+  onRefresh,
+  onClear,
+}: {
+  events: FeedbackEvent[];
+  onRefresh: () => void;
+  onClear: () => void;
+}) {
+  const summary = useMemo(() => summarizeFeedback(events), [events]);
+  const recent = events.slice(-12).reverse();
+
+  return (
+    <section className="grid gap-4 border border-[color-mix(in_oklab,var(--ochre)_35%,transparent)] bg-[color-mix(in_oklab,var(--ochre)_6%,white)] p-4 md:p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2
+            className="text-xl text-[var(--ink)]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            False-positive queue
+          </h2>
+          <p className="mt-1 text-sm text-[var(--ink-soft)] max-w-2xl leading-relaxed">
+            “Fine in this context” and similar Review dismissals land here in
+            this browser. Export them to turn repeated misses into
+            counterexamples — especially useful for care, grief, and cultural
+            storytelling copy.
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onRefresh}
+            className="text-sm px-3 py-1.5 border border-[color-mix(in_oklab,var(--ink)_18%,transparent)] text-[var(--ink-soft)] hover:text-[var(--ink)]"
+          >
+            Refresh
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadFeedbackJson(events)}
+            disabled={events.length === 0}
+            className="text-sm px-3 py-1.5 border border-[color-mix(in_oklab,var(--ink)_18%,transparent)] text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-40"
+          >
+            Export JSON
+          </button>
+          <button
+            type="button"
+            onClick={() => downloadFeedbackMarkdown(events)}
+            disabled={events.length === 0}
+            className="text-sm px-3 py-1.5 border border-[color-mix(in_oklab,var(--ink)_18%,transparent)] text-[var(--ink-soft)] hover:text-[var(--ink)] disabled:opacity-40"
+          >
+            Export Markdown
+          </button>
+          <button
+            type="button"
+            onClick={onClear}
+            disabled={events.length === 0}
+            className="text-sm px-3 py-1.5 text-[var(--coral)] underline underline-offset-2 disabled:opacity-40"
+          >
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <p className="text-sm text-[var(--ink-soft)]">
+        {summary.total} event{summary.total === 1 ? "" : "s"} ·{" "}
+        {summary.fineInContext} fine in context · {summary.falsePositive} false
+        positive · {summary.badSuggestion} bad suggestion
+      </p>
+
+      {summary.byRule.length > 0 ? (
+        <div className="grid gap-2">
+          <p className="text-xs uppercase tracking-wider text-[var(--moss)]">
+            Hot rules
+          </p>
+          <ul className="flex flex-wrap gap-2 text-sm">
+            {summary.byRule.slice(0, 8).map((row) => (
+              <li
+                key={row.ruleId}
+                className="px-2 py-1 bg-white/70 border border-[color-mix(in_oklab,var(--ink)_10%,transparent)]"
+              >
+                <a href={`#${row.ruleId}`} className="text-[var(--teal-deep)] underline underline-offset-2">
+                  {row.ruleId}
+                </a>{" "}
+                · {row.count}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : (
+        <p className="text-sm text-[var(--ink-soft)]">
+          No local feedback yet. Use Review → “Fine in this context” while
+          scanning care or cultural sites, then refresh this queue.
+        </p>
+      )}
+
+      {recent.length > 0 ? (
+        <ul className="grid gap-3">
+          {recent.map((event, index) => (
+            <li
+              key={`${event.createdAt}-${event.ruleId}-${index}`}
+              className="grid gap-1 text-sm border-t border-[color-mix(in_oklab,var(--ink)_8%,transparent)] pt-3"
+            >
+              <p className="text-[var(--ink)]">
+                <span className="uppercase tracking-wider text-xs text-[var(--ochre)]">
+                  {event.kind.replaceAll("_", " ")}
+                </span>{" "}
+                · <code className="font-[family-name:var(--font-mono)] text-xs">{event.ruleId}</code>{" "}
+                · “{event.match}”
+              </p>
+              <p className="text-[var(--ink-soft)] leading-relaxed">
+                {event.context}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : null}
+    </section>
   );
 }

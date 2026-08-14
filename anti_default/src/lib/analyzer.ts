@@ -1,6 +1,7 @@
 import { LANGUAGE_RULES } from "./rules";
 import { resolveRules } from "./preferences";
 import { evaluateMatchContext } from "./context";
+import { normalizeSuggestions, suggestionTexts } from "./suggestions";
 import type {
   AnalysisResult,
   AnalysisSummary,
@@ -72,6 +73,7 @@ export function analyzeText(
         match.index,
         matchedText.length,
         rule.id,
+        { counterexamples: rule.counterexamples },
       );
       if (ctx.skip) {
         if (match.index === regex.lastIndex) {
@@ -79,6 +81,8 @@ export function analyzeText(
         }
         continue;
       }
+
+      const { swaps, guidance } = normalizeSuggestions(rule);
 
       findings.push({
         id: `${rule.id}-${match.index}-${findings.length}`,
@@ -88,7 +92,9 @@ export function analyzeText(
         severity: rule.severity,
         label: rule.label,
         why: rule.why,
-        suggestions: rule.suggestions,
+        suggestions: suggestionTexts(rule),
+        swaps: swaps.length ? swaps : undefined,
+        guidance: guidance.length ? guidance : undefined,
         context: snippetAround(normalized, match.index, matchedText.length),
         index: match.index,
         source: options.sourceTag,

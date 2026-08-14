@@ -41,7 +41,8 @@
         "Europe, Africa, and Asia",
         "Afro-Eurasia",
         "name the regions"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "third-world",
@@ -166,9 +167,17 @@
       "suggestions": [
         "nation",
         "people",
-        "community",
+        "community"
+      ],
+      "guidance": [
         "use the specific nation’s name"
-      ]
+      ],
+      "counterexamples": [
+        "First Nations, Inuit, and Métis communities",
+        "work with the specific tribe or nation named by the family",
+        "ask which Nation or tribe the person belongs to"
+      ],
+      "defaultSoft": true
     },
     {
       "id": "exotic",
@@ -182,7 +191,8 @@
         "distinctive",
         "unfamiliar to [audience]",
         "name the culture or place"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "oriental-people",
@@ -209,7 +219,8 @@
         "Inuit (when referring to Inuit)",
         "Yup’ik / Iñupiat / the specific community’s name",
         "ask or follow community self-identification"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "pow-wow-metaphor",
@@ -294,7 +305,8 @@
         "guide",
         "specialist",
         "mentor"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "native-speaker-only",
@@ -322,7 +334,8 @@
         "fluent in English",
         "professional proficiency in…",
         "strong written and spoken English"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "virgin-land",
@@ -364,7 +377,8 @@
         "enter",
         "open in",
         "build presence in"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "guys-generic",
@@ -753,12 +767,17 @@
       "category": "ableist",
       "severity": "low",
       "label": "“Suffers from”",
-      "why": "Assumes misery; many prefer neutral “has” or “lives with.”",
+      "why": "Assumes misery; many prefer neutral “has” or “lives with.” Keep when someone is describing their own suffering, or when clinical/palliative writing is naming distress.",
       "suggestions": [
         "has",
         "lives with",
         "was diagnosed with"
-      ]
+      ],
+      "counterexamples": [
+        "Many patients say they suffer from unmanaged pain near the end of life.",
+        "Ask whether the person describes themselves as suffering from the illness."
+      ],
+      "defaultSoft": true
     },
     {
       "id": "handicap",
@@ -783,8 +802,11 @@
       "label": "“Special needs”",
       "why": "Vague and often othering; many prefer naming the disability or support needed.",
       "suggestions": [
-        "disabled children / disabled people (when accurate)",
         "children with disabilities",
+        "disabled people"
+      ],
+      "guidance": [
+        "disabled children / disabled people (when accurate)",
         "name the specific support or disability"
       ]
     },
@@ -1199,7 +1221,8 @@
         "trans woman",
         "trans man",
         "transgender woman / man"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "shemale-slur",
@@ -1240,7 +1263,8 @@
       "suggestions": [
         "women (when that is accurate and inclusive of your intent)",
         "name the specific policy (sports, shelters, healthcare)"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "rapid-onset-gd",
@@ -1268,7 +1292,8 @@
         "peer influence / social factors (if studying them carefully)",
         "gender dysphoria with clinical sources",
         "avoid contagion metaphors for identity"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "transing-kids",
@@ -1296,7 +1321,8 @@
         "gender-affirming surgery / care",
         "puberty blockers / hormone therapy (clinical terms)",
         "name the specific procedure or medication"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "erase-women",
@@ -1310,7 +1336,8 @@
         "name the specific policy conflict",
         "women’s rights and trans rights (both matter)",
         "avoid zero-sum erasure framing"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "men-in-dresses",
@@ -1434,7 +1461,8 @@
         "workers in roles requiring less formal training",
         "entry-level workers",
         "name the occupation"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "poverty-stricken",
@@ -1448,7 +1476,8 @@
         "people living in poverty",
         "low-income households",
         "communities facing economic hardship"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "slum-language",
@@ -1462,7 +1491,8 @@
         "informal settlement (when accurate)",
         "under-resourced neighborhood",
         "name the specific housing conditions"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "welfare-dependent",
@@ -1490,7 +1520,8 @@
         "low-income communities",
         "economically marginalized people",
         "name the specific group or condition"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "elderly-as-burden",
@@ -1499,12 +1530,17 @@
       "category": "age",
       "severity": "low",
       "label": "“The elderly”",
-      "why": "Can flatten older adults into a monolith. Prefer “older adults” when possible.",
+      "why": "Can flatten older adults into a monolith. Prefer “older adults” when possible. Caregiving and clinical copy often uses this neutrally — soft-flagged.",
       "suggestions": [
         "older adults",
         "older people",
         "elders (community-specific)"
-      ]
+      ],
+      "counterexamples": [
+        "Caregiving tips for families supporting the elderly at home",
+        "palliative care resources for the elderly and their caregivers"
+      ],
+      "defaultSoft": true
     },
     {
       "id": "boomer-as-insult",
@@ -1570,9 +1606,18 @@
       "why": "Can reduce older adults to age as a defining trait or use age as a dismissive category. Does not flag ordinary phrases like “the old ways.”",
       "suggestions": [
         "older adults",
-        "older people",
-        "people age [range]"
-      ]
+        "older people"
+      ],
+      "guidance": [
+        "people age [range]",
+        "name the specific need or role instead of age as a category"
+      ],
+      "counterexamples": [
+        "Communicating in the old ways",
+        "the old days of community visiting",
+        "respect for the old world traditions of mourning"
+      ],
+      "defaultSoft": true
     },
     {
       "id": "over-the-hill",
@@ -1600,7 +1645,8 @@
         "name the specific requirement",
         "ask about the person’s preference or ability",
         "remove the age assumption"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "geriatric-insult",
@@ -1614,7 +1660,8 @@
         "older adult",
         "geriatric medicine (in clinical context)",
         "describe what seems outdated"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "silver-tsunami",
@@ -1638,11 +1685,18 @@
       "severity": "low",
       "label": "Generational dismissal",
       "why": "Can dismiss a broad age group instead of naming a specific behavior, trend, or evidence. Supportive uses like “supporting our young people today” are skipped.",
-      "suggestions": [
+      "suggestions": [],
+      "guidance": [
         "name the behavior or trend",
         "cite the age group and evidence",
         "avoid generalizing a generation"
-      ]
+      ],
+      "counterexamples": [
+        "Supporting our young people today",
+        "Resources by grieving youth, for grieving youth",
+        "Guidance for schools supporting grieving children and youth"
+      ],
+      "defaultSoft": true
     },
     {
       "id": "anti-aging",
@@ -1657,7 +1711,8 @@
         "supports skin elasticity",
         "reduces the appearance of fine lines",
         "name the specific effect"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "cultural-marxism",
@@ -1724,7 +1779,8 @@
       "suggestions": [
         "avoid the number combo in usernames and copy if unintended",
         "use a different numeric ID"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "globalist-smear",
@@ -1738,7 +1794,8 @@
         "multinational corporations",
         "trade policy you oppose",
         "name the institution or practice"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "western-values-dogwhistle",
@@ -1748,11 +1805,18 @@
       "severity": "low",
       "label": "“Western values / culture” as code",
       "why": "Sometimes ordinary geography or history — sometimes a euphemism for ethnonationalism or anti-Muslim / anti-LGBTQ politics. Soft-flagged so you can be specific. Bare “our way of life” in cultural or community copy is not flagged.",
-      "suggestions": [
+      "suggestions": [],
+      "guidance": [
         "name the specific right or tradition (e.g. free press, due process)",
         "democracy and human rights",
         "avoid vague civilizational framing"
-      ]
+      ],
+      "counterexamples": [
+        "Conversations on care, culture, and spirituality when living with serious illness",
+        "Living My Culture shares stories about our way of life",
+        "Indigenous Cultural Safety Training helping you provide culturally safer care"
+      ],
+      "defaultSoft": true
     },
     {
       "id": "trans-agenda",
@@ -1780,7 +1844,8 @@
         "do not use as a political smear",
         "name the specific harm or crime if one exists",
         "educator / librarian / advocate (when accurate)"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "go-woke-go-broke",
@@ -1793,7 +1858,8 @@
       "suggestions": [
         "describe the specific business or creative disagreement",
         "avoid the slogan if you don’t mean the culture-war frame"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "modern-audience",
@@ -1807,7 +1873,8 @@
         "today’s viewers / players",
         "name the specific creative choice",
         "diverse casting (if that’s what you mean positively)"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "white-genocide",
@@ -1833,7 +1900,8 @@
       "suggestions": [
         "reject racial hierarchy framing",
         "discuss inequality via history and policy, not racial essentialism"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "iotbw",
@@ -1860,7 +1928,8 @@
         "voluntary return / assisted departure (if that’s the policy)",
         "asylum or immigration law specifics",
         "avoid euphemisms for mass ethnic removal"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "soy-boy",
@@ -1873,7 +1942,8 @@
       "suggestions": [
         "drop the insult",
         "critique ideas without gendered food memes"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "kalergi-plan",
@@ -1899,7 +1969,8 @@
       "suggestions": [
         "describe the specific policy failure or news event",
         "avoid the meme branding if you don’t mean that frame"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "ninja-rockstar",
@@ -1997,7 +2068,8 @@
         "people without [specific condition]",
         "typical in this sample",
         "name the comparison group"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "minorities-noun",
@@ -2011,7 +2083,8 @@
         "minoritized communities",
         "underrepresented groups",
         "name the specific communities"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "clean-cut-candidate",
@@ -2025,7 +2098,8 @@
         "follows role-specific safety requirements",
         "meets the stated dress policy",
         "remove appearance criteria unrelated to the job"
-      ]
+      ],
+      "defaultSoft": true
     },
     {
       "id": "real-name",
@@ -2040,7 +2114,8 @@
         "name you go by",
         "name on your identification",
         "preferred display name"
-      ]
+      ],
+      "defaultSoft": true
     }
   ]
 }

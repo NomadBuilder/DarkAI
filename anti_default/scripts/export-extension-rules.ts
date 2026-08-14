@@ -19,7 +19,12 @@ const slim = LANGUAGE_RULES.map((r) => ({
   severity: r.severity,
   label: r.label,
   why: r.why,
-  suggestions: r.suggestions,
+  suggestions: r.suggestions.map((s) =>
+    typeof s === "string" ? s : s.text,
+  ),
+  guidance: r.guidance,
+  counterexamples: r.counterexamples,
+  defaultSoft: r.defaultSoft,
 }));
 
 writeFileSync(

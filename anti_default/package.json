@@ -1,8 +1,8 @@
 {
   "name": "anti-default",
   "version": "0.4.0",
-  "private": true,
-  "description": "Inclusive language review for AI-generated and human copy \u2014 CLI fix, MCP tools, GitHub Action, and browser extension",
+  "private": false,
+  "description": "Inclusive language review for AI-generated and human copy — CLI fix, MCP tools, GitHub Action, and browser extension",
   "homepage": "https://darkai.ca/anti-default",
   "repository": {
     "type": "git",
@@ -50,22 +50,17 @@
     "analyze:urls": "node bin/anti-default.js --urls",
     "cli": "node bin/anti-default.js",
     "corpus": "tsx scripts/check-corpus.ts",
+    "sources:check": "tsx scripts/check-sources.ts",
+    "rules:check": "tsx scripts/check-rule-examples.ts",
     "extension:rules": "tsx scripts/export-extension-rules.ts",
     "extension:assets": "python3 scripts/generate-extension-assets.py",
     "extension:pack": "bash scripts/pack-extension.sh",
     "package:build": "node scripts/build-package.mjs",
     "package:check": "node scripts/check-package.mjs",
-    "test": "npm run corpus && npm run package:check",
+    "test": "npm run corpus && npm run sources:check && npm run rules:check && npm run package:check",
     "prepack": "npm run package:build"
   },
-  "dependencies": {
-    "cheerio": "^1.2.0",
-    "next": "16.2.12",
-    "react": "19.2.4",
-    "react-dom": "19.2.4",
-    "tsx": "^4.23.5",
-    "zod": "^4.4.3"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

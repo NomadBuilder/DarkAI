@@ -2,6 +2,7 @@ import type { RulePreferences } from "./types";
 import { LANGUAGE_RULES } from "./rules";
 import { resolveRules } from "./preferences";
 import { CATEGORY_META, CATEGORY_ORDER } from "./types";
+import { suggestionDisplayTexts } from "./suggestions";
 
 /** Compact prefs for URL sharing (only non-defaults). */
 export function prefsToSharePayload(prefs: RulePreferences): string {
@@ -56,7 +57,9 @@ export function buildGuideMarkdown(prefs: RulePreferences): string {
       lines.push(``);
       lines.push(rule.why);
       lines.push(``);
-      lines.push(`**Prefer:** ${rule.suggestions.join("; ")}`);
+      lines.push(
+        `**Prefer:** ${suggestionDisplayTexts(rule.suggestions).join("; ")}`,
+      );
       lines.push(``);
     }
   }

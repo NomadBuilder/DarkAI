@@ -9,6 +9,7 @@ import {
   CATEGORY_ORDER,
   type Category,
 } from "@/lib/types";
+import { suggestionDisplayTexts } from "@/lib/suggestions";
 
 export function RulesStudio() {
   const { preferences, hydrated, toggleRule, reset, drift } =
@@ -30,7 +31,9 @@ export function RulesStudio() {
         rule.label.toLowerCase().includes(q) ||
         rule.why.toLowerCase().includes(q) ||
         rule.pattern.toLowerCase().includes(q) ||
-        rule.suggestions.some((s) => s.toLowerCase().includes(q)) ||
+        rule.suggestions.some((s) =>
+          (typeof s === "string" ? s : s.text).toLowerCase().includes(q),
+        ) ||
         rule.id.includes(q)
       );
     });
@@ -179,7 +182,13 @@ export function RulesStudio() {
                         <span className="text-[var(--ink-soft)]">
                           Context-sensitive options (not automatic swaps):{" "}
                         </span>
-                        {rule.suggestions.join(" · ")}
+                        {suggestionDisplayTexts(rule.suggestions).join(" · ")}
+                        {rule.guidance && rule.guidance.length > 0 ? (
+                          <span className="text-[var(--ink-soft)]">
+                            {" "}
+                            · Guidance: {rule.guidance.join(" · ")}
+                          </span>
+                        ) : null}
                       </p>
                       {sourceContext.evidence.length > 0 ? (
                         <p className="text-xs text-[var(--ink-soft)] leading-relaxed">

@@ -39,8 +39,10 @@ export default function AdminPage() {
           {" "}it — and edit the label, rationale, or proposed alternatives
           inline. A valid reason to flag wording does not prove that a suggested
           replacement is better, so review its meaning, framing, and evidence
-          independently. You can also propose rules we missed. Your work stays in this browser;
-          export it when you&rsquo;re done so the changes can be merged into{" "}
+          independently. “Fine in this context” events from Review land in the
+          false-positive queue below. You can also propose rules we missed. Your
+          work stays in this browser; export it when you&rsquo;re done so the
+          changes can be merged into{" "}
           <code className="font-[family-name:var(--font-mono)] text-sm text-[var(--teal-deep)]">
             src/lib/rules.ts
           </code>

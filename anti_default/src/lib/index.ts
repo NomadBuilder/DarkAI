@@ -36,5 +36,13 @@ export type {
   RulePreference,
   RulePreferences,
   RuleSourceRef,
+  RuleSuggestion,
   Severity,
+  SuggestionKind,
 } from "./types";
+export {
+  inferSuggestionKind,
+  normalizeSuggestions,
+  suggestionTexts,
+} from "./suggestions";
+export { isLexicalSuggestion } from "./rewrite";
