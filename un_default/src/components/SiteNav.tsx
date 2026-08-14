@@ -11,7 +11,7 @@ import {
 export function SiteNav({
   active,
 }: {
-  active?: "home" | "swap" | "dogwhistles" | "rules" | "sources";
+  active?: "home" | "swap" | "dogwhistles" | "rules" | "sources" | "agents";
 }) {
   return (
     <nav
@@ -39,6 +39,13 @@ export function SiteNav({
           accent="var(--indigo)"
         >
           Dogwhistles
+        </NavLink>
+        <NavLink
+          href="/for-agents"
+          active={active === "agents"}
+          accent="var(--coral)"
+        >
+          Agents
         </NavLink>
         <InstallMenu />
       </div>
@@ -116,6 +123,17 @@ function InstallMenu() {
           className="install-menu"
           aria-label="Install Un-Default"
         >
+          <Link
+            role="menuitem"
+            href="/for-agents"
+            className="install-menu-item"
+            onClick={() => setOpen(false)}
+          >
+            <span className="install-menu-title">Claude / Cursor</span>
+            <span className="install-menu-desc">
+              <code>npx un-default init</code> · MCP paste
+            </span>
+          </Link>
           <a
             role="menuitem"
             href={CHROME_STORE_URL}

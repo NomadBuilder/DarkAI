@@ -63,6 +63,11 @@ try {
     "utf8",
   );
   await readFile(path.join(temp, ".cursor", "mcp.json"), "utf8");
+  await readFile(
+    path.join(temp, ".claude", "skills", "un-default", "SKILL.md"),
+    "utf8",
+  );
+  await readFile(path.join(temp, ".mcp.json"), "utf8");
   await exec(bin, ["baseline", "."], { cwd: temp });
   const afterBaseline = await exec(
     bin,

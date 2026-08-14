@@ -210,10 +210,12 @@ Options:
   -v, --version                  Show version
 
 Agent / AI-copy habit:
+  npx un-default init             # skill + MCP + PR check (do this once)
   1. npx un-default fix .          # auto-heal safe 1:1 swaps
   2. npx un-default . --fail-on hard
   3. Only ask a human about remaining contextual hits
   4. Mark intentional language: feedback --kind fine_in_context …
+  Docs: https://darkai.ca/un-default/for-agents/
 
 Examples:
   npx un-default .

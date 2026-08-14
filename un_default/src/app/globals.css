@@ -293,6 +293,59 @@ a.nav-quiet,
   min-height: auto;
 }
 
+.copy-block {
+  border: 1px solid color-mix(in oklab, var(--ink) 14%, transparent);
+  background: color-mix(in oklab, var(--paper) 70%, white);
+  overflow: hidden;
+}
+
+.copy-block-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid color-mix(in oklab, var(--ink) 10%, transparent);
+  background: color-mix(in oklab, var(--sand) 55%, transparent);
+}
+
+.copy-block-label {
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.copy-block-btn {
+  appearance: none;
+  border: 1px solid color-mix(in oklab, var(--teal) 40%, transparent);
+  background: color-mix(in oklab, var(--teal) 12%, transparent);
+  color: var(--teal-deep);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.7rem;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.copy-block-btn:hover {
+  background: color-mix(in oklab, var(--teal) 22%, transparent);
+  color: var(--ink);
+}
+
+.copy-block-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .install-cta {
   display: inline-flex;
   align-items: center;

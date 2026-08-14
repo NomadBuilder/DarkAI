@@ -303,6 +303,10 @@ services:
           echo "❌ un_default/out/dogwhistles/index.html missing — Dogwhistles route not exported"
           exit 1
         fi
+        if [ ! -f "out/for-agents/index.html" ]; then
+          echo "❌ un_default/out/for-agents/index.html missing — Agents route not exported"
+          exit 1
+        fi
         echo "✅ Un-Default build successful!"
         cd ..
       else

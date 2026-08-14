@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "un-default": {
+      "command": "npx",
+      "args": ["-y", "un-default", "mcp"]
+    }
+  }
+}

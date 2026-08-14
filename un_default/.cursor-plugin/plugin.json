@@ -1,0 +1,22 @@
+{
+  "name": "un-default",
+  "displayName": "Un-Default",
+  "version": "0.5.1",
+  "description": "Inclusive-language definition of done for AI-written UI copy, docs, and marketing. Skill + MCP: scan, safe fix, and feedback.",
+  "author": {
+    "name": "NomadBuilder",
+    "email": "hello@darkai.ca"
+  },
+  "license": "MIT",
+  "keywords": [
+    "inclusive-language",
+    "accessibility",
+    "copywriting",
+    "mcp",
+    "claude",
+    "lint"
+  ],
+  "logo": "extension/icons/icon-128.png",
+  "skills": ["skills/un-default"],
+  "mcp": "mcp.json"
+}

@@ -16,7 +16,7 @@ import {
   type ScanReport,
 } from "../src/cli/format";
 import { writeBaseline } from "../src/cli/baseline";
-import { initializeProject } from "../src/cli/init";
+import { initializeProject, initNextSteps } from "../src/cli/init";
 import { applySafeFixes } from "../src/cli/fix";
 import { runScan } from "../src/cli/scan";
 import {
@@ -81,6 +81,7 @@ async function main() {
     } else {
       console.log("Un-Default is already initialized; no files changed.");
     }
+    for (const line of initNextSteps()) console.log(line);
     return;
   }
 

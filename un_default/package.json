@@ -1,9 +1,9 @@
 {
   "name": "un-default",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "private": false,
   "description": "Inclusive language review for AI-generated and human copy — CLI fix, MCP tools, GitHub Action, and browser extension. Formerly Anti-Default.",
-  "homepage": "https://darkai.ca/un-default",
+  "homepage": "https://darkai.ca/un-default/for-agents",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/NomadBuilder/anti-default.git"

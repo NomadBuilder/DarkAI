@@ -68,12 +68,18 @@ export default function Home() {
               className="text-sm text-[var(--ink)] mb-3"
               style={{ fontFamily: "var(--font-mono)" }}
             >
-              npx un-default .
+              npx un-default init
             </p>
             <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
-              Scan a folder, fail CI on hard hits, or install the extension for
-              live pages — use <strong className="font-medium text-[var(--ink)]">Install</strong> in
-              the nav. This Review UI is for demos and tuning.
+              After Claude or Cursor writes UI copy, make Un-Default the
+              definition of done — skill, MCP, and PR check in one shot.{" "}
+              <Link
+                href="/for-agents"
+                className="text-[var(--teal-deep)] underline underline-offset-2 decoration-[var(--ochre)] hover:text-[var(--ink)]"
+              >
+                Agents one-pager
+              </Link>
+              . Or scan here for demos and tuning.
             </p>
           </div>
 
@@ -119,8 +125,15 @@ export default function Home() {
             accent="var(--indigo)"
             body={
               <>
-                <code className="text-[var(--ink)]">npx un-default .</code>,
-                a GitHub Action that fails PRs / posts a checklist, and a{" "}
+                <Link
+                  href="/for-agents"
+                  className="text-[var(--teal-deep)] underline underline-offset-2"
+                >
+                  Agents
+                </Link>
+                :{" "}
+                <code className="text-[var(--ink)]">npx un-default init</code>,
+                MCP for Claude/Cursor, a GitHub Action that fails PRs, and a{" "}
                 <a
                   href={CHROME_STORE_URL}
                   target="_blank"
@@ -128,8 +141,8 @@ export default function Home() {
                   className="text-[var(--teal-deep)] underline underline-offset-2"
                 >
                   Chrome extension
-                </a>{" "}
-                — same rules, no paste-one-page bottleneck.
+                </a>
+                .
               </>
             }
           />
@@ -141,6 +154,12 @@ export default function Home() {
           Language moves with people. Keep humans and communities in the loop.
         </p>
         <p className="text-xs self-end flex flex-wrap gap-x-3 gap-y-1 justify-end items-center">
+          <Link
+            href="/for-agents"
+            className="text-[var(--teal-deep)] underline underline-offset-2"
+          >
+            Agents
+          </Link>
           <Link
             href="/rules"
             className="text-[var(--teal-deep)] underline underline-offset-2"

@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.5.1
+
+- Ship `/for-agents` one-pager: after Claude writes UI copy, run `npx un-default init`.
+- Paste-ready MCP config for Cursor, Claude Desktop, and Claude Code; Claude Project instructions; LinkedIn draft.
+- `init` also writes `.claude/skills/un-default/SKILL.md` and project `.mcp.json`.
+- Cursor plugin manifest (`.cursor-plugin/plugin.json`) + directory publish checklist.
+
 ## 0.5.0
 
 - Rename the product from **Anti-Default** to **Un-Default** (undoing defaults, not opposing people).

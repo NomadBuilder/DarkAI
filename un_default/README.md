@@ -14,12 +14,49 @@ It explains what it noticed and offers clearer alternatives.
 No account. No AI required for matching. Open rules you can tune.
 
 <p align="center">
+  <a href="https://darkai.ca/un-default/for-agents/"><strong>After Claude writes UI copy</strong></a>
+  ·
   <a href="https://darkai.ca/un-default"><strong>Try the web app</strong></a>
   ·
   <a href="https://chromewebstore.google.com/detail/anti-default-%E2%80%94-inclusive/aajdplalleopollfjegljkajkdcihmhc"><strong>Add the Chrome extension</strong></a>
   ·
   <a href="https://github.com/NomadBuilder/anti-default"><strong>Star on GitHub</strong></a>
 </p>
+
+---
+
+## After Claude / Cursor writes UI copy
+
+**One command** — skill + MCP + PR check. This is the habit that sticks:
+
+```bash
+npx un-default init
+```
+
+Paste-ready MCP JSON, Claude Project instructions, and a LinkedIn draft:
+
+**https://darkai.ca/un-default/for-agents/**
+
+### Paste MCP config (Cursor · Claude Desktop · Claude Code)
+
+```json
+{
+  "mcpServers": {
+    "un-default": {
+      "command": "npx",
+      "args": ["-y", "un-default", "mcp"]
+    }
+  }
+}
+```
+
+| Host | Where it goes |
+|------|----------------|
+| Cursor | `.cursor/mcp.json` (written by `init`) or Settings → MCP |
+| Claude Desktop | Settings → Developer → Edit Config → `claude_desktop_config.json` (merge, quit, relaunch) |
+| Claude Code | `.mcp.json` at repo root (written by `init`) or `claude mcp add` |
+
+Tools: `un_default_scan` · `un_default_fix` · `un_default_feedback`
 
 ---
 
@@ -44,9 +81,9 @@ Want the complete project setup?
 npx un-default init
 ```
 
-`init` adds an ignore file, changed-files GitHub workflow, Cursor skill + MCP
-config, and `inclusive-check` / `inclusive-fix` scripts. Existing files are
-never overwritten.
+`init` adds an ignore file, changed-files GitHub workflow, Cursor + Claude
+skills, `.cursor/mcp.json` + `.mcp.json`, and `inclusive-check` /
+`inclusive-fix` scripts. Existing files are never overwritten.
 
 ### AI-copy habit (definition of done)
 
@@ -68,14 +105,13 @@ npx un-default feedback --kind fine_in_context \
   --note "Quoted lyric" --open-issue
 ```
 
-### MCP (for Cursor / Claude / any agent host)
+### MCP server
 
 ```bash
 npx un-default mcp
 ```
 
-Tools: `un_default_scan` · `un_default_fix` · `un_default_feedback`  
-`init` writes `.cursor/mcp.json` when missing.
+See [for-agents](https://darkai.ca/un-default/for-agents/) for host-specific paste steps.
 
 ### Scan the way you work
 
