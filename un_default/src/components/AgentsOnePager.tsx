@@ -4,6 +4,8 @@ import Link from "next/link";
 import { CopyBlock } from "@/components/CopyBlock";
 import {
   AGENTS_URL,
+  CLAUDE_MARKETPLACE_ADD,
+  CLAUDE_PLUGIN_INSTALL,
   CLAUDE_PROJECT_INSTRUCTIONS,
   INIT_COMMAND,
   LINKEDIN_POST,
@@ -36,13 +38,38 @@ export function AgentsOnePager() {
           className="text-2xl text-[var(--ink)]"
           style={{ fontFamily: "var(--font-display)" }}
         >
+          Claude Code plugin
+        </h2>
+        <p className="text-[var(--ink-soft)] leading-relaxed">
+          Prefer plugins? Add the marketplace, then install — skill, MCP, and
+          after-edit hooks without running{" "}
+          <code className="text-[var(--ink)]">init</code> first (still useful for
+          CI + ignore file).
+        </p>
+        <CopyBlock
+          label="Add marketplace"
+          text={CLAUDE_MARKETPLACE_ADD}
+          language="bash"
+        />
+        <CopyBlock
+          label="Install plugin"
+          text={CLAUDE_PLUGIN_INSTALL}
+          language="bash"
+        />
+      </section>
+
+      <section className="grid gap-4 max-w-2xl">
+        <h2
+          className="text-2xl text-[var(--ink)]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           Claude does it without asking
         </h2>
         <p className="text-[var(--ink-soft)] leading-relaxed">
-          After <code className="text-[var(--ink)]">init</code>, Claude Code and
-          Cursor hooks scan copy right after file edits. Hard findings are
-          pushed back into the agent loop — users don’t have to remember a
-          command.
+          After <code className="text-[var(--ink)]">init</code> or the Claude
+          plugin, Claude Code and Cursor hooks scan copy right after file edits.
+          Hard findings are pushed back into the agent loop — users don’t have
+          to remember a command.
         </p>
       </section>
 
@@ -124,9 +151,9 @@ export function AgentsOnePager() {
             <code className="text-[var(--ink)]">.mcp.json</code> at the repo root
             (project scope). Approve when prompted, or{" "}
             <code className="text-[var(--ink)]">
-              claude mcp add --scope project -- npx -y un-default mcp
+              claude mcp add --scope project -- npx -y anti-default mcp
             </code>
-            .
+            . Or install the plugin from the marketplace above.
           </p>
         </div>
       </section>

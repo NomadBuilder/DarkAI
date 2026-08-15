@@ -13,6 +13,11 @@ export const INIT_COMMAND = `npx -y ${NPM_PACKAGE} init`;
 export const AGENTS_PATH = "/for-agents";
 export const AGENTS_URL = `${LIVE_APP_URL}${AGENTS_PATH}`;
 
+/** Claude Code — add this marketplace, then install the plugin (no init required). */
+export const CLAUDE_MARKETPLACE_ADD = "claude plugin marketplace add NomadBuilder/anti-default";
+export const CLAUDE_PLUGIN_INSTALL =
+  "claude plugin install un-default@un-default";
+
 /** stdio MCP server entry — same blob for Cursor, Claude Desktop, Claude Code. */
 export const MCP_SERVER_ENTRY = {
   command: "npx",
@@ -54,6 +59,10 @@ export const LINKEDIN_POST = `After Claude (or Cursor) writes UI copy, I don't m
 One command sets the habit for the whole repo — skill + MCP + after-edit hooks + PR check:
 
 ${INIT_COMMAND}
+
+Or in Claude Code:
+${CLAUDE_MARKETPLACE_ADD}
+${CLAUDE_PLUGIN_INSTALL}
 
 Paste-ready MCP + Claude Project instructions:
 ${AGENTS_URL}

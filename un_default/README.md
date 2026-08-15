@@ -54,7 +54,7 @@ Paste-ready MCP JSON, Claude Project instructions, and a LinkedIn draft:
 |------|----------------|
 | Cursor | `.cursor/mcp.json` (written by `init`) or Settings → MCP |
 | Claude Desktop | Settings → Developer → Edit Config → `claude_desktop_config.json` (merge, quit, relaunch) |
-| Claude Code | `.mcp.json` at repo root (written by `init`) or `claude mcp add` |
+| Claude Code | Plugin marketplace (above), or `.mcp.json` via `init`, or `claude mcp add` |
 
 Tools: `un_default_scan` · `un_default_fix` · `un_default_feedback`
 

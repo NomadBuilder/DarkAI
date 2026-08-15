@@ -1,91 +1,112 @@
-# Publish Un-Default to agent directories
+# Directory & marketplace submissions
 
-Checklist for getting the skill + MCP in front of Claude / Cursor users.
-The product CTA is always:
+Repo is ready for discovery. Product CTA stays:
 
 ```bash
 npx -y anti-default init
 ```
 
-That writes Cursor + Claude Code skills, project MCP config, ignore file,
-`.claude/settings.json` / `.cursor/hooks.json` after-edit hooks, `CLAUDE.md`,
-and a GitHub Action workflow. Existing files are never overwritten.
-
 One-pager: https://darkai.ca/un-default/for-agents/
 
 ---
 
-## Cursor marketplace (plugin)
+## Done in-repo (shipped)
 
-Repo already includes:
+| Channel | Artifact |
+|---------|----------|
+| Claude Code marketplace (self-serve) | `.claude-plugin/marketplace.json` + `plugin.json` |
+| Claude plugin components | `skills/`, `.mcp.json`, `hooks/hooks.json` |
+| Cursor plugin | `.cursor-plugin/plugin.json`, `mcp.json`, `skills/` |
+| Official MCP Registry metadata | `server.json` + `package.json` → `mcpName` |
+| Smithery | `smithery.yaml` |
 
-- `.cursor-plugin/plugin.json` — plugin manifest
-- `mcp.json` — MCP server entry for plugin hosts
-- `skills/un-default/SKILL.md` — agent skill
-
-### Local smoke test
+### Claude Code — install without browsing a store
 
 ```bash
-mkdir -p ~/.cursor/plugins/local/un-default
-rsync -a \
-  .cursor-plugin \
-  mcp.json \
-  skills \
-  README.md \
-  ~/.cursor/plugins/local/un-default/
+claude plugin marketplace add NomadBuilder/anti-default
+claude plugin install un-default@un-default
 ```
 
-Reload Cursor → confirm skill `un-default` and MCP server appear.
+Validate locally (optional):
 
-### Submit
-
-1. Polish README “After Claude / Cursor” section (done).
-2. Optional logo: square PNG hosted in-repo.
-3. Submit at https://cursor.com/marketplace/publish  
-   or email Cursor plugins (see current Cursor plugin-template docs).
-4. Also list on community catalog: https://cursor.directory/plugins/new — paste the GitHub URL.
-
----
-
-## Claude MCP directories
-
-Paste the same stdio config:
-
-```json
-{
-  "mcpServers": {
-    "un-default": {
-      "command": "npx",
-      "args": ["-y", "anti-default", "mcp"]
-    }
-  }
-}
+```bash
+claude plugin validate .
 ```
 
-Submit / claim listings where people browse MCP servers:
+### Official Claude plugin directory (Anthropic)
 
-| Directory | Notes |
-|-----------|--------|
-| [Glama MCP](https://glama.ai/mcp) | Add server with npm package `un-default`, command `npx -y un-default mcp` |
-| [Smithery](https://smithery.ai) | Publish if you want one-click Claude Desktop install |
-| [mcp.so](https://mcp.so) / PulseMCP | Community listings — link to for-agents + GitHub |
-| Anthropic / Claude docs “custom connectors” | When they accept community stdio servers, point at this package |
+Submit the **public GitHub repo** after validate:
 
-Always link **https://darkai.ca/un-default/for-agents/** as the install doc.
+- Console: https://platform.claude.com/plugins/submit  
+- Team/Enterprise: https://claude.ai/admin-settings/directory/submissions/plugins/new  
+
+Repo URL: `https://github.com/NomadBuilder/anti-default`
+
+### Cursor marketplace
+
+1. Local smoke (optional): see `docs/PUBLISH-DIRECTORIES.md`
+2. Submit: https://cursor.com/marketplace/publish  
+3. Community: https://cursor.directory/plugins/new — paste GitHub URL
+
+### Official MCP Registry
+
+Requires npm package with matching `mcpName` (needs **anti-default@0.5.4+** published), then:
+
+```bash
+# once: install mcp-publisher (brew or GitHub release)
+mcp-publisher login github
+mcp-publisher publish
+```
+
+Server name: `io.github.NomadBuilder/un-default`
+
+### Smithery
+
+```bash
+npx @smithery/cli@latest
+# or after smithery auth:
+# smithery mcp publish ./… -n nomadbuilder/un-default
+```
+
+Use `smithery.yaml` (npx `anti-default mcp`). Complete any web onboarding at https://smithery.ai
 
 ---
 
-## Claude Project gallery / templates
+## Paste-ready listing copy
 
-There is no official public “Project template store” yet. Distribution:
+**Name:** Un-Default  
+**npm:** `anti-default`  
+**Command:** `npx -y anti-default mcp`  
+**Init:** `npx -y anti-default init`  
+**Docs:** https://darkai.ca/un-default/for-agents/  
+**GitHub:** https://github.com/NomadBuilder/anti-default  
+**Privacy:** https://darkai.ca/un-default/privacy/
 
-1. Share the custom-instructions block from the for-agents page.
-2. Pin a LinkedIn / X post with the instructions + `npx -y anti-default init`.
-3. Add a gist mirroring `docs/agents/CLAUDE_PROJECT.md` for easy star/fork.
+**Short description (≤160 chars):**  
+Inclusive-language definition of done for AI-written copy. Local rules, scan/fix/feedback MCP, after-edit hooks. No account.
+
+**Longer blurb:**  
+Un-Default catches colonial defaults, gendered role titles, ableist framing, and related coded language in UI copy, docs, and marketing. One `init` installs a Claude/Cursor skill, MCP tools, after-edit hooks, and a PR check so agents keep checking even when nobody remembers. Prefer `npx -y anti-default init` over starring the repo.
+
+### Glama / mcp.so / PulseMCP
+
+| Field | Value |
+|-------|--------|
+| Package | `anti-default` |
+| Start | `npx -y anti-default mcp` |
+| Homepage | https://darkai.ca/un-default/for-agents/ |
+| Source | https://github.com/NomadBuilder/anti-default |
+
+(Do **not** use the blocked npm name `un-default`.)
 
 ---
 
-## After listing
+## Still manual (needs your account)
 
-- Update Chrome store / npm README badges if directories give share URLs.
-- Prefer CTA copy that says **run `init`**, not “star the repo”.
+- [ ] Anthropic plugin directory form  
+- [ ] Cursor marketplace publish  
+- [ ] cursor.directory  
+- [ ] `mcp-publisher publish` (after npm 0.5.4)  
+- [ ] Smithery account publish  
+- [ ] Glama / mcp.so / PulseMCP claim  
+- [ ] Post LinkedIn draft from for-agents page  

@@ -1,0 +1,20 @@
+{
+  "name": "un-default",
+  "version": "0.5.4",
+  "description": "Inclusive-language definition of done for AI-written copy. Skill, MCP tools (scan/fix/feedback), and after-edit hooks.",
+  "author": {
+    "name": "NomadBuilder",
+    "email": "hello@darkai.ca"
+  },
+  "homepage": "https://darkai.ca/un-default/for-agents",
+  "repository": "https://github.com/NomadBuilder/anti-default",
+  "license": "MIT",
+  "keywords": [
+    "inclusive-language",
+    "accessibility",
+    "copywriting",
+    "mcp",
+    "lint",
+    "claude"
+  ]
+}

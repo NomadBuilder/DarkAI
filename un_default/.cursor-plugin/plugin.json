@@ -1,7 +1,7 @@
 {
   "name": "un-default",
   "displayName": "Un-Default",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "Inclusive-language definition of done for AI-written copy. Skill + MCP + after-edit hooks.",
   "author": {
     "name": "NomadBuilder",

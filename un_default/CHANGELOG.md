@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.5.4
+
+- Claude Code **plugin + marketplace** (`.claude-plugin/`) so users can
+  `claude plugin marketplace add NomadBuilder/anti-default` then install
+  `un-default@un-default`.
+- Official MCP Registry metadata (`server.json` + `mcpName`) and Smithery
+  `smithery.yaml` for directory discovery.
+- Plugin-bundled `.mcp.json` + `hooks/hooks.json`; for-agents page documents
+  the marketplace install path.
+
 ## 0.5.3
 
 - `init` installs Claude Code + Cursor **after-edit hooks** so agents get Un-Default findings without the user remembering a command.

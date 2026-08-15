@@ -1,0 +1,28 @@
+{
+  "name": "un-default",
+  "owner": {
+    "name": "NomadBuilder",
+    "email": "hello@darkai.ca"
+  },
+  "metadata": {
+    "description": "Un-Default — inclusive language review for AI-written and human copy",
+    "version": "0.5.4"
+  },
+  "plugins": [
+    {
+      "name": "un-default",
+      "source": "./",
+      "description": "Inclusive-language definition of done: skill + MCP + after-edit hooks so Claude keeps checking copy.",
+      "homepage": "https://darkai.ca/un-default/for-agents",
+      "repository": "https://github.com/NomadBuilder/anti-default",
+      "license": "MIT",
+      "keywords": [
+        "inclusive-language",
+        "mcp",
+        "accessibility",
+        "copywriting"
+      ],
+      "category": "productivity"
+    }
+  ]
+}

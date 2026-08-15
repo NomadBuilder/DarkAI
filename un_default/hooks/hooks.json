@@ -1,0 +1,16 @@
+{
+  "description": "Un-Default after-edit inclusive-language scan",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks/un-default-after-edit.sh\""
+          }
+        ]
+      }
+    ]
+  }
+}

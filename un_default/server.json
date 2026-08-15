@@ -1,0 +1,28 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.NomadBuilder/un-default",
+  "title": "Un-Default",
+  "description": "Inclusive language review for AI-generated and human copy. Scan, safe autofix, and fine-in-context feedback — local rules, no account.",
+  "repository": {
+    "url": "https://github.com/NomadBuilder/anti-default",
+    "source": "github"
+  },
+  "version": "0.5.4",
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "anti-default",
+      "version": "0.5.4",
+      "transport": {
+        "type": "stdio"
+      },
+      "packageArguments": [
+        {
+          "type": "positional",
+          "value": "mcp"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+# Smithery — https://smithery.ai
+# Publishes the stdio MCP via npx (same as Claude / Cursor paste config).
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    required: []
+    properties: {}
+  commandFunction: |-
+    (config) => ({
+      command: 'npx',
+      args: ['-y', 'anti-default', 'mcp'],
+      env: {}
+    })
+exampleConfig: {}
