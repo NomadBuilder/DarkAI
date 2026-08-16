@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Regenerate OG cards at 2400×1260 (2×) with sharper JPEG so LinkedIn
+  previews don’t look soft after downscale.
 - Serve Un-Default OG images with public cache headers (LinkedIn often skips
   `no-cache` assets) and prefer JPEG `og:image` with a version query so
   scrapers re-fetch.
