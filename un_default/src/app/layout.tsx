@@ -4,6 +4,7 @@ import {
   Atkinson_Hyperlegible,
   IBM_Plex_Mono,
 } from "next/font/google";
+import { LIVE_APP_URL } from "@/lib/links";
 import "./globals.css";
 
 const display = Fraunces({
@@ -25,9 +26,33 @@ const mono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(`${LIVE_APP_URL}/`),
   title: "Un-Default — Inclusive language review",
   description:
     "A welcoming tool to review website copy for colonial, gendered, ableist, and other excluding language — catch defaults, then rewrite with care.",
+  openGraph: {
+    type: "website",
+    siteName: "Un-Default",
+    title: "Un-Default — Inclusive language review",
+    description:
+      "Catch colonial, gendered, and ableist defaults in AI-written copy — locally, with public rules.",
+    url: LIVE_APP_URL,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Un-Default — inclusive language review for AI-written copy",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Un-Default — Inclusive language review",
+    description:
+      "Catch colonial, gendered, and ableist defaults in AI-written copy — locally, with public rules.",
+    images: ["/og.png"],
+  },
 };
 
 export default function RootLayout({

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Add Open Graph / LinkedIn preview images (`og.png`, `og-for-agents.png`) so
+  shared links show the Un-Default mark instead of an empty card.
 - Gender pack: high-signal **sexist digs / misogynistic framing** rules
   (e.g. feminazi, like a girl, man up, bossy, shrill, hysterical, unnecessary
   “female [role]”, girls-for-adult-coworkers) so women-creators positioning is

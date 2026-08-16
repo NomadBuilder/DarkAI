@@ -1,8 +1,9 @@
+import type { Metadata } from "next";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 import { AgentsOnePager } from "@/components/AgentsOnePager";
 import { AGENTS_URL } from "@/lib/agent-install";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "After Claude writes UI copy — Un-Default",
   description:
     "Make Un-Default the definition of done for AI-generated copy. One command: npx -y anti-default init — skill, MCP, and PR check for Claude and Cursor.",
@@ -11,6 +12,22 @@ export const metadata = {
     description:
       "npx -y anti-default init — skill + MCP + PR check so agents don’t ship colonial defaults.",
     url: AGENTS_URL,
+    type: "website",
+    images: [
+      {
+        url: "/og-for-agents.png",
+        width: 1200,
+        height: 630,
+        alt: "Un-Default — after Claude writes UI copy, run npx -y anti-default init",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "After Claude writes UI copy, run this",
+    description:
+      "npx -y anti-default init — skill + MCP + PR check so agents don’t ship colonial defaults.",
+    images: ["/og-for-agents.png"],
   },
 };
 
