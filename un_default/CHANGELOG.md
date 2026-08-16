@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased
+
+- Gender pack: high-signal **sexist digs / misogynistic framing** rules
+  (e.g. feminazi, like a girl, man up, bossy, shrill, hysterical, unnecessary
+  “female [role]”, girls-for-adult-coworkers) so women-creators positioning is
+  backed by real checks — mix of hard flags and soft heads-ups.
+- Refresh LinkedIn / for-agents social draft around agent-written copy and
+  belonging language (master/slave, pow-wow, ableist metaphors, spirit animal,
+  sexist digs) — never lead with weak “guys / whitelist” examples on the site.
+
 ## 0.5.4
 
 - Claude Code **plugin + marketplace** (`.claude-plugin/`) so users can

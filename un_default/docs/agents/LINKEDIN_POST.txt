@@ -1,10 +1,30 @@
-After Claude (or Cursor) writes UI copy, I don't mark it done until Un-Default is clean.
+We’ve gotten really good at having agents write the product.
 
-One command sets the habit for the whole repo — skill + MCP + PR check:
+We’re still bad at noticing when the language they write quietly decides who belongs.
+
+As creators, we want the work to feel inclusive — not accidentally coded against the people reading it.
+
+Job posts. Onboarding. UI strings. Docs.
+They get drafted in seconds now — often faster than anyone reviews the words themselves.
+
+So a README still says master/slave.
+A sprint invite calls the sync a pow-wow.
+A status update still calls the outage crazy — or the bug crippling.
+A brand brief goes looking for its “spirit animal.”
+A review still calls someone “bossy” or “shrill,” or tells them to “man up.”
+
+That’s colonial defaults, ableist metaphors, and quiet digs — the stuff that decides who feels welcome in creator and brand copy.
+
+We moved writing upstream into the agent. The language check should move with it.
+
+Un-Default is a neat way to do that. It runs locally, uses public rules (including sexist digs, ableist metaphors, and male-default language), makes no AI calls, needs no account, and plugs directly into agent workflows.
+
+It’s the kind of small guardrail that feels worth having by default — especially when adding it takes about 30 seconds.
+
+If you’re using Claude Code, Copilot, or ChatGPT:
 
 npx -y anti-default init
 
-Paste-ready MCP + Claude Project instructions:
 https://darkai.ca/un-default/for-agents/
 
-Local rules. No account. Same check in CI.
+Then “done” doesn’t just mean the code compiles.

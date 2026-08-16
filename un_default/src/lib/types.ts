@@ -131,7 +131,7 @@ export const CATEGORY_META: Record<
   gender: {
     title: "Gender-inclusive",
     description:
-      "Assumptions that erase non-binary people or treat male as the default human.",
+      "Male-as-default wording, binary address, and sexist digs that police or diminish women.",
   },
   ableist: {
     title: "Ableist",

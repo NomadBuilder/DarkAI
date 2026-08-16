@@ -283,6 +283,112 @@ const BY_ID: Partial<Record<string, RuleSourceRef[]>> = {
   businessman: [R.unWomenGender],
   freshman: [R.unWomenGender],
   "you-guys": [R.unWomenGender],
+  feminazi: [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "flags sexist and demeaning gendered language; prefer specific, respectful description",
+    },
+  ],
+  "like-a-girl": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "discourages language that treats gender as a deficit or insult",
+    },
+  ],
+  "man-up": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "discourages language that equates competence or courage with masculinity",
+    },
+  ],
+  "office-wife": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "recommends avoiding gendered stereotypes and demeaning relationship metaphors at work",
+    },
+  ],
+  "bitch-slur": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "flags gendered insults; soft-flagged here so breeding and quoted uses can be kept",
+    },
+  ],
+  bossy: [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports avoiding gendered double standards in describing leadership and assertiveness",
+    },
+  ],
+  shrill: [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports avoiding tone-policing language that disproportionately targets women",
+    },
+  ],
+  hysterical: [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports avoiding historically gendered dismissals of emotion and judgment",
+    },
+  ],
+  "female-role-prefix": [R.unWomenGender],
+  "girls-for-adults": [R.unWomenGender],
+  "high-maintenance": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports avoiding gendered stereotypes when describing people’s needs or requests",
+    },
+  ],
+  girlboss: [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports describing people’s roles without patronizing gendered marketing labels",
+    },
+  ],
+  "emotional-stereotype": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "flags stereotyping women as overly emotional; prefer specific behavior description",
+    },
+  ],
+  "drama-queen": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports avoiding gendered dismissals of someone’s concerns",
+    },
+  ],
+  "gold-digger": [
+    {
+      title: "APA — Bias-free language: gender",
+      href: S.apaGender,
+      supports:
+        "supports avoiding misogynistic stereotypes about women’s motives",
+    },
+  ],
 
   crazy: [R.ncdj, R.rootedDisability],
   lame: [R.ncdj, R.rootedDisability],

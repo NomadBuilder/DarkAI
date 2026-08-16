@@ -27,7 +27,7 @@ export const SOURCE_GROUPS: SourceGroup[] = [
     id: "gender",
     title: "Gender-inclusive",
     summary:
-      "Male-default wording, binary address, and gendered job titles.",
+      "Male-default wording, binary address, gendered job titles, and high-signal sexist digs.",
     links: [
       {
         title: "UN Women — Gender-inclusive language guidelines",
