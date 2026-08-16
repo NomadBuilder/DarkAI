@@ -54,18 +54,30 @@ Docs: ${AGENTS_URL}
 `;
 
 /** Short LinkedIn / social paste — keep under ~1300 chars for easy posting. */
-export const LINKEDIN_POST = `After Claude (or Cursor) writes UI copy, I don't mark it done until Un-Default is clean.
+export const LINKEDIN_POST = `Your coding agent just shipped UI copy.
 
-One command sets the habit for the whole repo — skill + MCP + after-edit hooks + PR check:
+It also quietly left you with “guys,” “whitelist,” and “native English speakers only.”
 
-${INIT_COMMAND}
+That’s the gap: agents finish the code, and nobody finishes the language.
 
-Or in Claude Code:
-${CLAUDE_MARKETPLACE_ADD}
-${CLAUDE_PLUGIN_INSTALL}
+Un-Default closes it.
 
-Paste-ready MCP + Claude Project instructions:
-${AGENTS_URL}
+What it is:
+A local inclusive-language check that becomes definition-of-done for AI-written copy. Colonial defaults, gendered titles, ableist framing, soft dogwhistles — flagged with plain-language rewrites.
 
-Local rules. No account. Same check in CI — and hooks catch edits even when nobody looks.
+What it is not:
+Another account. Another model bill. Another “please remember to review.”
+
+One command installs the habit for the whole repo — skill, MCP, after-edit hooks, PR check — so Claude Code (or Copilot / ChatGPT / whoever) keeps scanning even when you don’t.
+
+npx -y anti-default init
+
+Claude Code, one more step:
+claude plugin marketplace add NomadBuilder/anti-default
+claude plugin install un-default@un-default
+
+Paste configs + Project instructions:
+https://darkai.ca/un-default/for-agents/
+
+If AI writes your words, this is the missing “done.”
 `;

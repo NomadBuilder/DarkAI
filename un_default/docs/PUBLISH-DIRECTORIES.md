@@ -10,6 +10,40 @@ One-pager: https://darkai.ca/un-default/for-agents/
 
 ---
 
+## Automated release (npm + MCP Registry)
+
+Before tagging:
+
+```bash
+npm run preflight
+```
+
+That checks version sync, full tests, MCP tools/list + scan, after-edit hook exit-2,
+init merge into existing Claude settings, and `claude plugin validate` when available.
+
+Then tag (versions must match `package.json`):
+
+```bash
+git tag v0.5.4
+git push origin v0.5.4
+```
+
+`.github/workflows/publish.yml` on `v*` tags / GitHub Releases:
+
+1. Preflight  
+2. `npm publish --access public --provenance`  
+3. Wait until the version is visible on npm  
+4. `mcp-publisher` → official MCP Registry (GitHub OIDC)  
+5. Print the manual directory checklist  
+
+**GitHub secret:** `NPM_TOKEN` (granular publish token), **or** configure npm
+[trusted publishing](https://docs.npmjs.com/trusted-publishers) for this repo so
+OIDC provenance works without a classic token.
+
+MCP Registry OIDC needs no extra secret (`id-token: write` is already set).
+
+---
+
 ## Done in-repo (shipped)
 
 | Channel | Artifact |

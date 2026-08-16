@@ -60,6 +60,7 @@
     "extension:pack": "bash scripts/pack-extension.sh",
     "package:build": "node scripts/build-package.mjs",
     "package:check": "node scripts/check-package.mjs",
+    "preflight": "node scripts/preflight-release.mjs",
     "test": "npm run corpus && npm run sources:check && npm run rules:check && npm run package:check",
     "prepack": "npm run package:build"
   },

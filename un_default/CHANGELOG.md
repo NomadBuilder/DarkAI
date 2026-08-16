@@ -9,6 +9,8 @@
   `smithery.yaml` for directory discovery.
 - Plugin-bundled `.mcp.json` + `hooks/hooks.json`; for-agents page documents
   the marketplace install path.
+- Release automation: `npm run preflight` + tag workflow publishes npm and the
+  MCP Registry; manual directory URLs printed at the end.
 
 ## 0.5.3
 

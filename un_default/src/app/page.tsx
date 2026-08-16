@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "@/components/BrandMark";
 import { ReviewApp } from "@/components/ReviewApp";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 import {
@@ -23,6 +24,10 @@ export default function Home() {
           <p className="animate-rise text-xs uppercase tracking-[0.2em] text-[var(--teal)] mb-6">
             For every reader · every community
           </p>
+
+          <div className="animate-rise mb-6">
+            <BrandMark className="h-16 w-16 md:h-20 md:w-20 rounded-[1.1rem] shadow-[0_12px_40px_rgba(18,24,32,0.18)]" />
+          </div>
 
           <h1
             className="animate-rise text-[clamp(3.4rem,12vw,6.5rem)] leading-[0.92] tracking-[-0.03em] text-[var(--ink)] max-w-4xl"

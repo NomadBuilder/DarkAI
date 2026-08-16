@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { BrandMark } from "@/components/BrandMark";
 import {
   CHROME_STORE_URL,
   CLI_DOCS_URL,
@@ -20,9 +21,10 @@ export function SiteNav({
     >
       <Link
         href="/"
-        className="nav-quiet text-base tracking-wide text-[var(--ink)] hover:text-[var(--teal-deep)] transition-colors py-1"
+        className="nav-quiet flex items-center gap-2.5 text-base tracking-wide text-[var(--ink)] hover:text-[var(--teal-deep)] transition-colors py-1"
         style={{ fontFamily: "var(--font-display)" }}
       >
+        <BrandMark className="h-8 w-8 shrink-0 rounded-[0.55rem] shadow-sm" />
         Un-Default
       </Link>
 

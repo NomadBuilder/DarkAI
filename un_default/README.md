@@ -33,9 +33,18 @@ No account. No AI required for matching. Open rules you can tune.
 npx -y anti-default init
 ```
 
+Or install the Claude Code plugin from this repo’s marketplace:
+
+```bash
+claude plugin marketplace add NomadBuilder/anti-default
+claude plugin install un-default@un-default
+```
+
 Paste-ready MCP JSON, Claude Project instructions, and a LinkedIn draft:
 
 **https://darkai.ca/un-default/for-agents/**
+
+Directory checklist: [`docs/PUBLISH-DIRECTORIES.md`](docs/PUBLISH-DIRECTORIES.md)
 
 ### Paste MCP config (Cursor · Claude Desktop · Claude Code)
 
