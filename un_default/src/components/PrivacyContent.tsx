@@ -90,6 +90,13 @@ export default function PrivacyContent() {
             <code className="text-[var(--ink)]">telemetry: false</code> to opt
             out.
           </li>
+          <li>
+            This app is hosted on darkai.ca and loads the same{" "}
+            <strong>Google Tag Manager</strong> container as the rest of the
+            DarkAI site (page analytics). That is separate from the anonymous
+            Un-Default usage counters above. The CLI, extension, and local
+            scans still do not load GTM.
+          </li>
         </ul>
       </section>
 

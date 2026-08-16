@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Load DarkAI sitewide **Google Tag Manager** (`GTM-MZ69VXXL`) on the Un-Default
+  web UI so `/un-default` pages match the rest of darkai.ca analytics.
 - First-party **usage counters**: for-agents page views + copy clicks, anonymous
   GitHub Action pings (`telemetry: false` to opt out). Public totals at
   `/usage` and `/api/stats`; badge at `/api/badge/action_run.svg`.
