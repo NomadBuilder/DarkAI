@@ -40,7 +40,7 @@ claude plugin marketplace add NomadBuilder/anti-default
 claude plugin install un-default@un-default
 ```
 
-Paste-ready MCP JSON, Claude Project instructions, and a LinkedIn draft:
+Paste-ready MCP JSON and Claude Project instructions:
 
 **https://darkai.ca/un-default/for-agents/**
 

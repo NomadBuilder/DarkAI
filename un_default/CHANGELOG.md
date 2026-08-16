@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Remove the Share on LinkedIn block from `/for-agents` (draft stays in
+  `docs/agents/LINKEDIN_POST.txt` for offline use).
 - Add Open Graph / LinkedIn preview images (`og.png`, `og-for-agents.png`) so
   shared links show the Un-Default mark instead of an empty card.
 - Gender pack: high-signal **sexist digs / misogynistic framing** rules

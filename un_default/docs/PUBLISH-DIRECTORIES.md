@@ -143,4 +143,4 @@ Un-Default catches colonial defaults, gendered role titles, ableist framing, and
 - [ ] `mcp-publisher publish` (after npm 0.5.4)  
 - [ ] Smithery account publish  
 - [ ] Glama / mcp.so / PulseMCP claim  
-- [ ] Post LinkedIn draft from for-agents page  
+- [ ] Post LinkedIn draft from `docs/agents/LINKEDIN_POST.txt` (not shown on the site)  

@@ -8,7 +8,6 @@ import {
   CLAUDE_PLUGIN_INSTALL,
   CLAUDE_PROJECT_INSTRUCTIONS,
   INIT_COMMAND,
-  LINKEDIN_POST,
   MCP_CONFIG_JSON,
 } from "@/lib/agent-install";
 
@@ -176,22 +175,6 @@ export function AgentsOnePager() {
           text={CLAUDE_PROJECT_INSTRUCTIONS}
           language="text"
         />
-      </section>
-
-      <section className="grid gap-4">
-        <div className="grid gap-2 max-w-2xl">
-          <h2
-            className="text-2xl text-[var(--ink)]"
-            style={{ fontFamily: "var(--font-display)" }}
-          >
-            Share on LinkedIn
-          </h2>
-          <p className="text-[var(--ink-soft)] leading-relaxed">
-            Copy, post, point the CTA at{" "}
-            <code className="text-[var(--ink)]">init</code> — not just a star.
-          </p>
-        </div>
-        <CopyBlock label="LinkedIn draft" text={LINKEDIN_POST} language="text" />
         <p className="text-sm text-[var(--ink-soft)]">
           Canonical URL for this page:{" "}
           <a
