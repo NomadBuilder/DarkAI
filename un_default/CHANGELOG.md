@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Serve Un-Default OG images with public cache headers (LinkedIn often skips
+  `no-cache` assets) and prefer JPEG `og:image` with a version query so
+  scrapers re-fetch.
 - Remove the Share on LinkedIn block from `/for-agents` (draft stays in
   `docs/agents/LINKEDIN_POST.txt` for offline use).
 - Add Open Graph / LinkedIn preview images (`og.png`, `og-for-agents.png`) so

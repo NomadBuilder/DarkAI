@@ -268,6 +268,32 @@ def scrape():
 
 MAX_UPLOAD_BYTES = 8_000_000
 
+# LinkedIn/Facebook OG crawlers need cacheable images; Flask defaults to no-cache.
+_CACHEABLE_STATIC = (
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".gif",
+    ".svg",
+    ".ico",
+    ".woff",
+    ".woff2",
+    ".css",
+    ".js",
+    ".map",
+)
+
+
+def _with_static_cache(response, path: str):
+    lower = (path or "").lower()
+    if any(lower.endswith(ext) for ext in _CACHEABLE_STATIC):
+        response.headers["Cache-Control"] = "public, max-age=604800"
+        response.headers["Content-Disposition"] = "inline"
+    elif lower.endswith(".html") or not lower:
+        response.headers["Cache-Control"] = "public, max-age=60"
+    return response
+
 
 @un_default_bp.route("/api/extract", methods=["POST"])
 def extract_document():
@@ -367,18 +393,24 @@ def serve_static(path: str = ""):
     if not path or path.endswith("/"):
         candidate = os.path.join(root, path, "index.html")
         if os.path.isfile(candidate):
-            return send_from_directory(os.path.dirname(candidate), "index.html")
+            return _with_static_cache(
+                send_from_directory(os.path.dirname(candidate), "index.html"),
+                "index.html",
+            )
 
     full = os.path.join(root, path)
     if os.path.isfile(full):
-        return send_from_directory(root, path)
+        return _with_static_cache(send_from_directory(root, path), path)
 
     index_candidate = os.path.join(root, path, "index.html")
     if os.path.isfile(index_candidate):
-        return send_from_directory(os.path.join(root, path), "index.html")
+        return _with_static_cache(
+            send_from_directory(os.path.join(root, path), "index.html"),
+            "index.html",
+        )
 
     index = os.path.join(root, "index.html")
     if os.path.isfile(index):
-        return send_from_directory(root, "index.html")
+        return _with_static_cache(send_from_directory(root, "index.html"), "index.html")
 
     abort(404)

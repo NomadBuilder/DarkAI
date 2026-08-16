@@ -117,6 +117,9 @@ def write_agents(f: dict[str, ImageFont.ImageFont]) -> None:
     out = PUBLIC / "og-for-agents.png"
     img.save(out, "PNG", optimize=True)
     print(f"wrote {out} ({out.stat().st_size} bytes)")
+    jpg = PUBLIC / "og-for-agents.jpg"
+    img.convert("RGB").save(jpg, "JPEG", quality=88, optimize=True)
+    print(f"wrote {jpg} ({jpg.stat().st_size} bytes)")
 
 
 def write_home(f: dict[str, ImageFont.ImageFont]) -> None:
@@ -138,6 +141,9 @@ def write_home(f: dict[str, ImageFont.ImageFont]) -> None:
     out = PUBLIC / "og.png"
     img.save(out, "PNG", optimize=True)
     print(f"wrote {out} ({out.stat().st_size} bytes)")
+    jpg = PUBLIC / "og.jpg"
+    img.convert("RGB").save(jpg, "JPEG", quality=88, optimize=True)
+    print(f"wrote {jpg} ({jpg.stat().st_size} bytes)")
 
 
 def main() -> None:

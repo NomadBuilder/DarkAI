@@ -15,10 +15,11 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/og-for-agents.png",
+        url: "/og-for-agents.jpg?v=2",
         width: 1200,
         height: 630,
         alt: "Un-Default — after Claude writes UI copy, run npx -y anti-default init",
+        type: "image/jpeg",
       },
     ],
   },
@@ -27,10 +28,9 @@ export const metadata: Metadata = {
     title: "After Claude writes UI copy, run this",
     description:
       "npx -y anti-default init — skill + MCP + PR check so agents don’t ship colonial defaults.",
-    images: ["/og-for-agents.png"],
+    images: ["/og-for-agents.jpg?v=2"],
   },
 };
-
 export default function ForAgentsPage() {
   return (
     <main id="main-content" className="flex-1">

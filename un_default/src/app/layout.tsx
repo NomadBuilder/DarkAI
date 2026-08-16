@@ -39,10 +39,11 @@ export const metadata: Metadata = {
     url: LIVE_APP_URL,
     images: [
       {
-        url: "/og.png",
+        url: "/og.jpg?v=2",
         width: 1200,
         height: 630,
         alt: "Un-Default — inclusive language review for AI-written copy",
+        type: "image/jpeg",
       },
     ],
   },
@@ -51,11 +52,9 @@ export const metadata: Metadata = {
     title: "Un-Default — Inclusive language review",
     description:
       "Catch colonial, gendered, and ableist defaults in AI-written copy — locally, with public rules.",
-    images: ["/og.png"],
+    images: ["/og.jpg?v=2"],
   },
-};
-
-export default function RootLayout({
+};export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
