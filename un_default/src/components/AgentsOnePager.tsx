@@ -21,7 +21,12 @@ export function AgentsOnePager() {
           after-edit hooks, and a PR check so Claude keeps checking even when
           nobody is watching.
         </p>
-        <CopyBlock label="Run once in your project" text={INIT_COMMAND} language="bash" />
+        <CopyBlock
+          label="Run once in your project"
+          text={INIT_COMMAND}
+          language="bash"
+          track="init_copy"
+        />
         <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
           That writes Cursor + Claude Code skills, project MCP,{" "}
           <code className="text-[var(--ink)]">CLAUDE.md</code>, Claude/Cursor
@@ -49,11 +54,13 @@ export function AgentsOnePager() {
           label="Add marketplace"
           text={CLAUDE_MARKETPLACE_ADD}
           language="bash"
+          track="marketplace_copy"
         />
         <CopyBlock
           label="Install plugin"
           text={CLAUDE_PLUGIN_INSTALL}
           language="bash"
+          track="plugin_install_copy"
         />
       </section>
 
@@ -216,6 +223,22 @@ export function AgentsOnePager() {
           <li>
             Marketplace / directory listing checklist in the repo:{" "}
             <code className="text-[var(--ink)]">docs/PUBLISH-DIRECTORIES.md</code>
+          </li>
+          <li>
+            Anonymous usage totals:{" "}
+            <Link
+              href="/usage"
+              className="text-[var(--teal-deep)] underline underline-offset-2"
+            >
+              Usage
+            </Link>{" "}
+            ·{" "}
+            <a
+              href="https://darkai.ca/un-default/api/stats"
+              className="text-[var(--teal-deep)] underline underline-offset-2"
+            >
+              api/stats
+            </a>
           </li>
         </ul>
       </section>

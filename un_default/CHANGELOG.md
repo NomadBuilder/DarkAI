@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- First-party **usage counters**: for-agents page views + copy clicks, anonymous
+  GitHub Action pings (`telemetry: false` to opt out). Public totals at
+  `/usage` and `/api/stats`; badge at `/api/badge/action_run.svg`.
 - Regenerate OG cards at 2400×1260 (2×) with sharper JPEG so LinkedIn
   previews don’t look soft after downscale.
 - Serve Un-Default OG images with public cache headers (LinkedIn often skips

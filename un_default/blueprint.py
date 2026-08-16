@@ -13,7 +13,7 @@ from urllib.parse import urlparse
 
 import requests
 from bs4 import BeautifulSoup
-from flask import Blueprint, jsonify, request, send_from_directory, abort
+from flask import Blueprint, jsonify, request, send_from_directory, abort, Response
 
 un_default_bp = Blueprint("un_default", __name__)
 
@@ -264,6 +264,76 @@ def scrape():
         return jsonify({"error": str(exc)}), 400
     except Exception as exc:
         return jsonify({"error": str(exc) or "Failed to scrape URL."}), 400
+
+
+@un_default_bp.route("/api/telemetry", methods=["POST", "OPTIONS"])
+def telemetry():
+    """Anonymous allowlisted event counter (install intent + CI runs)."""
+    if request.method == "OPTIONS":
+        resp = jsonify({"ok": True})
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        return resp
+
+    try:
+        from un_default import telemetry_store
+    except ImportError:
+        import telemetry_store  # type: ignore
+
+    client = request.headers.get("CF-Connecting-IP") or request.remote_addr or "unknown"
+    if telemetry_store.rate_limited(client):
+        resp = jsonify({"ok": False, "error": "rate_limited"})
+        resp.status_code = 429
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        return resp
+
+    payload = request.get_json(silent=True) or {}
+    event = (payload.get("event") or "").strip()
+    if event not in telemetry_store.ALLOWED_EVENTS:
+        resp = jsonify({"ok": False, "error": "unknown_event"})
+        resp.status_code = 400
+        resp.headers["Access-Control-Allow-Origin"] = "*"
+        return resp
+
+    telemetry_store.record_event(event)
+    resp = jsonify({"ok": True})
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Cache-Control"] = "no-store"
+    return resp
+
+
+@un_default_bp.route("/api/stats", methods=["GET"])
+def usage_stats():
+    try:
+        from un_default import telemetry_store
+    except ImportError:
+        import telemetry_store  # type: ignore
+
+    resp = jsonify(telemetry_store.read_stats())
+    resp.headers["Access-Control-Allow-Origin"] = "*"
+    resp.headers["Cache-Control"] = "public, max-age=30"
+    return resp
+
+
+@un_default_bp.route("/api/badge.svg", methods=["GET"])
+@un_default_bp.route("/api/badge/<metric>.svg", methods=["GET"])
+def usage_badge(metric: str = "action_run"):
+    try:
+        from un_default import telemetry_store
+    except ImportError:
+        import telemetry_store  # type: ignore
+
+    metric = (request.args.get("metric") or metric or "action_run").strip()
+    svg = telemetry_store.badge_svg(metric)
+    return Response(
+        svg,
+        mimetype="image/svg+xml",
+        headers={
+            "Cache-Control": "public, max-age=60",
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
 
 
 MAX_UPLOAD_BYTES = 8_000_000

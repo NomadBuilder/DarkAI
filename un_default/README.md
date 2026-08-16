@@ -184,9 +184,17 @@ jobs:
           changed-from: ${{ github.event.pull_request.base.sha }}
           format: json
           comment-on-pr: "true"
+          # telemetry: false   # opt out of anonymous action_run pings
 ```
 
 Prefer SARIF for Code Scanning? Set `format: sarif` and `output-file: un-default.sarif`. Full inputs: [`action.yml`](action.yml).
+
+Anonymous Action pings (no repo name or findings) feed public totals at
+[darkai.ca/un-default/usage](https://darkai.ca/un-default/usage/). Badge:
+
+```markdown
+![Un-Default CI runs](https://darkai.ca/un-default/api/badge/action_run.svg)
+```
 
 ---
 

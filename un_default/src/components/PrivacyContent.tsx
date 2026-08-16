@@ -7,7 +7,7 @@ export default function PrivacyContent() {
     <article className="prose-privacy grid gap-8 max-w-3xl text-[var(--ink)]">
       <div className="grid gap-3">
         <p className="text-sm text-[var(--ink-soft)]">
-          Last updated: August 2, 2026
+          Last updated: August 16, 2026
         </p>
         <p className="text-lg text-[var(--ink-soft)] leading-relaxed">
           Un-Default helps people notice default-heavy language. This policy
@@ -73,6 +73,22 @@ export default function PrivacyContent() {
           <li>
             Standard web server logs (IP, time, path) may be retained briefly
             for security and reliability on the host platform.
+          </li>
+          <li>
+            The agents guide and GitHub Action may send{" "}
+            <strong>anonymous aggregate counters</strong> (for example: page
+            view, “copy init”, Action run). These events do{" "}
+            <strong>not</strong> include repository names, file paths, scanned
+            text, or advertising identifiers. Totals are shown at{" "}
+            <a
+              href="https://darkai.ca/un-default/usage/"
+              className="text-[var(--teal-deep)] underline underline-offset-2"
+            >
+              /un-default/usage
+            </a>
+            . Action users can set{" "}
+            <code className="text-[var(--ink)]">telemetry: false</code> to opt
+            out.
           </li>
         </ul>
       </section>

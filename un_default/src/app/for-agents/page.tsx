@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
 import { InclusiveBand, SiteNav } from "@/components/SiteNav";
 import { AgentsOnePager } from "@/components/AgentsOnePager";
+import { ForAgentsAnalytics } from "@/components/ForAgentsAnalytics";
 import { AGENTS_URL } from "@/lib/agent-install";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "After Claude writes UI copy — Un-Default",
@@ -60,6 +61,7 @@ export const metadata: Metadata = {
         </p>
 
         <AgentsOnePager />
+        <ForAgentsAnalytics />
       </div>
     </main>
   );
