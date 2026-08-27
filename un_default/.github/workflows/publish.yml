@@ -1,0 +1,132 @@
+# Automate what platforms allow: tests → npm → MCP Registry.
+# Manual directory forms are printed at the end (Anthropic, Cursor, etc.).
+
+name: Release publish
+
+on:
+  push:
+    tags: ["v*"]
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      skip_npm:
+        description: "Skip npm publish (MCP Registry only)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: release-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Resolve version
+        id: ver
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            TAG_VERSION="${GITHUB_REF#refs/tags/v}"
+          elif [[ -n "${{ github.event.release.tag_name }}" ]]; then
+            TAG_VERSION="${{ github.event.release.tag_name }}"
+            TAG_VERSION="${TAG_VERSION#v}"
+          else
+            TAG_VERSION="$(node -p "require('./package.json').version")"
+          fi
+          PKG_VERSION="$(node -p "require('./package.json').version")"
+          echo "tag=${TAG_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "pkg=${PKG_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Resolved tag=${TAG_VERSION} package.json=${PKG_VERSION}"
+          if [[ "${TAG_VERSION}" != "${PKG_VERSION}" ]]; then
+            echo "::error::Tag version ${TAG_VERSION} does not match package.json ${PKG_VERSION}"
+            exit 1
+          fi
+
+      - name: Sync server.json version
+        run: |
+          VERSION="${{ steps.ver.outputs.pkg }}"
+          node -e '
+            const fs = require("fs");
+            const v = process.env.VERSION;
+            const j = JSON.parse(fs.readFileSync("server.json", "utf8"));
+            j.version = v;
+            if (j.packages?.[0]) j.packages[0].version = v;
+            fs.writeFileSync("server.json", JSON.stringify(j, null, 2) + "\n");
+          '
+        env:
+          VERSION: ${{ steps.ver.outputs.pkg }}
+
+      - name: Preflight (tests + MCP + hooks + init merge)
+        run: npm run preflight
+
+      - name: Ensure npm supports trusted publishing
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.skip_npm) }}
+        run: npm install -g npm@latest
+
+      - name: Publish to npm
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.skip_npm) }}
+        run: npm publish --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Wait for npm (ownership check)
+        if: ${{ !(github.event_name == 'workflow_dispatch' && inputs.skip_npm) }}
+        run: |
+          VERSION="${{ steps.ver.outputs.pkg }}"
+          for i in $(seq 1 18); do
+            GOT="$(npm view "anti-default@${VERSION}" version 2>/dev/null || true)"
+            echo "attempt ${i}: got=${GOT}"
+            if [[ "${GOT}" == "${VERSION}" ]]; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::npm did not show anti-default@${VERSION} in time"
+          exit 1
+
+      - name: Install mcp-publisher
+        run: |
+          curl -fsSL "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/').tar.gz" \
+            | tar xz mcp-publisher
+          chmod +x mcp-publisher
+
+      - name: Publish to MCP Registry
+        run: |
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
+
+      - name: Manual directory checklist
+        if: always()
+        run: |
+          cat <<'EOF'
+          ────────────────────────────────────────
+          Automated this run: tests/preflight → npm → MCP Registry
+          Still one-time / human (platforms have no public API):
+            • Anthropic plugin directory
+              https://platform.claude.com/plugins/submit
+              repo: https://github.com/NomadBuilder/anti-default
+            • Cursor marketplace
+              https://cursor.com/marketplace/publish
+            • cursor.directory
+              https://cursor.directory/plugins/new
+            • Smithery / Glama / mcp.so — docs/PUBLISH-DIRECTORIES.md
+            • Claude users can already:
+              claude plugin marketplace add NomadBuilder/anti-default
+              claude plugin install un-default@un-default
+          EOF

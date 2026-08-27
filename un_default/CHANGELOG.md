@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Product Hunt conversion: live findings demo on `/for-agents`, shareable
+  Review at `/?demo=1`, and `init` writes `examples/un-default-demo.md` then
+  prints a sample scan so the first finding is immediate.
 - Load DarkAI sitewide **Google Tag Manager** (`GTM-MZ69VXXL`) on the Un-Default
   web UI so `/un-default` pages match the rest of darkai.ca analytics.
 - First-party **usage counters**: for-agents page views + copy clicks, anonymous

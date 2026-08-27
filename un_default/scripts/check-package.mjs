@@ -8,13 +8,43 @@ import { promisify } from "node:util";
 const exec = promisify(execFile);
 const temp = await mkdtemp(path.join(os.tmpdir(), "un-default-package-"));
 
+function packInfoFromStdout(stdout) {
+  const text = String(stdout ?? "");
+  const arrayAt = text.indexOf("[");
+  const objectAt = text.indexOf("{");
+  let jsonText = "";
+  if (arrayAt >= 0 && (objectAt < 0 || arrayAt <= objectAt)) {
+    jsonText = text.slice(arrayAt);
+  } else if (objectAt >= 0) {
+    jsonText = text.slice(objectAt);
+  } else {
+    throw new Error(`npm pack --json produced no JSON:\n${text.slice(0, 800)}`);
+  }
+  const parsed = JSON.parse(jsonText);
+  const info = Array.isArray(parsed) ? parsed[0] : parsed;
+  if (!info?.filename) {
+    throw new Error(
+      `npm pack --json missing filename:\n${JSON.stringify(parsed).slice(0, 800)}`,
+    );
+  }
+  return info;
+}
+
 try {
   const packed = await exec(
     "npm",
     ["pack", "--json", "--pack-destination", temp],
     { cwd: process.cwd(), maxBuffer: 2_000_000 },
   );
-  const packInfo = JSON.parse(packed.stdout)[0];
+  let packInfo;
+  try {
+    packInfo = packInfoFromStdout(packed.stdout);
+  } catch (err) {
+    const { readdir } = await import("node:fs/promises");
+    const tgz = (await readdir(temp)).find((f) => f.endsWith(".tgz"));
+    if (!tgz) throw err;
+    packInfo = { filename: tgz };
+  }
   const tarball = path.join(temp, packInfo.filename);
 
   await writeFile(

@@ -188,6 +188,42 @@ export const CORPUS_CASES: CorpusCase[] = [
     expect: "flag",
     ruleIds: ["pregnant-women-only"],
   },
+  {
+    id: "sexist-digs-pack",
+    axis: "gender",
+    text: "Don’t man up like a girl — reviewers called her bossy, shrill, and too emotional. One brief still said feminazi.",
+    expect: "flag",
+    ruleIds: [
+      "man-up",
+      "like-a-girl",
+      "bossy",
+      "shrill",
+      "emotional-stereotype",
+      "feminazi",
+    ],
+  },
+  {
+    id: "sexist-soft-heads-up",
+    axis: "gender",
+    text: "Ask the girls in marketing; investors joked she was high-maintenance and a drama queen.",
+    expect: "soft",
+    ruleIds: ["girls-for-adults", "high-maintenance", "drama-queen"],
+  },
+  {
+    id: "bitch-breeding-ok",
+    axis: "gender",
+    text: "Veterinary notes: pregnant bitch, third trimester.",
+    expect: "no-flag",
+    ruleIds: ["bitch-slur"],
+    note: "Animal breeding / clinical use should not fire.",
+  },
+  {
+    id: "shrill-alarm-ok",
+    axis: "gender",
+    text: "A shrill alarm sounded when the sensor tripped.",
+    expect: "no-flag",
+    ruleIds: ["shrill"],
+  },
 
   // ── Must NOT catch (common false friends) ──────────────────────────
   {

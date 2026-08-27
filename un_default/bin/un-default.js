@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /* eslint-disable @typescript-eslint/no-require-imports */
-/** npx un-default entry. Published packages run the compiled CLI. */
+/** npx -y anti-default entry. Published packages run the compiled CLI. */
 const path = require("node:path");
 
 const pkgRoot = path.join(__dirname, "..");

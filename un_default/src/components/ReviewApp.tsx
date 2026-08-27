@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import Link from "next/link";
 import { analyzeText } from "@/lib/analyzer";
 import { withBasePath } from "@/lib/base-path";
+import { DEMO_COPY } from "@/lib/demo-copy";
 import { DocumentHighlight } from "@/components/DocumentHighlight";
 import { downloadFindingsExport } from "@/lib/export";
 import {
@@ -49,6 +50,11 @@ const TEXT_EXTS = new Set([
   "rtf",
 ]);
 
+function isDemoQuery(): boolean {
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).get("demo") === "1";
+}
+
 export function ReviewApp() {
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState("https://example.com");
@@ -64,27 +70,58 @@ export function ReviewApp() {
   const [crawledPages, setCrawledPages] = useState<
     Array<{ url: string; title: string }> | null
   >(null);
+  const [demoMode, setDemoMode] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const { preferences, drift } = useRulePreferences();
+  const demoRan = useRef(false);
+  const { preferences, hydrated, drift } = useRulePreferences();
 
   useEffect(() => {
     setIgnoredKeys(loadIgnoredKeys());
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const copyRes = await fetch(withBasePath("/fixtures/demo-copy.txt"));
-        if (cancelled || !copyRes.ok) return;
-        setText(await copyRes.text());
-      } catch {
-        // Keep fallback — demo is optional.
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
+    setText(DEMO_COPY);
+    if (isDemoQuery()) {
+      setMode("text");
+      setDemoMode(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!demoMode || !hydrated || demoRan.current) return;
+    demoRan.current = true;
+    setResult(
+      analyzeText(DEMO_COPY, {
+        sourceType: "text",
+        sourceLabel: "demo sample",
+        title: "Demo review",
+        preferences,
+      }),
+    );
+    setActiveFindingId(null);
+    setError(null);
+  }, [demoMode, hydrated, preferences]);
+
+  const clearDemoMode = useCallback(() => {
+    setDemoMode(false);
+    demoRan.current = false;
+    setResult(null);
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.delete("demo");
+    const qs = urlObj.searchParams.toString();
+    window.history.replaceState({}, "", qs ? `${urlObj.pathname}?${qs}` : urlObj.pathname);
+  }, []);
+
+  const loadDemo = useCallback(() => {
+    setMode("text");
+    setText(DEMO_COPY);
+    setDocLabel(null);
+    setCrawledPages(null);
+    setDemoMode(true);
+    demoRan.current = false;
+    const urlObj = new URL(window.location.href);
+    urlObj.searchParams.set("demo", "1");
+    window.history.replaceState({}, "", `${urlObj.pathname}?${urlObj.searchParams.toString()}`);
   }, []);
 
   const persistIgnore = useCallback((keys: string[]) => {
@@ -374,6 +411,32 @@ export function ReviewApp() {
           </button>
         ))}
       </div>
+
+      {demoMode ? (
+        <p className="mb-5 text-sm text-[var(--ink-soft)] leading-relaxed max-w-2xl">
+          Demo sample loaded and reviewed — shareable as{" "}
+          <code className="text-[var(--ink)]">?demo=1</code>.{" "}
+          <button
+            type="button"
+            onClick={clearDemoMode}
+            className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+          >
+            Clear demo
+          </button>
+        </p>
+      ) : (
+        <p className="mb-5 text-sm text-[var(--ink-soft)] leading-relaxed max-w-2xl">
+          Want a guaranteed finding?{" "}
+          <button
+            type="button"
+            onClick={loadDemo}
+            className="text-[var(--teal-deep)] underline underline-offset-2 hover:text-[var(--ink)]"
+          >
+            Run the demo sample
+          </button>
+          .
+        </p>
+      )}
 
       <div className="grid gap-4">
         {mode === "url" && (

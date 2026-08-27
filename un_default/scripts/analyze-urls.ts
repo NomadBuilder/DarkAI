@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-/** @deprecated Prefer `npx un-default --urls` / `--urls-file` */
+/** @deprecated Prefer `npx -y anti-default --urls` / `--urls-file` */
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

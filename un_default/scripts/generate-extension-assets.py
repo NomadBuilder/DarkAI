@@ -38,31 +38,44 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont | ImageFont.Im
 
 
 def draw_icon(size: int) -> Image.Image:
+    """Prefer rendered assets/logo.png (from SVG); fall back to five-bar mark."""
+    logo_path = Path(__file__).resolve().parents[1] / "assets" / "logo.png"
+    if logo_path.exists():
+        return (
+            Image.open(logo_path)
+            .convert("RGBA")
+            .resize((size, size), Image.Resampling.LANCZOS)
+        )
+
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     draw = ImageDraw.Draw(img)
-    pad = max(1, size // 16)
     draw.rounded_rectangle(
-        [pad, pad, size - pad - 1, size - pad - 1],
-        radius=max(4, size // 5),
-        fill=TEAL_DEEP,
+        [0, 0, size - 1, size - 1],
+        radius=max(6, size * 56 // 256),
+        fill=(18, 24, 32, 255),
     )
-    # accent bar
-    bar_h = max(2, size // 10)
-    draw.rectangle(
-        [pad, size - pad - bar_h * 2, size - pad - 1, size - pad - 1],
+    s = size / 256.0
+    bar_w = max(2, int(22 * s))
+    bar_h = max(4, int(152 * s))
+    y0 = int(52 * s)
+    for x in (52, 86, 120, 154):
+        x0 = int(x * s)
+        draw.rounded_rectangle(
+            [x0, y0, x0 + bar_w, y0 + bar_h],
+            radius=max(1, bar_w // 2),
+            fill=PAPER,
+        )
+    # Approximate tilted coral bar
+    coral = Image.new("RGBA", (size, size), (0, 0, 0, 0))
+    cdraw = ImageDraw.Draw(coral)
+    x0 = int(187 * s)
+    cdraw.rounded_rectangle(
+        [x0, y0, x0 + bar_w, y0 + bar_h],
+        radius=max(1, bar_w // 2),
         fill=CORAL,
     )
-    label = "AD"
-    f = font(max(10, int(size * 0.42)), bold=True)
-    bbox = draw.textbbox((0, 0), label, font=f)
-    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
-    draw.text(
-        ((size - tw) / 2, (size - th) / 2 - size * 0.06),
-        label,
-        fill=PAPER,
-        font=f,
-    )
-    return img
+    coral = coral.rotate(-18, resample=Image.Resampling.BICUBIC, center=(size * 0.77, size * 0.5))
+    return Image.alpha_composite(img, coral)
 
 
 def screenshot_highlights() -> Image.Image:
@@ -150,8 +163,8 @@ def screenshot_popup() -> Image.Image:
 
     # fake toolbar
     draw.rounded_rectangle([900, 60, 1200, 120], radius=12, fill=WHITE, outline=(210, 205, 196), width=2)
-    draw.ellipse([1100, 78, 1136, 114], fill=TEAL_DEEP)
-    draw.text((1108, 86), "AD", fill=PAPER, font=font(14, bold=True))
+    icon = draw_icon(36)
+    img.paste(icon, (1100, 72), icon)
 
     # popup card
     draw.rounded_rectangle([420, 240, 860, 560], radius=12, fill=PAPER, outline=TEAL_DEEP, width=3)

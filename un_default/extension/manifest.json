@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Un-Default — Inclusive Language Highlights",
   "short_name": "Un-Default",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Review inclusive-language suggestions on any page in the popup. Runs offline from local rules — no AI calls, no tracking.",
   "homepage_url": "https://darkai.ca/un-default/",
   "icons": {

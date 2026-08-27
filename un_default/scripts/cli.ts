@@ -16,7 +16,7 @@ import {
   type ScanReport,
 } from "../src/cli/format";
 import { writeBaseline } from "../src/cli/baseline";
-import { initializeProject, initNextSteps } from "../src/cli/init";
+import { initializeProject, initNextSteps, DEMO_FILE_RELATIVE } from "../src/cli/init";
 import { applySafeFixes } from "../src/cli/fix";
 import { runScan } from "../src/cli/scan";
 import {
@@ -27,6 +27,40 @@ import {
 } from "../src/cli/feedback";
 
 declare const __ANTI_DEFAULT_VERSION__: string | undefined;
+
+async function printDemoScan(cwd: string): Promise<void> {
+  const demoPath = path.join(cwd, DEMO_FILE_RELATIVE);
+  try {
+    await fs.access(demoPath);
+  } catch {
+    return;
+  }
+  const scan = await runScan({
+    cwd,
+    paths: [DEMO_FILE_RELATIVE],
+    useBaseline: false,
+  });
+  const hard = scan.findings.filter((f) => !f.likelyFalsePositive);
+  const show = (hard.length ? hard : scan.findings).slice(0, 5);
+  console.log("");
+  console.log(`── Sample scan (${DEMO_FILE_RELATIVE}) ──`);
+  console.log(
+    `${scan.findings.length} finding(s) · showing ${show.length} (local rules, no model)`,
+  );
+  for (const f of show) {
+    const soft = f.likelyFalsePositive ? " [soft]" : "";
+    console.log("");
+    console.log(`[${f.label}]${soft} “${f.match}”`);
+    console.log(`  ${f.why}`);
+    if (f.suggestions[0]) console.log(`  try: ${f.suggestions[0]}`);
+  }
+  if (scan.findings.length > show.length) {
+    console.log("");
+    console.log(
+      `…and ${scan.findings.length - show.length} more → npx -y anti-default ${DEMO_FILE_RELATIVE}`,
+    );
+  }
+}
 
 function packageVersion(): string {
   if (
@@ -82,6 +116,7 @@ async function main() {
       console.log("Un-Default is already initialized; no files changed.");
     }
     for (const line of initNextSteps()) console.log(line);
+    await printDemoScan(cwd);
     return;
   }
 

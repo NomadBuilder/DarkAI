@@ -1,5 +1,5 @@
 #!/usr/bin/env tsx
-/** @deprecated Prefer `npx un-default` / `node bin/un-default.js` */
+/** @deprecated Prefer `npx -y anti-default` / `node bin/un-default.js` */
 import { spawnSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

@@ -33,6 +33,8 @@ No account. No AI required for matching. Open rules you can tune.
 npx -y anti-default init
 ```
 
+That also writes `examples/un-default-demo.md` and prints a sample scan so you see a finding immediately. Browser demo (shareable): [/?demo=1](https://darkai.ca/un-default/?demo=1).
+
 Or install the Claude Code plugin from this repo’s marketplace:
 
 ```bash

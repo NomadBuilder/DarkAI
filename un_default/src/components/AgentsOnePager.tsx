@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { AgentsLiveDemo } from "@/components/AgentsLiveDemo";
 import { CopyBlock } from "@/components/CopyBlock";
 import {
   AGENTS_URL,
@@ -14,12 +15,16 @@ import {
 export function AgentsOnePager() {
   return (
     <div className="grid gap-16">
+      <AgentsLiveDemo />
+
       <section className="grid gap-4 max-w-2xl">
         <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
           Stars don’t change shipped language. One{" "}
           <code className="text-[var(--ink)]">init</code> does — skill, MCP,
           after-edit hooks, and a PR check so Claude keeps checking even when
-          nobody is watching.
+          nobody is watching. npm package name:{" "}
+          <code className="text-[var(--ink)]">anti-default</code> (product is
+          Un-Default).
         </p>
         <CopyBlock
           label="Run once in your project"
@@ -30,10 +35,13 @@ export function AgentsOnePager() {
         <p className="text-sm text-[var(--ink-soft)] leading-relaxed">
           That writes Cursor + Claude Code skills, project MCP,{" "}
           <code className="text-[var(--ink)]">CLAUDE.md</code>, Claude/Cursor
-          after-edit hooks, ignore file,{" "}
+          after-edit hooks, ignore file, sample copy at{" "}
+          <code className="text-[var(--ink)]">examples/un-default-demo.md</code>
+          ,{" "}
           <code className="text-[var(--ink)]">inclusive-check</code> /{" "}
           <code className="text-[var(--ink)]">inclusive-fix</code> scripts, and
-          a GitHub Action workflow. Existing files are never overwritten.
+          a GitHub Action workflow. Existing files are never overwritten. Init
+          ends with a sample scan so you see a finding immediately.
         </p>
       </section>
 

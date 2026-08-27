@@ -1,6 +1,10 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { AGENTS_URL, CLAUDE_PROJECT_INSTRUCTIONS, MCP_CONFIG_JSON } from "../lib/agent-install";
+import {
+  DEMO_FILE_RELATIVE,
+  demoFileContents,
+} from "../lib/demo-copy";
 import { AFTER_EDIT_HOOK_SCRIPT } from "./hook-script";
 import { SKILL as BUNDLED_SKILL } from "./skill-text";
 
@@ -203,6 +207,7 @@ export async function initializeProject(cwd: string): Promise<string[]> {
     [".claude/skills/un-default/SKILL.md", BUNDLED_SKILL],
     [".mcp.json", MCP_CONFIG_JSON],
     ["CLAUDE.md", `${CLAUDE_PROJECT_INSTRUCTIONS.trim()}\n`],
+    [DEMO_FILE_RELATIVE, demoFileContents()],
   ];
 
   for (const [relative, contents] of files) {
@@ -270,7 +275,11 @@ export async function initializeProject(cwd: string): Promise<string[]> {
 export function initNextSteps(): string[] {
   return [
     "Claude/Cursor will now scan after file edits (hooks) — no extra user step.",
+    `Sample copy for a first finding: ${DEMO_FILE_RELATIVE}`,
+    `  npx -y anti-default ${DEMO_FILE_RELATIVE}`,
     "Optional: paste Project instructions / MCP from:",
     `  ${AGENTS_URL}`,
   ];
 }
+
+export { DEMO_FILE_RELATIVE };
