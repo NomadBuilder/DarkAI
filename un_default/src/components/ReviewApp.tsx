@@ -109,7 +109,11 @@ export function ReviewApp() {
     const urlObj = new URL(window.location.href);
     urlObj.searchParams.delete("demo");
     const qs = urlObj.searchParams.toString();
-    window.history.replaceState({}, "", qs ? `${urlObj.pathname}?${qs}` : urlObj.pathname);
+    window.history.replaceState(
+      {},
+      "",
+      qs ? `${urlObj.pathname}?${qs}` : urlObj.pathname,
+    );
   }, []);
 
   const loadDemo = useCallback(() => {
@@ -118,11 +122,30 @@ export function ReviewApp() {
     setDocLabel(null);
     setCrawledPages(null);
     setDemoMode(true);
-    demoRan.current = false;
+    demoRan.current = true;
+    setError(null);
+    setActiveFindingId(null);
+    setResult(
+      analyzeText(DEMO_COPY, {
+        sourceType: "text",
+        sourceLabel: "demo sample",
+        title: "Demo review",
+        preferences,
+      }),
+    );
     const urlObj = new URL(window.location.href);
     urlObj.searchParams.set("demo", "1");
-    window.history.replaceState({}, "", `${urlObj.pathname}?${urlObj.searchParams.toString()}`);
-  }, []);
+    window.history.replaceState(
+      {},
+      "",
+      `${urlObj.pathname}?${urlObj.searchParams.toString()}`,
+    );
+    requestAnimationFrame(() => {
+      document
+        .getElementById("demo-results")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }, [preferences]);
 
   const persistIgnore = useCallback((keys: string[]) => {
     setIgnoredKeys(keys);
@@ -562,7 +585,11 @@ export function ReviewApp() {
       </div>
 
       {result && (
-        <section className="mt-12 animate-rise" aria-live="polite">
+        <section
+          id="demo-results"
+          className="mt-12 animate-rise"
+          aria-live="polite"
+        >
           <header className="mb-6 border-t border-[color-mix(in_oklab,var(--ink)_16%,transparent)] pt-8">
             <p className="text-xs uppercase tracking-[0.18em] text-[var(--moss)] mb-2">
               Results
