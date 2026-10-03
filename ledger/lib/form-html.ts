@@ -61,6 +61,14 @@ export const defaultYardSignIntroHtml =
 export const defaultSuccessYardSignHtml =
   '<p>Haven&apos;t paid yet? Pay $10 per sign on <a href="/products">Products</a>, Stripe checkout, or e-transfer to <a href="mailto:FIGHT_FORD_SIGNS@outlook.com">FIGHT_FORD_SIGNS@outlook.com</a> when you&apos;re ready.</p>'
 
+/** Ensure a single space at the join so trimmed fragments still read correctly. */
+function joinWithSpace(left: string, right: string): string {
+  if (!left) return right
+  if (!right) return left
+  const needSpace = !/\s$/.test(left) && !/^\s/.test(right)
+  return needSpace ? `${left} ${right}` : `${left}${right}`
+}
+
 export function legacyYardSignIntroHtml(parts: {
   introPrefix?: string
   productsLinkLabel?: string
@@ -69,7 +77,13 @@ export function legacyYardSignIntroHtml(parts: {
   introSuffix?: string
 }): string {
   const email = parts.paymentEmail?.trim() || 'FIGHT_FORD_SIGNS@outlook.com'
-  return `<p>${parts.introPrefix ?? ''}<a href="/products">${parts.productsLinkLabel ?? 'Products'}</a>${parts.introMiddle ?? ''}<a href="mailto:${email}">${email}</a>${parts.introSuffix ?? ''}</p>`
+  const products = `<a href="/products">${parts.productsLinkLabel ?? 'Products'}</a>`
+  const mail = `<a href="mailto:${email}">${email}</a>`
+  const body = joinWithSpace(
+    joinWithSpace(joinWithSpace(parts.introPrefix ?? '', products), parts.introMiddle ?? ''),
+    joinWithSpace(mail, parts.introSuffix ?? '')
+  )
+  return `<p>${body}</p>`
 }
 
 export function legacySuccessYardSignHtml(parts: {
@@ -80,5 +94,11 @@ export function legacySuccessYardSignHtml(parts: {
   suffix?: string
 }): string {
   const email = parts.paymentEmail?.trim() || 'FIGHT_FORD_SIGNS@outlook.com'
-  return `<p>${parts.prefix ?? ''}<a href="/products">${parts.productsLinkLabel ?? 'Products'}</a>${parts.middle ?? ''}<a href="mailto:${email}">${email}</a>${parts.suffix ?? ''}</p>`
+  const products = `<a href="/products">${parts.productsLinkLabel ?? 'Products'}</a>`
+  const mail = `<a href="mailto:${email}">${email}</a>`
+  const body = joinWithSpace(
+    joinWithSpace(joinWithSpace(parts.prefix ?? '', products), parts.middle ?? ''),
+    joinWithSpace(mail, parts.suffix ?? '')
+  )
+  return `<p>${body}</p>`
 }

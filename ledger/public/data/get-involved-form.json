@@ -73,6 +73,7 @@
   },
   "yardSign": {
     "sectionTitle": "Sign request",
+    "introHtml": "<p>$10 per sign, delivered by volunteers—not shipped by mail. Pay on <a href=\"/products\">Products</a> or via e-transfer to <a href=\"mailto:FIGHT_FORD_SIGNS@outlook.com\">FIGHT_FORD_SIGNS@outlook.com</a> (preferred) when you're ready.</p>",
     "introPrefix": "$10 per sign, delivered by volunteers—not shipped by mail. Pay on ",
     "productsLinkLabel": "Products",
     "introMiddle": " or via e-transfer to ",
@@ -156,6 +157,7 @@
     "sendingLabel": "Sending…"
   },
   "successYardSign": {
+    "bodyHtml": "<p>Haven't paid yet? Pay $10 per sign on <a href=\"/products\">Products</a>, Stripe checkout, or e-transfer to <a href=\"mailto:FIGHT_FORD_SIGNS@outlook.com\">FIGHT_FORD_SIGNS@outlook.com</a> when you're ready.</p>",
     "prefix": "Haven't paid yet? Pay $10 per sign on ",
     "productsLinkLabel": "Products",
     "middle": ", Stripe checkout, or e-transfer to ",

@@ -151,6 +151,11 @@ function mergeStr(value: unknown, fallback: string): string {
   return typeof value === 'string' && value.trim() ? value.trim() : fallback
 }
 
+/** Like mergeStr, but keeps leading/trailing spaces (needed for HTML fragments around links). */
+function mergeStrKeepWs(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value : fallback
+}
+
 function mergeSelectOptions(value: unknown, fallback: SelectOptionCopy[]): SelectOptionCopy[] {
   if (!Array.isArray(value) || value.length === 0) return fallback
   const parsed = value
@@ -346,14 +351,14 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
     typeof ysObj.introHtml === 'string' && ysObj.introHtml.trim()
       ? ysObj.introHtml.trim()
       : legacyYardSignIntroHtml({
-          introPrefix: mergeStr(
+          introPrefix: mergeStrKeepWs(
             ysObj.introPrefix,
             '$10 per sign, delivered by volunteers—not shipped by mail. Pay on '
           ),
           productsLinkLabel: mergeStr(ysObj.productsLinkLabel, 'Products'),
-          introMiddle: mergeStr(ysObj.introMiddle, ' or via e-transfer to '),
+          introMiddle: mergeStrKeepWs(ysObj.introMiddle, ' or via e-transfer to '),
           paymentEmail: mergeStr(ysObj.paymentEmail, 'FIGHT_FORD_SIGNS@outlook.com'),
-          introSuffix: mergeStr(ysObj.introSuffix, " (preferred) when you're ready."),
+          introSuffix: mergeStrKeepWs(ysObj.introSuffix, " (preferred) when you're ready."),
         })
 
   const yardSign: YardSignCopy = {
@@ -397,11 +402,11 @@ export function parseGetInvolvedFormCopy(data: unknown): GetInvolvedFormCopy {
     typeof syObj.bodyHtml === 'string' && syObj.bodyHtml.trim()
       ? syObj.bodyHtml.trim()
       : legacySuccessYardSignHtml({
-          prefix: mergeStr(syObj.prefix, ''),
+          prefix: mergeStrKeepWs(syObj.prefix, ''),
           productsLinkLabel: mergeStr(syObj.productsLinkLabel, 'Products'),
-          middle: mergeStr(syObj.middle, ', Stripe checkout, or e-transfer to '),
+          middle: mergeStrKeepWs(syObj.middle, ', Stripe checkout, or e-transfer to '),
           paymentEmail: mergeStr(syObj.paymentEmail, 'FIGHT_FORD_SIGNS@outlook.com'),
-          suffix: mergeStr(syObj.suffix, " when you're ready."),
+          suffix: mergeStrKeepWs(syObj.suffix, " when you're ready."),
         })
 
   return {

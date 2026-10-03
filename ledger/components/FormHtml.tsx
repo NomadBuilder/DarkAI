@@ -18,7 +18,7 @@ export default function FormHtml({ html, className = '', linkClassName }: Props)
 
   return (
     <div
-      className={`form-html [&_p]:m-0 [&_p+p]:mt-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 ${linkClasses} ${className}`}
+      className={`form-html break-words [&_p]:m-0 [&_p+p]:mt-2 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5 ${linkClasses} ${className}`}
       dangerouslySetInnerHTML={{ __html: safe }}
     />
   )
